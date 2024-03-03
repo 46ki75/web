@@ -1,6 +1,8 @@
 name: All branch Unit Test
 
-on: push
+on:
+  - push
+  - workflow_dispatch
 
 jobs:
   build:
