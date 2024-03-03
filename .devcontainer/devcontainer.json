@@ -1,0 +1,16 @@
+{
+  "name": "Next.js Dev Container",
+  "dockerFile": "Dockerfile",
+  "postCreateCommand": "npm i",
+  "customizations": {
+    "vscode": {
+      "settings": {},
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "svipas.prettier-plus",
+        "usernamehw.errorlens"
+      ]
+    }
+  },
+  "forwardPorts": [3000]
+}
