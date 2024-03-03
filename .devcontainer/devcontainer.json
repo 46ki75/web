@@ -1,6 +1,6 @@
 {
   "name": "Next.js Dev Container",
-  "dockerFile": "Dockerfile",
+  "build": { "dockerfile": "Dockerfile" },
   "postCreateCommand": "npm i",
   "customizations": {
     "vscode": {
