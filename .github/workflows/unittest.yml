@@ -1,4 +1,4 @@
-name: All branch Unit Test
+name: Unit Tests for All Branches
 
 on:
   - push
@@ -24,6 +24,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Run lint
+        run: npm run lint
 
       - name: Run tests
         run: npm exec -- vitest --run
