@@ -1,16 +1,6 @@
 name: All branch Unit Test
 
-on:
-  push:
-    branches:
-      - main
-      - stg
-      - dev
-  pull_request:
-    branches:
-      - main
-      - stg
-      - dev
+on: push
 
 jobs:
   build:
