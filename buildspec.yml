@@ -3,9 +3,9 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      nodejs: 20.x
+      nodejs: 20
     commands:
-      - npm install
+      - npm ci
   build:
     commands:
       - npm run build
@@ -13,3 +13,6 @@ artifacts:
   files:
     - '**/*'
   base-directory: 'out'
+cache:
+  paths:
+    - 'node_modules/**/*'
