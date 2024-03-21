@@ -1,5 +1,5 @@
 import { factory } from '@/Factory'
-import { type NotionBlogPageProperty } from '@/app/api/blog/NotionBlogPageProperty'
+import { type NotionBlogPageProperty } from '@/models/backend'
 
 export const generateStaticParams = async (): Promise<
   Array<{ slug: string }>

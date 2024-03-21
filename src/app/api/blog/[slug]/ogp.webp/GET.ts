@@ -1,7 +1,7 @@
 import { factory } from '@/Factory'
 import { type NextRequest, NextResponse } from 'next/server'
 import { f } from 'notion-markup-utils'
-import { type NotionBlogPageProperty } from '@/app/api/blog/NotionBlogPageProperty'
+import { type NotionBlogPageProperty } from '@/models/backend'
 
 import fs from 'fs'
 import path from 'path'

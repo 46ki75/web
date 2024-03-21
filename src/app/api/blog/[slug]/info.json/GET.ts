@@ -1,6 +1,6 @@
 import { factory } from '@/Factory'
 import { type NextRequest, NextResponse } from 'next/server'
-import { type NotionBlogPageProperty } from '../../NotionBlogPageProperty'
+import { type NotionBlogPageProperty } from '@/models/backend'
 import { f } from 'notion-markup-utils'
 
 import { load } from 'cheerio'

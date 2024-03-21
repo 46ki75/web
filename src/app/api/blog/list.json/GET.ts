@@ -1,6 +1,6 @@
 import { factory } from '@/Factory'
 import { NextResponse } from 'next/server'
-import { type NotionBlogPageProperty } from '../NotionBlogPageProperty'
+import { type NotionBlogPageProperty } from '@/models/backend'
 import { f, s } from 'notion-markup-utils'
 
 // models
