@@ -1,6 +1,15 @@
 import fs from 'fs'
 import path from 'path'
 
+/**
+ * Function to save inline images. Save images from an S3 signed URL
+ * to /public/images/blog/${slug}/i${url.index}.webp. For example,
+ * if the blog's ID (slug) is 15, the first image would be saved as
+ * `/public/images/blog/15/i0.webp`.
+ *
+ * @param {string[]} imageURLs
+ * @param {string} slug id of the article
+ */
 export async function saveImages(
   imageURLs: string[],
   slug: string
