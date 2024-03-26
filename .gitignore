@@ -25,3 +25,5 @@ logs
 
 # inline images
 /public/images/blog/4/i*.webp
+
+*storybook.log
