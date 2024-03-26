@@ -1,12 +1,7 @@
 <template>
-  <div>aaa</div>
-  <div>data: {{ data }}</div>
+  <BlogSide />
 </template>
 
-<script setup lang="ts">
-import { useFetch } from 'nuxt/app'
-
-const { data, pending } = await useFetch('/api/blog/list.json')
-</script>
+<script setup lang="ts"></script>
 
 <style scoped></style>

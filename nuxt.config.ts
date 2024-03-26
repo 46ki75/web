@@ -3,6 +3,7 @@ import { getAllBlogSlug } from './helpers/getAllBlogSlug'
 
 export default defineNuxtConfig({
   devtools: { enabled: true },
+
   hooks: {
     'build:before': () => {
       console.log('Build Start')
@@ -14,5 +15,7 @@ export default defineNuxtConfig({
       paths.push(...slugs.map((slug) => `/api/blog/${slug}/ogp.webp`))
       nitroConfig?.prerender?.routes?.push(...paths)
     }
-  }
+  },
+  css: ['~/assets/global.scss'],
+  modules: ['@nuxt/image']
 })
