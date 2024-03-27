@@ -1,0 +1,18 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 20
+    commands:
+      - npm ci
+  build:
+    commands:
+      - npm run generate
+artifacts:
+  files:
+    - '**/*'
+  base-directory: '.output/public'
+cache:
+  paths:
+    - 'node_modules/**/*'
