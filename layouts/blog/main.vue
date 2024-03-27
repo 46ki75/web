@@ -28,6 +28,7 @@ import { Pagetop } from 'elmethis'
   }
 
   .body-container {
+    width: 100%;
     margin: 1rem;
 
     display: flex;
@@ -47,6 +48,7 @@ import { Pagetop } from 'elmethis'
     }
 
     .main {
+      width: 100%;
       flex: 6.5;
       box-shadow: 0 0 0.125rem rgba(0, 0, 0, 0.3);
 
@@ -58,6 +60,7 @@ import { Pagetop } from 'elmethis'
     }
 
     .side {
+      width: 100%;
       box-sizing: border-box;
       flex: 3.5;
     }

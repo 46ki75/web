@@ -19,7 +19,7 @@
     "@aws-sdk/client-ssm": "^3.540.0",
     "@nuxt/image": "^1.4.0",
     "@tanstack/vue-query": "^5.28.9",
-    "elmethis": "^0.0.11",
+    "elmethis": "^0.0.12",
     "notion-markup-utils": "^1.4.11",
     "nuxt": "^3.11.1",
     "vue": "^3.4.21",
