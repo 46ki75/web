@@ -41,7 +41,7 @@ withDefaults(
 
   width: 100%;
   box-shadow: 0 0 0.125rem rgba(0, 0, 0, 0.25);
-  background-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.8);
 
   display: flex;
   flex-direction: column;

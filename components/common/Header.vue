@@ -41,7 +41,7 @@ header {
   box-shadow: 0 0 0.25rem rgba(0, 0, 0, 0.3);
 
   transition: all 0.3s;
-  backdrop-filter: blur(0.125rem);
+  backdrop-filter: blur(2px);
 
   a {
     all: unset;
