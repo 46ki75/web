@@ -31,7 +31,9 @@ export default defineEventHandler(async (event) => {
   const [result] = results
 
   const rawDom = await notion.blocks.getDOMJSON({ id: result.id })
-  const convertedDom = convertDomJSON(rawDom, String(result.properties.slug))
+  const convertedDom = convertDomJSON(rawDom, String(slug))
+
+  // console.log(convertedDom)
 
   await saveImages(convertedDom.newUrls, slug)
 

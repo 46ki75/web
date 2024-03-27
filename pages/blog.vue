@@ -1,14 +1,7 @@
 <template>
   <NuxtLayout name="default">
     <NuxtLayout name="blog-main">
-      <BlogMain
-        :title="data != null ? data.title : ''"
-        :created-at="data != null ? data.createdAt : '????-??-??'"
-        :updated-at="data != null ? data.updatedAt : '????-??-??'"
-        :links="links"
-        :image="src"
-        ><NuxtPage
-      /></BlogMain>
+      <NuxtPage />
     </NuxtLayout>
   </NuxtLayout>
 </template>

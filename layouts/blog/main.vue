@@ -28,7 +28,7 @@ import { Pagetop } from 'elmethis'
   }
 
   .body-container {
-    margin-top: 1rem;
+    margin: 1rem;
 
     @media (min-width: 768px) {
       max-width: 1380px;
@@ -52,6 +52,7 @@ import { Pagetop } from 'elmethis'
     }
 
     .side {
+      box-sizing: border-box;
       flex: 3.5;
     }
   }
