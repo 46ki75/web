@@ -19,7 +19,7 @@
 import { type Blog } from '~/models/frontend'
 import { useQuery } from '@tanstack/vue-query'
 
-const { isPending, isFetching, isError, data, error } = useQuery<Blog[]>({
+const { isPending, data } = useQuery<Blog[]>({
   queryKey: ['/api/v1/blog/list/meta.json'],
   queryFn: async () => await $fetch('/api/v1/blog/list/meta.json')
 })
