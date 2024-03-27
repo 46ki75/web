@@ -1,4 +1,4 @@
-import { factory } from '../../../helpers/Factory'
+import { factory } from '../../../../../helpers/Factory'
 
 export default defineEventHandler(async (event) => {
   const notion = await factory.getNotionClient()

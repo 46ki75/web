@@ -10,9 +10,14 @@ export default defineNuxtConfig({
     },
     async 'nitro:config'(nitroConfig) {
       const slugs = await getAllBlogSlug()
-      const paths = ['/api/blog/list.json', '/api/blog/tags.json']
-      paths.push(...slugs.map((slug) => `/api/blog/${slug}/info.json`))
-      paths.push(...slugs.map((slug) => `/api/blog/${slug}/ogp.webp`))
+      const paths = [
+        '/api/v1/blog/home/meta.json',
+        '/api/v1/blog/list/meta.json',
+        '/api/v1/blog/list/tags.json'
+      ]
+      paths.push(...slugs.map((slug) => `/api/v1/blog/${slug}/meta.json`))
+      paths.push(...slugs.map((slug) => `/api/v1/blog/${slug}/body.json`))
+      paths.push(...slugs.map((slug) => `/api/v1/blog/${slug}/ogp.webp`))
       nitroConfig?.prerender?.routes?.push(...paths)
     }
   },

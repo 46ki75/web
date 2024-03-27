@@ -1,5 +1,5 @@
-import { factory } from '../../../helpers/Factory'
-import { type NotionBlogPageProperty } from '../../../models/backend'
+import { factory } from '../../../../../helpers/Factory'
+import { type NotionBlogPageProperty } from '../../../../../models/backend'
 import { f, s } from 'notion-markup-utils'
 
 // models

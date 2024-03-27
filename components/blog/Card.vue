@@ -1,5 +1,5 @@
 <template>
-  <a class="card" :href="href">
+  <NuxtLink class="card" :to="href">
     <img class="image" :src="image" alt="Image of OGP" />
     <div class="typography">
       <span class="title">{{ title }}</span>
@@ -14,7 +14,7 @@
       />
     </div>
     <BlogDate :created-at="createdAt" :updated-at="updatedAt" />
-  </a>
+  </NuxtLink>
 </template>
 
 <script setup lang="ts">

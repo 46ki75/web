@@ -1,4 +1,4 @@
-import { factory } from '../../../../helpers/Factory'
+import { factory } from '../../../../../helpers/Factory'
 import { f } from 'notion-markup-utils'
 import { type NotionBlogPageProperty } from '@/models/backend'
 
