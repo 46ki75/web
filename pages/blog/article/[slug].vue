@@ -20,19 +20,35 @@ import { NotionHTML } from 'elmethis'
 import type { DOMJSON } from 'notion-markup-utils/dist/block/DOMJSON'
 import type { Blog } from '~/models/frontend'
 
+import { useQuery } from '@tanstack/vue-query'
+
 const route = useRoute()
 
-const { data: meta } = await useAsyncData<Blog>(
-  `/api/v1/blog/${route.path.split('/').pop()}/meta.json`,
-  () => $fetch(`/api/v1/blog/${route.path.split('/').pop()}/meta.json`),
-  { watch: [route] }
+const slug = computed(
+  () => route.path.split('/')[route.path.split('/').length - 1]
 )
 
-const { data: body } = await useAsyncData<DOMJSON[]>(
-  `/api/v1/blog/${route.path.split('/').pop()}/body.json`,
-  () => $fetch(`/api/v1/blog/${route.path.split('/').pop()}/body.json`),
-  { watch: [route] }
-)
+const { data: meta } = useQuery<Blog>({
+  queryKey: [`/api/v1/blog/${slug.value}/meta.json`],
+  queryFn: async () => await $fetch(`/api/v1/blog/${slug.value}/meta.json`)
+})
+
+const { data: body } = useQuery<DOMJSON[]>({
+  queryKey: [`/api/v1/blog/${slug.value}/body.json`],
+  queryFn: async () => await $fetch(`/api/v1/blog/${slug.value}/body.json`)
+})
+
+// const { data: meta } = await useAsyncData<Blog>(
+//   `/api/v1/blog/${slug.value}/meta.json`,
+//   () => $fetch(`/api/v1/blog/${slug.value}/meta.json`),
+//   { watch: [route] }
+// )
+
+// const { data: body } = await useAsyncData<DOMJSON[]>(
+//   `/api/v1/blog/${slug.value}/body.json`,
+//   () => $fetch(`/api/v1/blog/${slug.value}/body.json`),
+//   { watch: [route] }
+// )
 </script>
 
 <style scoped lang="scss">

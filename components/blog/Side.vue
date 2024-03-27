@@ -1,7 +1,7 @@
 <template>
   <div class="side">
-    <div v-if="pending">LOADING</div>
-    <nav v-else-if="!pending" v-for="blog in data">
+    <div v-if="isPending">LOADING</div>
+    <nav v-else-if="!isPending" v-for="blog in data">
       <BlogCard
         :title="blog.title"
         :description="blog.description"
@@ -16,10 +16,13 @@
 </template>
 
 <script setup lang="ts">
-import { useFetch } from 'nuxt/app'
 import { type Blog } from '~/models/frontend'
+import { useQuery } from '@tanstack/vue-query'
 
-const { data, pending } = await useFetch<Blog[]>('/api/v1/blog/list/meta.json')
+const { isPending, isFetching, isError, data, error } = useQuery<Blog[]>({
+  queryKey: ['/api/v1/blog/list/meta.json'],
+  queryFn: async () => await $fetch('/api/v1/blog/list/meta.json')
+})
 </script>
 
 <style scoped lang="scss">

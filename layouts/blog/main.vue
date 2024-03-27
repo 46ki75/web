@@ -20,7 +20,7 @@ import { Pagetop } from 'elmethis'
 .body {
   width: 100%;
 
-  @media (min-width: 768px) {
+  @media (min-width: 1024px) {
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -30,7 +30,13 @@ import { Pagetop } from 'elmethis'
   .body-container {
     margin: 1rem;
 
-    @media (min-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+
+    @media (min-width: 1024px) {
       max-width: 1380px;
 
       display: flex;
@@ -46,7 +52,7 @@ import { Pagetop } from 'elmethis'
 
       padding: 0.25rem;
 
-      @media (min-width: 768px) {
+      @media (min-width: 1024px) {
         padding: 0.5rem;
       }
     }
