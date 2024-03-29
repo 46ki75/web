@@ -91,7 +91,7 @@ onUnmounted(() => {
         width: 100%;
         flex: 6.5;
         box-shadow: 0 0 0.125rem rgba(0, 0, 0, 0.3);
-        background: rgba(255, 255, 255, 0.6);
+        background: rgba(255, 255, 255, 0.4);
         padding: 0.25rem;
 
         @media (min-width: 1024px) {
