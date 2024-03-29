@@ -1,15 +1,17 @@
 <template>
   <BlogBreadcrumb :links="links" />
   <Heading1 :content="title" margin="0" />
-  <div class="tag-container">
-    <BlogTag
-      v-if="tags != null"
-      v-for="tag in tags"
-      :label="tag.name"
-      :color="tag.color"
-    />
+  <div class="date-tag-container">
+    <div class="tag-container">
+      <BlogTag
+        v-if="tags != null"
+        v-for="tag in tags"
+        :label="tag.name"
+        :color="tag.color"
+      />
+    </div>
+    <BlogDate :created-at="createdAt" :updatedAt="updatedAt" />
   </div>
-  <BlogDate :created-at="createdAt" :updatedAt="updatedAt" />
   <Divider margin="0.35rem" />
   <ImageWithModal :src="image" />
   <Divider />
@@ -31,11 +33,18 @@ defineProps<{
 </script>
 
 <style scoped lang="scss">
-.tag-container {
+.date-tag-container {
   display: flex;
   flex-direction: row;
-  margin-top: 0.25rem;
-  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: space-between;
+
+  .tag-container {
+    display: flex;
+    flex-direction: row;
+    margin-top: 0.25rem;
+    gap: 0.5rem;
+  }
 }
 
 h1 {

@@ -51,8 +51,11 @@ const formatedUpdatedAt = computed(() => formatDate(props.updatedAt))
 
 <style scoped lang="scss">
 .date-container {
-  width: 100%;
+  box-sizing: border-box;
   margin-top: 0.5rem;
+  margin-left: auto;
+  padding: 0.35rem;
+
   font-size: 0.85rem;
   color: rgba(0, 0, 0, 0.7);
 

@@ -10,10 +10,11 @@
 
 <style scoped lang="scss">
 .footer {
+  margin-top: 2rem;
   padding: 2rem;
 
   background-color: rgba(255, 255, 255, 0.8);
-  box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.15);
+  box-shadow: 0 0 0.25rem rgba(0, 0, 0, 0.15);
 
   display: flex;
   justify-content: center;
