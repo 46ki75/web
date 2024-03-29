@@ -11,7 +11,7 @@
       />
     </svg>
 
-    <span>{{ formatedCreatedAt }}</span>
+    <span style="white-space: nowrap">{{ formatedCreatedAt }}</span>
 
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -24,7 +24,7 @@
       />
     </svg>
 
-    <span>{{ formatedUpdatedAt }}</span>
+    <span style="white-space: nowrap">{{ formatedUpdatedAt }}</span>
   </div>
 </template>
 
@@ -51,8 +51,8 @@ const formatedUpdatedAt = computed(() => formatDate(props.updatedAt))
 
 <style scoped lang="scss">
 .date-container {
-  margin: 0.5rem 0 0 0;
-  padding: 0.5rem;
+  width: 100%;
+  margin-top: 0.5rem;
   font-size: 0.85rem;
   color: rgba(0, 0, 0, 0.7);
 

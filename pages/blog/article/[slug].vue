@@ -10,6 +10,7 @@
         { label: '記事', href: route.path }
       ]"
       :image="`/api/v1/blog/${route.path.split('/').pop()}/ogp.webp`"
+      :tags="meta?.tags"
       ><NotionHTML :domjson="body ?? []"
     /></BlogMain>
   </article>
