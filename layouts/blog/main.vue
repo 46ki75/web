@@ -64,10 +64,11 @@ onUnmounted(() => {
     }
 
     .body-container {
-      width: 100%;
-      margin: 1rem;
+      width: calc(100% - 0.5rem);
+      margin: 0.25rem;
 
       display: flex;
+      flex-wrap: nowrap;
       flex-direction: column;
       justify-content: center;
       align-items: center;
@@ -75,8 +76,10 @@ onUnmounted(() => {
 
       @media (min-width: 1024px) {
         max-width: 1380px;
+        margin: 1rem;
 
         display: flex;
+        flex-wrap: nowrap;
         flex-direction: row;
         justify-content: center;
         align-items: flex-start;
@@ -84,6 +87,7 @@ onUnmounted(() => {
       }
 
       .main {
+        box-sizing: border-box;
         width: 100%;
         flex: 6.5;
         box-shadow: 0 0 0.125rem rgba(0, 0, 0, 0.3);
@@ -96,6 +100,7 @@ onUnmounted(() => {
       }
 
       .side {
+        box-sizing: border-box;
         width: 100%;
         box-sizing: border-box;
         flex: 3.5;
