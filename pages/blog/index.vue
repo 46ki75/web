@@ -8,7 +8,8 @@
       { label: 'ブログ', href: '/blog' }
     ]"
     image="/images/blog/blog.webp"
-  ></BlogMain>
+    ><NuxtLink to="/blog/tag">タグ検索</NuxtLink></BlogMain
+  >
 </template>
 
 <script setup lang="ts"></script>

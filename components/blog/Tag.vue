@@ -11,9 +11,8 @@
         opacity="0.7"
       />
     </svg>
-    <span
-      ><a :href="href">{{ label }}</a></span
-    >
+    <a v-if="href != null" :href="href">{{ label }}</a>
+    <span v-else>{{ label }}</span>
   </div>
 </template>
 
@@ -37,7 +36,7 @@ const getColor = (color: ColorFG): string => {
 withDefaults(
   defineProps<{
     label: string
-    href: string
+    href?: string
     color?: ColorFG
   }>(),
   { color: 'default' }
@@ -59,7 +58,7 @@ withDefaults(
   align-items: center;
   gap: 0.25rem;
 
-  transition: all 0.12s;
+  transition: all 0.2s;
   cursor: pointer;
 
   &:hover {
@@ -70,12 +69,12 @@ withDefaults(
     opacity: 0.5;
   }
 
+  a {
+    all: unset;
+  }
+
   span {
     user-select: none;
-
-    a {
-      all: unset;
-    }
   }
 }
 </style>
