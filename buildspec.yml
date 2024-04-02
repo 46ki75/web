@@ -8,6 +8,7 @@ phases:
       - npm i
   build:
     commands:
+      - npm cache clean --force
       - npm run generate
 artifacts:
   files:
