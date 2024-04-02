@@ -5,10 +5,10 @@ phases:
     runtime-versions:
       nodejs: 20
     commands:
+      - npm cache clean --force
       - npm i
   build:
     commands:
-      - npm cache clean --force
       - npm run generate
 artifacts:
   files:
