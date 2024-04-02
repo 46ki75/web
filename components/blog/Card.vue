@@ -1,6 +1,7 @@
 <template>
   <NuxtLink class="card" :to="href">
-    <img class="image" :src="image" alt="Image of OGP" />
+    <ImageWithFallback class="image" :src="image" alt="OGP Image " />
+    <!-- <img/> -->
     <div class="typography">
       <span class="title">{{ title }}</span>
       <span class="description">{{ description }}</span>
@@ -18,6 +19,7 @@
 </template>
 
 <script setup lang="ts">
+import { ImageWithFallback } from 'elmethis'
 import { type Select } from '~/models/frontend'
 
 withDefaults(

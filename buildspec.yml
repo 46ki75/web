@@ -13,6 +13,6 @@ artifacts:
   files:
     - '**/*'
   base-directory: '.output/public'
-cache:
-  paths:
-    - 'node_modules/**/*'
+# cache:
+#   paths:
+#     - 'node_modules/**/*'
