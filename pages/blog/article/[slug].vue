@@ -1,9 +1,9 @@
 <template>
   <article>
     <BlogMain
-      :title="meta != null ? meta.title : ''"
-      :created-at="meta != null ? meta.createdAt : '????-??-??'"
-      :updated-at="meta != null ? meta.updatedAt : '????-??-??'"
+      :title="!pending && meta != null ? meta.title : ''"
+      :created-at="!pending && meta != null ? meta.createdAt : '????-??-??'"
+      :updated-at="!pending && meta != null ? meta.updatedAt : '????-??-??'"
       :links="[
         { label: 'ホーム', href: '/' },
         { label: 'ブログ', href: '/blog' },
@@ -11,8 +11,9 @@
       ]"
       :image="`/api/v1/blog/${route.path.split('/').pop()}/ogp.webp`"
       :tags="meta?.tags"
-      ><NotionHTML :domjson="body ?? []"
-    /></BlogMain>
+    >
+      <NotionHTML :domjson="body ?? []" />
+    </BlogMain>
   </article>
 </template>
 
@@ -29,27 +30,29 @@ const slug = computed(
   () => route.path.split('/')[route.path.split('/').length - 1]
 )
 
-const { data: meta } = useQuery<Blog>({
-  queryKey: [`/api/v1/blog/${slug.value}/meta.json`],
-  queryFn: async () => await $fetch(`/api/v1/blog/${slug.value}/meta.json`)
+const { data: meta, pending } = useAsyncData<Blog>(
+  `/api/v1/blog/${slug.value}/meta.json`,
+  async () => await $fetch(`/api/v1/blog/${slug.value}/meta.json`),
+  { watch: [route] }
+)
+
+const { data: body } = useAsyncData<DOMJSON[]>(
+  `/api/v1/blog/${slug.value}/body.json`,
+  async () => await $fetch(`/api/v1/blog/${slug.value}/body.json`),
+  { watch: [route] }
+)
+
+useSeoMeta({
+  title: () => meta.value?.title ?? '',
+  ogTitle: () => meta.value?.title,
+  description: () => meta.value?.description,
+  ogImage: () => `/api/v1/blog/${slug.value}/ogp.webp`,
+  author: 'Chomolungma Shirayuki',
+  articlePublishedTime: () =>
+    new Date(String(meta.value?.createdAt)).toISOString(),
+  articleModifiedTime: () =>
+    new Date(String(meta.value?.updatedAt)).toISOString()
 })
-
-const { data: body } = useQuery<DOMJSON[]>({
-  queryKey: [`/api/v1/blog/${slug.value}/body.json`],
-  queryFn: async () => await $fetch(`/api/v1/blog/${slug.value}/body.json`)
-})
-
-// const { data: meta } = await useAsyncData<Blog>(
-//   `/api/v1/blog/${slug.value}/meta.json`,
-//   () => $fetch(`/api/v1/blog/${slug.value}/meta.json`),
-//   { watch: [route] }
-// )
-
-// const { data: body } = await useAsyncData<DOMJSON[]>(
-//   `/api/v1/blog/${slug.value}/body.json`,
-//   () => $fetch(`/api/v1/blog/${slug.value}/body.json`),
-//   { watch: [route] }
-// )
 </script>
 
 <style scoped lang="scss">
