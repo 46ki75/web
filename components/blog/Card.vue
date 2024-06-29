@@ -1,5 +1,9 @@
 <template>
-  <NuxtLink class="card" :to="href">
+  <NuxtLink
+    class="card"
+    :to="href"
+    :style="{ animationDelay: animationDelay + 's' }"
+  >
     <ImageWithFallback class="image" :src="image" alt="OGP Image " />
     <!-- <img/> -->
     <div class="typography">
@@ -31,6 +35,7 @@ withDefaults(
     tags: Select[]
     createdAt: string
     updatedAt: string
+    animationDelay: number
   }>(),
   { image: '/images/noimage.webp' }
 )
@@ -59,6 +64,19 @@ withDefaults(
   &:active {
     opacity: 0.65;
   }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  animation-name: fadeIn;
+  animation-duration: 0.5s;
+  animation-fill-mode: both;
 }
 
 .image {

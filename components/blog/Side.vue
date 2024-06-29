@@ -1,7 +1,7 @@
 <template>
   <div class="side">
     <div v-if="isPending">LOADING</div>
-    <nav v-else-if="!isPending" v-for="blog in data">
+    <nav v-else-if="!isPending" v-for="(blog, index) in data">
       <BlogCard
         :title="blog.title"
         :description="blog.description"
@@ -10,6 +10,7 @@
         :href="`/blog/article/${blog.slug}`"
         :created-at="blog.createdAt"
         :updated-at="blog.updatedAt"
+        :animation-delay="index * 0.3"
       />
     </nav>
   </div>
