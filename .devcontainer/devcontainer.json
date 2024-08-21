@@ -10,9 +10,9 @@
         "esbenp.prettier-vscode",
         "usernamehw.errorlens",
         "Vue.volar",
-        "wix.vscode-import-cost"
+        "Gruntfuggly.todo-tree"
       ]
     }
   },
-  "forwardPorts": [5173, 6006]
+  "forwardPorts": [3000]
 }
