@@ -153,6 +153,8 @@ export default defineEventHandler(async () => {
           'An error occurred while retrieving the updatedAt(date).'
         )
       }
+
+      // TODO: Add logic for saving images
     }
 
     return blogMeta
