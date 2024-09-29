@@ -1,13 +1,24 @@
 'use client'
 
-import React from 'react'
+import React, { type ReactNode } from 'react'
 
-import { Heading1 } from 'relmethis'
+import styles from './BlogMain.module.scss'
 
-export const BlogMain = () => {
+import { Breadcrumbs, Heading1 } from 'relmethis'
+
+export const BlogMain = ({ children }: { children: ReactNode }) => {
   return (
-    <main>
+    <main className={styles.main}>
+      <Breadcrumbs
+        align='left'
+        links={[
+          { href: '/', label: 'HOME', color: '#449763' },
+          { href: 'blog', label: 'BLOG', color: '#4c6da2' }
+        ]}
+      />
       <Heading1 locale='ja-JP'>BlogMain</Heading1>
+
+      <article>{children}</article>
     </main>
   )
 }
