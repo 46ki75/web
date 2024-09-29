@@ -12,7 +12,6 @@ const Heading1 = dynamic(
   { ssr: false }
 )
 
-import { Header } from '@/components/Header'
 import { Suspense } from 'react'
 import Link from 'next/link'
 
