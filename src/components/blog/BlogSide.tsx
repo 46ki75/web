@@ -7,8 +7,6 @@ import styles from './BlogSide.module.scss'
 import Link from 'next/link'
 import { Url } from 'next/dist/shared/lib/router/router'
 
-import dynamic from 'next/dynamic'
-
 // icons
 import { ArrowPathIcon, CalendarDaysIcon } from '@heroicons/react/24/outline'
 
