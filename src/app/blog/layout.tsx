@@ -1,4 +1,8 @@
+import { BlogSide } from '@/components/blog/BlogSide'
 import { Header } from '@/components/Header'
+
+import styles from './page.module.scss'
+import { BlogFooter } from '@/components/blog/BlogFooter'
 
 export default function BlogLayout({
   children
@@ -6,9 +10,13 @@ export default function BlogLayout({
   children: React.ReactNode
 }>) {
   return (
-    <>
+    <div className={styles.wrapper}>
       <Header />
-      {children}
-    </>
+      <div className={styles.container}>
+        {children}
+        <BlogSide />
+      </div>
+      <BlogFooter />
+    </div>
   )
 }
