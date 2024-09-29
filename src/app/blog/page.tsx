@@ -4,7 +4,9 @@ import React from 'react'
 export default function Blog() {
   return (
     <>
-      <BlogMain>ARTICLE PLACEHOLDER</BlogMain>
+      <BlogMain createdAt={'2022-10-01'} updatedAt={'2024-9-30'}>
+        ARTICLE PLACEHOLDER
+      </BlogMain>
     </>
   )
 }
