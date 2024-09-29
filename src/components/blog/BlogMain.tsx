@@ -2,12 +2,7 @@
 
 import React from 'react'
 
-import dynamic from 'next/dynamic'
-
-const Heading1 = dynamic(
-  () => import('relmethis').then((mod) => mod.Heading1),
-  { ssr: false }
-)
+import { Heading1 } from 'relmethis'
 
 export const BlogMain = () => {
   return (

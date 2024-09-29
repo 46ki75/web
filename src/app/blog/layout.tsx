@@ -1,9 +1,11 @@
 import { BlogSide } from '@/components/blog/BlogSide'
 import { Header } from '@/components/Header'
 
-import styles from './page.module.scss'
+import styles from './layout.module.scss'
+
 import { BlogFooter } from '@/components/blog/BlogFooter'
 import { NoSSR } from '@/components/nossr/NoSSR'
+import { Pagetop } from 'relmethis'
 
 export default function BlogLayout({
   children
@@ -11,15 +13,16 @@ export default function BlogLayout({
   children: React.ReactNode
 }>) {
   return (
-    <div className={styles.wrapper}>
-      <Header />
-      <div className={styles.container}>
-        {children}
-        <NoSSR>
+    <NoSSR>
+      <div className={styles.wrapper}>
+        <Header />
+        <div className={styles.container}>
+          {children}
           <BlogSide />
-        </NoSSR>
+        </div>
+        <BlogFooter />
+        <Pagetop />
       </div>
-      <BlogFooter />
-    </div>
+    </NoSSR>
   )
 }
