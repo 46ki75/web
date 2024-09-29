@@ -14,17 +14,21 @@ export default function BlogLayout({
   children: React.ReactNode
 }>) {
   return (
-    <NoSSR>
-      <div className={styles.wrapper}>
-        <Header />
-        <div className={styles.container}>
-          {children}
-          <BlogSide />
+    <>
+      <NoSSR>
+        <div className={styles.wrapper}>
+          <Header />
+          <div className={styles.container}>
+            {children}
+            <BlogSide />
+          </div>
+          <BlogFooter />
+          <Parallax />
         </div>
-        <BlogFooter />
-        <Parallax />
-      </div>
-      <Pagetop />
-    </NoSSR>
+      </NoSSR>
+      <NoSSR>
+        <Pagetop />
+      </NoSSR>
+    </>
   )
 }
