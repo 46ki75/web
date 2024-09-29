@@ -9,7 +9,6 @@
         "dbaeumer.vscode-eslint",
         "esbenp.prettier-vscode",
         "usernamehw.errorlens",
-        "Vue.volar",
         "Gruntfuggly.todo-tree"
       ]
     }
