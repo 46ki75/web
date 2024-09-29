@@ -1,13 +1,6 @@
 // global styles
 import './globals.scss'
 
-// Global NO SSR
-import dynamic from 'next/dynamic'
-const Body = dynamic(
-  () => import('../components/Body').then((mod) => mod.Body),
-  { ssr: false }
-)
-
 // fonts
 import { Noto_Sans_JP } from 'next/font/google'
 const notoSansJp = Noto_Sans_JP({
@@ -23,9 +16,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='ja' className={notoSansJp.className}>
-      <body>
-        <Body>{children}</Body>
-      </body>
+      <body>{children}</body>
     </html>
   )
 }

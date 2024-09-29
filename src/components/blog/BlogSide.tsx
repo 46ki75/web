@@ -10,18 +10,7 @@ import { Url } from 'next/dist/shared/lib/router/router'
 import dynamic from 'next/dynamic'
 
 // icons
-const ArrowPathIcon = dynamic(
-  () => import('@heroicons/react/24/outline').then((mod) => mod.ArrowPathIcon),
-  { ssr: false }
-)
-
-const CalendarDaysIcon = dynamic(
-  () =>
-    import('@heroicons/react/24/outline').then((mod) => mod.CalendarDaysIcon),
-  {
-    ssr: false
-  }
-)
+import { ArrowPathIcon, CalendarDaysIcon } from '@heroicons/react/24/outline'
 
 // relmethis
 import { InlineText, Image } from 'relmethis'
