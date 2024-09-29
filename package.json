@@ -10,10 +10,11 @@
     "format": "prettier --write ./src"
   },
   "dependencies": {
+    "@heroicons/react": "^2.1.5",
     "next": "14.2.13",
     "react": "^18",
     "react-dom": "^18",
-    "relmethis": "^0.1.26",
+    "relmethis": "^0.1.40",
     "sass": "^1.79.4"
   },
   "devDependencies": {

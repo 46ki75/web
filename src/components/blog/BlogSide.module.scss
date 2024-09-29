@@ -1,0 +1,56 @@
+.side {
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.side-card {
+  all: unset;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+
+  box-shadow: 0 0 0.25rem rgba(0, 0, 0, 0.1);
+
+  cursor: pointer;
+
+  transition:
+    opacity 400ms,
+    background-color 400ms;
+
+  &:hover {
+    opacity: 0.8;
+    background-color: rgba($color: #6987b8, $alpha: 0.1);
+  }
+
+  &:active {
+    background-color: rgba($color: #b8a36e, $alpha: 0.1);
+  }
+
+  &__typography {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 0.25rem;
+    gap: 0.25rem;
+  }
+
+  &__date {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__icon {
+    width: 16px;
+    opacity: 0.6;
+  }
+}
