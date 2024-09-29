@@ -1,8 +1,10 @@
 .footer {
   box-sizing: border-box;
-  padding: 1.5rem;
+  padding: 5rem;
+  margin-block-start: 2rem;
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
+  background: rgba(255, 255, 255, 0.25);
 }
