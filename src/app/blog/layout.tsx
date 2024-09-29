@@ -6,6 +6,7 @@ import styles from './layout.module.scss'
 import { BlogFooter } from '@/components/blog/BlogFooter'
 import { NoSSR } from '@/components/nossr/NoSSR'
 import { Pagetop } from 'relmethis'
+import { Parallax } from '@/components/blog/Parallax'
 
 export default function BlogLayout({
   children
@@ -21,8 +22,9 @@ export default function BlogLayout({
           <BlogSide />
         </div>
         <BlogFooter />
-        <Pagetop />
+        <Parallax />
       </div>
+      <Pagetop />
     </NoSSR>
   )
 }
