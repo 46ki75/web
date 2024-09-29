@@ -7,6 +7,15 @@
   align-items: center;
 }
 
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 .side-card {
   all: unset;
   display: flex;
@@ -16,6 +25,10 @@
 
   background: rgba(255, 255, 255, 0.25);
   box-shadow: 0 0 0.25rem rgba(0, 0, 0, 0.1);
+
+  animation-name: fade;
+  animation-duration: 400ms;
+  animation-fill-mode: both;
 
   cursor: pointer;
 

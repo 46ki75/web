@@ -19,7 +19,8 @@ const BlogSideCard = ({
   title,
   description,
   createdAt,
-  updatedAt
+  updatedAt,
+  index
 }: {
   href: Url
   image: string
@@ -27,10 +28,15 @@ const BlogSideCard = ({
   description: string
   createdAt: string
   updatedAt: string
+  index: number
 }) => {
   return (
-    <Link href={href} className={styles['side-card']}>
-      <Image src={image} alt='' />
+    <Link
+      href={href}
+      className={styles['side-card']}
+      style={{ animationDelay: `${index * 200}ms` }}
+    >
+      <Image src={image} alt={title} />
       <div className={styles['side-card__typography']}>
         <div>
           <InlineText fontSize={'1.1rem'}>{title}</InlineText>
@@ -88,7 +94,7 @@ const seed = [
 export const BlogSide = () => {
   return (
     <nav className={styles.side}>
-      {seed.map((data) => (
+      {seed.map((data, index) => (
         <BlogSideCard
           key={data.href}
           href={data.href}
@@ -97,6 +103,7 @@ export const BlogSide = () => {
           description={data.description}
           createdAt={data.createdAt}
           updatedAt={data.updatedAt}
+          index={index + 1}
         />
       ))}
     </nav>
