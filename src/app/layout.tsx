@@ -5,7 +5,8 @@ import './globals.scss'
 import { Noto_Sans_JP } from 'next/font/google'
 const notoSansJp = Noto_Sans_JP({
   weight: ['400', '700'],
-  subsets: []
+  subsets: [],
+  preload: true
 })
 
 // layout
