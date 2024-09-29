@@ -14,7 +14,7 @@
     "next": "14.2.13",
     "react": "^18",
     "react-dom": "^18",
-    "relmethis": "^0.1.40",
+    "relmethis": "^0.1.45",
     "sass": "^1.79.4"
   },
   "devDependencies": {

@@ -24,15 +24,7 @@ const CalendarDaysIcon = dynamic(
 )
 
 // relmethis
-const InlineText = dynamic(
-  () => import('relmethis').then((mod) => mod.InlineText),
-  { ssr: false }
-)
-
-const Image = dynamic(() => import('relmethis').then((mod) => mod.Image), {
-  ssr: false,
-  loading: () => <></>
-})
+import { InlineText, Image } from 'relmethis'
 
 const BlogSideCard = ({
   href,
