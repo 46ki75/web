@@ -1,13 +1,18 @@
 import { configureStore } from '@reduxjs/toolkit'
 import themeReducer from './themeSlice'
 
+const rootReducer = {
+  theme: themeReducer
+}
+
 export const makeStore = () =>
   configureStore({
-    reducer: {
-      theme: themeReducer
-    }
+    reducer: rootReducer
   })
 
-export type RootState = ReturnType<typeof makeStore>['getState']
+export type RootState = {
+  theme: ReturnType<typeof themeReducer>
+}
+
 export type AppStore = ReturnType<typeof makeStore>
-export type AppDispatch = ReturnType<typeof makeStore>['dispatch']
+export type AppDispatch = AppStore['dispatch']
