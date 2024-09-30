@@ -31,7 +31,14 @@ export const BlogMain = ({
   const isDark = useSelector((state: RootState) => state.theme.isDark)
 
   return (
-    <main className={styles.main}>
+    <main
+      className={styles.main}
+      style={{
+        backgroundColor: isDark
+          ? 'rgba(0, 0, 0, 0.25)'
+          : 'rgba(255, 255, 255, 0.25)'
+      }}
+    >
       <Breadcrumbs
         isDark={isDark}
         align='left'
@@ -52,7 +59,6 @@ export const BlogMain = ({
       <Heading1 isDark={isDark} locale='ja-JP'>
         {title}
       </Heading1>
-
       <div className={styles['main__date']}>
         <CalendarDaysIcon className={styles['main__icon']} />
         <InlineText isDark={isDark} fontSize={'0.8rem'} opacity={0.6}>
@@ -63,9 +69,7 @@ export const BlogMain = ({
           {updatedAt}
         </InlineText>
       </div>
-
       <Image isDark={isDark} src={ogp} alt={title} />
-
       <article>{children}</article>
     </main>
   )

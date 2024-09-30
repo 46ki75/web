@@ -16,6 +16,10 @@ import { InlineText, Image } from 'relmethis'
 // utils
 import { type BlogMetadata } from '@/utils/blog/Markdown'
 
+// redux
+import { useSelector } from 'react-redux'
+import { RootState } from '@/redux'
+
 // # --------------------------------------------------------------------------------
 //
 // component
@@ -41,29 +45,38 @@ const BlogSideCard = ({
   updatedAt,
   index
 }: BlogSideCardProps) => {
+  const isDark = useSelector((state: RootState) => state.theme.isDark)
+
   return (
     <Link
       href={href}
       className={styles['side-card']}
-      style={{ animationDelay: `${index * 200}ms` }}
+      style={{
+        animationDelay: `${index * 200}ms`,
+        backgroundColor: isDark
+          ? 'rgba(0, 0, 0, 0.25)'
+          : 'rgba(255, 255, 255, 0.25)'
+      }}
     >
-      <Image src={image} alt={title} disableModal />
+      <Image isDark={isDark} src={image} alt={title} disableModal />
       <div className={styles['side-card__typography']}>
         <div>
-          <InlineText fontSize={'1.1rem'}>{title}</InlineText>
+          <InlineText isDark={isDark} fontSize={'1.1rem'}>
+            {title}
+          </InlineText>
         </div>
         <div>
-          <InlineText fontSize={'0.8rem'} opacity={0.6}>
+          <InlineText isDark={isDark} fontSize={'0.8rem'} opacity={0.6}>
             {description}
           </InlineText>
         </div>
         <div className={styles['side-card__date']}>
           <CalendarDaysIcon className={styles['side-card__icon']} />
-          <InlineText fontSize={'0.8rem'} opacity={0.6}>
+          <InlineText isDark={isDark} fontSize={'0.8rem'} opacity={0.6}>
             {createdAt}
           </InlineText>
           <ArrowPathIcon className={styles['side-card__icon']} />
-          <InlineText fontSize={'0.8rem'} opacity={0.7}>
+          <InlineText isDark={isDark} fontSize={'0.8rem'} opacity={0.7}>
             {updatedAt}
           </InlineText>
         </div>

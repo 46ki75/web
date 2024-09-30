@@ -40,8 +40,7 @@ export function Blog({ children, blogMetadatas }: BlogProps) {
         <BlogFooter />
         <Parallax />
       </div>
-
-      <Pagetop />
+      <Pagetop isDark={isDark} />
     </>
   )
 }

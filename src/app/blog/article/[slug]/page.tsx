@@ -3,7 +3,6 @@ import path from 'path'
 import React from 'react'
 
 import { BlogMain } from '@/components/blog/BlogMain'
-import { Markdown as RelMarkdown } from 'relmethis'
 
 import config from '@/config'
 
@@ -12,6 +11,7 @@ import { Markdown } from '@/utils/blog/Markdown'
 
 // types
 import { type Metadata } from 'next'
+import { BlogArticle } from '@/components/blog/BlogArticle'
 
 export function generateStaticParams() {
   const slugs = readdirSync(path.resolve('./public/static/blog/'))
@@ -47,7 +47,7 @@ const Page = async ({ params }: { params: { slug: string } }) => {
       updatedAt={markdown.updatedAt}
       slug={markdown.slug}
     >
-      <RelMarkdown markdown={markdown.markdown} locale='ja-JP' />
+      <BlogArticle markdown={markdown.markdown} />
     </BlogMain>
   )
 }
