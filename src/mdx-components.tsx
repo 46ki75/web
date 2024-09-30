@@ -1,6 +1,7 @@
 import type { MDXComponents } from 'mdx/types'
 import React from 'react'
 import {
+  BulletedList,
   Heading1,
   Heading2,
   Heading3,
@@ -8,6 +9,7 @@ import {
   Heading5,
   Heading6,
   InlineText,
+  NumberedList,
   Paragraph
 } from 'relmethis'
 
@@ -32,6 +34,21 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     code: ({ children }) =>
       children != null ? (
         <InlineText code>{children.toString()}</InlineText>
-      ) : null
+      ) : null,
+    ul: ({ children }) => (
+      <BulletedList>
+        {React.Children.map(children, (child, index) =>
+          index % 2 === 1 ? child : null
+        )}
+      </BulletedList>
+    ),
+    ol: ({ children }) => (
+      <NumberedList>
+        {React.Children.map(children, (child, index) =>
+          index % 2 === 1 ? child : null
+        )}
+      </NumberedList>
+    ),
+    li: ({ children }) => <>{children}</>
   }
 }
