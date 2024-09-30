@@ -47,7 +47,7 @@ const BlogSideCard = ({
       className={styles['side-card']}
       style={{ animationDelay: `${index * 200}ms` }}
     >
-      <Image src={image} alt={title} />
+      <Image src={image} alt={title} disableModal />
       <div className={styles['side-card__typography']}>
         <div>
           <InlineText fontSize={'1.1rem'}>{title}</InlineText>
