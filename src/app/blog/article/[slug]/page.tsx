@@ -1,27 +1,24 @@
-import { readdirSync, readFileSync } from 'fs'
+import { readdirSync } from 'fs'
 import path from 'path'
 import React from 'react'
 
 import { BlogMain } from '@/components/blog/BlogMain'
-import { Markdown } from 'relmethis'
+import { Markdown as RelMarkdown } from 'relmethis'
+
+// utils
+import { Markdown } from '@/utils/blog/Markdown'
 
 export function generateStaticParams() {
   const dirs = readdirSync(path.resolve('./public/static/blog/'))
   return dirs.map((dir) => ({ slug: dir }))
 }
 
-function getMarkdown(slug: string) {
-  const filePath = path.join('./public/static/blog/', slug, `index.md`)
-  const content = readFileSync(filePath, 'utf8')
-  return content
-}
-
 const Page = async ({ params }: { params: { slug: string } }) => {
-  const markdown = getMarkdown(params.slug)
+  const markdown = Markdown.getBySlug(params.slug)
 
   return (
     <BlogMain createdAt={'2022-10-01'} updatedAt={'2024-9-30'}>
-      <Markdown markdown={markdown} />
+      <RelMarkdown markdown={markdown.markdown} />
     </BlogMain>
   )
 }
