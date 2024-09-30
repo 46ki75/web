@@ -2,7 +2,7 @@
 
 import React from 'react'
 
-import { Markdown } from 'relmethis'
+import { parseMarkdownToMdast, RenderMdast, TableOfContents } from 'relmethis'
 
 // redux
 import { RootState } from '@/redux'
@@ -11,9 +11,21 @@ import { useSelector } from 'react-redux'
 export const BlogArticle = ({ markdown }: { markdown: string }) => {
   const isDark = useSelector((state: RootState) => state.theme.isDark)
 
+  const mdast = parseMarkdownToMdast(markdown)
+
+  const { headings, markdownComponent, footnoteComponent } = RenderMdast({
+    mdastNodes: mdast.children,
+    definitions: [],
+    footnoteComponent: [],
+    isDark,
+    locale: 'ja-JP'
+  })
+
   return (
     <>
-      <Markdown isDark={isDark} markdown={markdown} locale='ja-JP' />
+      <TableOfContents headings={headings} isDark={isDark} />
+      {markdownComponent}
+      {footnoteComponent}
     </>
   )
 }
