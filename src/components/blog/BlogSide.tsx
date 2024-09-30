@@ -12,7 +12,9 @@ import { ArrowPathIcon, CalendarDaysIcon } from '@heroicons/react/24/outline'
 
 // relmethis
 import { InlineText, Image } from 'relmethis'
-import { BlogMetadata } from '@/app/blog/layout'
+
+// utils
+import { type BlogMetadata } from '@/utils/blog/Markdown'
 
 // # --------------------------------------------------------------------------------
 //
@@ -71,21 +73,21 @@ const BlogSideCard = ({
 }
 
 interface BlogSideProps {
-  metas: Array<BlogMetadata>
+  blogMetadatas: BlogMetadata[]
 }
 
-export const BlogSide = ({ metas }: BlogSideProps) => {
+export const BlogSide = ({ blogMetadatas }: BlogSideProps) => {
   return (
     <nav className={styles.side}>
-      {metas.map((data, index) => (
+      {blogMetadatas.map((meta, index) => (
         <BlogSideCard
-          key={data.slug}
-          href={`/blog/article/${data.slug}`}
-          image={`/static/blog/${data.slug}/ogp.webp`}
-          title={data.title}
-          description={data.description}
-          createdAt={data.createdAt}
-          updatedAt={data.updatedAt}
+          key={meta.slug}
+          href={`/blog/article/${meta.slug}`}
+          image={`/static/blog/${meta.slug}/ogp.webp`}
+          title={meta.title}
+          description={meta.description}
+          createdAt={meta.createdAt}
+          updatedAt={meta.updatedAt}
           index={index + 1}
         />
       ))}

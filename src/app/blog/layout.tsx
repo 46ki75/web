@@ -8,37 +8,18 @@ import { NoSSR } from '@/components/nossr/NoSSR'
 import { Pagetop } from 'relmethis'
 import { Parallax } from '@/components/blog/Parallax'
 
-// node
-import { readdirSync, readFileSync } from 'fs'
-import path from 'path'
-
-export interface BlogMetadata {
-  slug: string
-  title: string
-  description: string
-  createdAt: string
-  updatedAt: string
-}
-
-const getMetadata = (): BlogMetadata[] => {
-  const dirs = readdirSync(path.resolve('./public/static/blog/'))
-  const metadatas: Array<BlogMetadata> = dirs.map((dir) => {
-    const data = readFileSync(
-      path.resolve('./public/static/blog/', dir, 'meta.json'),
-      'utf-8'
-    )
-    return { ...JSON.parse(data), slug: dir }
-  })
-
-  return metadatas
-}
+// utils
+import { Markdown } from '@/utils/blog/Markdown'
 
 export default function BlogLayout({
   children
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const meta = getMetadata()
+  // const meta = getMetadata()
+
+  const markdowns = Markdown.listAll()
+  const blogMetadatas = markdowns.map((md) => md.toBlogMetadata())
 
   return (
     <>
@@ -47,7 +28,7 @@ export default function BlogLayout({
           <Header />
           <div className={styles.container}>
             {children}
-            <BlogSide metas={meta} />
+            <BlogSide blogMetadatas={blogMetadatas} />
           </div>
           <BlogFooter />
           <Parallax />

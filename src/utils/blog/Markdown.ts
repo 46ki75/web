@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync } from 'fs'
 import path from 'path'
 
-interface BlogMetadata {
+export interface BlogMetadata {
   slug: string
   title: string
   description: string
@@ -91,5 +91,18 @@ export class Markdown {
 
   get href() {
     return `/blog/article/${this.slug}`
+  }
+
+  /**
+   * Converts the current instance into a BlogMetadata object
+   */
+  toBlogMetadata(): BlogMetadata {
+    return {
+      slug: this.slug,
+      title: this.title,
+      description: this.description,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt
+    }
   }
 }
