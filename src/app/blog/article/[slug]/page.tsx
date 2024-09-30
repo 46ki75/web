@@ -17,8 +17,14 @@ const Page = async ({ params }: { params: { slug: string } }) => {
   const markdown = Markdown.getBySlug(params.slug)
 
   return (
-    <BlogMain createdAt={'2022-10-01'} updatedAt={'2024-9-30'}>
-      <RelMarkdown markdown={markdown.markdown} />
+    <BlogMain
+      title={markdown.title}
+      ogp={markdown.ogp}
+      createdAt={markdown.createdAt}
+      updatedAt={markdown.updatedAt}
+      slug={markdown.slug}
+    >
+      <RelMarkdown markdown={markdown.markdown} locale='ja-JP' />
     </BlogMain>
   )
 }

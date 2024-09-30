@@ -16,8 +16,6 @@ export default function BlogLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  // const meta = getMetadata()
-
   const markdowns = Markdown.listAll()
   const blogMetadatas = markdowns.map((md) => md.toBlogMetadata())
 
