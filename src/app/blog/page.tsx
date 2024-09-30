@@ -1,6 +1,19 @@
 import { BlogMain } from '@/components/blog/BlogMain'
 import React from 'react'
 
+import config from '@/config'
+
+import { Metadata } from 'next'
+export const metadata: Metadata = {
+  title: 'BLOG TOP',
+  description: '', // TODO: enter the description
+  openGraph: {
+    title: 'BLOG TOP',
+    description: '', // TODO: enter the description
+    images: [`https://${config.domain}/static/blog/index-ogp.webp`] // TODO: replace the placeholder
+  }
+}
+
 export default function Blog() {
   return (
     <>

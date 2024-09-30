@@ -5,12 +5,35 @@ import React from 'react'
 import { BlogMain } from '@/components/blog/BlogMain'
 import { Markdown as RelMarkdown } from 'relmethis'
 
+import config from '@/config'
+
 // utils
 import { Markdown } from '@/utils/blog/Markdown'
 
+// types
+import { type Metadata } from 'next'
+
 export function generateStaticParams() {
-  const dirs = readdirSync(path.resolve('./public/static/blog/'))
-  return dirs.map((dir) => ({ slug: dir }))
+  const slugs = readdirSync(path.resolve('./public/static/blog/'))
+  return slugs.map((slug) => ({ slug }))
+}
+
+export function generateMetadata({
+  params
+}: {
+  params: { slug: string }
+}): Metadata {
+  const markdown = Markdown.getBySlug(params.slug)
+
+  return {
+    title: markdown.title,
+    description: markdown.description,
+    openGraph: {
+      title: markdown.title,
+      description: markdown.description,
+      images: [`https://${config.domain}${markdown.ogp}`]
+    }
+  }
 }
 
 const Page = async ({ params }: { params: { slug: string } }) => {
