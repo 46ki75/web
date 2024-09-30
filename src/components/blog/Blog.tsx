@@ -38,7 +38,7 @@ export function Blog({ children, blogMetadatas }: BlogProps) {
           <BlogSide blogMetadatas={blogMetadatas} />
         </div>
         <BlogFooter />
-        <Parallax />
+        <Parallax isDark={isDark} />
       </div>
       <Pagetop isDark={isDark} />
     </>
