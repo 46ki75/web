@@ -1,4 +1,6 @@
 .header {
+  box-sizing: border-box;
+  padding-inline: 0.5rem;
   width: 100%;
   height: 3rem;
   position: sticky;
@@ -10,6 +12,6 @@
   box-shadow: 0 0 0.25rem rgba(0, 0, 0, 0.2);
 
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
 }

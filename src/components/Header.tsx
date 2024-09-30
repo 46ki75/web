@@ -13,6 +13,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { type RootState } from '@/redux'
 import { toggleTheme } from '@/redux/themeSlice'
 
+import { InlineText, ToggleTheme } from 'relmethis'
+
 export const Header = () => {
   const { y } = useWindowScroll()
 
@@ -23,18 +25,24 @@ export const Header = () => {
     <header
       className={styles.header}
       style={{
-        backgroundColor:
-          y > 50 ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.8)'
+        backgroundColor: isDark
+          ? y > 50
+            ? 'rgba(0, 0, 0, 0.1)'
+            : 'rgba(0, 0, 0, 0.8)'
+          : y > 50
+            ? 'rgba(255, 255, 255, 0.1)'
+            : 'rgba(255, 255, 255, 0.8)'
       }}
     >
-      <div>Header</div>
-      <button
+      <InlineText isDark={isDark}>Header</InlineText>
+
+      <ToggleTheme
+        isDark={isDark}
+        size={'28px'}
         onClick={() => {
           dispatch(toggleTheme())
         }}
-      >
-        {isDark ? 'DARK' : 'LIGHT'}
-      </button>
+      />
     </header>
   )
 }
