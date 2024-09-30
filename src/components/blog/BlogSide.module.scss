@@ -5,6 +5,19 @@
   gap: 0.5rem;
   justify-content: flex-start;
   align-items: center;
+
+  @media (max-width: 576px) {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  @media (min-width: 576px) and (max-width: 992px) {
+    max-width: 800px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: stretch;
+  }
 }
 
 @keyframes fade {
@@ -34,6 +47,16 @@
   transition:
     opacity 400ms,
     background-color 400ms;
+
+  @media (max-width: 576px) {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  @media (min-width: 576px) and (max-width: 992px) {
+    box-sizing: border-box;
+    width: calc(50% - 0.5rem);
+  }
 
   &:hover {
     background-color: rgba($color: #6987b8, $alpha: 0.2);
