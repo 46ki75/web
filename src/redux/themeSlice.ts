@@ -5,7 +5,11 @@ interface ThemeState {
 }
 
 const initialState: ThemeState = {
-  isDark: false
+  isDark:
+    typeof window !== 'undefined'
+      ? localStorage.getItem('theme') === 'dark' ||
+        window.matchMedia('(prefers-color-scheme: dark)').matches
+      : false
 }
 
 const themeSlice = createSlice({
@@ -14,12 +18,15 @@ const themeSlice = createSlice({
   reducers: {
     toggleTheme: (state) => {
       state.isDark = !state.isDark
+      localStorage.setItem('theme', state.isDark ? 'dark' : 'light')
     },
     setDarkTheme: (state) => {
       state.isDark = true
+      localStorage.setItem('theme', 'dark')
     },
     setLightTheme: (state) => {
       state.isDark = false
+      localStorage.setItem('theme', 'light')
     }
   }
 })
