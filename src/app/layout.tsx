@@ -9,6 +9,9 @@ const notoSansJp = Noto_Sans_JP({
   preload: true
 })
 
+// Redux
+import StoreProvider from '@/StoreProvider'
+
 // SEO Meta
 import { Metadata } from 'next'
 import config from '@/config'
@@ -29,8 +32,10 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang='ja' className={notoSansJp.className}>
-      <body>{children}</body>
-    </html>
+    <StoreProvider>
+      <html lang='ja' className={notoSansJp.className}>
+        <body>{children}</body>
+      </html>
+    </StoreProvider>
   )
 }
