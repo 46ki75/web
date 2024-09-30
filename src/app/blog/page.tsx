@@ -5,7 +5,7 @@ export default function Blog() {
   return (
     <>
       <BlogMain createdAt={'2022-10-01'} updatedAt={'2024-9-30'}>
-        ARTICLE PLACEHOLDER
+        <>BLOG TOP PAGE CONTENTS (HARD CODING)</>
       </BlogMain>
     </>
   )

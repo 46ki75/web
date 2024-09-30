@@ -1,13 +1,7 @@
-import React, { ReactNode } from 'react'
-
-import { BlogMain } from '@/components/blog/BlogMain'
+import { ReactNode } from 'react'
 
 const MdxLayout = ({ children }: { children: ReactNode }) => {
-  return (
-    <BlogMain createdAt={'2022-10-01'} updatedAt={'2024-9-30'}>
-      {children}
-    </BlogMain>
-  )
+  return children
 }
 
 export default MdxLayout
