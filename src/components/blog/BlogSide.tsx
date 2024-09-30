@@ -71,11 +71,17 @@ const BlogSideCard = ({
           </InlineText>
         </div>
         <div className={styles['side-card__date']}>
-          <CalendarDaysIcon className={styles['side-card__icon']} />
+          <CalendarDaysIcon
+            className={styles['side-card__icon']}
+            style={{ color: isDark ? 'white' : 'black' }}
+          />
           <InlineText isDark={isDark} fontSize={'0.8rem'} opacity={0.6}>
             {createdAt}
           </InlineText>
-          <ArrowPathIcon className={styles['side-card__icon']} />
+          <ArrowPathIcon
+            className={styles['side-card__icon']}
+            style={{ color: isDark ? 'white' : 'black' }}
+          />
           <InlineText isDark={isDark} fontSize={'0.8rem'} opacity={0.7}>
             {updatedAt}
           </InlineText>
