@@ -1,21 +1,10 @@
+@use '../../mixins';
 @import '../../_variables.scss';
 
-@keyframes fade {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
 .wrapper {
+  @include mixins.fade-in(500ms, 20ms);
   background-color: var(--background-color);
   transition: background-color 300ms;
-  animation-name: fade;
-  animation-duration: 500ms;
-  animation-fill-mode: both;
-  animation-delay: 20ms;
 }
 
 .container {

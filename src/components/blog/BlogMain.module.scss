@@ -1,21 +1,11 @@
-@keyframes fade {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
+@use '../../mixins';
 
 .main {
+  @include mixins.fade-in();
   box-sizing: border-box;
   max-width: 100%;
   width: 800px;
   padding: 0.5rem;
-
-  animation-name: fade;
-  animation-duration: 1000ms;
-  animation-fill-mode: both;
 
   box-shadow: 0 0 0.25rem rgba(0, 0, 0, 0.1);
 
