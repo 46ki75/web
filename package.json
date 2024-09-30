@@ -11,11 +11,15 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.1.5",
+    "@mdx-js/loader": "^3.0.1",
+    "@mdx-js/react": "^3.0.1",
+    "@next/mdx": "^14.2.13",
+    "@types/mdx": "^2.0.13",
     "next": "14.2.13",
     "react": "^18",
     "react-dom": "^18",
     "react-use": "^17.5.1",
-    "relmethis": "^0.1.51",
+    "relmethis": "^0.1.52",
     "sass": "^1.79.4"
   },
   "devDependencies": {
