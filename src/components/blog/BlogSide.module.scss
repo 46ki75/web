@@ -1,3 +1,5 @@
+@import '../../variables';
+
 .side {
   max-width: 400px;
   display: flex;
@@ -6,12 +8,12 @@
   justify-content: flex-start;
   align-items: center;
 
-  @media (max-width: 576px) {
+  @media (max-width: $breakpoint-mobile) {
     width: 100%;
     max-width: 100%;
   }
 
-  @media (min-width: 576px) and (max-width: 992px) {
+  @media (min-width: $breakpoint-mobile) and (max-width: $breakpoint-desktop) {
     max-width: 800px;
     flex-direction: row;
     flex-wrap: wrap;
@@ -48,12 +50,12 @@
     opacity 400ms,
     background-color 400ms;
 
-  @media (max-width: 576px) {
+  @media (max-width: $breakpoint-mobile) {
     width: 100%;
     max-width: 100%;
   }
 
-  @media (min-width: 576px) and (max-width: 992px) {
+  @media (min-width: $breakpoint-mobile) and (max-width: $breakpoint-desktop) {
     box-sizing: border-box;
     width: calc(50% - 0.5rem);
   }
