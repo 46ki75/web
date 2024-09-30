@@ -6,7 +6,6 @@ import { Header } from '@/components/Header'
 import styles from './Blog.module.scss'
 
 import { BlogFooter } from '@/components/blog/BlogFooter'
-import { Pagetop } from 'relmethis'
 import { Parallax } from '@/components/blog/Parallax'
 
 import { type BlogMetadata } from '@/utils/blog/Markdown'
@@ -40,7 +39,6 @@ export function Blog({ children, blogMetadatas }: BlogProps) {
         <BlogFooter />
         <Parallax isDark={isDark} />
       </div>
-      <Pagetop isDark={isDark} />
     </>
   )
 }

@@ -12,9 +12,13 @@ const notoSansJp = Noto_Sans_JP({
 // Redux
 import StoreProvider from '@/redux/StoreProvider'
 
+// component
+import { Pagetop } from '@/components/global/Pagetop'
+
 // SEO Meta
 import { Metadata } from 'next'
 import config from '@/config'
+import { NoSSR } from '@/components/nossr/NoSSR'
 export const metadata: Metadata = {
   authors: [{ name: 'Chomolungma Shirayuki', url: 'https://www.46ki75.com' }],
   openGraph: {
@@ -34,7 +38,12 @@ export default function RootLayout({
   return (
     <StoreProvider>
       <html lang='ja' className={notoSansJp.className}>
-        <body>{children}</body>
+        <body>
+          {children}
+          <NoSSR>
+            <Pagetop />
+          </NoSSR>
+        </body>
       </html>
     </StoreProvider>
   )
