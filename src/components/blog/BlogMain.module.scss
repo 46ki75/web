@@ -1,11 +1,23 @@
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 .main {
   box-sizing: border-box;
   max-width: 100%;
   width: 800px;
   padding: 0.5rem;
 
-  box-shadow: 0 0 0.25rem rgba(0, 0, 0, 0.1);
+  animation-name: fade;
+  animation-duration: 1000ms;
+  animation-fill-mode: both;
 
+  box-shadow: 0 0 0.25rem rgba(0, 0, 0, 0.1);
   background: rgba(255, 255, 255, 0.25);
 
   &__date {
