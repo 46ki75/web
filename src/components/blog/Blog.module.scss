@@ -1,0 +1,27 @@
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.wrapper {
+  background-color: var(--background-color);
+  transition: background-color 300ms;
+  animation-name: fade;
+  animation-duration: 500ms;
+  animation-fill-mode: both;
+  animation-delay: 20ms;
+}
+
+.container {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  padding: 0.5rem;
+}

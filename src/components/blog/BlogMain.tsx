@@ -7,6 +7,10 @@ import styles from './BlogMain.module.scss'
 import { Breadcrumbs, Heading1, Image, InlineText } from 'relmethis'
 import { ArrowPathIcon, CalendarDaysIcon } from '@heroicons/react/24/outline'
 
+// redux
+import { useSelector } from 'react-redux'
+import { RootState } from '@/redux'
+
 interface BlogMainProps {
   children: ReactNode
   title: string
@@ -24,9 +28,12 @@ export const BlogMain = ({
   updatedAt,
   slug
 }: BlogMainProps) => {
+  const isDark = useSelector((state: RootState) => state.theme.isDark)
+
   return (
     <main className={styles.main}>
       <Breadcrumbs
+        isDark={isDark}
         align='left'
         links={[
           { href: '/', label: 'HOME', color: '#449763' },
@@ -42,20 +49,22 @@ export const BlogMain = ({
             : [])
         ]}
       />
-      <Heading1 locale='ja-JP'>{title}</Heading1>
+      <Heading1 isDark={isDark} locale='ja-JP'>
+        {title}
+      </Heading1>
 
       <div className={styles['main__date']}>
         <CalendarDaysIcon className={styles['main__icon']} />
-        <InlineText fontSize={'0.8rem'} opacity={0.6}>
+        <InlineText isDark={isDark} fontSize={'0.8rem'} opacity={0.6}>
           {createdAt}
         </InlineText>
         <ArrowPathIcon className={styles['main__icon']} />
-        <InlineText fontSize={'0.8rem'} opacity={0.7}>
+        <InlineText isDark={isDark} fontSize={'0.8rem'} opacity={0.7}>
           {updatedAt}
         </InlineText>
       </div>
 
-      <Image src={ogp} alt={title} />
+      <Image isDark={isDark} src={ogp} alt={title} />
 
       <article>{children}</article>
     </main>

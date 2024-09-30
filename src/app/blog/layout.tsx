@@ -1,15 +1,8 @@
-import { BlogSide } from '@/components/blog/BlogSide'
-import { Header } from '@/components/Header'
-
-import styles from './layout.module.scss'
-
-import { BlogFooter } from '@/components/blog/BlogFooter'
-import { NoSSR } from '@/components/nossr/NoSSR'
-import { Pagetop } from 'relmethis'
-import { Parallax } from '@/components/blog/Parallax'
-
 // utils
 import { Markdown } from '@/utils/blog/Markdown'
+import { Blog } from '../../components/blog/Blog'
+
+import { NoSSR } from '@/components/nossr/NoSSR'
 
 export default function BlogLayout({
   children
@@ -20,21 +13,8 @@ export default function BlogLayout({
   const blogMetadatas = markdowns.map((md) => md.toBlogMetadata())
 
   return (
-    <>
-      <NoSSR>
-        <div className={styles.wrapper}>
-          <Header />
-          <div className={styles.container}>
-            {children}
-            <BlogSide blogMetadatas={blogMetadatas} />
-          </div>
-          <BlogFooter />
-          <Parallax />
-        </div>
-      </NoSSR>
-      <NoSSR>
-        <Pagetop />
-      </NoSSR>
-    </>
+    <NoSSR>
+      <Blog blogMetadatas={blogMetadatas}>{children}</Blog>
+    </NoSSR>
   )
 }
