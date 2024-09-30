@@ -10,7 +10,7 @@ const notoSansJp = Noto_Sans_JP({
 })
 
 // Redux
-import StoreProvider from '@/StoreProvider'
+import StoreProvider from '@/redux/StoreProvider'
 
 // SEO Meta
 import { Metadata } from 'next'
