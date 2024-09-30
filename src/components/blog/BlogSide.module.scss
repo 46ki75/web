@@ -1,3 +1,4 @@
+@use '../../mixins';
 @use '../../variables';
 
 .side {
@@ -22,16 +23,9 @@
   }
 }
 
-@keyframes fade {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
 .side-card {
+  @include mixins.fade-in(400ms);
+
   all: unset;
   display: flex;
   flex-direction: column;
@@ -40,15 +34,12 @@
 
   box-shadow: 0 0 0.25rem rgba(0, 0, 0, 0.1);
 
-  animation-name: fade;
-  animation-duration: 400ms;
-  animation-fill-mode: both;
-
   cursor: pointer;
 
   transition:
     opacity 400ms,
-    background-color 400ms;
+    background-color 400ms,
+    transform 200ms;
 
   @media (max-width: variables.$breakpoint-mobile) {
     width: 100%;
@@ -61,10 +52,12 @@
   }
 
   &:hover {
+    transform: translateX(-2px) translateY(-2px);
     background-color: rgba($color: #6987b8, $alpha: 0.2);
   }
 
   &:active {
+    transform: translateX(2px) translateY(2px);
     background-color: rgba($color: #b8a36e, $alpha: 0.2);
   }
 
