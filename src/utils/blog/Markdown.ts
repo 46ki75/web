@@ -1,4 +1,4 @@
-import { readFileSync } from 'fs'
+import { readdirSync, readFileSync } from 'fs'
 import path from 'path'
 
 interface BlogMetadata {
@@ -36,6 +36,15 @@ export class Markdown {
     this.description = description
     this.createdAt = createdAt
     this.updatedAt = updatedAt
+  }
+
+  /**
+   * server side only
+   */
+  static listAll(): Markdown[] {
+    const slugs = readdirSync(path.resolve('./public/static/blog/'))
+    const markdowns = slugs.map((slug) => this.getBySlug(slug))
+    return markdowns
   }
 
   /**
