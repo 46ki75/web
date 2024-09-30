@@ -52,14 +52,18 @@ const BlogSideCard = ({
       href={href}
       className={styles['side-card']}
       style={{
-        animationDelay: `${index * 200}ms`,
-        backgroundColor: isDark
-          ? 'rgba(0, 0, 0, 0.25)'
-          : 'rgba(255, 255, 255, 0.25)'
+        animationDelay: `${index * 200}ms`
       }}
     >
       <Image isDark={isDark} src={image} alt={title} disableModal />
-      <div className={styles['side-card__typography']}>
+      <div
+        className={styles['side-card__typography']}
+        style={{
+          backgroundColor: isDark
+            ? 'rgba(0, 0, 0, 0.25)'
+            : 'rgba(255, 255, 255, 0.25)'
+        }}
+      >
         <div>
           <InlineText isDark={isDark} fontSize={'1.1rem'}>
             {title}

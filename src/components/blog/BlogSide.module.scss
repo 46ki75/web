@@ -23,7 +23,6 @@
   justify-content: flex-start;
   align-items: center;
 
-  background: rgba(255, 255, 255, 0.25);
   box-shadow: 0 0 0.25rem rgba(0, 0, 0, 0.1);
 
   animation-name: fade;
@@ -37,12 +36,11 @@
     background-color 400ms;
 
   &:hover {
-    opacity: 0.8;
-    background-color: rgba($color: #6987b8, $alpha: 0.1);
+    background-color: rgba($color: #6987b8, $alpha: 0.2);
   }
 
   &:active {
-    background-color: rgba($color: #b8a36e, $alpha: 0.1);
+    background-color: rgba($color: #b8a36e, $alpha: 0.2);
   }
 
   &__typography {
