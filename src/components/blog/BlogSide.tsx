@@ -11,7 +11,7 @@ import { Url } from 'next/dist/shared/lib/router/router'
 import { ArrowPathIcon, CalendarDaysIcon } from '@heroicons/react/24/outline'
 
 // relmethis
-import { InlineText, Image } from 'relmethis'
+import { InlineText, Image, TableOfContents } from 'relmethis'
 
 // utils
 import { type BlogMetadata } from '@/utils/blog/Markdown'
@@ -19,6 +19,7 @@ import { type BlogMetadata } from '@/utils/blog/Markdown'
 // redux
 import { useSelector } from 'react-redux'
 import { RootState } from '@/redux'
+import { usePathname } from 'next/navigation'
 
 // # --------------------------------------------------------------------------------
 //
@@ -34,6 +35,7 @@ interface BlogSideCardProps {
   createdAt: string
   updatedAt: string
   index: number
+  isDark: boolean
 }
 
 const BlogSideCard = ({
@@ -43,10 +45,9 @@ const BlogSideCard = ({
   description,
   createdAt,
   updatedAt,
-  index
+  index,
+  isDark
 }: BlogSideCardProps) => {
-  const isDark = useSelector((state: RootState) => state.theme.isDark)
-
   return (
     <Link
       href={href}
@@ -100,8 +101,17 @@ interface BlogSideProps {
 }
 
 export const BlogSide = ({ blogMetadatas }: BlogSideProps) => {
+  const isDark = useSelector((state: RootState) => state.theme.isDark)
+  const headings = useSelector((state: RootState) => state.headings.headings)
+
+  const pathname = usePathname()
+
   return (
     <nav className={styles.side}>
+      {pathname.match(/^\/blog\/article\/.+$/) && (
+        <TableOfContents headings={headings} isDark={isDark} />
+      )}
+
       {blogMetadatas.map((meta, index) => (
         <BlogSideCard
           key={meta.slug}
@@ -112,6 +122,7 @@ export const BlogSide = ({ blogMetadatas }: BlogSideProps) => {
           createdAt={meta.createdAt}
           updatedAt={meta.updatedAt}
           index={index + 1}
+          isDark={isDark}
         />
       ))}
     </nav>

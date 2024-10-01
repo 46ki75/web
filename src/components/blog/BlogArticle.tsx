@@ -6,16 +6,17 @@ import {
   BlockFallback,
   parseMarkdownToMdast,
   RenderMdast,
-  Root,
-  TableOfContents
+  Root
 } from 'relmethis'
 
 // redux
 import { RootState } from '@/redux'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import isEqual from 'react-fast-compare'
+import { setHeadings } from '@/redux/headingsSlice'
 
 export const BlogArticle = React.memo(({ markdown }: { markdown: string }) => {
+  const dispatch = useDispatch()
   const isDark = useSelector((state: RootState) => state.theme.isDark)
 
   const [mdast, setMdast] = useState<Root | null>(null)
@@ -34,9 +35,10 @@ export const BlogArticle = React.memo(({ markdown }: { markdown: string }) => {
     locale: 'ja-JP'
   })
 
+  dispatch(setHeadings(headings))
+
   return (
     <>
-      <TableOfContents headings={headings} isDark={isDark} />
       {markdownComponent}
       {footnoteComponent}
     </>
