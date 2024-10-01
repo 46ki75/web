@@ -1,6 +1,6 @@
 'use client'
 
-import React, { type ReactNode } from 'react'
+import React, { useMemo, type ReactNode } from 'react'
 
 import styles from './BlogMain.module.scss'
 
@@ -29,6 +29,16 @@ export const BlogMain = ({
   slug
 }: BlogMainProps) => {
   const isDark = useSelector((state: RootState) => state.theme.isDark)
+
+  const iconStyle = useMemo(
+    () => ({
+      color: isDark ? 'white' : 'black',
+      width: 16,
+      height: 16,
+      opacity: 0.8
+    }),
+    [isDark]
+  )
 
   return (
     <main
@@ -60,17 +70,11 @@ export const BlogMain = ({
         {title}
       </Heading1>
       <div className={styles['main__date']}>
-        <CalendarDaysIcon
-          className={styles['main__icon']}
-          style={{ color: isDark ? 'white' : 'black' }}
-        />
+        <CalendarDaysIcon style={iconStyle} />
         <InlineText isDark={isDark} fontSize={'0.8rem'} opacity={0.6}>
           {createdAt}
         </InlineText>
-        <ArrowPathIcon
-          className={styles['main__icon']}
-          style={{ color: isDark ? 'white' : 'black' }}
-        />
+        <ArrowPathIcon style={iconStyle} />
         <InlineText isDark={isDark} fontSize={'0.8rem'} opacity={0.7}>
           {updatedAt}
         </InlineText>
