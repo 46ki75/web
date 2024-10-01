@@ -31,7 +31,7 @@ export const metadata: Metadata = {
 
 // components
 import { NoSSR } from '@/components/nossr/NoSSR'
-import { BodyWrapper } from '@/components/BodyWrapper'
+import { GlobalWrapper } from '@/components/GlobalWrapper'
 
 // layout
 export default function RootLayout({
@@ -42,12 +42,14 @@ export default function RootLayout({
   return (
     <StoreProvider>
       <html lang='ja' className={notoSansJp.className}>
-        <BodyWrapper>
-          {children}
-          <NoSSR>
-            <Pagetop />
-          </NoSSR>
-        </BodyWrapper>
+        <body>
+          <GlobalWrapper>
+            {children}
+            <NoSSR>
+              <Pagetop />
+            </NoSSR>
+          </GlobalWrapper>
+        </body>
       </html>
     </StoreProvider>
   )

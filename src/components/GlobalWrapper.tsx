@@ -2,7 +2,7 @@
 
 import React, { ReactNode } from 'react'
 
-import styles from './BodyWrapper.module.scss'
+import styles from './GlobalWrapper.module.scss'
 
 // redux
 import { RootState } from '@/redux'
@@ -12,19 +12,19 @@ import { useSelector } from 'react-redux'
 import clsx from 'clsx'
 import { NoSSR } from './nossr/NoSSR'
 
-export const BodyWrapper = ({ children }: { children: ReactNode }) => {
+export const GlobalWrapper = ({ children }: { children: ReactNode }) => {
   const isDark = useSelector((state: RootState) => state.theme.isDark)
 
   return (
     <NoSSR>
-      <body
+      <div
         className={clsx(styles.body, {
           [styles['body--light']]: !isDark,
           [styles['body--dark']]: isDark
         })}
       >
         {children}
-      </body>
+      </div>
     </NoSSR>
   )
 }
