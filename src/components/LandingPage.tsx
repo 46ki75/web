@@ -1,27 +1,32 @@
 'use client'
 
-import dynamic from 'next/dynamic'
+import styles from './LandingPage.module.scss'
+import clsx from 'clsx'
 
-const FullscreenFallback = dynamic(
-  () => import('relmethis').then((mod) => mod.FullscreenFallback),
-  { ssr: false }
-)
+// redux
+import { useSelector } from 'react-redux'
+import { RootState } from '@/redux'
 
-const Heading1 = dynamic(
-  () => import('relmethis').then((mod) => mod.Heading1),
-  { ssr: false }
-)
-
-import { Suspense } from 'react'
 import Link from 'next/link'
+import { NoSSR } from './nossr/NoSSR'
+import { Heading1 } from 'relmethis'
 
 export const LandingPage = () => {
+  const isDark = useSelector((state: RootState) => state.theme.isDark)
+
   return (
-    <Suspense fallback={<FullscreenFallback />}>
-      <div>
+    <NoSSR>
+      <div
+        className={clsx(styles.wrapper, {
+          [styles['wrapper--light']]: !isDark,
+          [styles['wrapper--dark']]: isDark
+        })}
+      >
+        <Link href={'/blog'} style={{ fontSize: 32 }}>
+          BLOG
+        </Link>
         <Heading1>INDEX PAGE (UNDER CONSTRUCTION)</Heading1>
-        <Link href={'/blog'}>BLOG</Link>
       </div>
-    </Suspense>
+    </NoSSR>
   )
 }
