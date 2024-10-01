@@ -1,7 +1,7 @@
 import { ReactNode } from 'react'
 
-const MdxLayout = ({ children }: { children: ReactNode }) => {
+const Layout = ({ children }: { children: ReactNode }) => {
   return children
 }
 
-export default MdxLayout
+export default Layout
