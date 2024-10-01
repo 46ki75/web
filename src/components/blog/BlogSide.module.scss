@@ -28,6 +28,8 @@
     box-sizing: border-box;
     padding-right: 0.25rem;
     padding-left: 0.25rem;
+    padding-bottom: 0.5rem;
+    border-bottom: dashed 1px rgba($color: gray, $alpha: 0.8);
 
     position: sticky;
     top: calc(variables.$header-height + 0.5rem);
