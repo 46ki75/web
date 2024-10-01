@@ -28,7 +28,16 @@ export function Blog({ children, blogMetadatas }: BlogProps) {
       <div className={styles.wrapper}>
         <Header />
         <div className={styles.container}>
-          {children}
+          <div
+            className={styles['blog-main-wrapper']}
+            style={{
+              backgroundColor: isDark
+                ? 'rgba(0, 0, 0, 0.25)'
+                : 'rgba(255, 255, 255, 0.25)'
+            }}
+          >
+            {children}
+          </div>
           <BlogSide blogMetadatas={blogMetadatas} />
         </div>
         <BlogFooter />

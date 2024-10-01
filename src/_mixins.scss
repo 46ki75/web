@@ -10,6 +10,6 @@
 
   animation-name: mixin-fade-in;
   animation-fill-mode: both;
-  animation-duration: 500ms;
-  animation-delay: 0ms;
+  animation-duration: $animation-duration;
+  animation-delay: $animation-delay;
 }

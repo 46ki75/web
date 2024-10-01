@@ -41,14 +41,7 @@ export const BlogMain = ({
   )
 
   return (
-    <main
-      className={styles.main}
-      style={{
-        backgroundColor: isDark
-          ? 'rgba(0, 0, 0, 0.25)'
-          : 'rgba(255, 255, 255, 0.25)'
-      }}
-    >
+    <main className={styles.main}>
       <Breadcrumbs
         isDark={isDark}
         align='left'
@@ -69,17 +62,21 @@ export const BlogMain = ({
       <Heading1 isDark={isDark} locale='ja-JP'>
         {title}
       </Heading1>
+
       <div className={styles['main__date']}>
         <CalendarDaysIcon style={iconStyle} />
         <InlineText isDark={isDark} fontSize={'0.8rem'} opacity={0.6}>
           {createdAt}
         </InlineText>
+
         <ArrowPathIcon style={iconStyle} />
         <InlineText isDark={isDark} fontSize={'0.8rem'} opacity={0.7}>
           {updatedAt}
         </InlineText>
       </div>
+
       <Image isDark={isDark} src={ogp} alt={title} />
+
       <article>{children}</article>
     </main>
   )
