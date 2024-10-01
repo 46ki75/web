@@ -105,14 +105,20 @@ export const BlogSide = ({ blogMetadatas }: BlogSideProps) => {
   const isDark = useSelector((state: RootState) => state.theme.isDark)
   const headings = useSelector((state: RootState) => state.headings.headings)
 
-  const isMobile = useMedia('(max-width: 576px)')
+  const isMobile = useMedia('(max-width: 992px)')
 
   const pathname = usePathname()
   const isShow = pathname.match(/^\/blog\/article\/.+$/) && !isMobile
 
   return (
     <nav className={styles.side}>
-      {isShow && <TableOfContents headings={headings} isDark={isDark} />}
+      {isShow && (
+        <TableOfContents
+          headings={headings}
+          isDark={isDark}
+          fontSizeRatio={0.8}
+        />
+      )}
 
       {blogMetadatas.map((meta, index) => (
         <BlogSideCard
