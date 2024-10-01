@@ -15,6 +15,8 @@ import { type ReactNode } from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from '@/redux'
 
+import clsx from 'clsx'
+
 interface BlogProps {
   children: ReactNode
   blogMetadatas: BlogMetadata[]
@@ -26,10 +28,10 @@ export function Blog({ children, blogMetadatas }: BlogProps) {
   return (
     <>
       <div
-        className={styles.wrapper}
-        style={{
-          backgroundColor: `var(--${isDark ? 'dark' : 'light'}-background-color)`
-        }}
+        className={clsx(styles.wrapper, {
+          [styles['wrapper--light']]: !isDark,
+          [styles['wrapper--dark']]: isDark
+        })}
       >
         <Header />
         <div className={styles.container}>

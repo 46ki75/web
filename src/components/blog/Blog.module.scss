@@ -3,8 +3,15 @@
 
 .wrapper {
   @include mixins.fade-in(500ms, 20ms);
-  background-color: var(--background-color);
   transition: background-color 300ms;
+
+  &--light {
+    background-color: variables.$light-background-color;
+  }
+
+  &--dark {
+    background-color: variables.$dark-background-color;
+  }
 }
 
 .container {

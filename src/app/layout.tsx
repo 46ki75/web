@@ -37,7 +37,11 @@ export default function RootLayout({
 }>) {
   return (
     <StoreProvider>
-      <html lang='ja' className={notoSansJp.className}>
+      <html
+        lang='ja'
+        style={{ background: 'gray' }}
+        className={notoSansJp.className}
+      >
         <body>
           {children}
           <NoSSR>
