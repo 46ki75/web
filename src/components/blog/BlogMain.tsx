@@ -10,6 +10,7 @@ import { ArrowPathIcon, CalendarDaysIcon } from '@heroicons/react/24/outline'
 // redux
 import { useSelector } from 'react-redux'
 import { RootState } from '@/redux'
+import { useRouter } from 'next/navigation'
 
 interface BlogMainProps {
   children: ReactNode
@@ -28,6 +29,8 @@ export const BlogMain = ({
   updatedAt,
   slug
 }: BlogMainProps) => {
+  const router = useRouter()
+
   const isDark = useSelector((state: RootState) => state.theme.isDark)
 
   const iconStyle = useMemo(
@@ -46,12 +49,26 @@ export const BlogMain = ({
         isDark={isDark}
         align='left'
         links={[
-          { href: '/', label: 'HOME', color: '#449763' },
-          { href: '/blog', label: 'BLOG', color: '#4c6da2' },
+          {
+            onClick: () => {
+              router.push('/')
+            },
+            label: 'HOME',
+            color: '#449763'
+          },
+          {
+            onClick: () => {
+              router.push('/blog')
+            },
+            label: 'BLOG',
+            color: '#4c6da2'
+          },
           ...(slug != null
             ? [
                 {
-                  href: `/blog/article/${slug}`,
+                  onClick: () => {
+                    router.push(`/blog/article/${slug}`)
+                  },
                   label: 'ARTICLE',
                   color: '#9771bd'
                 }
@@ -59,6 +76,7 @@ export const BlogMain = ({
             : [])
         ]}
       />
+
       <Heading1 isDark={isDark} locale='ja-JP'>
         {title}
       </Heading1>
