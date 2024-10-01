@@ -1,0 +1,19 @@
+.not-found {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100vh;
+  gap: 1rem;
+
+  &__icon {
+    padding: 0.25rem;
+    width: 24px;
+    border-radius: 0.25rem;
+    transition: background-color 400ms;
+
+    &:hover {
+      background-color: rgba(128, 128, 128, 0.2);
+    }
+  }
+}
