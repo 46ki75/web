@@ -3,6 +3,7 @@ import path from 'path'
 import React from 'react'
 
 import { BlogMain } from '@/components/blog/BlogMain'
+import { BlogArticle } from '@/components/blog/BlogArticle'
 
 import config from '@/config'
 
@@ -11,7 +12,6 @@ import { Markdown } from '@/utils/blog/Markdown'
 
 // types
 import { type Metadata } from 'next'
-import { BlogArticle } from '@/components/blog/BlogArticle'
 
 export function generateStaticParams() {
   const slugs = readdirSync(path.resolve('./public/static/blog/'))

@@ -1,17 +1,30 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
-import { parseMarkdownToMdast, RenderMdast, TableOfContents } from 'relmethis'
+import {
+  BlockFallback,
+  parseMarkdownToMdast,
+  RenderMdast,
+  Root,
+  TableOfContents
+} from 'relmethis'
 
 // redux
 import { RootState } from '@/redux'
 import { useSelector } from 'react-redux'
+import isEqual from 'react-fast-compare'
 
-export const BlogArticle = ({ markdown }: { markdown: string }) => {
+export const BlogArticle = React.memo(({ markdown }: { markdown: string }) => {
   const isDark = useSelector((state: RootState) => state.theme.isDark)
 
-  const mdast = parseMarkdownToMdast(markdown)
+  const [mdast, setMdast] = useState<Root | null>(null)
+
+  useEffect(() => {
+    setMdast(parseMarkdownToMdast(markdown))
+  }, [markdown])
+
+  if (mdast == null) return <BlockFallback />
 
   const { headings, markdownComponent, footnoteComponent } = RenderMdast({
     mdastNodes: mdast.children,
@@ -28,4 +41,6 @@ export const BlogArticle = ({ markdown }: { markdown: string }) => {
       {footnoteComponent}
     </>
   )
-}
+}, isEqual)
+
+BlogArticle.displayName = 'BlogArticle'
