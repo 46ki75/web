@@ -1,11 +1,16 @@
 @use '../../mixins';
+@use '../../variables';
 
 .main {
   @include mixins.fade-in(1500ms);
 
   box-sizing: border-box;
   width: 100%;
-  padding: 0.5rem;
+  padding: 1rem;
+
+  @media (max-width: variables.$breakpoint-mobile) {
+    padding: 0.5rem;
+  }
 
   &__date {
     width: 100%;
