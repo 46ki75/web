@@ -1,7 +1,6 @@
 'use client'
 
 import styles from './LandingPage.module.scss'
-import clsx from 'clsx'
 
 // redux
 import { useSelector } from 'react-redux'
@@ -15,16 +14,11 @@ export const LandingPage = () => {
   const isDark = useSelector((state: RootState) => state.theme.isDark)
 
   return (
-    <div
-      className={clsx(styles.wrapper, {
-        [styles['wrapper--light']]: !isDark,
-        [styles['wrapper--dark']]: isDark
-      })}
-    >
+    <div className={styles.wrapper}>
       <Link href={'/blog'} style={{ fontSize: 32 }}>
         BLOG
       </Link>
-      <Heading1>INDEX PAGE (UNDER CONSTRUCTION)</Heading1>
+      <Heading1 isDark={isDark}>INDEX PAGE (UNDER CONSTRUCTION)</Heading1>
     </div>
   )
 }

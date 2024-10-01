@@ -18,7 +18,7 @@ import { Pagetop } from '@/components/global/Pagetop'
 // SEO Meta
 import { Metadata } from 'next'
 import config from '@/config'
-import { NoSSR } from '@/components/nossr/NoSSR'
+
 export const metadata: Metadata = {
   authors: [{ name: 'Chomolungma Shirayuki', url: 'https://www.46ki75.com' }],
   openGraph: {
@@ -29,6 +29,10 @@ export const metadata: Metadata = {
   }
 }
 
+// components
+import { NoSSR } from '@/components/nossr/NoSSR'
+import { BodyWrapper } from '@/components/BodyWrapper'
+
 // layout
 export default function RootLayout({
   children
@@ -37,17 +41,13 @@ export default function RootLayout({
 }>) {
   return (
     <StoreProvider>
-      <html
-        lang='ja'
-        style={{ background: 'gray' }}
-        className={notoSansJp.className}
-      >
-        <body>
+      <html lang='ja' className={notoSansJp.className}>
+        <BodyWrapper>
           {children}
           <NoSSR>
             <Pagetop />
           </NoSSR>
-        </body>
+        </BodyWrapper>
       </html>
     </StoreProvider>
   )
