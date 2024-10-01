@@ -20,6 +20,7 @@ import { type BlogMetadata } from '@/utils/blog/Markdown'
 import { useSelector } from 'react-redux'
 import { RootState } from '@/redux'
 import { usePathname } from 'next/navigation'
+import { useMedia } from 'react-use'
 
 // # --------------------------------------------------------------------------------
 //
@@ -104,13 +105,14 @@ export const BlogSide = ({ blogMetadatas }: BlogSideProps) => {
   const isDark = useSelector((state: RootState) => state.theme.isDark)
   const headings = useSelector((state: RootState) => state.headings.headings)
 
+  const isMobile = useMedia('(max-width: 576px)')
+
   const pathname = usePathname()
+  const isShow = pathname.match(/^\/blog\/article\/.+$/) && !isMobile
 
   return (
     <nav className={styles.side}>
-      {pathname.match(/^\/blog\/article\/.+$/) && (
-        <TableOfContents headings={headings} isDark={isDark} />
-      )}
+      {isShow && <TableOfContents headings={headings} isDark={isDark} />}
 
       {blogMetadatas.map((meta, index) => (
         <BlogSideCard
