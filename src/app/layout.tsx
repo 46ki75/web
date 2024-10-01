@@ -12,9 +12,6 @@ const notoSansJp = Noto_Sans_JP({
 // Redux
 import StoreProvider from '@/redux/StoreProvider'
 
-// component
-import { Pagetop } from '@/components/global/Pagetop'
-
 // SEO Meta
 import { Metadata } from 'next'
 import config from '@/config'
@@ -30,7 +27,6 @@ export const metadata: Metadata = {
 }
 
 // components
-import { NoSSR } from '@/components/nossr/NoSSR'
 import { GlobalWrapper } from '@/components/GlobalWrapper'
 
 // layout
@@ -43,12 +39,7 @@ export default function RootLayout({
     <StoreProvider>
       <html lang='ja' className={notoSansJp.className}>
         <body>
-          <GlobalWrapper>
-            {children}
-            <NoSSR>
-              <Pagetop />
-            </NoSSR>
-          </GlobalWrapper>
+          <GlobalWrapper>{children}</GlobalWrapper>
         </body>
       </html>
     </StoreProvider>

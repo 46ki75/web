@@ -12,6 +12,12 @@ import { useSelector } from 'react-redux'
 import clsx from 'clsx'
 import { NoSSR } from './nossr/NoSSR'
 
+// lazy
+import dynamic from 'next/dynamic'
+const Pagetop = dynamic(() => import('relmethis').then((mod) => mod.Pagetop), {
+  ssr: false
+})
+
 export const GlobalWrapper = ({ children }: { children: ReactNode }) => {
   const isDark = useSelector((state: RootState) => state.theme.isDark)
 
@@ -25,6 +31,7 @@ export const GlobalWrapper = ({ children }: { children: ReactNode }) => {
       >
         {children}
       </div>
+      <Pagetop isDark={isDark} />
     </NoSSR>
   )
 }
