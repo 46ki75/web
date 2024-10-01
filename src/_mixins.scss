@@ -13,3 +13,17 @@
   animation-duration: $animation-duration;
   animation-delay: $animation-delay;
 }
+
+@mixin hide-scrollbar() {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE */
+  &::-webkit-scrollbar {
+    width: 0; /* Chrome, Safari */
+    height: 0;
+  }
+}
+
+@mixin custom-scrollbar() {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(#6987b8, 0.3) rgba(#6987b8, 0.15);
+}

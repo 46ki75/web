@@ -21,6 +21,20 @@
     justify-content: flex-start;
     align-items: stretch;
   }
+
+  @media (min-width: variables.$breakpoint-desktop) {
+    @include mixins.custom-scrollbar();
+
+    box-sizing: border-box;
+    padding-right: 0.25rem;
+    padding-left: 0.25rem;
+
+    position: sticky;
+    top: calc(variables.$header-height + 0.5rem);
+    height: calc(100vh - (variables.$header-height + 0.5rem) - 0.5rem);
+    overflow-x: hidden;
+    overflow-y: scroll;
+  }
 }
 
 .side-card {
