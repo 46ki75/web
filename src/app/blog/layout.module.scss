@@ -1,19 +1,5 @@
-@use '../../variables';
-
-@keyframes fade {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
 .wrapper {
-  animation-name: fade;
-  animation-duration: 500ms;
-  animation-fill-mode: both;
-  animation-delay: 20ms;
+  @include mixins.fade-in(500ms, 20ms);
 }
 
 .container {
