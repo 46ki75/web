@@ -54,7 +54,7 @@ export const BlogFooter = () => {
       </div>
 
       <InlineText isDark={isDark} opacity={0.8}>
-        © 2024 Chomolungma Shirayuki
+        {`© 2021 - ${String(new Date().getFullYear())} Chomolungma Shirayuki`}
       </InlineText>
     </footer>
   )
