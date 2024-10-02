@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 
 import styles from './BlogSide.module.scss'
 
@@ -11,7 +11,7 @@ import { Url } from 'next/dist/shared/lib/router/router'
 import { ArrowPathIcon, CalendarDaysIcon } from '@heroicons/react/24/outline'
 
 // relmethis
-import { InlineText, Image, TableOfContents } from 'relmethis'
+import { InlineText, Image, TableOfContents, RainbowFrame } from 'relmethis'
 
 // utils
 import { type BlogMetadata } from '@/utils/blog/Markdown'
@@ -49,6 +49,8 @@ const BlogSideCard = ({
   index,
   isDark
 }: BlogSideCardProps) => {
+  const [isHover, setIsHover] = useState(false)
+
   return (
     <Link
       href={href}
@@ -56,7 +58,14 @@ const BlogSideCard = ({
       style={{
         animationDelay: `${index * 200}ms`
       }}
+      onMouseOver={() => {
+        setIsHover(true)
+      }}
+      onMouseLeave={() => {
+        setIsHover(false)
+      }}
     >
+      {isHover && <RainbowFrame opacity={0.3} strokeWidth={2} />}
       <Image isDark={isDark} src={image} alt={title} disableModal />
       <div
         className={styles['side-card__typography']}
