@@ -1,11 +1,11 @@
 'use client'
 
-import React from 'react'
+import React, { useCallback, useRef } from 'react'
 
 import styles from './BlogSide.module.scss'
 
 // relmethis
-import { TableOfContents } from 'relmethis'
+import { Divider, TableOfContents } from 'relmethis'
 
 // utils
 import { type BlogMetadata } from '@/utils/blog/Markdown'
@@ -37,8 +37,16 @@ export const BlogSide = ({ blogMetadatas }: BlogSideProps) => {
   const pathname = usePathname()
   const isShow = pathname.match(/^\/blog\/article\/.+$/) && !isMobile
 
+  const scrollableRef = useRef<HTMLElement>(null)
+
+  const scrollToTop = useCallback(() => {
+    if (scrollableRef.current) {
+      scrollableRef.current.scrollTop = 0
+    }
+  }, [scrollableRef])
+
   return (
-    <nav className={styles.side}>
+    <nav ref={scrollableRef} className={styles.side}>
       {isShow && (
         <TableOfContents
           headings={headings}
@@ -58,8 +66,15 @@ export const BlogSide = ({ blogMetadatas }: BlogSideProps) => {
           updatedAt={meta.updatedAt}
           index={index + 1}
           isDark={isDark}
+          scrollToTop={scrollToTop}
         />
       ))}
+
+      {!isMobile && (
+        <div style={{ marginBlock: '1rem' }}>
+          <Divider />
+        </div>
+      )}
     </nav>
   )
 }

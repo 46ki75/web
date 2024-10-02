@@ -36,5 +36,7 @@
     height: calc(100vh - (variables.$header-height + 0.5rem) - 0.5rem);
     overflow-x: hidden;
     overflow-y: scroll;
+
+    scroll-behavior: smooth;
   }
 }

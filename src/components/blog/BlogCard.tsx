@@ -28,6 +28,7 @@ interface BlogCardProps {
   updatedAt: string
   index: number
   isDark: boolean
+  scrollToTop: () => void
 }
 
 export const BlogCard = ({
@@ -38,7 +39,8 @@ export const BlogCard = ({
   createdAt,
   updatedAt,
   index,
-  isDark
+  isDark,
+  scrollToTop
 }: BlogCardProps) => {
   const [isHover, setIsHover] = useState(false)
 
@@ -55,6 +57,7 @@ export const BlogCard = ({
       onMouseLeave={() => {
         setIsHover(false)
       }}
+      onClick={scrollToTop}
     >
       {isHover && <RainbowFrame opacity={0.3} strokeWidth={2} />}
       <Image isDark={isDark} src={image} alt={title} disableModal />
