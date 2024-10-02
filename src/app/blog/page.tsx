@@ -5,7 +5,6 @@ import config from '@/config'
 
 import { Metadata } from 'next'
 
-import { PrimeWorker } from '@/worker/PrimeWorker'
 import { BlogSearchWorker } from '@/worker/BlogSearchWorker'
 
 export const metadata: Metadata = {
@@ -27,7 +26,6 @@ export default function Blog() {
         createdAt={'2022-10-01'}
         updatedAt={'2024-9-30'}
       >
-        <PrimeWorker />
         <BlogSearchWorker />
       </BlogMain>
     </>
