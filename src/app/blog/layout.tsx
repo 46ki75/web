@@ -19,13 +19,8 @@ export default function BlogLayout({
 
   mkdirSync('./public/_dist/blog', { recursive: true })
   writeFileSync(
-    './public/_dist/blog/side.json',
+    './public/_dist/blog/meta.json',
     JSON.stringify(sortedBlogMetadatas),
-    'utf-8'
-  )
-  writeFileSync(
-    './public/_dist/blog/side-latest.json',
-    JSON.stringify(sortedBlogMetadatasLatest),
     'utf-8'
   )
 
