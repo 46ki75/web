@@ -5,7 +5,7 @@ import { BlogMetadata } from '@/utils/blog/Markdown'
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
 import { FuseResult } from 'fuse.js'
-import React, { useEffect, useState } from 'react'
+import React, { useDeferredValue, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { BlockFallback, Heading2, Paragraph } from 'relmethis'
 
@@ -23,6 +23,7 @@ export const BlogSearchWorker = () => {
   const isDark = useSelector((state: RootState) => state.theme.isDark)
 
   const [keyword, setKeyword] = useState<string>('')
+  const deferredKeyword = useDeferredValue(keyword)
   const [meta, setMeta] = useState<FuseResult<BlogMetadata>[] | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
@@ -35,16 +36,16 @@ export const BlogSearchWorker = () => {
     }
 
     setIsLoading(true)
-    worker.postMessage({ keyword: keyword, blogMetadatas: data })
+    worker.postMessage({ keyword: deferredKeyword, blogMetadatas: data })
 
     return () => {
       worker.terminate()
     }
-  }, [data, keyword])
+  }, [data, deferredKeyword])
 
   return (
     <div>
-      <Heading2 isDark={isDark}>Search Blog Article</Heading2>
+      <Heading2 isDark={isDark}>ブログ記事検索</Heading2>
       <p>
         <input
           type='text'
