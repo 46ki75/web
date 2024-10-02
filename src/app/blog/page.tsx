@@ -4,6 +4,7 @@ import React from 'react'
 import config from '@/config'
 
 import { Metadata } from 'next'
+import { PrimeWorker } from '@/worker/PrimeWorker'
 export const metadata: Metadata = {
   title: 'BLOG TOP',
   description: '', // TODO: enter the description
@@ -23,7 +24,7 @@ export default function Blog() {
         createdAt={'2022-10-01'}
         updatedAt={'2024-9-30'}
       >
-        <div>BLOG TOP PAGE CONTENTS (HARD CODING)</div>
+        <PrimeWorker />
       </BlogMain>
     </>
   )
