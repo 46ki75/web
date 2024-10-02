@@ -12,16 +12,26 @@ export default function BlogLayout({
 }>) {
   const markdowns = Markdown.listAll()
   const blogMetadatas = markdowns.map((md) => md.toBlogMetadata())
+  const sortedBlogMetadatas = blogMetadatas.sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  )
+  const sortedBlogMetadatasLatest = sortedBlogMetadatas.slice(0, 10)
+
   mkdirSync('./public/_dist/blog', { recursive: true })
   writeFileSync(
     './public/_dist/blog/side.json',
-    JSON.stringify(blogMetadatas),
+    JSON.stringify(sortedBlogMetadatas),
+    'utf-8'
+  )
+  writeFileSync(
+    './public/_dist/blog/side-latest.json',
+    JSON.stringify(sortedBlogMetadatasLatest),
     'utf-8'
   )
 
   return (
     <NoSSR>
-      <Blog blogMetadatas={blogMetadatas}>{children}</Blog>
+      <Blog blogMetadatas={sortedBlogMetadatasLatest}>{children}</Blog>
     </NoSSR>
   )
 }
