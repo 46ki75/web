@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React from 'react'
 
 import styles from './BlogCard.module.scss'
 
@@ -42,8 +42,6 @@ export const BlogCard = ({
   isDark,
   scrollToTop
 }: BlogCardProps) => {
-  const [isHover, setIsHover] = useState(false)
-
   return (
     <Link
       href={href}
@@ -51,15 +49,10 @@ export const BlogCard = ({
       style={{
         animationDelay: `${index * 200}ms`
       }}
-      onMouseOver={() => {
-        setIsHover(true)
-      }}
-      onMouseLeave={() => {
-        setIsHover(false)
-      }}
       onClick={scrollToTop}
     >
-      {isHover && <RainbowFrame opacity={0.3} strokeWidth={2} />}
+      <RainbowFrame opacity={0.3} strokeWidth={2} displayOnHover />
+
       <Image isDark={isDark} src={image} alt={title} disableModal />
       <div
         className={styles['card__typography']}
