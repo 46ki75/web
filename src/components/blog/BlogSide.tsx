@@ -5,7 +5,7 @@ import React, { useCallback, useRef } from 'react'
 import styles from './BlogSide.module.scss'
 
 // relmethis
-import { Divider, TableOfContents } from 'relmethis'
+import { TableOfContents } from 'relmethis'
 
 // utils
 import { type BlogMetadata } from '@/utils/blog/Markdown'
@@ -69,12 +69,6 @@ export const BlogSide = ({ blogMetadatas }: BlogSideProps) => {
           scrollToTop={scrollToTop}
         />
       ))}
-
-      {!isMobile && (
-        <div style={{ marginBlock: '1rem' }}>
-          <Divider />
-        </div>
-      )}
     </nav>
   )
 }

@@ -21,7 +21,7 @@
     "react-fast-compare": "^3.2.2",
     "react-redux": "^9.1.2",
     "react-use": "^17.5.1",
-    "relmethis": "^0.1.75",
+    "relmethis": "^0.1.76",
     "sass": "^1.79.4"
   },
   "devDependencies": {
