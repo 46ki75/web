@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "test": "echo 'Unit test have not written yet.'",
     "format": "prettier --write ./src"
   },
   "dependencies": {
@@ -25,12 +26,18 @@
     "sass": "^1.79.4"
   },
   "devDependencies": {
-    "@types/node": "^20",
+    "@types/node": "^22",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "eslint": "^8.57.1",
     "eslint-config-next": "14.2.14",
     "prettier": "^3.3.3",
     "typescript": "^5"
+  },
+  "volta": {
+    "node": "22.9.0"
+  },
+  "engines": {
+    "node": "22"
   }
 }
