@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "test": "echo 'Unit test have not written yet.'",
     "format": "prettier --write ./src"
   },
   "dependencies": {
