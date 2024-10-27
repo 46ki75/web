@@ -57,7 +57,7 @@ export const BlogSide = ({ blogMetadatas }: BlogSideProps) => {
         />
       )}
 
-      {blogMetadatas.map((meta, index) => (
+      {blogMetadatas.map((meta) => (
         <ArticleCard
           key={meta.slug}
           image={`/static/blog/${meta.slug}/ogp.webp`}
