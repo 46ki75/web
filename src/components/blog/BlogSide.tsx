@@ -4,8 +4,10 @@ import React, { useCallback, useRef } from 'react'
 
 import styles from './BlogSide.module.scss'
 
+import { useRouter } from 'next/navigation'
+
 // relmethis
-import { TableOfContents } from 'relmethis'
+import { ArticleCard, TableOfContents } from 'relmethis'
 
 // utils
 import { type BlogMetadata } from '@/utils/blog/Markdown'
@@ -15,8 +17,6 @@ import { useSelector } from 'react-redux'
 import { RootState } from '@/redux'
 import { usePathname } from 'next/navigation'
 import { useMedia } from 'react-use'
-
-import { BlogCard } from './BlogCard'
 
 // # --------------------------------------------------------------------------------
 //
@@ -29,6 +29,8 @@ interface BlogSideProps {
 }
 
 export const BlogSide = ({ blogMetadatas }: BlogSideProps) => {
+  const router = useRouter()
+
   const isDark = useSelector((state: RootState) => state.theme.isDark)
   const headings = useSelector((state: RootState) => state.headings.headings)
 
@@ -56,17 +58,18 @@ export const BlogSide = ({ blogMetadatas }: BlogSideProps) => {
       )}
 
       {blogMetadatas.map((meta, index) => (
-        <BlogCard
+        <ArticleCard
           key={meta.slug}
-          href={`/blog/article/${meta.slug}`}
           image={`/static/blog/${meta.slug}/ogp.webp`}
           title={meta.title}
           description={meta.description}
           createdAt={meta.createdAt}
           updatedAt={meta.updatedAt}
-          index={index + 1}
           isDark={isDark}
-          scrollToTop={scrollToTop}
+          onClick={() => {
+            scrollToTop()
+            router.push(`/blog/article/${meta.slug}`)
+          }}
         />
       ))}
     </nav>

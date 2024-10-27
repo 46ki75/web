@@ -6,7 +6,7 @@ import { Header } from '@/components/Header'
 import styles from './Blog.module.scss'
 
 import { BlogFooter } from '@/components/blog/BlogFooter'
-import { Parallax } from '@/components/blog/Parallax'
+import { Parallax } from 'relmethis'
 
 import { type BlogMetadata } from '@/utils/blog/Markdown'
 import { type ReactNode } from 'react'
@@ -41,7 +41,11 @@ export function Blog({ children, blogMetadatas }: BlogProps) {
           <BlogSide blogMetadatas={blogMetadatas} />
         </div>
         <BlogFooter />
-        <Parallax isDark={isDark} />
+        <Parallax
+          imageUrl1='/_system/images/blog/bg1.webp'
+          imageUrl2='/_system/images/blog/bg2.webp'
+          isDark={isDark}
+        />
       </div>
     </>
   )
