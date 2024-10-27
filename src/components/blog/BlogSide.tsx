@@ -35,7 +35,7 @@ export const BlogSide = ({ blogMetadatas }: BlogSideProps) => {
   const isMobile = useMedia('(max-width: 992px)')
 
   const pathname = usePathname()
-  const isShow = pathname.match(/^\/blog\/article\/.+$/) && !isMobile
+  const isShow = pathname?.match(/^\/blog\/article\/.+$/) && !isMobile
 
   const scrollableRef = useRef<HTMLElement>(null)
 
