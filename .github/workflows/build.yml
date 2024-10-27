@@ -6,6 +6,12 @@ on:
       - main
       - develop
       - 'release/**'
+  push:
+    branches:
+      - main
+      - develop
+      - 'release/**'
+      - 'feature/**'
   workflow_dispatch:
 
 # permissions:
