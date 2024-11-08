@@ -1,7 +1,9 @@
 <template>
-  <nav>SIDE</nav>
+  <nav>{{ data }}</nav>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const { data } = useFetch('/api/blog/side')
+</script>
 
 <style scoped lang="scss"></style>
