@@ -1,8 +1,15 @@
 <template>
-  <NuxtLayout name="default">
-    <NuxtRouteAnnouncer />
-    <NuxtPage />
-  </NuxtLayout>
+  <Suspense>
+    <template #default>
+      <NuxtLayout name="default">
+        <NuxtPage />
+      </NuxtLayout>
+    </template>
+
+    <template #fallback>
+      <Fallback />
+    </template>
+  </Suspense>
 </template>
 
 <style lang="scss">

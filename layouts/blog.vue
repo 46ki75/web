@@ -1,7 +1,7 @@
 <template>
   <div class="body">
     <BlogMain>
-      <NuxtPage />
+      <slot />
     </BlogMain>
     <BlogSide />
   </div>
