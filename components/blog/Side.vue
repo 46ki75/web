@@ -33,7 +33,7 @@ interface BlogMeta {
   updatedAt: string
 }
 
-const { data } = useFetch<BlogMeta[]>('/api/blog/side')
+const { data } = useAsyncData(() => $fetch<BlogMeta[]>('/api/blog/side'))
 </script>
 
 <style scoped lang="scss">
