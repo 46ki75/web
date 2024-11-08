@@ -8,7 +8,6 @@
           :createdAt="side.createdAt"
           :updatedAt="side.updatedAt"
           :image="side.ogp"
-          :url="`/blog/article/${side.slug}`"
           :is-horizontal="false"
           :onClick="() => $router.push(`/blog/article/${side.slug}`)"
         />
