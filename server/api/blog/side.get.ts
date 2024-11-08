@@ -11,6 +11,7 @@ interface BlogMeta {
   }>
   createdAt: string
   updatedAt: string
+  ogp: string
 }
 
 export default defineEventHandler(async (event) => {
@@ -97,7 +98,8 @@ export default defineEventHandler(async (event) => {
         .join(''),
       tags: properties.tags.multi_select,
       createdAt: blog.created_time,
-      updatedAt: blog.last_edited_time
+      updatedAt: blog.last_edited_time,
+      ogp: `/api/blog/image/${properties.slug.unique_id.number}/ogp.webp`
     }
   })
 

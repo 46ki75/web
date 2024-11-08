@@ -2,7 +2,7 @@ import { Client } from '@notionhq/client'
 import sharp from 'sharp'
 
 export default defineEventHandler(async (event) => {
-  setHeader(event, 'Content-Type', 'application/json')
+  setHeader(event, 'Content-Type', 'image/webp')
 
   try {
     const slug = getRouterParam(event, 'slug')
@@ -69,7 +69,19 @@ export default defineEventHandler(async (event) => {
       !Array.isArray(result.properties.ogpImage.files) ||
       result.properties.ogpImage.files.length === 0
     ) {
-      return new Response('image not found', { status: 404 })
+      const response = await fetch('https://nuxt.com/new-social.jpg')
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch image')
+      }
+
+      const blob = await response.blob()
+      const arrayBuffer = await blob.arrayBuffer()
+      const buffer = Buffer.from(arrayBuffer)
+
+      const webpBuffer = await sharp(buffer).webp().toBuffer()
+
+      return webpBuffer
     }
 
     const [file] = result.properties.ogpImage.files
@@ -96,8 +108,6 @@ export default defineEventHandler(async (event) => {
     const buffer = Buffer.from(arrayBuffer)
 
     const webpBuffer = await sharp(buffer).webp().toBuffer()
-
-    setHeader(event, 'Content-Type', 'image/webp')
 
     return webpBuffer
   } catch (e) {

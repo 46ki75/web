@@ -8,7 +8,7 @@
         :description="side.description"
         :createdAt="side.createdAt"
         :updatedAt="side.updatedAt"
-        :image="`/api/blog/image/${side.slug}`"
+        :image="side.ogp"
         :url="`/blog/article/${side.slug}`"
         :is-horizontal="false"
         :onClick="() => $router.push(`/blog/article/${side.slug}`)"
@@ -31,6 +31,7 @@ interface BlogMeta {
   }>
   createdAt: string
   updatedAt: string
+  ogp: string
 }
 
 const { data } = useAsyncData(() => $fetch<BlogMeta[]>('/api/blog/side'))
