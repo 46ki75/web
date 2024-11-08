@@ -1,6 +1,5 @@
 <template>
-  <div>INDEX PAGE</div>
-  <div><NuxtLink to="/blog">BLOG</NuxtLink></div>
+  <main>MAIN</main>
 </template>
 
 <script setup lang="ts"></script>
