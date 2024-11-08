@@ -85,9 +85,8 @@ export default defineEventHandler(async (event) => {
       return new Response('image not found', { status: 404 })
     }
 
-    const image = await fetch(url)
-
     const response = await fetch(url)
+
     if (!response.ok) {
       throw new Error('Failed to fetch image')
     }

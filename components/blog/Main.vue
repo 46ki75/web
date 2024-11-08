@@ -4,6 +4,7 @@
       :links="[{ text: 'Home' }, { text: 'Blog' }, { text: 'Article' }]"
     />
     <ElmHeading1 text="HEADING1 PLACEHOLDER" />
+    <NuxtPage />
   </main>
 </template>
 
@@ -13,6 +14,6 @@ import { ElmBreadcrumb, ElmHeading1 } from '@elmethis/core'
 
 <style scoped lang="scss">
 .main {
-  min-width: 800px;
+  width: 800px;
 }
 </style>

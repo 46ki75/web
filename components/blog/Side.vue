@@ -9,7 +9,7 @@
         :createdAt="side.createdAt"
         :updatedAt="side.updatedAt"
         :image="`/api/blog/image/${side.slug}`"
-        :url="`/blog/${side.slug}`"
+        :url="`/blog/article/${side.slug}`"
         :is-horizontal="false"
         :onClick="() => $router.push(`/blog/article/${side.slug}`)"
       />
