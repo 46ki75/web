@@ -1,7 +1,21 @@
 <template>
   <main class="main">
     <ElmBreadcrumb
-      :links="[{ text: 'Home' }, { text: 'Blog' }, { text: 'Article' }]"
+      :links="[
+        {
+          text: 'Home',
+          onClick: () => {
+            $router.push('/')
+          }
+        },
+        {
+          text: 'Blog',
+          onClick: () => {
+            $router.push('/blog')
+          }
+        },
+        { text: 'Article' }
+      ]"
     />
     <ElmHeading1 text="HEADING1 PLACEHOLDER" />
     <NuxtPage />

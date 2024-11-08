@@ -1,18 +1,18 @@
 <template>
   <nav>
     <div class="side">
-      <ElmBookmark
-        v-for="side in data"
-        :key="side.slug"
-        :title="side.title"
-        :description="side.description"
-        :createdAt="side.createdAt"
-        :updatedAt="side.updatedAt"
-        :image="side.ogp"
-        :url="`/blog/article/${side.slug}`"
-        :is-horizontal="false"
-        :onClick="() => $router.push(`/blog/article/${side.slug}`)"
-      />
+      <template v-for="side in data" :key="side.slug">
+        <ElmBookmark
+          :title="side.title"
+          :description="side.description"
+          :createdAt="side.createdAt"
+          :updatedAt="side.updatedAt"
+          :image="side.ogp"
+          :url="`/blog/article/${side.slug}`"
+          :is-horizontal="false"
+          :onClick="() => $router.push(`/blog/article/${side.slug}`)"
+        />
+      </template>
     </div>
   </nav>
 </template>
