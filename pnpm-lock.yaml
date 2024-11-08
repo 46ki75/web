@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@elmethis/core':
+        specifier: 1.0.0-alpha.48
+        version: 1.0.0-alpha.48
       nuxt:
         specifier: ^3.14.159
         version: 3.14.159(@parcel/watcher@2.5.0)(@types/node@22.9.0)(ioredis@5.4.1)(magicast@0.3.5)(rollup@4.24.4)(sass@1.80.6)(terser@5.36.0)(typescript@5.6.3)(vite@5.4.10(@types/node@22.9.0)(sass@1.80.6)(terser@5.36.0))
@@ -177,6 +180,9 @@ packages:
   '@cloudflare/kv-asset-handler@0.3.4':
     resolution: {integrity: sha512-YLPHc8yASwjNkmcDMQMY35yiWjoKAKnhUbPRszBRS0YgH+IXtsMp61j+yTcnCE3oO2DgP0U3iejLC8FTtKDC8Q==}
     engines: {node: '>=16.13'}
+
+  '@elmethis/core@1.0.0-alpha.48':
+    resolution: {integrity: sha512-Et5fnj0y7jFGiDiZS5ERJG26S0NEXoU1fcGvAL0den22cDR3M3GQlbjOpse8cJHlztt6DnxEUkKryP48C8i96Q==}
 
   '@esbuild/aix-ppc64@0.21.5':
     resolution: {integrity: sha512-1SDgH6ZSPTlggy1yI6+Dbkiz8xzpHJEVAlF/AM1tHPLsf5STom9rwtjE4hKAF20FfXXNTFqEYXyJNWh1GiZedQ==}
@@ -3285,6 +3291,8 @@ snapshots:
   '@cloudflare/kv-asset-handler@0.3.4':
     dependencies:
       mime: 3.0.0
+
+  '@elmethis/core@1.0.0-alpha.48': {}
 
   '@esbuild/aix-ppc64@0.21.5':
     optional: true

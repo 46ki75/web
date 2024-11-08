@@ -10,6 +10,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@elmethis/core": "1.0.0-alpha.48",
     "nuxt": "^3.14.159",
     "vue": "latest",
     "vue-router": "latest"
