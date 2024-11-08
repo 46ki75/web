@@ -49,6 +49,8 @@ export default defineEventHandler(async (event) => {
 
     await client.convert({ id: result.id })
 
+    console.log(client.components)
+
     await client.save('public', slug)
 
     return client.components

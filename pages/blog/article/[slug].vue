@@ -1,6 +1,6 @@
 <template>
-  <article :key="JSON.stringify(route.params.slug)">
-    <ElmJsonRenderer v-if="data != null" :json="data" />
+  <article v-if="data != null">
+    <ElmJsonRenderer :json="data" />
   </article>
 </template>
 
