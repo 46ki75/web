@@ -18,7 +18,7 @@
       ]"
     />
     <ElmHeading1 text="HEADING1 PLACEHOLDER" />
-    <NuxtPage />
+    <slot />
   </main>
 </template>
 

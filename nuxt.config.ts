@@ -11,9 +11,13 @@ const { results } = await notion.databases.query({
   }
 })
 
-const routes = results.map(
+const ogpImageRoutes = results.map(
   (page: any) =>
     `/api/blog/image/${page.properties.slug.unique_id.number}/ogp.webp`
+)
+
+const articleRoutes = results.map(
+  (page: any) => `/blog/article/${page.properties.slug.unique_id.number}`
 )
 
 export default defineNuxtConfig({
@@ -33,7 +37,7 @@ export default defineNuxtConfig({
   },
   nitro: {
     prerender: {
-      routes
+      routes: [...ogpImageRoutes, ...articleRoutes]
     }
   }
 })

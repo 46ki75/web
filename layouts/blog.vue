@@ -1,6 +1,8 @@
 <template>
   <div class="body">
-    <BlogMain />
+    <BlogMain>
+      <NuxtPage />
+    </BlogMain>
     <BlogSide />
   </div>
 </template>

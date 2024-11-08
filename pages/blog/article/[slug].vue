@@ -9,8 +9,9 @@ import { ElmJsonRenderer, type ElmJsonRendererProps } from '@elmethis/core'
 
 const route = useRoute()
 
-const { data } = useAsyncData<ElmJsonRendererProps['json']>(() =>
-  $fetch(`/api/blog/article/${route.params.slug}`)
+const { data } = useAsyncData<ElmJsonRendererProps['json']>(
+  `/api/blog/article/${route.params.slug}`,
+  async () => await $fetch(`/api/blog/article/${route.params.slug}`)
 )
 </script>
 
