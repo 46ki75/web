@@ -12,6 +12,14 @@
   </Suspense>
 </template>
 
+<script setup lang="ts">
+useHead({
+  htmlAttrs: {
+    lang: 'ja'
+  }
+})
+</script>
+
 <style lang="scss">
 body {
   margin: 0;
