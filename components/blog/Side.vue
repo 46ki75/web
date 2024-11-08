@@ -3,6 +3,7 @@
     <div class="side">
       <ElmBookmark
         v-for="side in data"
+        :key="side.slug"
         :title="side.title"
         :description="side.description"
         :createdAt="side.createdAt"
@@ -10,6 +11,7 @@
         :image="`/api/blog/image/${side.slug}`"
         :url="`/blog/${side.slug}`"
         :is-horizontal="false"
+        :onClick="() => $router.push(`/blog/article/${side.slug}`)"
       />
     </div>
   </nav>
