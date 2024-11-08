@@ -1,5 +1,5 @@
 <template>
-  <main>
+  <main class="main">
     <ElmBreadcrumb
       :links="[{ text: 'Home' }, { text: 'Blog' }, { text: 'Article' }]"
     />
@@ -11,4 +11,8 @@
 import { ElmBreadcrumb, ElmHeading1 } from '@elmethis/core'
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.main {
+  min-width: 800px;
+}
+</style>

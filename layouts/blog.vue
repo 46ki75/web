@@ -9,7 +9,10 @@
 
 <style scoped lang="scss">
 .body {
+  width: 100%;
   display: flex;
   flex-direction: row;
+  justify-content: center;
+  gap: 1rem;
 }
 </style>
