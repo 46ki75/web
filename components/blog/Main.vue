@@ -28,6 +28,13 @@ import { ElmBreadcrumb, ElmHeading1 } from '@elmethis/core'
 
 <style scoped lang="scss">
 .main {
+  box-sizing: border-box;
   width: 800px;
+  padding: 0.5rem;
+  box-shadow: 0 0 0.25rem rgba(black, 0.05);
+  background-color: rgba(white, 0.1);
+  [data-theme='dark'] & {
+    background-color: rgba(black, 0.1);
+  }
 }
 </style>
