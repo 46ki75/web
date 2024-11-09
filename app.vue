@@ -1,15 +1,7 @@
 <template>
-  <Suspense>
-    <template #default>
-      <NuxtLayout name="default">
-        <NuxtPage />
-      </NuxtLayout>
-    </template>
-
-    <template #fallback>
-      <Fallback />
-    </template>
-  </Suspense>
+  <NuxtLayout name="default">
+    <NuxtPage />
+  </NuxtLayout>
 </template>
 
 <script setup lang="ts">

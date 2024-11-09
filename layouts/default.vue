@@ -1,9 +1,7 @@
 <template>
-  <div>
-    <Header />
-    <slot />
-    <ElmPagetop />
-  </div>
+  <Header />
+  <slot />
+  <ElmPagetop />
 </template>
 
 <script setup lang="ts">
