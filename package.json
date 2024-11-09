@@ -10,7 +10,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "@elmethis/core": "1.0.0-alpha.53",
+    "@elmethis/core": "1.0.0-alpha.54",
     "@elmethis/notion-node": "1.0.0-alpha.13",
     "@notionhq/client": "^2.2.15",
     "nuxt": "^3.14.159",
