@@ -2,6 +2,7 @@
   <Header />
   <slot />
   <ElmPagetop />
+  <Footer />
 </template>
 
 <script setup lang="ts">
