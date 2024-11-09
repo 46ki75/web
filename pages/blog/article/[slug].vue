@@ -1,4 +1,21 @@
 <template>
+  <BlogMain
+    :links="[
+      {
+        text: 'HOME',
+        path: '/'
+      },
+      {
+        text: 'Blog',
+        path: '/blog'
+      },
+      {
+        text: 'Article',
+        path: `/blog/article/${route.params.slug}`
+      }
+    ]"
+    title="BLOG"
+  />
   <article>
     <ElmJsonRenderer v-if="page.data.value != null" :json="page.data.value" />
   </article>
