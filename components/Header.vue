@@ -16,7 +16,7 @@ import { ElmInlineText, ElmToggleTheme } from '@elmethis/core'
   top: 0;
   z-index: 50;
   background-color: rgba(black, 0.025);
-  padding: 1rem;
+  padding: 0.5rem;
   text-align: center;
   box-shadow: 0 0 0.125rem rgba(black, 0.1);
   display: flex;
