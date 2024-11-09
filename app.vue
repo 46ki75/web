@@ -21,10 +21,13 @@ useHead({
 </script>
 
 <style lang="scss">
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
   padding: 0;
-
   transition: background-color 200ms;
 
   background-color: rgba(0, 0, 0, 0.05);
