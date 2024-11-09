@@ -14,6 +14,7 @@ import { ElmInlineText, ElmToggleTheme } from '@elmethis/core'
 .header {
   position: sticky;
   top: 0;
+  z-index: 50;
   background-color: rgba(black, 0.025);
   padding: 1rem;
   text-align: center;
@@ -22,6 +23,7 @@ import { ElmInlineText, ElmToggleTheme } from '@elmethis/core'
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
+  backdrop-filter: blur(0.125rem);
 }
 
 .icon-container {
