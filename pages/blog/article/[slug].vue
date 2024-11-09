@@ -17,9 +17,7 @@
     :title="meta.data.value?.title"
   />
   <article>
-    <ClientOnly>
-      <ElmJsonRenderer v-if="page.data.value != null" :json="page.data.value"
-    /></ClientOnly>
+    <ElmJsonRenderer v-if="page.data.value != null" :json="page.data.value" />
   </article>
 </template>
 
