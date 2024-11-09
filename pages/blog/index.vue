@@ -1,5 +1,5 @@
 <template>
-  <BlogMain
+  <BlogInfo
     :links="[
       {
         text: 'HOME',
