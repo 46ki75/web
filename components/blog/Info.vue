@@ -7,6 +7,7 @@
       }))
     "
   />
+  <BlogDate :created-at="createdAt" :updated-at="updatedAt" />
   <ElmHeading1 v-if="title != null" :text="title" />
 </template>
 
@@ -19,6 +20,8 @@ interface BlogMainProps {
     path: string
   }>
   title?: string
+  createdAt?: string
+  updatedAt?: string
 }
 
 defineProps<BlogMainProps>()

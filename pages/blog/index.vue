@@ -11,6 +11,8 @@
       }
     ]"
     title="BLOG"
+    created-at="2021-10-01"
+    updated-at="2021-10-01"
   />
   <div>BLOG TOP</div>
 </template>
