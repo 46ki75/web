@@ -17,6 +17,7 @@
     :title="meta.data.value?.title"
     :created-at="meta.data.value?.createdAt.substring(0, 10)"
     :updated-at="meta.data.value?.updatedAt.substring(0, 10)"
+    :tags="meta.data.value?.tags"
   />
   <article>
     <ElmJsonRenderer v-if="page.data.value != null" :json="page.data.value" />
