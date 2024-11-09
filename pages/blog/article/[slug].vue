@@ -1,6 +1,6 @@
 <template>
-  <article v-if="data != null">
-    <ElmJsonRenderer :json="data" />
+  <article>
+    <ElmJsonRenderer v-if="page.data.value != null" :json="page.data.value" />
   </article>
 </template>
 
@@ -23,7 +23,7 @@ interface BlogMeta {
 
 const route = useRoute()
 
-const { data } = useAsyncData<ElmJsonRendererProps['json']>(
+const page = useAsyncData<ElmJsonRendererProps['json']>(
   `/api/blog/article/${route.params.slug}`,
   async () => await $fetch(`/api/blog/article/${route.params.slug}`)
 )

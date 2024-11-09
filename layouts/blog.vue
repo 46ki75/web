@@ -18,6 +18,8 @@ import { ElmParallax } from '@elmethis/core'
 <style scoped lang="scss">
 .body {
   width: 100%;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
   display: flex;
   flex-direction: row;
   justify-content: center;
