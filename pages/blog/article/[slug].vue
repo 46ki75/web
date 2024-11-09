@@ -14,7 +14,7 @@
         path: `/blog/article/${route.params.slug}`
       }
     ]"
-    title="BLOG"
+    :title="meta.data.value?.title"
   />
   <article>
     <ElmJsonRenderer v-if="page.data.value != null" :json="page.data.value" />

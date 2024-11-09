@@ -7,7 +7,7 @@
       }))
     "
   />
-  <ElmHeading1 text="HEADING1 PLACEHOLDER" />
+  <ElmHeading1 v-if="title != null" :text="title" />
 </template>
 
 <script setup lang="ts">
@@ -18,7 +18,7 @@ interface BlogMainProps {
     text: string
     path: string
   }>
-  title: string
+  title?: string
 }
 
 defineProps<BlogMainProps>()
