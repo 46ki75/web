@@ -2,15 +2,15 @@
   <nav>
     <div class="side">
       <template v-for="side in data" :key="side.slug">
-        <ElmBookmark
-          :title="side.title"
-          :description="side.description"
-          :createdAt="side.createdAt.substring(0, 10)"
-          :updatedAt="side.updatedAt.substring(0, 10)"
-          :image="side.ogp"
-          :is-horizontal="false"
-          :onClick="() => $router.push(`/blog/article/${side.slug}`)"
-        />
+        <NuxtLink :to="`/blog/article/${side.slug}`" :style="{ all: 'unset' }">
+          <ElmBookmark
+            :title="side.title"
+            :description="side.description"
+            :createdAt="side.createdAt.substring(0, 10)"
+            :updatedAt="side.updatedAt.substring(0, 10)"
+            :image="side.ogp"
+            :is-horizontal="false"
+        /></NuxtLink>
       </template>
     </div>
   </nav>

@@ -15,6 +15,7 @@ useHead({
 <style lang="scss">
 html {
   scroll-behavior: smooth;
+  font-family: 'Noto Sans JP', ui-sans-serif, sans-serif;
 }
 
 body {
