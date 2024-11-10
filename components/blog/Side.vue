@@ -18,22 +18,31 @@
 
 <script setup lang="ts">
 import { ElmBookmark } from '@elmethis/core'
+import { z } from 'zod'
 
-interface BlogMeta {
-  slug: number
-  title: string
-  description: string
-  tags: Array<{
-    id: string
-    name: string
-    color: string
-  }>
-  createdAt: string
-  updatedAt: string
-  ogp: string
-}
+const blogMetaSchema = z.object({
+  slug: z.number(),
+  title: z.string(),
+  description: z.string(),
+  tags: z.array(
+    z.object({
+      id: z.string(),
+      name: z.string(),
+      color: z.string()
+    })
+  ),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+  ogp: z.string()
+})
 
-const { data } = useAsyncData(() => $fetch<BlogMeta[]>('/api/blog/side'))
+export type BlogMeta = z.infer<typeof blogMetaSchema>
+
+const { data } = useAsyncData(async () => {
+  const response = await $fetch<unknown[]>('/api/blog/side')
+  const result = response.map((meta) => blogMetaSchema.parse(meta))
+  return result
+})
 </script>
 
 <style scoped lang="scss">
