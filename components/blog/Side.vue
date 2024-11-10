@@ -1,7 +1,7 @@
 <template>
   <nav>
     <div class="side">
-      <template v-for="side in data" :key="side.slug">
+      <template v-for="side in data">
         <NuxtLink :to="`/blog/article/${side.slug}`" :style="{ all: 'unset' }">
           <ElmBookmark
             :title="side.title"
@@ -10,7 +10,9 @@
             :updatedAt="side.updatedAt.substring(0, 10)"
             :image="side.ogp"
             :is-horizontal="false"
-        /></NuxtLink>
+            :onClick="() => $router.push(`/blog/article/${side.slug}`)"
+          />
+        </NuxtLink>
       </template>
     </div>
   </nav>
