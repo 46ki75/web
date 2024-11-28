@@ -10,8 +10,6 @@ impl Blog {
         ctx: &async_graphql::Context<'_>,
         slug: u64,
     ) -> Result<Self, async_graphql::Error> {
-        dotenvy::dotenv().ok();
-
         let notion_token = std::env::var("NOTION_API_KEY")?;
         let database_id = std::env::var("NOTION_BLOG_DATABASE_ID")?;
 
