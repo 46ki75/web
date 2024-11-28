@@ -244,6 +244,7 @@ dependencies = [
 name = "blog-block-image"
 version = "0.1.0"
 dependencies = [
+ "bytes",
  "dotenvy",
  "infer",
  "lambda_http",
