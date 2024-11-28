@@ -37,6 +37,17 @@ impl Ogp {
             .map(|s| s.to_string())
     }
 
+    pub async fn description(&self) -> Option<String> {
+        let document = scraper::Html::parse_document(&self.body);
+        let selector = scraper::Selector::parse("meta[name='description']").ok()?;
+        document
+            .select(&selector)
+            .next()?
+            .value()
+            .attr("content")
+            .map(|s| s.to_string())
+    }
+
     pub async fn og_title(&self) -> Option<String> {
         let document = scraper::Html::parse_document(&self.body);
         let selector = scraper::Selector::parse("meta[property='og:title']").ok()?;
