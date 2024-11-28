@@ -9,7 +9,7 @@ pub struct Blog {
 
 impl Blog {
     pub async fn get_by_slug(
-        _: &async_graphql::Context<'_>,
+        _ctx: &async_graphql::Context<'_>,
         slug: u64,
     ) -> Result<Self, async_graphql::Error> {
         let notion_token = std::env::var("NOTION_API_KEY")?;
@@ -72,7 +72,9 @@ impl Blog {
         })
     }
 
-    pub async fn list(_: &async_graphql::Context<'_>) -> Result<Vec<Self>, async_graphql::Error> {
+    pub async fn list(
+        _ctx: &async_graphql::Context<'_>,
+    ) -> Result<Vec<Self>, async_graphql::Error> {
         let notion_token = std::env::var("NOTION_API_KEY")?;
         let database_id = std::env::var("NOTION_BLOG_DATABASE_ID")?;
 
