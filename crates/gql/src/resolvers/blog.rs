@@ -5,6 +5,14 @@ pub struct Blog {
     pub ogp_image: Option<String>,
     pub created_at: String,
     pub updated_at: String,
+    pub tags: Vec<Tag>,
+}
+
+#[derive(Clone, async_graphql::SimpleObject)]
+pub struct Tag {
+    id: String,
+    name: String,
+    color: String,
 }
 
 impl Blog {
@@ -62,6 +70,37 @@ impl Blog {
             .ok_or(async_graphql::Error::new("updated_at not found"))?
             .to_string();
 
+        let tags = blog
+            .properties
+            .get("tags")
+            .map(|value| match &value {
+                notionrs::page::PageProperty::MultiSelect(tags) => tags
+                    .multi_select
+                    .iter()
+                    .map(|tag| {
+                        let id = tag
+                            .id
+                            .clone()
+                            .ok_or_else(|| async_graphql::Error::new("tag id not found"))?;
+
+                        let color = tag
+                            .color
+                            .ok_or_else(|| async_graphql::Error::new("tag color not found"))?;
+
+                        let color_string = serde_json::to_string(&color)
+                            .map_err(|e| async_graphql::Error::new(e.to_string()))?;
+
+                        Ok(Tag {
+                            id,
+                            name: tag.name.to_string(),
+                            color: color_string,
+                        })
+                    })
+                    .collect::<Result<Vec<Tag>, async_graphql::Error>>(),
+                _ => Err(async_graphql::Error::new("tags not found")),
+            })
+            .unwrap_or_else(|| Ok(vec![]))?;
+
         Ok(Blog {
             slug: slug.to_string(),
             title,
@@ -69,6 +108,7 @@ impl Blog {
             ogp_image,
             created_at,
             updated_at,
+            tags,
         })
     }
 
@@ -128,6 +168,36 @@ impl Blog {
                     .ok_or(async_graphql::Error::new("updated_at not found"))?
                     .to_string();
 
+                let tags =
+                    blog.properties
+                        .get("tags")
+                        .map(|value| match &value {
+                            notionrs::page::PageProperty::MultiSelect(tags) => tags
+                                .multi_select
+                                .iter()
+                                .map(|tag| {
+                                    let id = tag.id.clone().ok_or_else(|| {
+                                        async_graphql::Error::new("tag id not found")
+                                    })?;
+
+                                    let color = tag.color.ok_or_else(|| {
+                                        async_graphql::Error::new("tag color not found")
+                                    })?;
+
+                                    let color_string = serde_json::to_string(&color)
+                                        .map_err(|e| async_graphql::Error::new(e.to_string()))?;
+
+                                    Ok(Tag {
+                                        id,
+                                        name: tag.name.to_string(),
+                                        color: color_string,
+                                    })
+                                })
+                                .collect::<Result<Vec<Tag>, async_graphql::Error>>(),
+                            _ => Err(async_graphql::Error::new("tags not found")),
+                        })
+                        .unwrap_or_else(|| Ok(vec![]))?;
+
                 Ok(Blog {
                     slug,
                     title,
@@ -135,6 +205,7 @@ impl Blog {
                     ogp_image,
                     created_at,
                     updated_at,
+                    tags,
                 })
             })
             .collect::<Result<Vec<Blog>, async_graphql::Error>>()?;
@@ -176,5 +247,9 @@ impl Blog {
 
     pub async fn updated_at(&self) -> String {
         self.updated_at.to_string()
+    }
+
+    pub async fn tags(&self) -> Vec<Tag> {
+        self.tags.clone()
     }
 }
