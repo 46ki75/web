@@ -24,3 +24,6 @@ logs
 !.env.example
 
 _notion
+
+# Rust
+target
