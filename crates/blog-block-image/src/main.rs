@@ -4,7 +4,8 @@ mod fetch;
 
 /// e.g.
 ///
-/// GET /?block_id={image_block_id}
+/// - GET /?block_id={image_block_id}
+/// - GET /?slug={slug}
 async fn function_handler(
     event: lambda_http::Request,
 ) -> Result<lambda_http::Response<lambda_http::Body>, lambda_http::Error> {
