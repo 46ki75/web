@@ -16,7 +16,9 @@ impl Blog {
 
         let client = notionrs::Client::new().secret(notion_token);
 
-        let filter = notionrs::filter::Filter::unique_id_equals("slug", slug);
+        let slug_filter = notionrs::filter::Filter::unique_id_equals("slug", slug);
+        let status_filter = notionrs::filter::Filter::status_equals("status", "published");
+        let filter = notionrs::filter::Filter::and(vec![slug_filter, status_filter]);
 
         let request = client
             .query_database()
@@ -55,7 +57,12 @@ impl Blog {
 
         let client = notionrs::Client::new().secret(notion_token);
 
-        let request = client.query_database().database_id(database_id);
+        let status_filter = notionrs::filter::Filter::status_equals("status", "published");
+
+        let request = client
+            .query_database()
+            .database_id(database_id)
+            .filter(status_filter);
 
         let response = request.send().await?;
 
