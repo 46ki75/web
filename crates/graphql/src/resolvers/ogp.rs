@@ -68,4 +68,19 @@ impl Ogp {
 
         og_description
     }
+
+    pub async fn og_image(&self) -> String {
+        let document = scraper::Html::parse_document(&self.body);
+        let selector = scraper::Selector::parse("meta[property='og:image']").unwrap();
+        let og_image = document
+            .select(&selector)
+            .next()
+            .unwrap()
+            .value()
+            .attr("content")
+            .unwrap()
+            .to_string();
+
+        og_image
+    }
 }
