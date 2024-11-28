@@ -19,7 +19,8 @@ async fn function_handler(
     if block_id_query.is_none() && slug_query.is_none() {
         return Ok(lambda_http::Response::builder()
             .status(400)
-            .body("block_id or slug not found".into())?);
+            .body("block_id or slug not found".into())
+            .map_err(Box::new)?);
     }
 
     let bytes = if block_id_query.is_some() {
@@ -31,7 +32,8 @@ async fn function_handler(
                     None => {
                         return Ok(lambda_http::Response::builder()
                             .status(400)
-                            .body("id not found".into())?)
+                            .body("id not found".into())
+                            .map_err(Box::new)?)
                     }
                 }
                 .to_string();
@@ -41,7 +43,8 @@ async fn function_handler(
             None => {
                 return Ok(lambda_http::Response::builder()
                     .status(400)
-                    .body("id not found".into())?)
+                    .body("id not found".into())
+                    .map_err(Box::new)?)
             }
         }
     } else {
@@ -53,7 +56,8 @@ async fn function_handler(
                     None => {
                         return Ok(lambda_http::Response::builder()
                             .status(400)
-                            .body("slug not found".into())?)
+                            .body("slug not found".into())
+                            .map_err(Box::new)?)
                     }
                 }
                 .to_string()
@@ -61,7 +65,8 @@ async fn function_handler(
             None => {
                 return Ok(lambda_http::Response::builder()
                     .status(400)
-                    .body("slug not found".into())?)
+                    .body("slug not found".into())
+                    .map_err(Box::new)?)
             }
         };
 
@@ -70,7 +75,8 @@ async fn function_handler(
             Err(_) => {
                 return Ok(lambda_http::Response::builder()
                     .status(400)
-                    .body("slug is not a number".into())?)
+                    .body("slug is not a number".into())
+                    .map_err(Box::new)?)
             }
         };
 
