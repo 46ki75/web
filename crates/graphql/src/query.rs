@@ -27,4 +27,11 @@ impl QueryRoot {
     ) -> Result<Vec<resolvers::blog::Blog>, async_graphql::Error> {
         resolvers::blog::Blog::list(ctx, sort.unwrap_or_default()).await
     }
+
+    pub async fn ogp(
+        &self,
+        ctx: &async_graphql::Context<'_>,
+    ) -> Result<resolvers::ogp::Ogp, async_graphql::Error> {
+        resolvers::ogp::Ogp::new(ctx)
+    }
 }
