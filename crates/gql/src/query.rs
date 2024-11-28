@@ -1,4 +1,5 @@
 use async_graphql::*;
+use notionrs::database::sort;
 
 pub struct QueryRoot;
 
@@ -25,7 +26,8 @@ impl QueryRoot {
     pub async fn list_blog(
         &self,
         ctx: &async_graphql::Context<'_>,
+        sort: Option<resolvers::blog::SortDirection>,
     ) -> Result<Vec<resolvers::blog::Blog>, async_graphql::Error> {
-        resolvers::blog::Blog::list(ctx).await
+        resolvers::blog::Blog::list(ctx, sort.unwrap_or_default()).await
     }
 }

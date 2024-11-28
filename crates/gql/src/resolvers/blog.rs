@@ -15,6 +15,13 @@ pub struct Tag {
     color: String,
 }
 
+#[derive(async_graphql::Enum, Copy, Clone, Eq, PartialEq, Default)]
+pub enum SortDirection {
+    Asc,
+    #[default]
+    Desc,
+}
+
 impl Blog {
     pub async fn get_by_slug(
         _ctx: &async_graphql::Context<'_>,
@@ -114,7 +121,8 @@ impl Blog {
     }
 
     pub async fn list(
-        _ctx: &async_graphql::Context<'_>,
+        _: &async_graphql::Context<'_>,
+        sort: SortDirection,
     ) -> Result<Vec<Self>, async_graphql::Error> {
         let notion_token = std::env::var("NOTION_API_KEY")?;
         let database_id = std::env::var("NOTION_BLOG_DATABASE_ID")?;
