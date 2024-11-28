@@ -2,6 +2,7 @@ pub struct Blog {
     pub slug: String,
     pub title: String,
     pub description: String,
+    pub ogp_image: Option<String>,
 }
 
 impl Blog {
@@ -44,10 +45,16 @@ impl Blog {
             .ok_or(async_graphql::Error::new("description not found"))?
             .to_string();
 
+        let ogp_image = blog
+            .properties
+            .get("ogp_image")
+            .map(|value| value.to_string());
+
         Ok(Blog {
             slug: slug.to_string(),
             title,
             description,
+            ogp_image,
         })
     }
 
@@ -88,10 +95,16 @@ impl Blog {
                     .ok_or(async_graphql::Error::new("description not found"))?
                     .to_string();
 
+                let ogp_image = blog
+                    .properties
+                    .get("ogpImage")
+                    .map(|value| value.to_string());
+
                 Ok(Blog {
                     slug,
                     title,
                     description,
+                    ogp_image,
                 })
             })
             .collect::<Result<Vec<Blog>, async_graphql::Error>>()?;
@@ -112,5 +125,18 @@ impl Blog {
 
     pub async fn description(&self) -> String {
         self.description.to_string()
+    }
+
+    pub async fn ogp_image(&self) -> Option<String> {
+        match &self.ogp_image {
+            Some(image) => {
+                if image.is_empty() {
+                    None
+                } else {
+                    Some(image.to_string())
+                }
+            }
+            None => None,
+        }
     }
 }
