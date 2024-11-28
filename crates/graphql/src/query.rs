@@ -28,7 +28,7 @@ impl QueryRoot {
         resolvers::blog::Blog::list(ctx, sort.unwrap_or_default()).await
     }
 
-    pub async fn ogp(
+    pub async fn fetch_ogp(
         &self,
         ctx: &async_graphql::Context<'_>,
         url: String,
