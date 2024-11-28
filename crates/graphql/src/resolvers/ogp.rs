@@ -91,4 +91,59 @@ impl Ogp {
             .attr("content")
             .map(|s| s.to_string())
     }
+
+    pub async fn article_published_time(&self) -> Option<String> {
+        let document = scraper::Html::parse_document(&self.body);
+        let selector = scraper::Selector::parse("meta[property='article:published_time']").ok()?;
+        document
+            .select(&selector)
+            .next()?
+            .value()
+            .attr("content")
+            .map(|s| s.to_string())
+    }
+
+    pub async fn article_modified_time(&self) -> Option<String> {
+        let document = scraper::Html::parse_document(&self.body);
+        let selector = scraper::Selector::parse("meta[property='article:modified_time']").ok()?;
+        document
+            .select(&selector)
+            .next()?
+            .value()
+            .attr("content")
+            .map(|s| s.to_string())
+    }
+
+    pub async fn article_author(&self) -> Option<String> {
+        let document = scraper::Html::parse_document(&self.body);
+        let selector = scraper::Selector::parse("meta[property='article:author']").ok()?;
+        document
+            .select(&selector)
+            .next()?
+            .value()
+            .attr("content")
+            .map(|s| s.to_string())
+    }
+
+    pub async fn article_section(&self) -> Option<String> {
+        let document = scraper::Html::parse_document(&self.body);
+        let selector = scraper::Selector::parse("meta[property='article:section']").ok()?;
+        document
+            .select(&selector)
+            .next()?
+            .value()
+            .attr("content")
+            .map(|s| s.to_string())
+    }
+
+    pub async fn article_tag(&self) -> Option<String> {
+        let document = scraper::Html::parse_document(&self.body);
+        let selector = scraper::Selector::parse("meta[property='article:tag']").ok()?;
+        document
+            .select(&selector)
+            .next()?
+            .value()
+            .attr("content")
+            .map(|s| s.to_string())
+    }
 }
