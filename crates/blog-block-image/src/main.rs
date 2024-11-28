@@ -2,16 +2,16 @@ use lambda_http::RequestExt;
 
 /// e.g.
 ///
-/// GET /?id={image_block_id}
+/// GET /?block_id={image_block_id}
 async fn function_handler(
     event: lambda_http::Request,
 ) -> Result<lambda_http::Response<lambda_http::Body>, lambda_http::Error> {
     dotenvy::dotenv().ok();
 
     let query_params = event.query_string_parameters();
-    let query = query_params.all("id");
+    let block_id_query = query_params.all("block_id");
 
-    let id = match query {
+    let block_id = match block_id_query {
         Some(queries) => {
             let url_query = queries.first();
             match url_query {
@@ -31,12 +31,10 @@ async fn function_handler(
         }
     };
 
-    println!("id: {:?}", id);
-
     let notion_token = std::env::var("NOTION_API_KEY")?;
     let client = notionrs::Client::new().secret(notion_token);
 
-    let request = client.get_block().block_id(id);
+    let request = client.get_block().block_id(block_id);
 
     let response = request.send().await?;
 
