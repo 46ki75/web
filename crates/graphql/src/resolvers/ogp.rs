@@ -26,45 +26,44 @@ impl Ogp {
         self.body.to_string()
     }
 
-    pub async fn title(&self) -> String {
+    pub async fn title(&self) -> Option<String> {
         let document = scraper::Html::parse_document(&self.body);
         let selector = scraper::Selector::parse("title").unwrap();
-        let title = document
-            .select(&selector)
-            .next()
-            .unwrap()
-            .text()
-            .collect::<String>();
+        let title_element = document.select(&selector).next();
+        let title = match title_element {
+            Some(element) => element.text().collect::<String>(),
+            None => return None,
+        };
 
-        title
+        Some(title)
     }
 
-    pub async fn og_title(&self) -> String {
+    pub async fn og_title(&self) -> Option<String> {
         let document = scraper::Html::parse_document(&self.body);
         let selector = scraper::Selector::parse("meta[property='og:title']").unwrap();
-        let og_title = document
-            .select(&selector)
-            .next()
-            .unwrap()
-            .value()
-            .attr("content")
-            .unwrap()
-            .to_string();
+        let og_title_element = document.select(&selector).next();
+        let og_title = match og_title_element {
+            Some(element) => {
+                let og_title = element.value().attr("content").unwrap_or_default();
+                Some(og_title.to_string())
+            }
+            None => None,
+        };
 
         og_title
     }
 
-    pub async fn og_description(&self) -> String {
+    pub async fn og_description(&self) -> Option<String> {
         let document = scraper::Html::parse_document(&self.body);
         let selector = scraper::Selector::parse("meta[property='og:description']").unwrap();
-        let og_description = document
-            .select(&selector)
-            .next()
-            .unwrap()
-            .value()
-            .attr("content")
-            .unwrap()
-            .to_string();
+        let og_description_element = document.select(&selector).next();
+        let og_description = match og_description_element {
+            Some(element) => {
+                let og_description = element.value().attr("content").unwrap_or_default();
+                Some(og_description.to_string())
+            }
+            None => None,
+        };
 
         og_description
     }
@@ -72,14 +71,14 @@ impl Ogp {
     pub async fn og_image(&self) -> String {
         let document = scraper::Html::parse_document(&self.body);
         let selector = scraper::Selector::parse("meta[property='og:image']").unwrap();
-        let og_image = document
-            .select(&selector)
-            .next()
-            .unwrap()
-            .value()
-            .attr("content")
-            .unwrap()
-            .to_string();
+        let og_image_element = document.select(&selector).next();
+        let og_image = match og_image_element {
+            Some(element) => {
+                let og_image = element.value().attr("content").unwrap_or_default();
+                og_image.to_string()
+            }
+            None => "".to_string(),
+        };
 
         og_image
     }
