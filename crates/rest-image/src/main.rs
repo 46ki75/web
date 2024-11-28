@@ -6,30 +6,46 @@ use lambda_http::RequestExt;
 async fn function_handler(
     event: lambda_http::Request,
 ) -> Result<lambda_http::Response<lambda_http::Body>, lambda_http::Error> {
-    let url = event
-        .query_string_parameters()
-        .all("url")
-        .unwrap()
-        .first()
-        .ok_or(lambda_http::Error::from("url not found"))?
-        .to_string();
+    let query_params = event.query_string_parameters();
+    let query = query_params.all("url");
+
+    let url = match query {
+        Some(queries) => {
+            let url_query = queries.first();
+            match url_query {
+                Some(url) => url,
+                None => {
+                    return Ok(lambda_http::Response::builder()
+                        .status(400)
+                        .body("url not found".into())?)
+                }
+            }
+            .to_string()
+        }
+        None => {
+            return Ok(lambda_http::Response::builder()
+                .status(400)
+                .body("url not found".into())?)
+        }
+    };
 
     let client = reqwest::Client::new();
 
     let response = client.get(&url).send().await?;
 
-    let headers = response.headers();
+    let headers = response.headers().clone();
+
+    let bytes = response.bytes().await?;
+
+    let body = lambda_http::Body::Binary(bytes.to_vec());
 
     let content_type = headers
         .get("content-type")
         .unwrap()
         .to_str()
-        .unwrap()
-        .to_string();
-
-    let bytes = response.bytes().await?;
-
-    let body = lambda_http::Body::Binary(bytes.to_vec());
+        .unwrap_or_else(|_| {
+            infer::get(&bytes).map_or("application/octet-stream", |t| t.mime_type())
+        });
 
     let response = lambda_http::Response::builder()
         .status(200)
