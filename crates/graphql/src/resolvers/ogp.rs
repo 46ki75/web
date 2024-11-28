@@ -9,7 +9,11 @@ impl Ogp {
         url: String,
     ) -> Result<Self, async_graphql::Error> {
         let client = reqwest::Client::new();
-        let response = client.get(url.clone()).send().await?;
+        let response = client
+            .get(url.clone())
+            .header("User-Agent", "reqwest/0.12")
+            .send()
+            .await?;
         let body = response.text().await?;
 
         Ok(Ogp { url, body })
