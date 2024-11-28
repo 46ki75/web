@@ -1,4 +1,5 @@
 pub struct Blog {
+    pub id: String,
     pub slug: String,
     pub title: String,
     pub description: String,
@@ -110,6 +111,7 @@ impl Blog {
             .unwrap_or_else(|| Ok(vec![]))?;
 
         Ok(Blog {
+            id: blog.id.clone(),
             slug: slug.to_string(),
             title,
             description,
@@ -215,6 +217,7 @@ impl Blog {
                         .unwrap_or_else(|| Ok(vec![]))?;
 
                 Ok(Blog {
+                    id: blog.id.clone(),
                     slug,
                     title,
                     description,
@@ -232,6 +235,10 @@ impl Blog {
 
 #[async_graphql::Object]
 impl Blog {
+    pub async fn id(&self) -> String {
+        self.id.to_string()
+    }
+
     pub async fn slug(&self) -> String {
         self.slug.to_string()
     }
