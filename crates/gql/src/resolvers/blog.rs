@@ -88,7 +88,8 @@ impl Blog {
                             .ok_or_else(|| async_graphql::Error::new("tag color not found"))?;
 
                         let color_string = serde_json::to_string(&color)
-                            .map_err(|e| async_graphql::Error::new(e.to_string()))?;
+                            .map_err(|e| async_graphql::Error::new(e.to_string()))?
+                            .replace("\"", "");
 
                         Ok(Tag {
                             id,
@@ -185,7 +186,8 @@ impl Blog {
                                     })?;
 
                                     let color_string = serde_json::to_string(&color)
-                                        .map_err(|e| async_graphql::Error::new(e.to_string()))?;
+                                        .map_err(|e| async_graphql::Error::new(e.to_string()))?
+                                        .replace("\"", "");
 
                                     Ok(Tag {
                                         id,
