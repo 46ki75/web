@@ -31,7 +31,8 @@ impl QueryRoot {
     pub async fn ogp(
         &self,
         ctx: &async_graphql::Context<'_>,
+        url: String,
     ) -> Result<resolvers::ogp::Ogp, async_graphql::Error> {
-        resolvers::ogp::Ogp::new(ctx)
+        resolvers::ogp::Ogp::new(ctx, url).await
     }
 }
