@@ -5,7 +5,7 @@ pub struct Blog {
 }
 
 impl Blog {
-    pub async fn get(
+    pub async fn get_by_slug(
         ctx: &async_graphql::Context<'_>,
         slug: u64,
     ) -> Result<Self, async_graphql::Error> {
@@ -49,24 +49,47 @@ impl Blog {
         })
     }
 
-    pub fn list(ctx: &async_graphql::Context) -> Result<Vec<Self>, async_graphql::Error> {
-        Ok(vec![
-            Blog {
-                slug: "001".to_string(),
-                title: "First blog".to_string(),
-                description: "First blog description".to_string(),
-            },
-            Blog {
-                slug: "002".to_string(),
-                title: "Second blog".to_string(),
-                description: "Second blog description".to_string(),
-            },
-            Blog {
-                slug: "003".to_string(),
-                title: "Third blog".to_string(),
-                description: "Third blog description".to_string(),
-            },
-        ])
+    pub async fn list(ctx: &async_graphql::Context<'_>) -> Result<Vec<Self>, async_graphql::Error> {
+        let notion_token = std::env::var("NOTION_API_KEY")?;
+        let database_id = std::env::var("NOTION_BLOG_DATABASE_ID")?;
+
+        let client = notionrs::Client::new().secret(notion_token);
+
+        let request = client.query_database().database_id(database_id);
+
+        let response = request.send().await?;
+
+        let blogs = response
+            .results
+            .iter()
+            .map(|blog| {
+                let slug = blog
+                    .properties
+                    .get("slug")
+                    .ok_or(async_graphql::Error::new("slug not found"))?
+                    .to_string();
+
+                let title = blog
+                    .properties
+                    .get("title")
+                    .ok_or(async_graphql::Error::new("title not found"))?
+                    .to_string();
+
+                let description = blog
+                    .properties
+                    .get("description")
+                    .ok_or(async_graphql::Error::new("description not found"))?
+                    .to_string();
+
+                Ok(Blog {
+                    slug,
+                    title,
+                    description,
+                })
+            })
+            .collect::<Result<Vec<Blog>, async_graphql::Error>>()?;
+
+        Ok(blogs)
     }
 }
 

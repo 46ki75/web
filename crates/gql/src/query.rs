@@ -14,18 +14,18 @@ impl QueryRoot {
         resolvers::greet::Greet::new(ctx)
     }
 
-    pub async fn get_blog(
+    pub async fn get_blog_by_slug(
         &self,
         ctx: &async_graphql::Context<'_>,
         slug: u64,
     ) -> Result<resolvers::blog::Blog, async_graphql::Error> {
-        resolvers::blog::Blog::get(ctx, slug).await
+        resolvers::blog::Blog::get_by_slug(ctx, slug).await
     }
 
     pub async fn list_blog(
         &self,
         ctx: &async_graphql::Context<'_>,
     ) -> Result<Vec<resolvers::blog::Blog>, async_graphql::Error> {
-        resolvers::blog::Blog::list(ctx)
+        resolvers::blog::Blog::list(ctx).await
     }
 }
