@@ -17,9 +17,9 @@ impl QueryRoot {
     pub async fn get_blog(
         &self,
         ctx: &async_graphql::Context<'_>,
-        slug: String,
+        slug: u64,
     ) -> Result<resolvers::blog::Blog, async_graphql::Error> {
-        resolvers::blog::Blog::new(ctx, slug)
+        resolvers::blog::Blog::get(ctx, slug).await
     }
 
     pub async fn list_blog(
