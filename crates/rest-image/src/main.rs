@@ -2,14 +2,16 @@ use lambda_http::RequestExt;
 
 /// e.g.
 ///
-/// GET /?url=https://example.com/image.jpg
+/// GET /?id={image_block_id}
 async fn function_handler(
     event: lambda_http::Request,
 ) -> Result<lambda_http::Response<lambda_http::Body>, lambda_http::Error> {
-    let query_params = event.query_string_parameters();
-    let query = query_params.all("url");
+    dotenvy::dotenv().ok();
 
-    let url = match query {
+    let query_params = event.query_string_parameters();
+    let query = query_params.all("id");
+
+    let id = match query {
         Some(queries) => {
             let url_query = queries.first();
             match url_query {
@@ -17,7 +19,7 @@ async fn function_handler(
                 None => {
                     return Ok(lambda_http::Response::builder()
                         .status(400)
-                        .body("url not found".into())?)
+                        .body("id not found".into())?)
                 }
             }
             .to_string()
@@ -25,13 +27,31 @@ async fn function_handler(
         None => {
             return Ok(lambda_http::Response::builder()
                 .status(400)
-                .body("url not found".into())?)
+                .body("id not found".into())?)
+        }
+    };
+
+    println!("id: {:?}", id);
+
+    let notion_token = std::env::var("NOTION_API_KEY")?;
+    let client = notionrs::Client::new().secret(notion_token);
+
+    let request = client.get_block().block_id(id);
+
+    let response = request.send().await?;
+
+    let url = match response.block {
+        notionrs::block::Block::Image { image } => image.get_url(),
+        _ => {
+            return Ok(lambda_http::Response::builder()
+                .status(400)
+                .body("image block not found".into())?)
         }
     };
 
     let client = reqwest::Client::new();
 
-    let response = client.get(&url).send().await?;
+    let response = client.get(url).send().await?;
 
     let headers = response.headers().clone();
 

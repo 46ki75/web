@@ -1480,8 +1480,10 @@ dependencies = [
 name = "rest-image"
 version = "0.1.0"
 dependencies = [
+ "dotenvy",
  "infer",
  "lambda_http",
+ "notionrs",
  "openssl",
  "reqwest",
  "tokio",
