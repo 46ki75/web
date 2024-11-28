@@ -3,11 +3,13 @@ pub struct Blog {
     pub title: String,
     pub description: String,
     pub ogp_image: Option<String>,
+    pub created_at: String,
+    pub updated_at: String,
 }
 
 impl Blog {
     pub async fn get_by_slug(
-        ctx: &async_graphql::Context<'_>,
+        _: &async_graphql::Context<'_>,
         slug: u64,
     ) -> Result<Self, async_graphql::Error> {
         let notion_token = std::env::var("NOTION_API_KEY")?;
@@ -48,15 +50,29 @@ impl Blog {
             .get("ogp_image")
             .map(|value| value.to_string());
 
+        let created_at = blog
+            .properties
+            .get("createdAt")
+            .ok_or(async_graphql::Error::new("created_at not found"))?
+            .to_string();
+
+        let updated_at = blog
+            .properties
+            .get("updatedAt")
+            .ok_or(async_graphql::Error::new("updated_at not found"))?
+            .to_string();
+
         Ok(Blog {
             slug: slug.to_string(),
             title,
             description,
             ogp_image,
+            created_at,
+            updated_at,
         })
     }
 
-    pub async fn list(ctx: &async_graphql::Context<'_>) -> Result<Vec<Self>, async_graphql::Error> {
+    pub async fn list(_: &async_graphql::Context<'_>) -> Result<Vec<Self>, async_graphql::Error> {
         let notion_token = std::env::var("NOTION_API_KEY")?;
         let database_id = std::env::var("NOTION_BLOG_DATABASE_ID")?;
 
@@ -98,11 +114,25 @@ impl Blog {
                     .get("ogpImage")
                     .map(|value| value.to_string());
 
+                let created_at = blog
+                    .properties
+                    .get("createdAt")
+                    .ok_or(async_graphql::Error::new("created_at not found"))?
+                    .to_string();
+
+                let updated_at = blog
+                    .properties
+                    .get("updatedAt")
+                    .ok_or(async_graphql::Error::new("updated_at not found"))?
+                    .to_string();
+
                 Ok(Blog {
                     slug,
                     title,
                     description,
                     ogp_image,
+                    created_at,
+                    updated_at,
                 })
             })
             .collect::<Result<Vec<Blog>, async_graphql::Error>>()?;
@@ -136,5 +166,13 @@ impl Blog {
             }
             None => None,
         }
+    }
+
+    pub async fn created_at(&self) -> String {
+        self.created_at.to_string()
+    }
+
+    pub async fn updated_at(&self) -> String {
+        self.updated_at.to_string()
     }
 }
