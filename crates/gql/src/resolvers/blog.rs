@@ -1,6 +1,7 @@
 pub struct Blog {
     pub slug: String,
     pub title: String,
+    pub description: String,
 }
 
 impl Blog {
@@ -29,24 +30,22 @@ impl Blog {
             .first()
             .ok_or(async_graphql::Error::new("Blog not found"))?;
 
-        let title_rich_text = blog
+        let title = blog
             .properties
             .get("title")
-            .ok_or(async_graphql::Error::new("title not found"))?;
+            .ok_or(async_graphql::Error::new("title not found"))?
+            .to_string();
 
-        let title = title_rich_text.to_string();
-
-        // let results = response.results.iter().map(|blog| {
-        //     let slug = blog
-        //         .properties
-        //         .get("slug")
-        //         .ok_or(|_| Err(async_graphql::Error::new("slug not found")));
-        //     Blog { slug }
-        // });
+        let description = blog
+            .properties
+            .get("description")
+            .ok_or(async_graphql::Error::new("description not found"))?
+            .to_string();
 
         Ok(Blog {
             slug: slug.to_string(),
             title,
+            description,
         })
     }
 
@@ -55,14 +54,17 @@ impl Blog {
             Blog {
                 slug: "001".to_string(),
                 title: "First blog".to_string(),
+                description: "First blog description".to_string(),
             },
             Blog {
                 slug: "002".to_string(),
                 title: "Second blog".to_string(),
+                description: "Second blog description".to_string(),
             },
             Blog {
                 slug: "003".to_string(),
                 title: "Third blog".to_string(),
+                description: "Third blog description".to_string(),
             },
         ])
     }
@@ -76,5 +78,9 @@ impl Blog {
 
     pub async fn title(&self) -> String {
         self.title.to_string()
+    }
+
+    pub async fn description(&self) -> String {
+        self.description.to_string()
     }
 }
