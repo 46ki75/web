@@ -241,6 +241,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "blog-block-image"
+version = "0.1.0"
+dependencies = [
+ "dotenvy",
+ "infer",
+ "lambda_http",
+ "notionrs",
+ "openssl",
+ "reqwest",
+ "tokio",
+]
+
+[[package]]
 name = "bumpalo"
 version = "3.16.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1474,19 +1487,6 @@ dependencies = [
  "wasm-bindgen-futures",
  "web-sys",
  "windows-registry",
-]
-
-[[package]]
-name = "rest-image"
-version = "0.1.0"
-dependencies = [
- "dotenvy",
- "infer",
- "lambda_http",
- "notionrs",
- "openssl",
- "reqwest",
- "tokio",
 ]
 
 [[package]]
