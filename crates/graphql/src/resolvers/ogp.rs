@@ -28,7 +28,7 @@ impl Ogp {
 
     pub async fn title(&self) -> Option<String> {
         let document = scraper::Html::parse_document(&self.body);
-        let selector = scraper::Selector::parse("title").unwrap();
+        let selector = scraper::Selector::parse("title").ok()?;
         document
             .select(&selector)
             .next()?
@@ -39,7 +39,7 @@ impl Ogp {
 
     pub async fn og_title(&self) -> Option<String> {
         let document = scraper::Html::parse_document(&self.body);
-        let selector = scraper::Selector::parse("meta[property='og:title']").unwrap();
+        let selector = scraper::Selector::parse("meta[property='og:title']").ok()?;
         document
             .select(&selector)
             .next()?
@@ -50,7 +50,7 @@ impl Ogp {
 
     pub async fn og_description(&self) -> Option<String> {
         let document = scraper::Html::parse_document(&self.body);
-        let selector = scraper::Selector::parse("meta[property='og:description']").unwrap();
+        let selector = scraper::Selector::parse("meta[property='og:description']").ok()?;
         document
             .select(&selector)
             .next()?
@@ -61,7 +61,7 @@ impl Ogp {
 
     pub async fn og_image(&self) -> Option<String> {
         let document = scraper::Html::parse_document(&self.body);
-        let selector = scraper::Selector::parse("meta[property='og:image']").unwrap();
+        let selector = scraper::Selector::parse("meta[property='og:image']").ok()?;
         document
             .select(&selector)
             .next()?
