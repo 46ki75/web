@@ -1,30 +1,48 @@
-use lambda_http::{run, service_fn, tracing, Body, Error, Request, RequestExt, Response};
+use lambda_http::RequestExt;
 
-/// This is the main body for the function.
-/// Write your code inside it.
-/// There are some code example in the following URLs:
-/// - https://github.com/awslabs/aws-lambda-rust-runtime/tree/main/examples
-async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
-    // Extract some useful information from the request
-    let who = event
-        .query_string_parameters_ref()
-        .and_then(|params| params.first("name"))
-        .unwrap_or("world");
-    let message = format!("Hello {who}, this is an AWS Lambda HTTP request");
+/// e.g.
+///
+/// GET /?url=https://example.com/image.jpg
+async fn function_handler(
+    event: lambda_http::Request,
+) -> Result<lambda_http::Response<lambda_http::Body>, lambda_http::Error> {
+    let url = event
+        .query_string_parameters()
+        .all("url")
+        .unwrap()
+        .first()
+        .ok_or(lambda_http::Error::from("url not found"))?
+        .to_string();
 
-    // Return something that implements IntoResponse.
-    // It will be serialized to the right response event automatically by the runtime
-    let resp = Response::builder()
+    let client = reqwest::Client::new();
+
+    let response = client.get(&url).send().await?;
+
+    let headers = response.headers();
+
+    let content_type = headers
+        .get("content-type")
+        .unwrap()
+        .to_str()
+        .unwrap()
+        .to_string();
+
+    let bytes = response.bytes().await?;
+
+    let body = lambda_http::Body::Binary(bytes.to_vec());
+
+    let response = lambda_http::Response::builder()
         .status(200)
-        .header("content-type", "text/html")
-        .body(message.into())
+        .header("content-type", content_type)
+        .body(body)
         .map_err(Box::new)?;
-    Ok(resp)
+
+    Ok(response)
 }
 
 #[tokio::main]
-async fn main() -> Result<(), Error> {
-    tracing::init_default_subscriber();
+async fn main() -> Result<(), lambda_http::Error> {
+    lambda_http::tracing::init_default_subscriber();
 
-    run(service_fn(function_handler)).await
+    lambda_http::run(lambda_http::service_fn(function_handler)).await
 }

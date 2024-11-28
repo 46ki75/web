@@ -1455,6 +1455,7 @@ name = "rest-image"
 version = "0.1.0"
 dependencies = [
  "lambda_http",
+ "reqwest",
  "tokio",
 ]
 
