@@ -69,4 +69,26 @@ impl Ogp {
             .attr("content")
             .map(|s| s.to_string())
     }
+
+    pub async fn og_url(&self) -> Option<String> {
+        let document = scraper::Html::parse_document(&self.body);
+        let selector = scraper::Selector::parse("meta[property='og:url']").ok()?;
+        document
+            .select(&selector)
+            .next()?
+            .value()
+            .attr("content")
+            .map(|s| s.to_string())
+    }
+
+    pub async fn og_type(&self) -> Option<String> {
+        let document = scraper::Html::parse_document(&self.body);
+        let selector = scraper::Selector::parse("meta[property='og:type']").ok()?;
+        document
+            .select(&selector)
+            .next()?
+            .value()
+            .attr("content")
+            .map(|s| s.to_string())
+    }
 }
