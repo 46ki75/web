@@ -19,27 +19,60 @@ async fn function_handler(
             .body("block_id or slug not found".into())?);
     }
 
-    let block_id = match block_id_query {
-        Some(queries) => {
-            let url_query = queries.first();
-            match url_query {
-                Some(url) => url,
-                None => {
-                    return Ok(lambda_http::Response::builder()
-                        .status(400)
-                        .body("id not found".into())?)
+    let bytes = if block_id_query.is_some() {
+        match block_id_query {
+            Some(queries) => {
+                let block_id_query = queries.first();
+                let block_id = match block_id_query {
+                    Some(url) => url,
+                    None => {
+                        return Ok(lambda_http::Response::builder()
+                            .status(400)
+                            .body("id not found".into())?)
+                    }
                 }
-            }
-            .to_string()
-        }
-        None => {
-            return Ok(lambda_http::Response::builder()
-                .status(400)
-                .body("id not found".into())?)
-        }
-    };
+                .to_string();
 
-    let bytes = get_image_by_block_id(&block_id).await?;
+                get_image_by_block_id(&block_id).await?
+            }
+            None => {
+                return Ok(lambda_http::Response::builder()
+                    .status(400)
+                    .body("id not found".into())?)
+            }
+        }
+    } else {
+        let slug = match slug_query {
+            Some(queries) => {
+                let slug_query = queries.first();
+                match slug_query {
+                    Some(slug) => slug,
+                    None => {
+                        return Ok(lambda_http::Response::builder()
+                            .status(400)
+                            .body("slug not found".into())?)
+                    }
+                }
+                .to_string()
+            }
+            None => {
+                return Ok(lambda_http::Response::builder()
+                    .status(400)
+                    .body("slug not found".into())?)
+            }
+        };
+
+        let slug_number = match slug.parse::<u64>() {
+            Ok(number) => number,
+            Err(_) => {
+                return Ok(lambda_http::Response::builder()
+                    .status(400)
+                    .body("slug is not a number".into())?)
+            }
+        };
+
+        get_image_by_slug(slug_number).await?
+    };
 
     let body = lambda_http::Body::Binary(bytes.to_vec());
 
@@ -69,6 +102,47 @@ async fn get_image_by_block_id(
         notionrs::block::Block::Image { image } => image.get_url(),
         _ => return Err("image block not found".into()),
     };
+
+    let client = reqwest::Client::new();
+    let response = client.get(url).send().await?;
+    let bytes = response.bytes().await?;
+
+    Ok(bytes)
+}
+
+async fn get_image_by_slug(
+    slug: u64,
+) -> Result<bytes::Bytes, Box<dyn std::error::Error + Send + Sync>> {
+    dotenvy::dotenv().ok();
+
+    let notion_token = std::env::var("NOTION_API_KEY")?;
+    let database_id = std::env::var("NOTION_BLOG_DATABASE_ID")?;
+
+    let client = notionrs::Client::new().secret(notion_token);
+
+    let filter = notionrs::filter::Filter::unique_id_equals("slug", slug);
+
+    let request = client
+        .query_database()
+        .database_id(database_id)
+        .filter(filter);
+    let response = request.send().await?;
+
+    let result = response.results.first().ok_or("image not found")?;
+
+    let images = result
+        .properties
+        .get("ogpImage")
+        .ok_or("ogpImage property not found")?;
+
+    let image = match images {
+        notionrs::page::PageProperty::Files(files) => {
+            files.files.first().ok_or("image not found")?
+        }
+        _ => return Err("image not found".into()),
+    };
+
+    let url = image.get_url();
 
     let client = reqwest::Client::new();
     let response = client.get(url).send().await?;
