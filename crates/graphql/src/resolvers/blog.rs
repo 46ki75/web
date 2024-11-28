@@ -231,6 +231,95 @@ impl Blog {
 
         Ok(blogs)
     }
+
+    pub async fn search(
+        _: &async_graphql::Context<'_>,
+        keyword: String,
+    ) -> Result<Vec<Self>, async_graphql::Error> {
+        let notion_token = std::env::var("NOTION_API_KEY")?;
+
+        let client = notionrs::Client::new().secret(notion_token);
+
+        let request = client.search().filter_page().query(keyword);
+
+        let response = request.send().await?;
+
+        let blogs = response
+            .results
+            .iter()
+            .filter_map(|result| match result {
+                notionrs::list_response::SearchResultItem::Database(_) => None,
+                notionrs::list_response::SearchResultItem::Page(page) => {
+                    let properties = &page.properties;
+
+                    let status = properties.get("status")?.to_string();
+
+                    if status != "published" {
+                        return None;
+                    };
+
+                    let id = page.id.clone();
+
+                    let slug = properties.get("slug").map(|value| value.to_string())?;
+
+                    let title = properties.get("title").map(|value| value.to_string())?;
+
+                    let description = properties
+                        .get("description")
+                        .map(|value| value.to_string())?;
+
+                    let ogp_image = properties.get("ogpImage").map(|value| value.to_string());
+
+                    let created_at = properties.get("createdAt").map(|value| value.to_string())?;
+
+                    let updated_at = properties.get("updatedAt").map(|value| value.to_string())?;
+
+                    let tags = properties
+                        .get("tags")
+                        .map(|value| match value {
+                            notionrs::page::PageProperty::MultiSelect(tags) => tags
+                                .multi_select
+                                .iter()
+                                .map(|tag| {
+                                    let id = tag.id.clone().ok_or_else(|| {
+                                        async_graphql::Error::new("tag id not found")
+                                    })?;
+
+                                    let color = tag.color.ok_or_else(|| {
+                                        async_graphql::Error::new("tag color not found")
+                                    })?;
+
+                                    let color_string = serde_json::to_string(&color)
+                                        .map_err(|e| async_graphql::Error::new(e.to_string()))?
+                                        .replace("\"", "");
+
+                                    Ok(Tag {
+                                        id,
+                                        name: tag.name.to_string(),
+                                        color: color_string,
+                                    })
+                                })
+                                .collect::<Result<Vec<Tag>, async_graphql::Error>>(),
+                            _ => Err(async_graphql::Error::new("tags not found")),
+                        })?
+                        .ok()?;
+
+                    Some(Blog {
+                        id,
+                        slug,
+                        title,
+                        description,
+                        ogp_image,
+                        created_at,
+                        updated_at,
+                        tags,
+                    })
+                }
+            })
+            .collect::<Vec<Blog>>();
+
+        Ok(blogs)
+    }
 }
 
 #[async_graphql::Object]

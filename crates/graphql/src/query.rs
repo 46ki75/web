@@ -35,4 +35,12 @@ impl QueryRoot {
     ) -> Result<resolvers::ogp::Ogp, async_graphql::Error> {
         resolvers::ogp::Ogp::new(ctx, url).await
     }
+
+    pub async fn search_blog(
+        &self,
+        ctx: &async_graphql::Context<'_>,
+        keyword: String,
+    ) -> Result<Vec<resolvers::blog::Blog>, async_graphql::Error> {
+        resolvers::blog::Blog::search(ctx, keyword).await
+    }
 }
