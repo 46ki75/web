@@ -53,4 +53,19 @@ impl Ogp {
 
         og_title
     }
+
+    pub async fn og_description(&self) -> String {
+        let document = scraper::Html::parse_document(&self.body);
+        let selector = scraper::Selector::parse("meta[property='og:description']").unwrap();
+        let og_description = document
+            .select(&selector)
+            .next()
+            .unwrap()
+            .value()
+            .attr("content")
+            .unwrap()
+            .to_string();
+
+        og_description
+    }
 }
