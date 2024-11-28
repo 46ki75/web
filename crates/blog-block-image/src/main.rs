@@ -23,7 +23,7 @@ async fn function_handler(
             .map_err(Box::new)?);
     }
 
-    let bytes = if block_id_query.is_some() {
+    let bytes_result = if block_id_query.is_some() {
         match block_id_query {
             Some(queries) => {
                 let block_id_query = queries.first();
@@ -38,7 +38,7 @@ async fn function_handler(
                 }
                 .to_string();
 
-                fetch::get_image_by_block_id(&block_id).await?
+                fetch::get_image_by_block_id(&block_id).await
             }
             None => {
                 return Ok(lambda_http::Response::builder()
@@ -80,7 +80,17 @@ async fn function_handler(
             }
         };
 
-        fetch::get_image_by_slug(slug_number).await?
+        fetch::get_image_by_slug(slug_number).await
+    };
+
+    let bytes = match bytes_result {
+        Ok(bytes) => bytes,
+        Err(e) => {
+            return Ok(lambda_http::Response::builder()
+                .status(404)
+                .body(format!("error: {}", e).into())
+                .map_err(Box::new)?)
+        }
     };
 
     let body = lambda_http::Body::Binary(bytes.to_vec());
