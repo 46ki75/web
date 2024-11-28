@@ -131,10 +131,16 @@ impl Blog {
 
         let status_filter = notionrs::filter::Filter::status_equals("status", "published");
 
+        let sort = match sort {
+            SortDirection::Asc => notionrs::database::sort::Sort::asc("createdAt"),
+            SortDirection::Desc => notionrs::database::sort::Sort::desc("createdAt"),
+        };
+
         let request = client
             .query_database()
             .database_id(database_id)
-            .filter(status_filter);
+            .filter(status_filter)
+            .sorts(vec![sort]);
 
         let response = request.send().await?;
 

@@ -1,6 +1,3 @@
-use async_graphql::*;
-use notionrs::database::sort;
-
 pub struct QueryRoot;
 
 use crate::resolvers;
