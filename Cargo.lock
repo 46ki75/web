@@ -709,7 +709,6 @@ dependencies = [
  "dotenvy",
  "lambda_http",
  "notionrs",
- "openssl",
  "reqwest",
  "scraper",
  "serde",
