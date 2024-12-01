@@ -95,9 +95,7 @@ impl Blog {
                             .color
                             .ok_or_else(|| async_graphql::Error::new("tag color not found"))?;
 
-                        let color_string = serde_json::to_string(&color)
-                            .map_err(|e| async_graphql::Error::new(e.to_string()))?
-                            .replace("\"", "");
+                        let color_string = color.to_string();
 
                         Ok(Tag {
                             id,
@@ -201,9 +199,7 @@ impl Blog {
                                         async_graphql::Error::new("tag color not found")
                                     })?;
 
-                                    let color_string = serde_json::to_string(&color)
-                                        .map_err(|e| async_graphql::Error::new(e.to_string()))?
-                                        .replace("\"", "");
+                                    let color_string = color.to_string();
 
                                     Ok(Tag {
                                         id,
@@ -289,9 +285,7 @@ impl Blog {
                                         async_graphql::Error::new("tag color not found")
                                     })?;
 
-                                    let color_string = serde_json::to_string(&color)
-                                        .map_err(|e| async_graphql::Error::new(e.to_string()))?
-                                        .replace("\"", "");
+                                    let color_string = color.to_string();
 
                                     Ok(Tag {
                                         id,
