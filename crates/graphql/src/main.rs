@@ -8,8 +8,6 @@ mod resolvers;
 async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
     dotenvy::dotenv().ok();
 
-    // let environment = std::env::var("ENVIRONMENT").unwrap_or("development".to_string());
-
     let schema = Schema::build(query::QueryRoot, EmptyMutation, EmptySubscription)
         .data(event.headers().clone())
         .finish();
