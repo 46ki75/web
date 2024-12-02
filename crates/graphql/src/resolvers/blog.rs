@@ -358,4 +358,22 @@ impl Blog {
     pub async fn tags(&self) -> Vec<Tag> {
         self.tags.clone()
     }
+
+    pub async fn blocks(
+        &self,
+    ) -> Result<async_graphql::Json<serde_json::Value>, async_graphql::Error> {
+        let notion_token = std::env::var("NOTION_API_KEY")?;
+
+        let mut client = elmethis_notion::client::Client::new(notion_token);
+
+        let blocks = client.convert_block(&self.id).await.map_err(|error| {
+            async_graphql::Error::new(format!("Failed to fetch blocks: {}", error))
+        })?;
+
+        let blocks = serde_json::to_value(blocks).map_err(|error| {
+            async_graphql::Error::new(format!("Failed to serialize blocks: {}", error))
+        })?;
+
+        Ok(blocks.into())
+    }
 }
