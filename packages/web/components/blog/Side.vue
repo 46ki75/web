@@ -52,6 +52,7 @@ const { data } = useAsyncData(async () => {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  max-width: 420px;
+  max-width: 100%;
+  width: 420px;
 }
 </style>
