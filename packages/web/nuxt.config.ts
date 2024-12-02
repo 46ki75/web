@@ -33,6 +33,18 @@ export default defineNuxtConfig({
           api: 'modern-compiler'
         }
       }
+    },
+    server: {
+      proxy: {
+        '/graphql': {
+          target: 'http://localhost:10000/lambda-url/graphql',
+          changeOrigin: true
+        },
+        '/api/v1/blog/images': {
+          target: 'http://localhost:11000/lambda-url/blog-block-image',
+          changeOrigin: true
+        }
+      }
     }
   },
   nitro: {

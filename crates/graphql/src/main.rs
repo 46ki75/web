@@ -8,20 +8,14 @@ mod resolvers;
 async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
     dotenvy::dotenv().ok();
 
-    let environment = std::env::var("ENVIRONMENT").unwrap_or("development".to_string());
+    // let environment = std::env::var("ENVIRONMENT").unwrap_or("development".to_string());
 
     let schema = Schema::build(query::QueryRoot, EmptyMutation, EmptySubscription)
         .data(event.headers().clone())
         .finish();
 
     if event.method() == Method::GET {
-        let playground_html = GraphiQLSource::build()
-            .endpoint(if environment == "production" {
-                "/graphql"
-            } else {
-                "/lambda-url/graphql"
-            })
-            .finish();
+        let playground_html = GraphiQLSource::build().endpoint("/graphql").finish();
         let response = Response::builder()
             .status(200)
             .header("content-type", "text/html")
