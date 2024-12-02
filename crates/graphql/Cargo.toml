@@ -15,14 +15,15 @@ edition = "2021"
 # and it will keep the alphabetic ordering for you.
 
 [dependencies]
-reqwest = { version = "0.12.9", features = ["native-tls-vendored"] }
+tokio = { version = "1", features = ["full"] }
+reqwest = { version = "0.12.9", default-features = false, features = [
+    "rustls-tls",
+] }
 async-graphql = "7.0.11"
 dotenvy = "0.15.7"
 lambda_http = "0.13.0"
-notionrs = "1.0.0-alpha.15"
+notionrs = { version = "1.0.0-alpha.17", features = ["rustls-tls"] }
+elmethis-notion = { version = "1.0.0-alpha.3", features = ["rustls-tls"] }
 scraper = "0.21.0"
 serde = { version = "1.0.215", features = ["derive"] }
 serde_json = "1.0.133"
-
-tokio = { version = "1", features = ["macros"] }
-elmethis-notion = "1.0.0-alpha.2"
