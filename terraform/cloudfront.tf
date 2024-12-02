@@ -31,7 +31,7 @@ resource "aws_cloudfront_distribution" "web" {
     ]
     cached_methods         = ["GET", "HEAD"]
     viewer_protocol_policy = "redirect-to-https"
-    target_origin_id       = "s3-root"
+    target_origin_id       = "web-static"
 
     default_ttl = 3600 * 24 * 30
     min_ttl     = 0
@@ -46,10 +46,50 @@ resource "aws_cloudfront_distribution" "web" {
     }
   }
 
+  ordered_cache_behavior {
+    path_pattern = "/graphql"
+    allowed_methods = [
+      "DELETE",
+      "GET",
+      "HEAD",
+      "OPTIONS",
+      "PATCH",
+      "POST",
+      "PUT"
+    ]
+    cached_methods         = ["GET", "HEAD"]
+    viewer_protocol_policy = "redirect-to-https"
+    target_origin_id       = "web-graphql"
+
+    default_ttl = 0
+    min_ttl     = 0
+    max_ttl     = 0
+
+    forwarded_values {
+      query_string = false
+      cookies {
+        forward = "none"
+      }
+    }
+  }
+
   origin {
     domain_name              = aws_s3_bucket.web.bucket_regional_domain_name
-    origin_id                = "s3-root"
+    origin_id                = "web-static"
     origin_access_control_id = aws_cloudfront_origin_access_control.web.id
+  }
+
+  origin {
+    domain_name = regex("https?://([^/]+)", aws_lambda_function_url.graphql.function_url)[0]
+    origin_id   = "web-graphql"
+    origin_path = "/graphql"
+
+    custom_origin_config {
+      http_port              = 80
+      https_port             = 443
+      origin_protocol_policy = "https-only"
+      origin_ssl_protocols   = ["TLSv1.2"]
+    }
   }
 
   default_root_object = "index.html"
