@@ -366,9 +366,25 @@ impl Blog {
 
         let mut client = elmethis_notion::client::Client::new(notion_token);
 
-        let blocks = client.convert_block(&self.id).await.map_err(|error| {
+        let mut blocks = client.convert_block(&self.id).await.map_err(|error| {
             async_graphql::Error::new(format!("Failed to fetch blocks: {}", error))
         })?;
+
+        for block in &mut blocks {
+            if let elmethis_notion::block::Block::ElmImage(image_block) = block {
+                for image in &client.images {
+                    let from_src = &image.src;
+                    let block_id = &image.id;
+                    let to_src = format!("/?block_id={block_id}");
+
+                    let mut src = image_block.props.src.clone();
+
+                    src = src.replace(from_src, &to_src);
+
+                    image_block.props.src = src;
+                }
+            }
+        }
 
         let blocks = serde_json::to_value(blocks).map_err(|error| {
             async_graphql::Error::new(format!("Failed to serialize blocks: {}", error))
