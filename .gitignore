@@ -27,3 +27,6 @@ _notion
 
 # Rust
 target
+
+# terraform
+.terraform/
