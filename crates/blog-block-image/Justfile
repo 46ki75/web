@@ -1,0 +1,3 @@
+dev:
+    echo "http://localhost:11000/lambda-url/blog-block-image" 
+    cargo lambda watch -p 11000
