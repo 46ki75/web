@@ -14,7 +14,7 @@
     "@elmethis/notion-node": "1.0.0-alpha.13",
     "@heroicons/vue": "^2.2.0",
     "@notionhq/client": "^2.2.15",
-    "nuxt": "^3.15.0",
+    "nuxt": "^3.15.1",
     "sharp": "^0.33.5",
     "vue": "latest",
     "vue-router": "latest",
