@@ -6,7 +6,7 @@
 
 data "archive_file" "lambda" {
   type        = "zip"
-  source_file = "../target/lambda/graphql/bootstrap"
+  source_file = "../target/lambda/api/bootstrap"
   output_path = "dist/bootstrap.zip"
 }
 

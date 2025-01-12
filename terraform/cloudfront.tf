@@ -48,7 +48,7 @@ resource "aws_cloudfront_distribution" "main" {
   }
 
   ordered_cache_behavior {
-    path_pattern = "/api"
+    path_pattern = "/api/*"
     allowed_methods = [
       "DELETE",
       "GET",
@@ -83,7 +83,6 @@ resource "aws_cloudfront_distribution" "main" {
   origin {
     domain_name = regex("https?://([^/]+)", aws_lambda_function_url.api.function_url)[0]
     origin_id   = "api"
-    origin_path = "/api"
 
     custom_origin_config {
       http_port              = 80

@@ -1,1 +1,1 @@
-{ "endpoints": ["/api", "/graphql"] }
+{ "endpoints": ["/api/", "/api/graphql"] }

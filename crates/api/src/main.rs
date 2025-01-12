@@ -8,7 +8,7 @@ async fn function_handler(
 
     if event.uri().path() == "/" {
         Ok(rest::handler::not_found_handler(event).await?)
-    } else if event.uri().path() == "/graphql" {
+    } else if event.uri().path() == "/api/graphql" {
         if event.method() == lambda_http::http::Method::GET {
             // GraphQL API (playground)
             Ok(graphql::handler::graphql_playground_handler(event).await?)

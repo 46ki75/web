@@ -1,8 +1,15 @@
 pub async fn graphql_playground_handler(
     _event: lambda_http::Request,
 ) -> Result<lambda_http::Response<lambda_http::Body>, lambda_http::Error> {
+    let environment = std::env::var("ENVIRONMENT");
+
+    let endpoint = match environment.as_deref() {
+        Ok("local") => "/lambda-url/api/graphql",
+        _ => "/api/graphql",
+    };
+
     let playground_html = async_graphql::http::GraphiQLSource::build()
-        .endpoint("/lambda-url/api/graphql")
+        .endpoint(endpoint)
         .finish();
 
     let response = lambda_http::Response::builder()
