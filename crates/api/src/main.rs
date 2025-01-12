@@ -2,8 +2,9 @@ use lambda_http::{http::Method, run, service_fn, tracing, Body, Error, Request, 
 use serde_json::json;
 
 mod graphql;
+mod rest;
 
-async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
+async fn function_handler(event: Request) -> Result<lambda_http::Response<Body>, Error> {
     dotenvy::dotenv().ok();
 
     let schema = async_graphql::Schema::build(
@@ -15,11 +16,7 @@ async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
     .finish();
 
     if event.uri().path() == "/" {
-        Ok(Response::builder()
-            .status(200)
-            .header("content-type", "application/json")
-            .body(include_str!("../endpoints.json").into())
-            .map_err(Box::new)?)
+        Ok(rest::not_found_handler(event).await)
     } else if event.uri().path() == "/graphql" {
         // # GraphQL ------------------------------
 
@@ -84,20 +81,9 @@ async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
         }
     } else if event.uri().path() == "/api" {
         // # REST ------------------------------
-
-        let response = Response::builder()
-            .status(200)
-            .header("content-type", "application/json")
-            .body(json!({"message":"Hello, world!"}).to_string().into())
-            .map_err(Box::new)?;
-        Ok(response)
+        Ok(rest::handler(event).await)
     } else {
-        let response = Response::builder()
-            .status(404)
-            .header("content-type", "application/json")
-            .body(include_str!("../endpoints.json").into())
-            .map_err(Box::new)?;
-        Ok(response)
+        Ok(rest::not_found_handler(event).await)
     }
 }
 
