@@ -7,24 +7,24 @@ async fn function_handler(
     dotenvy::dotenv().ok();
 
     if event.uri().path() == "/" {
-        Ok(rest::not_found_handler(event).await?)
+        Ok(rest::handler::not_found_handler(event).await?)
     } else if event.uri().path() == "/graphql" {
         if event.method() == lambda_http::http::Method::GET {
             // GraphQL API (playground)
-            Ok(graphql::graphql_playground_handler(event).await?)
+            Ok(graphql::handler::graphql_playground_handler(event).await?)
         } else if event.method() == lambda_http::http::Method::POST {
             // GraphQL API (execution)
-            Ok(graphql::graphql_execution_handler(event).await?)
+            Ok(graphql::handler::graphql_execution_handler(event).await?)
         } else {
             // GraphQL API (Method Not Allowed)
-            Ok(graphql::method_not_allowed_handler(event).await?)
+            Ok(graphql::handler::method_not_allowed_handler(event).await?)
         }
     } else if event.uri().path() == "/api" {
         // REST API
-        Ok(rest::handler(event).await?)
+        Ok(rest::handler::rest_router_handler(event).await?)
     } else {
         // Not Found
-        Ok(rest::not_found_handler(event).await?)
+        Ok(rest::handler::not_found_handler(event).await?)
     }
 }
 
