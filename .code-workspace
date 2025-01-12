@@ -1,0 +1,32 @@
+{
+    "folders": [
+        {
+            "path": ".",
+            "name": "root"
+        },
+        {
+            "path": "crates/graphql",
+            "name": "graphql"
+        },
+        {
+            "path": "packages/web",
+            "name": "web"
+        },
+        {
+            "path": "crates/api",
+            "name": "api"
+        },
+        {
+            "path": "terraform",
+            "name": "terraform"
+        }
+    ],
+    "settings": {
+        "terminal.integrated.env.linux": {
+            "AWS_PROFILE": "web"
+        },
+        "files.associations": {
+            "Justfile": "Makefile"
+        }
+    }
+}

@@ -1,0 +1,4 @@
+## Environment Variables
+
+- `NOTION_API_KEY`
+- `NOTION_BLOG_DATABASE_ID`
