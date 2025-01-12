@@ -1,5 +1,5 @@
-# 手動管理リソース一覧
+# Manual Managed Resources
 
 ## Amazon S3
 
-- `shared-46ki75-web-s3-bucket-terraform-tfstate`: `terraform.tfstate` の管理
+- `shared-46ki75-web-s3-bucket-terraform-tfstate`: bucket of storing `terraform.tfstate`
