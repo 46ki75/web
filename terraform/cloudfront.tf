@@ -1,12 +1,13 @@
-resource "aws_cloudfront_origin_access_control" "web" {
-  name                              = "web"
-  description                       = "Example Policy"
+resource "aws_cloudfront_origin_access_control" "frontend" {
+  name                              = "${terraform.workspace}-46ki75-web-cloudfront-oac-frontend"
+  description                       = "OIC for S3 bucket"
   origin_access_control_origin_type = "s3"
   signing_behavior                  = "always"
   signing_protocol                  = "sigv4"
 }
 
-resource "aws_cloudfront_distribution" "web" {
+resource "aws_cloudfront_distribution" "main" {
+  comment = "${terraform.workspace}-46ki75-web-cloudfront-distribution-main"
   enabled = true
 
   restrictions {
@@ -31,7 +32,7 @@ resource "aws_cloudfront_distribution" "web" {
     ]
     cached_methods         = ["GET", "HEAD"]
     viewer_protocol_policy = "redirect-to-https"
-    target_origin_id       = "web-static"
+    target_origin_id       = "frontend"
 
     default_ttl = 3600 * 24 * 30
     min_ttl     = 0
@@ -47,7 +48,7 @@ resource "aws_cloudfront_distribution" "web" {
   }
 
   ordered_cache_behavior {
-    path_pattern = "/graphql"
+    path_pattern = "/api"
     allowed_methods = [
       "DELETE",
       "GET",
@@ -59,7 +60,7 @@ resource "aws_cloudfront_distribution" "web" {
     ]
     cached_methods         = ["GET", "HEAD"]
     viewer_protocol_policy = "redirect-to-https"
-    target_origin_id       = "web-graphql"
+    target_origin_id       = "api"
 
     default_ttl = 0
     min_ttl     = 0
@@ -74,15 +75,15 @@ resource "aws_cloudfront_distribution" "web" {
   }
 
   origin {
-    domain_name              = aws_s3_bucket.web.bucket_regional_domain_name
-    origin_id                = "web-static"
-    origin_access_control_id = aws_cloudfront_origin_access_control.web.id
+    domain_name              = aws_s3_bucket.frontend.bucket_regional_domain_name
+    origin_id                = "frontend"
+    origin_access_control_id = aws_cloudfront_origin_access_control.frontend.id
   }
 
   origin {
-    domain_name = regex("https?://([^/]+)", aws_lambda_function_url.graphql.function_url)[0]
-    origin_id   = "web-graphql"
-    origin_path = "/graphql"
+    domain_name = regex("https?://([^/]+)", aws_lambda_function_url.api.function_url)[0]
+    origin_id   = "api"
+    origin_path = "/api"
 
     custom_origin_config {
       http_port              = 80

@@ -5,8 +5,8 @@
             "name": "root"
         },
         {
-            "path": "packages/web",
-            "name": "web"
+            "path": "packages/frontend",
+            "name": "frontend"
         },
         {
             "path": "crates/api",
@@ -22,7 +22,7 @@
             "AWS_PROFILE": "web"
         },
         "files.associations": {
-            "Justfile": "Makefile"
+            "Justfile": "makefile"
         }
     }
 }
