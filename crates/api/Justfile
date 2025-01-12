@@ -1,0 +1,3 @@
+dev:
+    echo "http://localhost:10000/lambda-url/api"
+    cargo lambda watch -p 10000
