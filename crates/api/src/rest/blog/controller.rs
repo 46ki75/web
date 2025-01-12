@@ -55,7 +55,38 @@ impl BlogController {
 
             Ok(response)
         } else if r#type == "database" {
-            todo!()
+            let slug = match query_params.first("slug") {
+                Some(b) => b,
+                None => {
+                    return Ok(lambda_http::Response::builder()
+                        .status(400)
+                        .header("content-type", "application/json")
+                        .body(lambda_http::Body::from(
+                            serde_json::json!({
+                                "error": "slug query parameter is required"
+                            })
+                            .to_string(),
+                        ))?);
+                }
+            };
+
+            let slug_number = slug.parse::<u64>()?;
+
+            let image_bytes =
+                crate::rest::blog::service::BlogImageService::get_image_by_slug(slug_number)
+                    .await?;
+
+            let content_type =
+                infer::get(&image_bytes).map_or("application/octet-stream", |t| t.mime_type());
+
+            let body = lambda_http::Body::Binary(image_bytes.to_vec());
+
+            let response = lambda_http::Response::builder()
+                .status(200)
+                .header("content-type", content_type)
+                .body(body)?;
+
+            Ok(response)
         } else {
             return Ok(lambda_http::Response::builder()
                 .status(400)
