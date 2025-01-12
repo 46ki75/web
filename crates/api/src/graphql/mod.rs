@@ -1,4 +1,5 @@
 pub mod query;
+pub mod schema;
 
 pub async fn graphql_playground_handler(
     _event: lambda_http::Request,
@@ -17,13 +18,7 @@ pub async fn graphql_playground_handler(
 pub async fn graphql_execution_handler(
     event: lambda_http::Request,
 ) -> lambda_http::Response<lambda_http::Body> {
-    let schema = async_graphql::Schema::build(
-        query::QueryRoot,
-        async_graphql::EmptyMutation,
-        async_graphql::EmptySubscription,
-    )
-    .data(event.headers().clone())
-    .finish();
+    let schema = schema::create_schema(&event);
 
     let request_body = event.body();
 
