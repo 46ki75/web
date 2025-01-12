@@ -12,5 +12,9 @@
             "path": "packages/web",
             "name": "web"
         },
+        {
+            "path": "terraform",
+            "name": "terraform"
+        }
     ],
 }
