@@ -69,9 +69,13 @@ name = "api"
 version = "0.1.0"
 dependencies = [
  "async-graphql",
+ "bytes",
  "dotenvy",
+ "infer",
  "lambda_http 0.13.0",
+ "notionrs",
  "regex",
+ "reqwest",
  "serde",
  "serde_json",
  "tokio",

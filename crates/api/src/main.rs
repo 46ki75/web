@@ -22,6 +22,8 @@ async fn function_handler(
     } else if event.uri().path() == "/api" {
         // REST API
         Ok(rest::handler::rest_router_handler(event).await?)
+    } else if event.uri().path().starts_with("/api/blog/image/") {
+        Ok(rest::blog::controller::BlogController::blog_block_image(event).await?)
     } else {
         // Not Found
         Ok(rest::handler::not_found_handler(event).await?)
