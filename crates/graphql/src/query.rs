@@ -12,7 +12,7 @@ impl QueryRoot {
         resolvers::greet::Greet::new(ctx)
     }
 
-    pub async fn get_blog_by_slug(
+    pub async fn blog(
         &self,
         ctx: &async_graphql::Context<'_>,
         slug: u64,
@@ -20,7 +20,7 @@ impl QueryRoot {
         resolvers::blog::Blog::get_by_slug(ctx, slug).await
     }
 
-    pub async fn list_blog(
+    pub async fn blogs(
         &self,
         ctx: &async_graphql::Context<'_>,
         sort: Option<resolvers::blog::SortDirection>,
