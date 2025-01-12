@@ -17,4 +17,9 @@
             "name": "terraform"
         }
     ],
+    "settings": {
+        "terminal.integrated.env.linux": {
+            "AWS_PROFILE": "web"
+        }
+    }
 }
