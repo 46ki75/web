@@ -5,10 +5,6 @@
             "name": "root"
         },
         {
-            "path": "crates/graphql",
-            "name": "graphql"
-        },
-        {
             "path": "packages/web",
             "name": "web"
         },
