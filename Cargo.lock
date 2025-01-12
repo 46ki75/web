@@ -71,6 +71,7 @@ dependencies = [
  "async-graphql",
  "bytes",
  "dotenvy",
+ "elmethis-notion",
  "infer",
  "lambda_http 0.13.0",
  "notionrs",
