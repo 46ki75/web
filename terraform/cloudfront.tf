@@ -6,9 +6,35 @@ resource "aws_cloudfront_origin_access_control" "frontend" {
   signing_protocol                  = "sigv4"
 }
 
+resource "aws_cloudfront_response_headers_policy" "default" {
+  name = "${terraform.workspace}-46ki75-web-cloudfront-response-headers-policy-default"
+
+  security_headers_config {
+    # strict-transport-security
+    strict_transport_security {
+      override                   = true
+      access_control_max_age_sec = 31536000
+      include_subdomains         = true
+      preload                    = true
+    }
+
+    # x-content-type-options
+    content_type_options {
+      override = true
+    }
+
+    # x-frame-options
+    frame_options {
+      override     = true
+      frame_option = "SAMEORIGIN"
+    }
+  }
+}
+
 resource "aws_cloudfront_distribution" "main" {
-  comment = "${terraform.workspace}-46ki75-web-cloudfront-distribution-main"
-  enabled = true
+  comment      = "${terraform.workspace}-46ki75-web-cloudfront-distribution-main"
+  enabled      = true
+  http_version = "http2and3"
 
   restrictions {
     geo_restriction {
@@ -16,9 +42,14 @@ resource "aws_cloudfront_distribution" "main" {
     }
   }
 
+  # >>> custom domain
   viewer_certificate {
-    cloudfront_default_certificate = true
+    acm_certificate_arn      = aws_acm_certificate.cloudfront_cert.arn
+    ssl_support_method       = "sni-only"
+    minimum_protocol_version = "TLSv1.2_2021"
   }
+  aliases = [aws_acm_certificate.cloudfront_cert.domain_name]
+  # <<< custom domain
 
   default_cache_behavior {
     allowed_methods = [
@@ -45,6 +76,8 @@ resource "aws_cloudfront_distribution" "main" {
       }
       headers = ["etag"]
     }
+
+    response_headers_policy_id = aws_cloudfront_response_headers_policy.default.id
   }
 
   ordered_cache_behavior {
