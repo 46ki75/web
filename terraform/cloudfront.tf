@@ -7,8 +7,9 @@ resource "aws_cloudfront_origin_access_control" "frontend" {
 }
 
 resource "aws_cloudfront_distribution" "main" {
-  comment = "${terraform.workspace}-46ki75-web-cloudfront-distribution-main"
-  enabled = true
+  comment      = "${terraform.workspace}-46ki75-web-cloudfront-distribution-main"
+  enabled      = true
+  http_version = "http2and3"
 
   restrictions {
     geo_restriction {
@@ -16,9 +17,14 @@ resource "aws_cloudfront_distribution" "main" {
     }
   }
 
+  # >>> custom domain
   viewer_certificate {
-    cloudfront_default_certificate = true
+    acm_certificate_arn      = aws_acm_certificate.cloudfront_cert.arn
+    ssl_support_method       = "sni-only"
+    minimum_protocol_version = "TLSv1.2_2021"
   }
+  aliases = [aws_acm_certificate.cloudfront_cert.domain_name]
+  # <<< custom domain
 
   default_cache_behavior {
     allowed_methods = [

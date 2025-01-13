@@ -24,3 +24,21 @@ terraform {
 provider "aws" {
   region = "ap-northeast-1"
 }
+
+provider "aws" {
+  alias  = "us-east-1"
+  region = "us-east-1"
+}
+
+locals {
+  environments = ["dev", "stg", "prod"]
+}
+
+resource "null_resource" "validate_workspace" {
+  lifecycle {
+    postcondition {
+      condition     = contains(local.environments, terraform.workspace)
+      error_message = "Invalid workspace. Available workspaces: ${join(", ", local.environments)}"
+    }
+  }
+}
