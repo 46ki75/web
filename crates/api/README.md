@@ -6,9 +6,9 @@
 
 To start the development server, ensure you have the following installed and configured:
 
-- Rust Compiler
 - Cargo
 - [Cargo Lambda](https://www.cargo-lambda.info/)
+- [Just - command runner](https://github.com/casey/just)
 - AWS CLI
 - AWS SSO Configuration
 
