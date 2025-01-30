@@ -30,7 +30,10 @@ To start the development server locally, execute the following command. This wil
 just dev
 ```
 
-Then, you can acccess to `http://localhost:10000/`
+Then, you can acccess to `http://localhost:10000/lambda-url/api/`.
+
+- REST: `http://localhost:10000/lambda-url/api/api/v1`
+- GraphQL: `http://localhost:10000/lambda-url/api/api/graphql`
 
 ## Function Deployment (AWS Lambda)
 
