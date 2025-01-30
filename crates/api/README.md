@@ -16,6 +16,8 @@ To start the development server, ensure you have the following installed and con
 
 Please set the following environment variables in the `.env` file:
 
-- `NOTION_API_KEY`
-- `NOTION_BLOG_DATABASE_ID`
-- `ENVIRONMENT=local`
+| Variable                  | Variants                      |
+| ------------------------- | ----------------------------- |
+| `NOTION_API_KEY`          | String                        |
+| `NOTION_BLOG_DATABASE_ID` | String                        |
+| `ENVIRONMENT`             | `local`, `dev`, `stg`, `prod` |
