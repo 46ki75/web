@@ -30,6 +30,8 @@ To start the development server locally, execute the following command. This wil
 just dev
 ```
 
+Then, you can acccess to `http://localhost:10000/`
+
 ## Function Deployment (AWS Lambda)
 
 First, fetch the AWS credentials:
