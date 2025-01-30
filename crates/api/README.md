@@ -29,3 +29,9 @@ To start the development server locally, execute the following command. This wil
 ```sh
 just dev
 ```
+
+## Deployment
+
+```sh
+ENVIRONMENT=dev just deploy
+```
