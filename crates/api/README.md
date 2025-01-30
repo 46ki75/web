@@ -30,7 +30,15 @@ To start the development server locally, execute the following command. This wil
 just dev
 ```
 
-## Deployment
+## Function Deployment (AWS Lambda)
+
+First, fetch the AWS credentials:
+
+```sh
+aws sso login
+```
+
+Next, you can deploy the function by executing the following command:
 
 ```sh
 ENVIRONMENT=dev just deploy
