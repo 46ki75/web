@@ -6,4 +6,4 @@ build:
     cargo lambda build --release
 
 deploy: build
-    scripts/deploy-function.sh ../../target/lambda/api/bootstrap "${ENVIRONMENT}-46ki75-web-lambda-function-api"
+    scripts/deploy-function.sh ../../target/lambda/api/ "${ENVIRONMENT}-46ki75-web-lambda-function-api"
