@@ -1,5 +1,17 @@
 # HTTP API
 
+This crate is an API server that is deployed using AWS Lambda and API Gateway. It provides both REST API and GraphQL API endpoints to handle requests from various clients.
+
+## Directory Structure
+
+| Directory / File  | Contents                                          |
+| ----------------- | ------------------------------------------------- |
+| `scripts/`        | Utility scripts for deployment and other purposes |
+| `src/`            | Source code                                       |
+| `.env`            | Environment variables file (not tracked in git)   |
+| `.endpoints.json` | List of endpoints                                 |
+| `Justfile`        | Command runner configuration file                 |
+
 ## Starting the Development Server
 
 ### Requirements
