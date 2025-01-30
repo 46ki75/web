@@ -35,7 +35,3 @@ aws-config = "1.5.13"
 aws-sdk-lambda = "1.63.0"
 tempfile = "3.15.0"
 zip = "2.2.2"
-
-[[bin]]
-name = "deploy"
-path = "./scripts/deploy.rs"
