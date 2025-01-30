@@ -47,6 +47,14 @@ Then, you can acccess to `http://localhost:10000/lambda-url/api/`.
 - REST: `http://localhost:10000/lambda-url/api/api/v1`
 - GraphQL: `http://localhost:10000/lambda-url/api/api/graphql`
 
+## Usage
+
+<!-- TODO: -->
+
+## Testing
+
+<!-- TODO: -->
+
 ## Function Deployment (AWS Lambda)
 
 First, fetch the AWS credentials:
