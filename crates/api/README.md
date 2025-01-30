@@ -21,3 +21,11 @@ Please set the following environment variables in the `.env` file:
 | `NOTION_API_KEY`          | String                        |
 | `NOTION_BLOG_DATABASE_ID` | String                        |
 | `ENVIRONMENT`             | `local`, `dev`, `stg`, `prod` |
+
+### Start Development Server
+
+To start the development server locally, execute the following command. This will use the `just` command runner to set up and start the server:
+
+```sh
+just dev
+```
