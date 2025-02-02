@@ -1,4 +1,7 @@
+mod error;
 mod graphql;
+mod model;
+mod repository;
 mod rest;
 
 async fn function_handler(
