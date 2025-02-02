@@ -4,7 +4,7 @@ pub async fn graphql_playground_handler(
     let environment = std::env::var("ENVIRONMENT");
 
     let endpoint = match environment.as_deref() {
-        Ok("local") => "/lambda-url/api/graphql",
+        Ok("local") => "/lambda-url/api/api/graphql",
         _ => "/api/graphql",
     };
 
