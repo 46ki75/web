@@ -18,11 +18,12 @@ edition = "2021"
 async-graphql = "7.0.13"
 async-trait = "0.1.86"
 bytes = "1.9.0"
+chrono = "0.4.39"
 dotenvy = "0.15.7"
 elmethis-notion = "1.0.0-alpha.7"
 infer = "0.16.0"
 lambda_http = "0.14.0"
-notionrs = { version = "1.0.0-alpha.29", features = ["rustls-tls"] }
+notionrs = { version = "1.0.0-alpha.30", features = ["rustls-tls"] }
 regex = "1.11.1"
 reqwest = { version = "0.12.12", default-features = false, features = [
     "rustls-tls",
