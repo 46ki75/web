@@ -58,6 +58,22 @@ impl Blog {
     pub async fn updated_at(&self) -> Result<String, async_graphql::Error> {
         Ok(self.updated_at.clone())
     }
+
+    pub async fn blocks(
+        &self,
+        ctx: &async_graphql::Context<'_>,
+    ) -> Result<Vec<serde_json::Value>, async_graphql::Error> {
+        let blog_service = ctx.data::<crate::service::blog::BlogService>()?;
+
+        let block_children = blog_service.get_block_children(&self.id).await?;
+
+        let serialised = serde_json::from_str(&block_children).map_err(|e| {
+            tracing::error!("Failed to serialize response: {}", e);
+            async_graphql::Error::new("Failed to serialize response")
+        })?;
+
+        Ok(serialised)
+    }
 }
 
 impl BlogQueryResolver {
@@ -65,9 +81,9 @@ impl BlogQueryResolver {
         &self,
         ctx: &async_graphql::Context<'_>,
     ) -> Result<Vec<Blog>, async_graphql::Error> {
-        let anki_service = ctx.data::<crate::service::blog::BlogService>()?;
+        let blog_service = ctx.data::<crate::service::blog::BlogService>()?;
 
-        let blogs = anki_service.list_blogs().await?;
+        let blogs = blog_service.list_blogs().await?;
 
         let blogs = blogs
             .into_iter()

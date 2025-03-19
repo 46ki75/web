@@ -2,6 +2,8 @@
 pub trait BlogRepository {
     async fn list_blogs(&self)
     -> Result<Vec<crate::record::blog::BlogRecord>, crate::error::Error>;
+
+    async fn get_block_children(&self, page_id: &str) -> Result<String, crate::error::Error>;
 }
 
 pub struct BlogRepositoryImpl {
@@ -190,5 +192,19 @@ impl BlogRepository for BlogRepositoryImpl {
             .collect::<Result<Vec<crate::record::blog::BlogRecord>, crate::error::Error>>()?;
 
         Ok(blogs)
+    }
+
+    async fn get_block_children(&self, page_id: &str) -> Result<String, crate::error::Error> {
+        let mut client = elmethis_notion::client::Client::new(&self.config.notion_api_key);
+
+        let response = client.convert_block(page_id).await.map_err(|e| {
+            tracing::error!("An error occurred while invoke Notion API: {}", e);
+            crate::error::Error::NotionAPI(e.to_string())
+        })?;
+
+        Ok(serde_json::to_string(&response).map_err(|e| {
+            tracing::error!("An error occurred while serialize response: {}", e);
+            crate::error::Error::Serialization(e.to_string())
+        })?)
     }
 }

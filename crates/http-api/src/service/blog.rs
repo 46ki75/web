@@ -73,4 +73,10 @@ impl BlogService {
 
         Ok(blog_entities)
     }
+
+    pub async fn get_block_children(&self, page_id: &str) -> Result<String, crate::error::Error> {
+        let block_children = self.blog_repository.get_block_children(page_id).await?;
+
+        Ok(block_children)
+    }
 }

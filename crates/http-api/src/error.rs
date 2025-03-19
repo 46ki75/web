@@ -17,4 +17,7 @@ pub enum Error {
 
     #[error("Notion database invalid schema: {0}")]
     NotionDatabaseInvalidSchema(String),
+
+    #[error("Failed to serialize response: {0}")]
+    Serialization(String),
 }
