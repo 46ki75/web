@@ -1,6 +1,8 @@
 use async_graphql::*;
 
-pub struct QueryRoot;
+pub struct QueryRoot {
+    pub blog_query_resolver: std::sync::Arc<crate::resolver::blog::query::BlogQueryResolver>,
+}
 
 #[async_graphql::Object]
 impl QueryRoot {
@@ -14,6 +16,13 @@ impl QueryRoot {
             message: "Hello, World!".to_string(),
             language: "Rust".to_string(),
         })
+    }
+
+    pub async fn blog_list(
+        &self,
+        ctx: &async_graphql::Context<'_>,
+    ) -> Result<Vec<crate::resolver::blog::query::Blog>, async_graphql::Error> {
+        self.blog_query_resolver.blog_list(ctx).await
     }
 }
 

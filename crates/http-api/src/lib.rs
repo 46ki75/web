@@ -1,5 +1,12 @@
-pub(crate) mod error;
-pub(crate) mod query;
+pub mod config;
+pub mod context;
+pub mod entity;
+pub mod error;
+pub mod query;
+pub mod record;
+pub mod repository;
+pub mod resolver;
+pub mod service;
 
 static SCHEMA: tokio::sync::OnceCell<
     async_graphql::Schema<
@@ -16,15 +23,31 @@ async fn init_schema() -> &'static async_graphql::Schema<
     SCHEMA
         .get_or_init(|| async {
             tracing::debug!("Initializing GraphQL schema");
+
+            let config = crate::config::Config::try_new_async()
+                .await
+                .expect("AAAAAAA");
+
+            let blog_repository =
+                std::sync::Arc::new(repository::blog::BlogRepositoryImpl { config });
+
+            let blog_service = service::blog::BlogService { blog_repository };
+
+            let blog_query_resolver =
+                std::sync::Arc::new(crate::resolver::blog::query::BlogQueryResolver {});
+
             let schema: async_graphql::Schema<
                 query::QueryRoot,
                 async_graphql::EmptyMutation,
                 async_graphql::EmptySubscription,
             > = async_graphql::Schema::build(
-                query::QueryRoot,
+                query::QueryRoot {
+                    blog_query_resolver,
+                },
                 async_graphql::EmptyMutation,
                 async_graphql::EmptySubscription,
             )
+            .data(blog_service)
             .finish();
             schema
         })

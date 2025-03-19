@@ -3,3 +3,4 @@
 ## Systems Manager Parameter Store
 
 - `/${STAGE_NAME}/46ki75/web/ssm/parameter/notion/secret`
+- `/shared/46ki75/web/ssm/parameter/notion/database/id`
