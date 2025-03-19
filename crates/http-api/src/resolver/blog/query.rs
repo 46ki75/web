@@ -59,7 +59,7 @@ impl Blog {
         Ok(self.updated_at.clone())
     }
 
-    pub async fn blocks(
+    pub async fn block_list(
         &self,
         ctx: &async_graphql::Context<'_>,
     ) -> Result<Vec<serde_json::Value>, async_graphql::Error> {
