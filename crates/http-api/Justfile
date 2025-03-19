@@ -1,0 +1,2 @@
+dev:
+	cargo lambda watch -P 10000

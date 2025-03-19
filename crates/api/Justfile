@@ -1,9 +1,0 @@
-dev:
-    echo "http://localhost:10000/lambda-url/api"
-    ENVIRONMENT=local cargo lambda watch -p 10000
-
-build:
-    cargo lambda build --release
-
-deploy: build
-    scripts/deploy-function.sh ../../target/lambda/api/ "${ENVIRONMENT}-46ki75-web-lambda-function-api"
