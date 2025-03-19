@@ -15,18 +15,19 @@ static SCHEMA: tokio::sync::OnceCell<
         async_graphql::EmptySubscription,
     >,
 > = tokio::sync::OnceCell::const_new();
-async fn init_schema() -> &'static async_graphql::Schema<
-    query::QueryRoot,
-    async_graphql::EmptyMutation,
-    async_graphql::EmptySubscription,
+async fn init_schema() -> Result<
+    &'static async_graphql::Schema<
+        query::QueryRoot,
+        async_graphql::EmptyMutation,
+        async_graphql::EmptySubscription,
+    >,
+    crate::error::Error,
 > {
     SCHEMA
-        .get_or_init(|| async {
+        .get_or_try_init(|| async {
             tracing::debug!("Initializing GraphQL schema");
 
-            let config = crate::config::Config::try_new_async()
-                .await
-                .expect("AAAAAAA");
+            let config = crate::config::Config::try_new_async().await?;
 
             let blog_repository =
                 std::sync::Arc::new(repository::blog::BlogRepositoryImpl { config });
@@ -49,7 +50,7 @@ async fn init_schema() -> &'static async_graphql::Schema<
             )
             .data(blog_service)
             .finish();
-            schema
+            Ok(schema)
         })
         .await
 }
@@ -57,7 +58,23 @@ async fn init_schema() -> &'static async_graphql::Schema<
 pub async fn function_handler(
     event: lambda_http::Request,
 ) -> Result<lambda_http::Response<lambda_http::Body>, lambda_http::Error> {
-    let schema = init_schema().await;
+    let schema = match init_schema().await {
+        Ok(schema) => schema,
+        Err(_err) => {
+            return Ok(lambda_http::Response::builder()
+                .status(500)
+                .header("content-type", "application/json")
+                .body(
+                    serde_json::json!({"error": format!("Failed to initialize schema.")})
+                        .to_string()
+                        .into(),
+                )
+                .map_err(|e| {
+                    tracing::error!("Failed to build response: {}", e);
+                    crate::error::Error::BuildResponse(e.to_string())
+                })?);
+        }
+    };
 
     if event.method() == lambda_http::http::Method::POST {
         // GraphQL Execution
