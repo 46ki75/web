@@ -25,6 +25,11 @@ pub enum Status {
     Archived,
 }
 
+#[derive(Debug, async_graphql::InputObject)]
+pub struct BlogInput {
+    pub page_id: String,
+}
+
 #[async_graphql::Object]
 impl Blog {
     pub async fn id(&self) -> Result<String, async_graphql::Error> {
@@ -77,6 +82,53 @@ impl Blog {
 }
 
 impl BlogQueryResolver {
+    pub async fn blog(
+        &self,
+        ctx: &async_graphql::Context<'_>,
+        input: BlogInput,
+    ) -> Result<Blog, async_graphql::Error> {
+        let blog_service = ctx.data::<crate::service::blog::BlogService>()?;
+
+        let blog = blog_service.get_blog_by_id(&input.page_id).await?;
+
+        let blog = Blog {
+            id: blog.id,
+            slug: blog.slug,
+            title: blog.title,
+            description: blog.description,
+            tags: blog
+                .tags
+                .into_iter()
+                .map(|tag| BlogTag {
+                    id: tag.id,
+                    name: tag.name,
+                    color: match tag.color {
+                        crate::entity::blog::BlogTagColorEntity::Default => "#868e9c",
+                        crate::entity::blog::BlogTagColorEntity::Blue => "#6987b8",
+                        crate::entity::blog::BlogTagColorEntity::Brown => "#a17c5b",
+                        crate::entity::blog::BlogTagColorEntity::Gray => "#868e9c",
+                        crate::entity::blog::BlogTagColorEntity::Green => "#59b57c",
+                        crate::entity::blog::BlogTagColorEntity::Orange => "#d48b70",
+                        crate::entity::blog::BlogTagColorEntity::Pink => "#c9699e",
+                        crate::entity::blog::BlogTagColorEntity::Purple => "#9771bd",
+                        crate::entity::blog::BlogTagColorEntity::Red => "#c56565",
+                        crate::entity::blog::BlogTagColorEntity::Yellow => "#cdb57b",
+                    }
+                    .to_string(),
+                })
+                .collect::<Vec<BlogTag>>(),
+            status: match blog.status {
+                crate::entity::blog::BlogStatusEntity::Draft => Status::Draft,
+                crate::entity::blog::BlogStatusEntity::Published => Status::Published,
+                crate::entity::blog::BlogStatusEntity::Archived => Status::Archived,
+            },
+            created_at: blog.created_at,
+            updated_at: blog.updated_at,
+        };
+
+        Ok(blog)
+    }
+
     pub async fn blog_list(
         &self,
         ctx: &async_graphql::Context<'_>,

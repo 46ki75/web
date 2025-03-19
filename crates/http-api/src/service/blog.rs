@@ -3,6 +3,17 @@ pub struct BlogService {
 }
 
 impl BlogService {
+    pub async fn get_blog_by_id(
+        &self,
+        id: &str,
+    ) -> Result<crate::entity::blog::BlogEntity, crate::error::Error> {
+        let blog_record = self.blog_repository.get_blog_by_id(id).await?;
+
+        let blog_entity = crate::entity::blog::BlogEntity::from(blog_record);
+
+        Ok(blog_entity)
+    }
+
     pub async fn list_blogs(
         &self,
     ) -> Result<Vec<crate::entity::blog::BlogEntity>, crate::error::Error> {

@@ -18,6 +18,14 @@ impl QueryRoot {
         })
     }
 
+    pub async fn blog(
+        &self,
+        ctx: &async_graphql::Context<'_>,
+        input: crate::resolver::blog::query::BlogInput,
+    ) -> Result<crate::resolver::blog::query::Blog, async_graphql::Error> {
+        self.blog_query_resolver.blog(ctx, input).await
+    }
+
     pub async fn blog_list(
         &self,
         ctx: &async_graphql::Context<'_>,
