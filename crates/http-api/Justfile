@@ -1,5 +1,5 @@
 dev:
-	cargo lambda watch -P 10000
+	RUST_LOG=http_api=debug cargo lambda watch -P 10000
 
 build:
 	cargo lambda build

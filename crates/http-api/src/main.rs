@@ -1,5 +1,23 @@
+use lambda_http::{Error, run, service_fn};
+
 #[tokio::main]
-async fn main() -> Result<(), lambda_http::Error> {
-    lambda_http::tracing::init_default_subscriber();
-    lambda_http::run(lambda_http::service_fn(http_api::function_handler)).await
+async fn main() -> Result<(), Error> {
+    let rust_log_format = std::env::var("RUST_LOG_FORMAT").unwrap_or("pretty".to_string());
+
+    let filter = tracing_subscriber::EnvFilter::try_from_default_env()
+        .unwrap_or_else(|_| tracing_subscriber::EnvFilter::new("warn"));
+
+    let fmt = tracing_subscriber::fmt()
+        .with_env_filter(filter)
+        .with_level(true)
+        .with_file(true)
+        .with_line_number(true);
+
+    if rust_log_format.eq_ignore_ascii_case("JSON") {
+        fmt.json().init();
+    } else {
+        fmt.pretty().init(); // cargo add tracing_subscriber --features=ansi
+    }
+
+    run(service_fn(http_api::function_handler)).await
 }

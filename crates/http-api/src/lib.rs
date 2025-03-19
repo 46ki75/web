@@ -15,6 +15,7 @@ async fn init_schema() -> &'static async_graphql::Schema<
 > {
     SCHEMA
         .get_or_init(|| async {
+            tracing::debug!("Initializing GraphQL schema");
             let schema: async_graphql::Schema<
                 query::QueryRoot,
                 async_graphql::EmptyMutation,
@@ -51,7 +52,7 @@ pub async fn function_handler(
                             .into(),
                     )
                     .map_err(|e| {
-                        lambda_http::tracing::error!("Failed to build response: {}", e);
+                        tracing::error!("Failed to build response: {}", e);
                         crate::error::Error::BuildResponse(e.to_string())
                     })?);
             }
@@ -62,7 +63,7 @@ pub async fn function_handler(
         let response_body = match serde_json::to_string(&gql_response) {
             Ok(body) => body,
             Err(err) => {
-                lambda_http::tracing::error!("Failed to serialize response: {}", err);
+                tracing::error!("Failed to serialize response: {}", err);
                 return Ok(lambda_http::Response::builder()
                     .status(500)
                     .header("content-type", "application/json")
@@ -72,7 +73,7 @@ pub async fn function_handler(
                             .into(),
                     )
                     .map_err(|e| {
-                        lambda_http::tracing::error!("Failed to build response: {}", e);
+                        tracing::error!("Failed to build response: {}", e);
                         crate::error::Error::BuildResponse(e.to_string())
                     })?);
             }
@@ -83,7 +84,7 @@ pub async fn function_handler(
             .header("content-type", "application/json")
             .body(response_body.into())
             .map_err(|e| {
-                lambda_http::tracing::error!("Failed to build response: {}", e);
+                tracing::error!("Failed to build response: {}", e);
                 crate::error::Error::BuildResponse(e.to_string())
             })?)
     } else {
@@ -97,7 +98,7 @@ pub async fn function_handler(
                     .into(),
             )
             .map_err(|e| {
-                lambda_http::tracing::error!("Failed to build response: {}", e);
+                tracing::error!("Failed to build response: {}", e);
                 crate::error::Error::BuildResponse(e.to_string())
             })?;
         Ok(response)
