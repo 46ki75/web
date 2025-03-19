@@ -11,6 +11,45 @@ pub struct Blog {
     pub updated_at: String,
 }
 
+impl From<crate::entity::blog::BlogEntity> for Blog {
+    fn from(value: crate::entity::blog::BlogEntity) -> Self {
+        Blog {
+            id: value.id,
+            slug: value.slug,
+            title: value.title,
+            description: value.description,
+            tags: value
+                .tags
+                .into_iter()
+                .map(|tag| BlogTag {
+                    id: tag.id,
+                    name: tag.name,
+                    color: match tag.color {
+                        crate::entity::blog::BlogTagColorEntity::Default => "#868e9c",
+                        crate::entity::blog::BlogTagColorEntity::Blue => "#6987b8",
+                        crate::entity::blog::BlogTagColorEntity::Brown => "#a17c5b",
+                        crate::entity::blog::BlogTagColorEntity::Gray => "#868e9c",
+                        crate::entity::blog::BlogTagColorEntity::Green => "#59b57c",
+                        crate::entity::blog::BlogTagColorEntity::Orange => "#d48b70",
+                        crate::entity::blog::BlogTagColorEntity::Pink => "#c9699e",
+                        crate::entity::blog::BlogTagColorEntity::Purple => "#9771bd",
+                        crate::entity::blog::BlogTagColorEntity::Red => "#c56565",
+                        crate::entity::blog::BlogTagColorEntity::Yellow => "#cdb57b",
+                    }
+                    .to_string(),
+                })
+                .collect::<Vec<BlogTag>>(),
+            status: match value.status {
+                crate::entity::blog::BlogStatusEntity::Draft => Status::Draft,
+                crate::entity::blog::BlogStatusEntity::Published => Status::Published,
+                crate::entity::blog::BlogStatusEntity::Archived => Status::Archived,
+            },
+            created_at: value.created_at,
+            updated_at: value.updated_at,
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, async_graphql::SimpleObject)]
 pub struct BlogTag {
     pub id: String,
@@ -89,42 +128,9 @@ impl BlogQueryResolver {
     ) -> Result<Blog, async_graphql::Error> {
         let blog_service = ctx.data::<crate::service::blog::BlogService>()?;
 
-        let blog = blog_service.get_blog_by_id(&input.page_id).await?;
+        let blog_entity = blog_service.get_blog_by_id(&input.page_id).await?;
 
-        let blog = Blog {
-            id: blog.id,
-            slug: blog.slug,
-            title: blog.title,
-            description: blog.description,
-            tags: blog
-                .tags
-                .into_iter()
-                .map(|tag| BlogTag {
-                    id: tag.id,
-                    name: tag.name,
-                    color: match tag.color {
-                        crate::entity::blog::BlogTagColorEntity::Default => "#868e9c",
-                        crate::entity::blog::BlogTagColorEntity::Blue => "#6987b8",
-                        crate::entity::blog::BlogTagColorEntity::Brown => "#a17c5b",
-                        crate::entity::blog::BlogTagColorEntity::Gray => "#868e9c",
-                        crate::entity::blog::BlogTagColorEntity::Green => "#59b57c",
-                        crate::entity::blog::BlogTagColorEntity::Orange => "#d48b70",
-                        crate::entity::blog::BlogTagColorEntity::Pink => "#c9699e",
-                        crate::entity::blog::BlogTagColorEntity::Purple => "#9771bd",
-                        crate::entity::blog::BlogTagColorEntity::Red => "#c56565",
-                        crate::entity::blog::BlogTagColorEntity::Yellow => "#cdb57b",
-                    }
-                    .to_string(),
-                })
-                .collect::<Vec<BlogTag>>(),
-            status: match blog.status {
-                crate::entity::blog::BlogStatusEntity::Draft => Status::Draft,
-                crate::entity::blog::BlogStatusEntity::Published => Status::Published,
-                crate::entity::blog::BlogStatusEntity::Archived => Status::Archived,
-            },
-            created_at: blog.created_at,
-            updated_at: blog.updated_at,
-        };
+        let blog = Blog::from(blog_entity);
 
         Ok(blog)
     }
@@ -135,44 +141,11 @@ impl BlogQueryResolver {
     ) -> Result<Vec<Blog>, async_graphql::Error> {
         let blog_service = ctx.data::<crate::service::blog::BlogService>()?;
 
-        let blogs = blog_service.list_blogs().await?;
+        let blog_entities = blog_service.list_blogs().await?;
 
-        let blogs = blogs
+        let blogs = blog_entities
             .into_iter()
-            .map(|blog| Blog {
-                id: blog.id,
-                slug: blog.slug,
-                title: blog.title,
-                description: blog.description,
-                tags: blog
-                    .tags
-                    .into_iter()
-                    .map(|tag| BlogTag {
-                        id: tag.id,
-                        name: tag.name,
-                        color: match tag.color {
-                            crate::entity::blog::BlogTagColorEntity::Default => "#868e9c",
-                            crate::entity::blog::BlogTagColorEntity::Blue => "#6987b8",
-                            crate::entity::blog::BlogTagColorEntity::Brown => "#a17c5b",
-                            crate::entity::blog::BlogTagColorEntity::Gray => "#868e9c",
-                            crate::entity::blog::BlogTagColorEntity::Green => "#59b57c",
-                            crate::entity::blog::BlogTagColorEntity::Orange => "#d48b70",
-                            crate::entity::blog::BlogTagColorEntity::Pink => "#c9699e",
-                            crate::entity::blog::BlogTagColorEntity::Purple => "#9771bd",
-                            crate::entity::blog::BlogTagColorEntity::Red => "#c56565",
-                            crate::entity::blog::BlogTagColorEntity::Yellow => "#cdb57b",
-                        }
-                        .to_string(),
-                    })
-                    .collect::<Vec<BlogTag>>(),
-                status: match blog.status {
-                    crate::entity::blog::BlogStatusEntity::Draft => Status::Draft,
-                    crate::entity::blog::BlogStatusEntity::Published => Status::Published,
-                    crate::entity::blog::BlogStatusEntity::Archived => Status::Archived,
-                },
-                created_at: blog.created_at,
-                updated_at: blog.updated_at,
-            })
+            .map(Blog::from)
             .collect::<Vec<Blog>>();
 
         Ok(blogs)
