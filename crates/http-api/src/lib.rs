@@ -1,3 +1,4 @@
+pub(crate) mod error;
 pub(crate) mod query;
 
 static SCHEMA: tokio::sync::OnceCell<
@@ -49,7 +50,10 @@ pub async fn function_handler(
                             .to_string()
                             .into(),
                     )
-                    .map_err(Box::new)?);
+                    .map_err(|e| {
+                        lambda_http::tracing::error!("Failed to build response: {}", e);
+                        crate::error::Error::BuildResponse(e.to_string())
+                    })?);
             }
         };
 
@@ -67,7 +71,10 @@ pub async fn function_handler(
                             .to_string()
                             .into(),
                     )
-                    .map_err(Box::new)?);
+                    .map_err(|e| {
+                        lambda_http::tracing::error!("Failed to build response: {}", e);
+                        crate::error::Error::BuildResponse(e.to_string())
+                    })?);
             }
         };
 
@@ -75,7 +82,10 @@ pub async fn function_handler(
             .status(200)
             .header("content-type", "application/json")
             .body(response_body.into())
-            .map_err(Box::new)?)
+            .map_err(|e| {
+                lambda_http::tracing::error!("Failed to build response: {}", e);
+                crate::error::Error::BuildResponse(e.to_string())
+            })?)
     } else {
         // Error Response - Method Not Allowed
         let response = lambda_http::Response::builder()
@@ -86,7 +96,10 @@ pub async fn function_handler(
                     .to_string()
                     .into(),
             )
-            .map_err(Box::new)?;
+            .map_err(|e| {
+                lambda_http::tracing::error!("Failed to build response: {}", e);
+                crate::error::Error::BuildResponse(e.to_string())
+            })?;
         Ok(response)
     }
 }
