@@ -1,2 +1,5 @@
 dev:
 	cargo lambda watch -P 10000
+
+build:
+	cargo lambda build

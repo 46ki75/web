@@ -20,11 +20,14 @@
       ]
     }
   },
-  "forwardPorts": [],
+  "forwardPorts": [
+    10000
+  ],
   "features": {
     "ghcr.io/devcontainers/features/aws-cli": {},
     "ghcr.io/devcontainers/features/node": {},
     "ghcr.io/devcontainers-extra/features/pnpm": {},
+    "ghcr.io/devcontainers-extra/features/zig": {},
     "ghcr.io/devcontainers/features/rust": {},
     "ghcr.io/devcontainers-extra/features/starship": {}
   }
