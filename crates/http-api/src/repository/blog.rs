@@ -11,6 +11,11 @@ pub trait BlogRepository {
     async fn get_block_children(&self, page_id: &str) -> Result<String, crate::error::Error>;
 
     async fn fetch_image_by_url(&self, url: &str) -> Result<bytes::Bytes, crate::error::Error>;
+
+    async fn fetch_image_by_block_id(
+        &self,
+        block_id: &str,
+    ) -> Result<bytes::Bytes, crate::error::Error>;
 }
 
 pub struct BlogRepositoryImpl {
@@ -74,6 +79,39 @@ impl BlogRepository for BlogRepositoryImpl {
     }
 
     async fn fetch_image_by_url(&self, url: &str) -> Result<bytes::Bytes, crate::error::Error> {
+        let response = reqwest::get(url).await.map_err(|e| {
+            tracing::error!("An error occurred while fetch image: {}", e);
+            crate::error::Error::FetchImage(e.to_string())
+        })?;
+
+        let bytes = response.bytes().await.map_err(|e| {
+            tracing::error!("An error occurred while fetch image: {}", e);
+            crate::error::Error::FetchImage(e.to_string())
+        })?;
+
+        Ok(bytes)
+    }
+
+    async fn fetch_image_by_block_id(
+        &self,
+        block_id: &str,
+    ) -> Result<bytes::Bytes, crate::error::Error> {
+        let request = self.config.notionrs_client.get_block().block_id(block_id);
+
+        let response = request.send().await.map_err(|e| {
+            tracing::error!("An error occurred while invoke Notion API: {}", e);
+            crate::error::Error::NotionAPI(e.to_string())
+        })?;
+
+        let url = match response.block {
+            notionrs::object::block::Block::Image { image } => image.get_url(),
+            _ => {
+                return Err(crate::error::Error::NotionDatabaseInvalidSchema(
+                    "The requested block is not an Image block.".to_string(),
+                ));
+            }
+        };
+
         let response = reqwest::get(url).await.map_err(|e| {
             tracing::error!("An error occurred while fetch image: {}", e);
             crate::error::Error::FetchImage(e.to_string())
