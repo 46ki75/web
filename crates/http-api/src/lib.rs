@@ -171,7 +171,11 @@ pub async fn function_handler(
             Ok(response)
         }
     } else if event.uri().path().starts_with("/api/blog/ogp/") {
-        let response = blog_controller.fetch_ogp_image_by_id(event).await?;
+        let response = blog_controller.fetch_ogp_image(event).await?;
+
+        Ok(response)
+    } else if event.uri().path().starts_with("/api/blog/block/") {
+        let response = blog_controller.fetch_block_image(event).await?;
 
         Ok(response)
     } else {
