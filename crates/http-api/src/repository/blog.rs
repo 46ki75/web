@@ -9,6 +9,8 @@ pub trait BlogRepository {
     -> Result<Vec<crate::record::blog::BlogRecord>, crate::error::Error>;
 
     async fn get_block_children(&self, page_id: &str) -> Result<String, crate::error::Error>;
+
+    async fn fetch_image_by_url(&self, url: &str) -> Result<bytes::Bytes, crate::error::Error>;
 }
 
 pub struct BlogRepositoryImpl {
@@ -69,5 +71,19 @@ impl BlogRepository for BlogRepositoryImpl {
             tracing::error!("An error occurred while serialize response: {}", e);
             crate::error::Error::Serialization(e.to_string())
         })?)
+    }
+
+    async fn fetch_image_by_url(&self, url: &str) -> Result<bytes::Bytes, crate::error::Error> {
+        let response = reqwest::get(url).await.map_err(|e| {
+            tracing::error!("An error occurred while fetch image: {}", e);
+            crate::error::Error::FetchImage(e.to_string())
+        })?;
+
+        let bytes = response.bytes().await.map_err(|e| {
+            tracing::error!("An error occurred while fetch image: {}", e);
+            crate::error::Error::FetchImage(e.to_string())
+        })?;
+
+        Ok(bytes)
     }
 }

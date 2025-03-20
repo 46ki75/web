@@ -3,6 +3,7 @@ pub struct BlogRecord {
     pub slug: String,
     pub title: String,
     pub description: String,
+    pub ogp_image_s3_url: Option<String>,
     pub tags: Vec<BlogTagRecord>,
     pub status: BlogStatusRecord,
     pub created_at: String,
@@ -71,6 +72,10 @@ impl TryFrom<notionrs::object::page::PageResponse> for BlogRecord {
                 crate::error::Error::NotionDatabasePropertyNotFound("Description".to_string())
             })?
             .to_string();
+
+        let ogp_image_s3_url = properties
+            .get("OGPImage")
+            .map(|ogp_image| ogp_image.to_string());
 
         let tags = match properties.get("Tags").ok_or_else(|| {
             tracing::error!("Notion database property not found: Tags");
@@ -166,7 +171,7 @@ impl TryFrom<notionrs::object::page::PageResponse> for BlogRecord {
             .to_string();
 
         let updated_at = properties
-            .get("CreatedAt")
+            .get("UpdatedAt")
             .ok_or_else(|| {
                 tracing::error!("Notion database property not found: Description");
                 crate::error::Error::NotionDatabasePropertyNotFound("CreatedAt".to_string())
@@ -178,6 +183,7 @@ impl TryFrom<notionrs::object::page::PageResponse> for BlogRecord {
             slug,
             title,
             description,
+            ogp_image_s3_url,
             tags,
             status,
             created_at,

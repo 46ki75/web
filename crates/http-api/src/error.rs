@@ -20,4 +20,7 @@ pub enum Error {
 
     #[error("Failed to serialize response: {0}")]
     Serialization(String),
+
+    #[error("Failed to fetch image: {0}")]
+    FetchImage(String),
 }

@@ -32,4 +32,23 @@ impl BlogService {
 
         Ok(block_children)
     }
+
+    pub async fn fetch_ogp_image_by_id(
+        &self,
+        page_id: &str,
+    ) -> Result<Option<bytes::Bytes>, crate::error::Error> {
+        let blog = self.blog_repository.get_blog_by_id(page_id).await?;
+
+        let ogp_image_s3_url = match blog.ogp_image_s3_url {
+            Some(url) => url,
+            None => return Ok(None),
+        };
+
+        let image_bytes = self
+            .blog_repository
+            .fetch_image_by_url(&ogp_image_s3_url)
+            .await?;
+
+        Ok(Some(image_bytes))
+    }
 }

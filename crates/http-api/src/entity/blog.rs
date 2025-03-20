@@ -3,6 +3,7 @@ pub struct BlogEntity {
     pub slug: String,
     pub title: String,
     pub description: String,
+    pub ogp_image_s3_url: Option<String>,
     pub tags: Vec<BlogTagEntity>,
     pub status: BlogStatusEntity,
     pub created_at: String,
@@ -47,6 +48,7 @@ impl From<crate::record::blog::BlogRecord> for BlogEntity {
             slug: record.slug.clone(),
             title: record.title.clone(),
             description: record.description.clone(),
+            ogp_image_s3_url: record.ogp_image_s3_url.clone(),
             tags: record
                 .tags
                 .iter()

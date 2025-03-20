@@ -5,6 +5,7 @@ pub struct Blog {
     pub slug: String,
     pub title: String,
     pub description: String,
+    pub ogp_image_s3_url: Option<String>,
     pub tags: Vec<BlogTag>,
     pub status: Status,
     pub created_at: String,
@@ -18,6 +19,7 @@ impl From<crate::entity::blog::BlogEntity> for Blog {
             slug: value.slug,
             title: value.title,
             description: value.description,
+            ogp_image_s3_url: value.ogp_image_s3_url,
             tags: value
                 .tags
                 .into_iter()
@@ -85,6 +87,10 @@ impl Blog {
 
     pub async fn description(&self) -> Result<String, async_graphql::Error> {
         Ok(self.description.clone())
+    }
+
+    pub async fn ogp_image_s3_url(&self) -> Result<Option<String>, async_graphql::Error> {
+        Ok(self.ogp_image_s3_url.clone())
     }
 
     pub async fn tags(&self) -> Result<Vec<BlogTag>, async_graphql::Error> {
