@@ -1,5 +1,6 @@
 pub mod config;
 pub mod context;
+pub mod controller;
 pub mod entity;
 pub mod error;
 pub mod query;
@@ -146,6 +147,18 @@ pub async fn function_handler(
                 })?;
             Ok(response)
         }
+    } else if event.uri().path().starts_with("/api/blog/ogp/") {
+        let config = crate::config::Config::try_new_async().await?;
+
+        let blog_repository = std::sync::Arc::new(repository::blog::BlogRepositoryImpl { config });
+
+        let blog_service = service::blog::BlogService { blog_repository };
+
+        let blog_controller = crate::controller::blog::BlogController { blog_service };
+
+        let response = blog_controller.fetch_ogp_image_by_id(event).await?;
+
+        Ok(response)
     } else {
         tracing::info!("Not Found: {}", event.uri());
         let response = lambda_http::Response::builder()
