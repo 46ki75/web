@@ -76,35 +76,38 @@ pub async fn function_handler(
         }
     };
 
-    if event.method() == lambda_http::http::Method::POST {
-        // GraphQL Execution
-        let request_body = event.body();
+    tracing::debug!("HTTP Request: {} {}", event.method(), event.uri().path());
 
-        let gql_request = match serde_json::from_slice::<async_graphql::Request>(request_body) {
-            Ok(request) => request,
-            Err(err) => {
-                return Ok(lambda_http::Response::builder()
-                    .status(400)
-                    .header("content-type", "application/json")
-                    .body(
-                        serde_json::json!({"error": format!("Invalid request body: {}", err)})
-                            .to_string()
-                            .into(),
-                    )
-                    .map_err(|e| {
-                        tracing::error!("Failed to build response: {}", e);
-                        crate::error::Error::BuildResponse(e.to_string())
-                    })?);
-            }
-        };
+    if event.uri().path() == "/api/graphql" {
+        if event.method() == lambda_http::http::Method::POST {
+            // GraphQL Execution
+            let request_body = event.body();
 
-        let gql_response = schema.execute(gql_request).await;
+            let gql_request = match serde_json::from_slice::<async_graphql::Request>(request_body) {
+                Ok(request) => request,
+                Err(err) => {
+                    return Ok(lambda_http::Response::builder()
+                        .status(400)
+                        .header("content-type", "application/json")
+                        .body(
+                            serde_json::json!({"error": format!("Invalid request body: {}", err)})
+                                .to_string()
+                                .into(),
+                        )
+                        .map_err(|e| {
+                            tracing::error!("Failed to build response: {}", e);
+                            crate::error::Error::BuildResponse(e.to_string())
+                        })?);
+                }
+            };
 
-        let response_body = match serde_json::to_string(&gql_response) {
-            Ok(body) => body,
-            Err(err) => {
-                tracing::error!("Failed to serialize response: {}", err);
-                return Ok(lambda_http::Response::builder()
+            let gql_response = schema.execute(gql_request).await;
+
+            let response_body = match serde_json::to_string(&gql_response) {
+                Ok(body) => body,
+                Err(err) => {
+                    tracing::error!("Failed to serialize response: {}", err);
+                    return Ok(lambda_http::Response::builder()
                     .status(500)
                     .header("content-type", "application/json")
                     .body(
@@ -116,27 +119,39 @@ pub async fn function_handler(
                         tracing::error!("Failed to build response: {}", e);
                         crate::error::Error::BuildResponse(e.to_string())
                     })?);
-            }
-        };
+                }
+            };
 
-        Ok(lambda_http::Response::builder()
-            .status(200)
-            .header("content-type", "application/json")
-            .body(response_body.into())
-            .map_err(|e| {
-                tracing::error!("Failed to build response: {}", e);
-                crate::error::Error::BuildResponse(e.to_string())
-            })?)
+            Ok(lambda_http::Response::builder()
+                .status(200)
+                .header("content-type", "application/json")
+                .body(response_body.into())
+                .map_err(|e| {
+                    tracing::error!("Failed to build response: {}", e);
+                    crate::error::Error::BuildResponse(e.to_string())
+                })?)
+        } else {
+            // Error Response - Method Not Allowed
+            let response = lambda_http::Response::builder()
+                .status(405)
+                .header("content-type", "application/json")
+                .body(
+                    serde_json::json!({"error":"Method Not Allowed"})
+                        .to_string()
+                        .into(),
+                )
+                .map_err(|e| {
+                    tracing::error!("Failed to build response: {}", e);
+                    crate::error::Error::BuildResponse(e.to_string())
+                })?;
+            Ok(response)
+        }
     } else {
-        // Error Response - Method Not Allowed
+        tracing::info!("Not Found: {}", event.uri());
         let response = lambda_http::Response::builder()
-            .status(405)
+            .status(404)
             .header("content-type", "application/json")
-            .body(
-                serde_json::json!({"error":"Method Not Allowed"})
-                    .to_string()
-                    .into(),
-            )
+            .body(serde_json::json!({"error":"Not Found"}).to_string().into())
             .map_err(|e| {
                 tracing::error!("Failed to build response: {}", e);
                 crate::error::Error::BuildResponse(e.to_string())
