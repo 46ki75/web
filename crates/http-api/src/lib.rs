@@ -9,6 +9,18 @@ pub mod repository;
 pub mod resolver;
 pub mod service;
 
+static CONFIG: tokio::sync::OnceCell<crate::config::Config> = tokio::sync::OnceCell::const_new();
+async fn init_config() -> Result<&'static crate::config::Config, crate::error::Error> {
+    CONFIG
+        .get_or_try_init(|| async {
+            tracing::debug!("Initializing Config");
+
+            let config = crate::config::Config::try_new_async().await?;
+            Ok(config)
+        })
+        .await
+}
+
 static SCHEMA: tokio::sync::OnceCell<
     async_graphql::Schema<
         query::QueryRoot,
@@ -16,7 +28,9 @@ static SCHEMA: tokio::sync::OnceCell<
         async_graphql::EmptySubscription,
     >,
 > = tokio::sync::OnceCell::const_new();
-async fn init_schema() -> Result<
+async fn init_schema(
+    config: &crate::config::Config,
+) -> Result<
     &'static async_graphql::Schema<
         query::QueryRoot,
         async_graphql::EmptyMutation,
@@ -28,10 +42,9 @@ async fn init_schema() -> Result<
         .get_or_try_init(|| async {
             tracing::debug!("Initializing GraphQL schema");
 
-            let config = crate::config::Config::try_new_async().await?;
-
-            let blog_repository =
-                std::sync::Arc::new(repository::blog::BlogRepositoryImpl { config });
+            let blog_repository = std::sync::Arc::new(repository::blog::BlogRepositoryImpl {
+                config: config.clone(),
+            });
 
             let blog_service = service::blog::BlogService { blog_repository };
 
@@ -59,7 +72,9 @@ async fn init_schema() -> Result<
 pub async fn function_handler(
     event: lambda_http::Request,
 ) -> Result<lambda_http::Response<lambda_http::Body>, lambda_http::Error> {
-    let schema = match init_schema().await {
+    let config = init_config().await?;
+
+    let schema = match init_schema(config).await {
         Ok(schema) => schema,
         Err(_err) => {
             return Ok(lambda_http::Response::builder()
@@ -148,9 +163,9 @@ pub async fn function_handler(
             Ok(response)
         }
     } else if event.uri().path().starts_with("/api/blog/ogp/") {
-        let config = crate::config::Config::try_new_async().await?;
-
-        let blog_repository = std::sync::Arc::new(repository::blog::BlogRepositoryImpl { config });
+        let blog_repository = std::sync::Arc::new(repository::blog::BlogRepositoryImpl {
+            config: config.clone(),
+        });
 
         let blog_service = service::blog::BlogService { blog_repository };
 
