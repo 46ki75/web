@@ -92,6 +92,14 @@ pub async fn function_handler(
         }
     };
 
+    let blog_repository = std::sync::Arc::new(repository::blog::BlogRepositoryImpl {
+        config: config.clone(),
+    });
+
+    let blog_service = std::sync::Arc::new(service::blog::BlogService { blog_repository });
+
+    let blog_controller = crate::controller::blog::BlogController { blog_service };
+
     tracing::debug!("HTTP Request: {} {}", event.method(), event.uri().path());
 
     if event.uri().path() == "/api/graphql" {
@@ -163,14 +171,6 @@ pub async fn function_handler(
             Ok(response)
         }
     } else if event.uri().path().starts_with("/api/blog/ogp/") {
-        let blog_repository = std::sync::Arc::new(repository::blog::BlogRepositoryImpl {
-            config: config.clone(),
-        });
-
-        let blog_service = std::sync::Arc::new(service::blog::BlogService { blog_repository });
-
-        let blog_controller = crate::controller::blog::BlogController { blog_service };
-
         let response = blog_controller.fetch_ogp_image_by_id(event).await?;
 
         Ok(response)
