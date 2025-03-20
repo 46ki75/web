@@ -34,7 +34,7 @@ impl BlogController {
         match image_bytes {
             Some(bytes) => lambda_http::Response::builder()
                 .status(200)
-                .header("content-type", "image/png")
+                .header("content-type", "image/webp")
                 .body(lambda_http::Body::Binary(bytes.into()))
                 .map_err(|e| {
                     tracing::error!("Failed to build response: {}", e);

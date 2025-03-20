@@ -23,4 +23,13 @@ pub enum Error {
 
     #[error("Failed to fetch image: {0}")]
     FetchImage(String),
+
+    #[error("Failed to fetch image: {0}")]
+    ImageFormat(String),
+
+    #[error("Failed to decode image: {0}")]
+    ImageDecode(String),
+
+    #[error("Failed to encode image: {0}")]
+    ImageEncode(String),
 }

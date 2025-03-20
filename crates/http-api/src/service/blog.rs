@@ -49,6 +49,25 @@ impl BlogService {
             .fetch_image_by_url(&ogp_image_s3_url)
             .await?;
 
-        Ok(Some(image_bytes))
+        let img = image::ImageReader::new(std::io::Cursor::new(image_bytes))
+            .with_guessed_format()
+            .map_err(|e| {
+                tracing::error!("Failed to guess image format: {}", e);
+                crate::error::Error::ImageFormat(e.to_string())
+            })?
+            .decode()
+            .map_err(|e| {
+                tracing::error!("Failed to decode image: {}", e);
+                crate::error::Error::ImageDecode(e.to_string())
+            })?;
+
+        let encoder = webp::Encoder::from_image(&img).map_err(|e| {
+            tracing::error!("Failed to encode image: {}", e);
+            crate::error::Error::ImageEncode(e.to_string())
+        })?;
+
+        let webp_bytes = bytes::Bytes::from(encoder.encode(80.0).to_vec());
+
+        Ok(Some(webp_bytes))
     }
 }
