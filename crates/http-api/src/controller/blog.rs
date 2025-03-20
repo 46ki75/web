@@ -1,5 +1,5 @@
 pub struct BlogController {
-    pub blog_service: crate::service::blog::BlogService,
+    pub blog_service: std::sync::Arc<crate::service::blog::BlogService>,
 }
 
 impl BlogController {

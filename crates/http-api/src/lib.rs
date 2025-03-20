@@ -167,7 +167,7 @@ pub async fn function_handler(
             config: config.clone(),
         });
 
-        let blog_service = service::blog::BlogService { blog_repository };
+        let blog_service = std::sync::Arc::new(service::blog::BlogService { blog_repository });
 
         let blog_controller = crate::controller::blog::BlogController { blog_service };
 
