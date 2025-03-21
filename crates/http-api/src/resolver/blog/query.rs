@@ -59,6 +59,28 @@ pub struct BlogTag {
     pub color: String,
 }
 
+impl From<crate::entity::blog::BlogTagEntity> for BlogTag {
+    fn from(tag: crate::entity::blog::BlogTagEntity) -> Self {
+        BlogTag {
+            id: tag.id,
+            name: tag.name,
+            color: match tag.color {
+                crate::entity::blog::BlogTagColorEntity::Default => "#868e9c",
+                crate::entity::blog::BlogTagColorEntity::Blue => "#6987b8",
+                crate::entity::blog::BlogTagColorEntity::Brown => "#a17c5b",
+                crate::entity::blog::BlogTagColorEntity::Gray => "#868e9c",
+                crate::entity::blog::BlogTagColorEntity::Green => "#59b57c",
+                crate::entity::blog::BlogTagColorEntity::Orange => "#d48b70",
+                crate::entity::blog::BlogTagColorEntity::Pink => "#c9699e",
+                crate::entity::blog::BlogTagColorEntity::Purple => "#9771bd",
+                crate::entity::blog::BlogTagColorEntity::Red => "#c56565",
+                crate::entity::blog::BlogTagColorEntity::Yellow => "#cdb57b",
+            }
+            .to_string(),
+        }
+    }
+}
+
 #[async_graphql::Object]
 impl BlogTag {
     pub async fn id(&self) -> Result<String, async_graphql::Error> {
@@ -190,6 +212,21 @@ impl BlogQueryResolver {
         Ok(blogs)
     }
 
+    pub async fn tag(
+        &self,
+        ctx: &async_graphql::Context<'_>,
+        tag_id: String,
+    ) -> Result<Option<BlogTag>, async_graphql::Error> {
+        let blog_service = ctx.data::<crate::service::blog::BlogService>()?;
+
+        let tag = blog_service
+            .get_tag_by_id(&tag_id)
+            .await?
+            .map(BlogTag::from);
+
+        Ok(tag)
+    }
+
     pub async fn tag_list(
         &self,
         ctx: &async_graphql::Context<'_>,
@@ -200,23 +237,7 @@ impl BlogQueryResolver {
 
         let blog_tags = tags
             .into_iter()
-            .map(|tag| BlogTag {
-                id: tag.id,
-                name: tag.name,
-                color: match tag.color {
-                    crate::entity::blog::BlogTagColorEntity::Default => "#868e9c",
-                    crate::entity::blog::BlogTagColorEntity::Blue => "#6987b8",
-                    crate::entity::blog::BlogTagColorEntity::Brown => "#a17c5b",
-                    crate::entity::blog::BlogTagColorEntity::Gray => "#868e9c",
-                    crate::entity::blog::BlogTagColorEntity::Green => "#59b57c",
-                    crate::entity::blog::BlogTagColorEntity::Orange => "#d48b70",
-                    crate::entity::blog::BlogTagColorEntity::Pink => "#c9699e",
-                    crate::entity::blog::BlogTagColorEntity::Purple => "#9771bd",
-                    crate::entity::blog::BlogTagColorEntity::Red => "#c56565",
-                    crate::entity::blog::BlogTagColorEntity::Yellow => "#cdb57b",
-                }
-                .to_string(),
-            })
+            .map(BlogTag::from)
             .collect::<Vec<BlogTag>>();
 
         Ok(blog_tags)

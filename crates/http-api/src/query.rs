@@ -33,6 +33,14 @@ impl QueryRoot {
         self.blog_query_resolver.blog_list(ctx).await
     }
 
+    pub async fn tag(
+        &self,
+        ctx: &async_graphql::Context<'_>,
+        tag_id: String,
+    ) -> Result<Option<crate::resolver::blog::query::BlogTag>, async_graphql::Error> {
+        self.blog_query_resolver.tag(ctx, tag_id).await
+    }
+
     pub async fn tag_list(
         &self,
         ctx: &async_graphql::Context<'_>,

@@ -102,6 +102,21 @@ impl BlogService {
         Ok(Some(webp_bytes))
     }
 
+    pub async fn get_tag_by_id(
+        &self,
+        tag_id: &str,
+    ) -> Result<Option<crate::entity::blog::BlogTagEntity>, crate::error::Error> {
+        let tag_records = self.blog_repository.list_tags().await?;
+
+        for tag_record in tag_records {
+            if tag_record.id == tag_id {
+                return Ok(Some(crate::entity::blog::BlogTagEntity::from(tag_record)));
+            }
+        }
+
+        Ok(None)
+    }
+
     pub async fn list_tags(
         &self,
     ) -> Result<Vec<crate::entity::blog::BlogTagEntity>, crate::error::Error> {
