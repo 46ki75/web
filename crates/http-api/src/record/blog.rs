@@ -128,7 +128,14 @@ impl TryFrom<notionrs::object::page::PageResponse> for BlogRecord {
 
         let ogp_image_s3_url = properties
             .get("OGPImage")
-            .map(|ogp_image| ogp_image.to_string());
+            .map(|ogp_image| ogp_image.to_string())
+            .and_then(|ogp_image| {
+                if ogp_image.is_empty() {
+                    None
+                } else {
+                    Some(ogp_image)
+                }
+            });
 
         let tags = match properties.get("Tags").ok_or_else(|| {
             tracing::error!("Notion database property not found: Tags");
