@@ -39,6 +39,49 @@ pub enum BlogStatusEntity {
     Archived,
 }
 
+impl From<crate::record::blog::BlogTagRecord> for BlogTagEntity {
+    fn from(value: crate::record::blog::BlogTagRecord) -> Self {
+        let record = value;
+
+        crate::entity::blog::BlogTagEntity {
+            id: record.id.clone(),
+            name: record.name.clone(),
+            color: match record.color {
+                crate::record::blog::BlogTagColorRecord::Default => {
+                    crate::entity::blog::BlogTagColorEntity::Default
+                }
+                crate::record::blog::BlogTagColorRecord::Blue => {
+                    crate::entity::blog::BlogTagColorEntity::Blue
+                }
+                crate::record::blog::BlogTagColorRecord::Brown => {
+                    crate::entity::blog::BlogTagColorEntity::Brown
+                }
+                crate::record::blog::BlogTagColorRecord::Gray => {
+                    crate::entity::blog::BlogTagColorEntity::Gray
+                }
+                crate::record::blog::BlogTagColorRecord::Green => {
+                    crate::entity::blog::BlogTagColorEntity::Green
+                }
+                crate::record::blog::BlogTagColorRecord::Orange => {
+                    crate::entity::blog::BlogTagColorEntity::Orange
+                }
+                crate::record::blog::BlogTagColorRecord::Pink => {
+                    crate::entity::blog::BlogTagColorEntity::Pink
+                }
+                crate::record::blog::BlogTagColorRecord::Purple => {
+                    crate::entity::blog::BlogTagColorEntity::Purple
+                }
+                crate::record::blog::BlogTagColorRecord::Red => {
+                    crate::entity::blog::BlogTagColorEntity::Red
+                }
+                crate::record::blog::BlogTagColorRecord::Yellow => {
+                    crate::entity::blog::BlogTagColorEntity::Yellow
+                }
+            },
+        }
+    }
+}
+
 impl From<crate::record::blog::BlogRecord> for BlogEntity {
     fn from(value: crate::record::blog::BlogRecord) -> Self {
         let record = value;
@@ -51,43 +94,8 @@ impl From<crate::record::blog::BlogRecord> for BlogEntity {
             ogp_image_s3_url: record.ogp_image_s3_url.clone(),
             tags: record
                 .tags
-                .iter()
-                .map(|tag| crate::entity::blog::BlogTagEntity {
-                    id: tag.id.clone(),
-                    name: tag.name.clone(),
-                    color: match tag.color {
-                        crate::record::blog::BlogTagColorRecord::Default => {
-                            crate::entity::blog::BlogTagColorEntity::Default
-                        }
-                        crate::record::blog::BlogTagColorRecord::Blue => {
-                            crate::entity::blog::BlogTagColorEntity::Blue
-                        }
-                        crate::record::blog::BlogTagColorRecord::Brown => {
-                            crate::entity::blog::BlogTagColorEntity::Brown
-                        }
-                        crate::record::blog::BlogTagColorRecord::Gray => {
-                            crate::entity::blog::BlogTagColorEntity::Gray
-                        }
-                        crate::record::blog::BlogTagColorRecord::Green => {
-                            crate::entity::blog::BlogTagColorEntity::Green
-                        }
-                        crate::record::blog::BlogTagColorRecord::Orange => {
-                            crate::entity::blog::BlogTagColorEntity::Orange
-                        }
-                        crate::record::blog::BlogTagColorRecord::Pink => {
-                            crate::entity::blog::BlogTagColorEntity::Pink
-                        }
-                        crate::record::blog::BlogTagColorRecord::Purple => {
-                            crate::entity::blog::BlogTagColorEntity::Purple
-                        }
-                        crate::record::blog::BlogTagColorRecord::Red => {
-                            crate::entity::blog::BlogTagColorEntity::Red
-                        }
-                        crate::record::blog::BlogTagColorRecord::Yellow => {
-                            crate::entity::blog::BlogTagColorEntity::Yellow
-                        }
-                    },
-                })
+                .into_iter()
+                .map(BlogTagEntity::from)
                 .collect::<Vec<crate::entity::blog::BlogTagEntity>>(),
             status: match record.status {
                 crate::record::blog::BlogStatusRecord::Draft => {

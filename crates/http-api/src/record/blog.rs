@@ -39,6 +39,59 @@ pub enum BlogStatusRecord {
     Archived,
 }
 
+impl TryFrom<notionrs::object::select::Select> for BlogTagRecord {
+    type Error = crate::error::Error;
+
+    fn try_from(tag: notionrs::object::select::Select) -> Result<Self, Self::Error> {
+        let id = tag.id.ok_or_else(|| {
+            tracing::error!("Notion database invalid schema: Tags.id");
+            crate::error::Error::NotionDatabaseInvalidSchema("Tags.id".to_string())
+        })?;
+
+        let name = tag.name;
+
+        let select_color = tag.color.ok_or_else(|| {
+            tracing::error!("Notion database invalid schema: Tags.color");
+            crate::error::Error::NotionDatabaseInvalidSchema("Tags.color".to_string())
+        })?;
+
+        let color = match select_color {
+            notionrs::object::select::SelectColor::Blue => {
+                crate::record::blog::BlogTagColorRecord::Blue
+            }
+            notionrs::object::select::SelectColor::Default => {
+                crate::record::blog::BlogTagColorRecord::Default
+            }
+            notionrs::object::select::SelectColor::Brown => {
+                crate::record::blog::BlogTagColorRecord::Brown
+            }
+            notionrs::object::select::SelectColor::Gray => {
+                crate::record::blog::BlogTagColorRecord::Gray
+            }
+            notionrs::object::select::SelectColor::Green => {
+                crate::record::blog::BlogTagColorRecord::Green
+            }
+            notionrs::object::select::SelectColor::Orange => {
+                crate::record::blog::BlogTagColorRecord::Orange
+            }
+            notionrs::object::select::SelectColor::Pink => {
+                crate::record::blog::BlogTagColorRecord::Pink
+            }
+            notionrs::object::select::SelectColor::Purple => {
+                crate::record::blog::BlogTagColorRecord::Purple
+            }
+            notionrs::object::select::SelectColor::Red => {
+                crate::record::blog::BlogTagColorRecord::Red
+            }
+            notionrs::object::select::SelectColor::Yellow => {
+                crate::record::blog::BlogTagColorRecord::Yellow
+            }
+        };
+
+        Ok(crate::record::blog::BlogTagRecord { id, name, color })
+    }
+}
+
 impl TryFrom<notionrs::object::page::PageResponse> for BlogRecord {
     type Error = crate::error::Error;
 
@@ -85,54 +138,7 @@ impl TryFrom<notionrs::object::page::PageResponse> for BlogRecord {
                 .clone()
                 .multi_select
                 .into_iter()
-                .map(|tag| {
-                    let id = tag.id.ok_or_else(|| {
-                        tracing::error!("Notion database invalid schema: Tags.id");
-                        crate::error::Error::NotionDatabaseInvalidSchema("Tags.id".to_string())
-                    })?;
-
-                    let name = tag.name;
-
-                    let select_color = tag.color.ok_or_else(|| {
-                        tracing::error!("Notion database invalid schema: Tags.color");
-                        crate::error::Error::NotionDatabaseInvalidSchema("Tags.color".to_string())
-                    })?;
-
-                    let color = match select_color {
-                        notionrs::object::select::SelectColor::Blue => {
-                            crate::record::blog::BlogTagColorRecord::Blue
-                        }
-                        notionrs::object::select::SelectColor::Default => {
-                            crate::record::blog::BlogTagColorRecord::Default
-                        }
-                        notionrs::object::select::SelectColor::Brown => {
-                            crate::record::blog::BlogTagColorRecord::Brown
-                        }
-                        notionrs::object::select::SelectColor::Gray => {
-                            crate::record::blog::BlogTagColorRecord::Gray
-                        }
-                        notionrs::object::select::SelectColor::Green => {
-                            crate::record::blog::BlogTagColorRecord::Green
-                        }
-                        notionrs::object::select::SelectColor::Orange => {
-                            crate::record::blog::BlogTagColorRecord::Orange
-                        }
-                        notionrs::object::select::SelectColor::Pink => {
-                            crate::record::blog::BlogTagColorRecord::Pink
-                        }
-                        notionrs::object::select::SelectColor::Purple => {
-                            crate::record::blog::BlogTagColorRecord::Purple
-                        }
-                        notionrs::object::select::SelectColor::Red => {
-                            crate::record::blog::BlogTagColorRecord::Red
-                        }
-                        notionrs::object::select::SelectColor::Yellow => {
-                            crate::record::blog::BlogTagColorRecord::Yellow
-                        }
-                    };
-
-                    Ok(crate::record::blog::BlogTagRecord { id, name, color })
-                })
+                .map(BlogTagRecord::try_from)
                 .collect::<Result<Vec<crate::record::blog::BlogTagRecord>, crate::error::Error>>(),
             _ => {
                 tracing::error!("Notion database invalid schema: Tags");

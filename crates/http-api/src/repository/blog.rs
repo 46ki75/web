@@ -16,6 +16,10 @@ pub trait BlogRepository {
         &self,
         block_id: &str,
     ) -> Result<bytes::Bytes, crate::error::Error>;
+
+    async fn list_tags(
+        &self,
+    ) -> Result<Vec<crate::record::blog::BlogTagRecord>, crate::error::Error>;
 }
 
 pub struct BlogRepositoryImpl {
@@ -123,5 +127,45 @@ impl BlogRepository for BlogRepositoryImpl {
         })?;
 
         Ok(bytes)
+    }
+
+    async fn list_tags(
+        &self,
+    ) -> Result<Vec<crate::record::blog::BlogTagRecord>, crate::error::Error> {
+        let request = self
+            .config
+            .notionrs_client
+            .retrieve_database()
+            .database_id(&self.config.notion_blog_database_id);
+
+        let response = request.send().await.map_err(|e| {
+            tracing::error!("An error occurred while invoke Notion API: {}", e);
+            crate::error::Error::NotionAPI(e.to_string())
+        })?;
+
+        let properties = response.properties.get("Tags").ok_or_else(|| {
+            tracing::error!("Notion database property not found: Tags");
+            crate::error::Error::NotionDatabasePropertyNotFound("Tags".to_string())
+        })?;
+
+        let tags_property = match properties {
+            notionrs::object::database::DatabaseProperty::MultiSelect(property) => {
+                &property.multi_select.options
+            }
+            _ => {
+                tracing::error!("Notion database invalid schema: Tags");
+                return Err(crate::error::Error::NotionDatabaseInvalidSchema(
+                    "Tags".to_string(),
+                ));
+            }
+        }
+        .clone();
+
+        let tags = tags_property
+            .into_iter()
+            .map(crate::record::blog::BlogTagRecord::try_from)
+            .collect::<Result<Vec<crate::record::blog::BlogTagRecord>, crate::error::Error>>()?;
+
+        Ok(tags)
     }
 }

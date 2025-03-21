@@ -32,6 +32,13 @@ impl QueryRoot {
     ) -> Result<Vec<crate::resolver::blog::query::Blog>, async_graphql::Error> {
         self.blog_query_resolver.blog_list(ctx).await
     }
+
+    pub async fn tag_list(
+        &self,
+        ctx: &async_graphql::Context<'_>,
+    ) -> Result<Vec<crate::resolver::blog::query::BlogTag>, async_graphql::Error> {
+        self.blog_query_resolver.tag_list(ctx).await
+    }
 }
 
 #[derive(async_graphql::SimpleObject)]

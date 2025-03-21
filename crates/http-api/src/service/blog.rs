@@ -101,4 +101,17 @@ impl BlogService {
 
         Ok(Some(webp_bytes))
     }
+
+    pub async fn list_tags(
+        &self,
+    ) -> Result<Vec<crate::entity::blog::BlogTagEntity>, crate::error::Error> {
+        let tag_records = self.blog_repository.list_tags().await?;
+
+        let tag_entities = tag_records
+            .into_iter()
+            .map(crate::entity::blog::BlogTagEntity::from)
+            .collect::<Vec<crate::entity::blog::BlogTagEntity>>();
+
+        Ok(tag_entities)
+    }
 }

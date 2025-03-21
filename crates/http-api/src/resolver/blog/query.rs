@@ -156,4 +156,36 @@ impl BlogQueryResolver {
 
         Ok(blogs)
     }
+
+    pub async fn tag_list(
+        &self,
+        ctx: &async_graphql::Context<'_>,
+    ) -> Result<Vec<BlogTag>, async_graphql::Error> {
+        let blog_service = ctx.data::<crate::service::blog::BlogService>()?;
+
+        let tags = blog_service.list_tags().await?;
+
+        let blog_tags = tags
+            .into_iter()
+            .map(|tag| BlogTag {
+                id: tag.id,
+                name: tag.name,
+                color: match tag.color {
+                    crate::entity::blog::BlogTagColorEntity::Default => "#868e9c",
+                    crate::entity::blog::BlogTagColorEntity::Blue => "#6987b8",
+                    crate::entity::blog::BlogTagColorEntity::Brown => "#a17c5b",
+                    crate::entity::blog::BlogTagColorEntity::Gray => "#868e9c",
+                    crate::entity::blog::BlogTagColorEntity::Green => "#59b57c",
+                    crate::entity::blog::BlogTagColorEntity::Orange => "#d48b70",
+                    crate::entity::blog::BlogTagColorEntity::Pink => "#c9699e",
+                    crate::entity::blog::BlogTagColorEntity::Purple => "#9771bd",
+                    crate::entity::blog::BlogTagColorEntity::Red => "#c56565",
+                    crate::entity::blog::BlogTagColorEntity::Yellow => "#cdb57b",
+                }
+                .to_string(),
+            })
+            .collect::<Vec<BlogTag>>();
+
+        Ok(blog_tags)
+    }
 }
