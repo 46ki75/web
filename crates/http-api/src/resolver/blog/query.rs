@@ -52,11 +52,26 @@ impl From<crate::entity::blog::BlogEntity> for Blog {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, async_graphql::SimpleObject)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct BlogTag {
     pub id: String,
     pub name: String,
     pub color: String,
+}
+
+#[async_graphql::Object]
+impl BlogTag {
+    pub async fn id(&self) -> Result<String, async_graphql::Error> {
+        Ok(self.id.clone())
+    }
+
+    pub async fn name(&self) -> Result<String, async_graphql::Error> {
+        Ok(self.name.clone())
+    }
+
+    pub async fn color(&self) -> Result<String, async_graphql::Error> {
+        Ok(self.color.clone())
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, async_graphql::Enum)]
