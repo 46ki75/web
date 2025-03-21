@@ -1,33 +1,49 @@
+//! BlogRepository module
+#![deny(missing_docs)]
+
+/// The repository trait for blog.
 #[async_trait::async_trait]
 pub trait BlogRepository {
+    /// Retrieves a blog by its page ID.
     async fn get_blog_by_id(
         &self,
         page_id: &str,
     ) -> Result<crate::record::blog::BlogRecord, crate::error::Error>;
 
+    /// Retrieves all blogs.
     async fn list_blogs(&self)
     -> Result<Vec<crate::record::blog::BlogRecord>, crate::error::Error>;
 
+    /// Retrieves the children of the page by its page ID.
     async fn get_block_children(&self, page_id: &str) -> Result<String, crate::error::Error>;
 
+    /// Fetches an image binary by its URL.
     async fn fetch_image_by_url(&self, url: &str) -> Result<bytes::Bytes, crate::error::Error>;
 
+    /// Fetches an image binary of the block by its block ID.
     async fn fetch_image_by_block_id(
         &self,
         block_id: &str,
     ) -> Result<bytes::Bytes, crate::error::Error>;
 
+    /// Lists all tags.
     async fn list_tags(
         &self,
     ) -> Result<Vec<crate::record::blog::BlogTagRecord>, crate::error::Error>;
 
+    /// Lists all blogs that contain the specified tags.
     async fn list_blogs_by_tags(
         &self,
         tags: Vec<String>,
     ) -> Result<Vec<crate::record::blog::BlogRecord>, crate::error::Error>;
 }
 
+/// The implementation of `BlogRepository` trait.
+///
+/// This struct provides the concrete implementation of the `BlogRepository` trait,
+/// using external dependencies such as the Notion API client to interact with the blog database.
 pub struct BlogRepositoryImpl {
+    /// The application configuration.
     pub config: crate::config::Config,
 }
 

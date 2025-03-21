@@ -9,7 +9,10 @@ pub mod repository;
 pub mod resolver;
 pub mod service;
 
+/// Thread-safe, write-once application configuration.
 static CONFIG: tokio::sync::OnceCell<crate::config::Config> = tokio::sync::OnceCell::const_new();
+
+/// Initialize the application configuration.
 async fn init_config() -> Result<&'static crate::config::Config, crate::error::Error> {
     CONFIG
         .get_or_try_init(|| async {
@@ -21,6 +24,7 @@ async fn init_config() -> Result<&'static crate::config::Config, crate::error::E
         .await
 }
 
+/// Thread-safe, write-once GraphQL schema.
 static SCHEMA: tokio::sync::OnceCell<
     async_graphql::Schema<
         query::QueryRoot,
@@ -28,6 +32,8 @@ static SCHEMA: tokio::sync::OnceCell<
         async_graphql::EmptySubscription,
     >,
 > = tokio::sync::OnceCell::const_new();
+
+/// Initialize the GraphQL schema.
 async fn init_schema(
     config: &crate::config::Config,
 ) -> Result<
