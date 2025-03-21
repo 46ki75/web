@@ -20,6 +20,11 @@ pub trait BlogRepository {
     async fn list_tags(
         &self,
     ) -> Result<Vec<crate::record::blog::BlogTagRecord>, crate::error::Error>;
+
+    async fn list_blogs_by_tags(
+        &self,
+        tags: Vec<String>,
+    ) -> Result<Vec<crate::record::blog::BlogRecord>, crate::error::Error>;
 }
 
 pub struct BlogRepositoryImpl {
@@ -167,5 +172,42 @@ impl BlogRepository for BlogRepositoryImpl {
             .collect::<Result<Vec<crate::record::blog::BlogTagRecord>, crate::error::Error>>()?;
 
         Ok(tags)
+    }
+
+    async fn list_blogs_by_tags(
+        &self,
+        tags: Vec<String>,
+    ) -> Result<Vec<crate::record::blog::BlogRecord>, crate::error::Error> {
+        let mut filters: Vec<notionrs::object::request::filter::Filter> =
+            vec![notionrs::object::request::filter::Filter::status_equals(
+                "Status",
+                "Published",
+            )];
+
+        for tag in tags {
+            filters.push(
+                notionrs::object::request::filter::Filter::multi_select_contains("Tags", tag),
+            );
+        }
+
+        let request = self
+            .config
+            .notionrs_client
+            .query_database()
+            .filter(notionrs::object::request::filter::Filter::and(filters))
+            .database_id(&self.config.notion_blog_database_id);
+
+        let response = request.send().await.map_err(|e| {
+            tracing::error!("An error occurred while invoke Notion API: {}", e);
+            crate::error::Error::NotionAPI(e.to_string())
+        })?;
+
+        let blogs = response
+            .results
+            .into_iter()
+            .map(crate::record::blog::BlogRecord::try_from)
+            .collect::<Result<Vec<crate::record::blog::BlogRecord>, crate::error::Error>>()?;
+
+        Ok(blogs)
     }
 }

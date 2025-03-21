@@ -114,4 +114,18 @@ impl BlogService {
 
         Ok(tag_entities)
     }
+
+    pub async fn list_blogs_by_tags(
+        &self,
+        tags: Vec<String>,
+    ) -> Result<Vec<crate::entity::blog::BlogEntity>, crate::error::Error> {
+        let blog_records = self.blog_repository.list_blogs_by_tags(tags).await?;
+
+        let blog_entities = blog_records
+            .into_iter()
+            .map(crate::entity::blog::BlogEntity::from)
+            .collect::<Vec<crate::entity::blog::BlogEntity>>();
+
+        Ok(blog_entities)
+    }
 }
