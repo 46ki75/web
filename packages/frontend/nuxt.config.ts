@@ -1,25 +1,32 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import "dotenv/config"
-import { Client } from '@notionhq/client'
+import 'dotenv/config'
 
-const notion = new Client({ auth: process.env.NOTION_API_KEY })
+const fetchRoutes = async () => {
+  const response = await fetch(
+    'http://localhost:10000/lambda-url/http-api/api/graphql',
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        query: /* GraphQL */ `
+          query Routes {
+            blogList {
+              id
+            }
+          }
+        `
+      })
+    }
+  )
 
-const { results } = await notion.databases.query({
-  database_id: String(process.env.NOTION_BLOG_DATABASE_ID),
-  filter: {
-    property: 'status',
-    status: { equals: 'published' }
+  const { data } = await response.json()
+
+  return data as {
+    data: { blogList: Array<{ id: string }> }
   }
-})
+}
 
-const ogpImageRoutes = results.map(
-  (page: any) =>
-    `/api/blog/image/${page.properties.slug.unique_id.number}/ogp.webp`
-)
-
-const articleRoutes = results.map(
-  (page: any) => `/blog/article/${page.properties.slug.unique_id.number}`
-)
+const articleRoutes = await fetchRoutes()
 
 export default defineNuxtConfig({
   compatibilityDate: '2024-04-03',
@@ -37,12 +44,8 @@ export default defineNuxtConfig({
     },
     server: {
       proxy: {
-        '/graphql': {
-          target: 'http://localhost:10000/lambda-url/graphql',
-          changeOrigin: true
-        },
-        '/api/v1/blog/images': {
-          target: 'http://localhost:11000/lambda-url/blog-block-image',
+        '/api': {
+          target: 'http://localhost:10000/lambda-url/http-api',
           changeOrigin: true
         }
       }
@@ -50,7 +53,9 @@ export default defineNuxtConfig({
   },
   nitro: {
     prerender: {
-      routes: [...ogpImageRoutes, ...articleRoutes]
+      routes: articleRoutes.data.blogList.map(
+        (article) => `/blog/article/${article.id}`
+      )
     }
   }
 })
