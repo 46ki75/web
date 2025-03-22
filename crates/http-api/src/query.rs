@@ -7,7 +7,7 @@ pub struct QueryRoot {
 
 #[async_graphql::Object]
 impl QueryRoot {
-    /// Fetch a single blog post by page id.
+    /// Returns a single blog post by page id.
     pub async fn blog(
         &self,
         ctx: &async_graphql::Context<'_>,
@@ -16,7 +16,7 @@ impl QueryRoot {
         self.blog_query_resolver.blog(ctx, page_id).await
     }
 
-    /// Fetch a list of blog posts.
+    /// Returns a list of blog posts.
     pub async fn blog_list(
         &self,
         ctx: &async_graphql::Context<'_>,
@@ -24,7 +24,7 @@ impl QueryRoot {
         self.blog_query_resolver.blog_list(ctx).await
     }
 
-    /// Fetch a single blog tag by tag id.
+    /// Returns a single blog tag by tag id.
     pub async fn tag(
         &self,
         ctx: &async_graphql::Context<'_>,
@@ -33,7 +33,7 @@ impl QueryRoot {
         self.blog_query_resolver.tag(ctx, tag_id).await
     }
 
-    /// Fetch a list of blog tags.
+    /// Returns a list of blog tags.
     pub async fn tag_list(
         &self,
         ctx: &async_graphql::Context<'_>,
