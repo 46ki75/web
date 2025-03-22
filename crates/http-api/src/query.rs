@@ -1,7 +1,10 @@
+//! Root Query object.
+
 use async_graphql::*;
 
-/// The root query object.
+/// Root Query object.
 pub struct QueryRoot {
+    /// Instance of `BlogQueryResolver`. Injected at the entory point.
     pub blog_query_resolver: std::sync::Arc<crate::resolver::blog::query::BlogQueryResolver>,
 }
 

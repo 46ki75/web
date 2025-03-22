@@ -1,3 +1,7 @@
+//! # Execute
+//!
+//! This module contains the Axum and GraphQL executors.
+
 use tower::ServiceExt;
 
 /// Execute an Axum app with a Lambda event.

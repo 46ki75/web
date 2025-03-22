@@ -1,5 +1,8 @@
+#![deny(missing_docs)]
+
+//! // TODO: Write documentation for this crate.
+
 pub mod config;
-pub mod context;
 pub mod controller;
 pub mod entity;
 pub mod error;
@@ -11,6 +14,7 @@ pub mod resolver;
 pub mod schema;
 pub mod service;
 
+/// Handler function of AWS Lambda.
 pub async fn function_handler(
     event: lambda_http::Request,
 ) -> Result<lambda_http::Response<lambda_http::Body>, lambda_http::Error> {

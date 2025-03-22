@@ -1,8 +1,13 @@
+//! Service that invokes repository methods and executes business logic
+
+/// Service that invokes repository methods and executes business logic
 pub struct BlogService {
+    /// Instance of BlogRepository. Injected at the entry point.
     pub blog_repository: std::sync::Arc<dyn crate::repository::blog::BlogRepository + Send + Sync>,
 }
 
 impl BlogService {
+    /// Fetches the blog by its page ID.
     pub async fn get_blog_by_id(
         &self,
         id: &str,
@@ -14,6 +19,7 @@ impl BlogService {
         Ok(blog_entity)
     }
 
+    /// Fetches all blogs.
     pub async fn list_blogs(
         &self,
     ) -> Result<Vec<crate::entity::blog::BlogEntity>, crate::error::Error> {
@@ -27,12 +33,14 @@ impl BlogService {
         Ok(blog_entities)
     }
 
+    /// Fetches block children of the blog by its page ID.
     pub async fn get_block_children(&self, page_id: &str) -> Result<String, crate::error::Error> {
         let block_children = self.blog_repository.get_block_children(page_id).await?;
 
         Ok(block_children)
     }
 
+    /// Fetches OGP image binary by its blog page ID.
     pub async fn fetch_ogp_image_by_id(
         &self,
         page_id: &str,
@@ -71,6 +79,7 @@ impl BlogService {
         Ok(Some(webp_bytes))
     }
 
+    /// Fetches image bynary of the block by its block ID.
     pub async fn fetch_block_image_by_id(
         &self,
         block_id: &str,
@@ -102,6 +111,7 @@ impl BlogService {
         Ok(Some(webp_bytes))
     }
 
+    /// Fetches the tag by its tag ID.
     pub async fn get_tag_by_id(
         &self,
         tag_id: &str,
@@ -117,6 +127,7 @@ impl BlogService {
         Ok(None)
     }
 
+    /// Fetches all tags.
     pub async fn list_tags(
         &self,
     ) -> Result<Vec<crate::entity::blog::BlogTagEntity>, crate::error::Error> {
@@ -130,6 +141,7 @@ impl BlogService {
         Ok(tag_entities)
     }
 
+    /// Fetches all blogs associated with the tags.
     pub async fn list_blogs_by_tags(
         &self,
         tags: Vec<String>,
