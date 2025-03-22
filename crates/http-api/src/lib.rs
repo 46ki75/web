@@ -8,58 +8,8 @@ pub mod query;
 pub mod record;
 pub mod repository;
 pub mod resolver;
+pub mod schema;
 pub mod service;
-
-/// Thread-safe, write-once GraphQL schema.
-static SCHEMA: tokio::sync::OnceCell<
-    async_graphql::Schema<
-        query::QueryRoot,
-        async_graphql::EmptyMutation,
-        async_graphql::EmptySubscription,
-    >,
-> = tokio::sync::OnceCell::const_new();
-
-/// Initialize the GraphQL schema.
-pub async fn init_schema(
-    config: &crate::config::Config,
-) -> Result<
-    &'static async_graphql::Schema<
-        query::QueryRoot,
-        async_graphql::EmptyMutation,
-        async_graphql::EmptySubscription,
-    >,
-    crate::error::Error,
-> {
-    SCHEMA
-        .get_or_try_init(|| async {
-            tracing::debug!("Initializing GraphQL schema");
-
-            let blog_repository = std::sync::Arc::new(repository::blog::BlogRepositoryImpl {
-                config: config.clone(),
-            });
-
-            let blog_service = service::blog::BlogService { blog_repository };
-
-            let blog_query_resolver =
-                std::sync::Arc::new(crate::resolver::blog::query::BlogQueryResolver {});
-
-            let schema: async_graphql::Schema<
-                query::QueryRoot,
-                async_graphql::EmptyMutation,
-                async_graphql::EmptySubscription,
-            > = async_graphql::Schema::build(
-                query::QueryRoot {
-                    blog_query_resolver,
-                },
-                async_graphql::EmptyMutation,
-                async_graphql::EmptySubscription,
-            )
-            .data(blog_service)
-            .finish();
-            Ok(schema)
-        })
-        .await
-}
 
 pub async fn function_handler(
     event: lambda_http::Request,

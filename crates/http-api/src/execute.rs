@@ -51,7 +51,7 @@ pub async fn graphql_handler(
         )
     })?;
 
-    let schema = crate::init_schema(config).await.map_err(|_| {
+    let schema = crate::schema::init_schema(config).await.map_err(|_| {
         (
             axum::http::StatusCode::INTERNAL_SERVER_ERROR,
             axum::Json::from(serde_json::json!({"message": "Failed to initialize schema."})),
