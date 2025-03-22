@@ -42,7 +42,7 @@ impl Config {
     pub async fn try_get_stage_name_async() -> Result<String, crate::error::Error> {
         let stage_name = std::env::var("STAGE_NAME").map_err(|_| {
             tracing::error!("Environmental variable not found: STAGE_NAME");
-            crate::error::Error::EnvironmentalVariableNotFound("STAGE_NAME".to_string())
+            crate::error::Error::EnvironmentVariableNotFound("STAGE_NAME".to_string())
         })?;
 
         tracing::debug!("STAGE_NAME: {}", stage_name);

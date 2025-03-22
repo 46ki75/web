@@ -37,6 +37,7 @@ pub async fn execute_axum(
         .map_err(Box::new)?)
 }
 
+/// Handles incoming GraphQL requests. Called by the axum route handler.
 pub async fn graphql_handler(
     body_bytes: axum::body::Bytes,
 ) -> Result<
