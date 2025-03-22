@@ -42,6 +42,7 @@ pub trait BlogRepository {
 ///
 /// This struct provides the concrete implementation of the `BlogRepository` trait,
 /// using external dependencies such as the Notion API client to interact with the blog database.
+#[derive(Debug, Clone)]
 pub struct BlogRepositoryImpl {
     /// The application configuration.
     pub config: crate::config::Config,

@@ -3,88 +3,66 @@ pub struct BlogController {
 }
 
 impl BlogController {
-    pub async fn fetch_ogp_image(
+    pub async fn handle_fetch_ogp_image(
         &self,
-        request: lambda_http::Request,
-    ) -> Result<lambda_http::Response<lambda_http::Body>, crate::error::Error> {
-        let Some(page_id) = request.uri().path().split('/').last() else {
-            return lambda_http::Response::builder()
-                .status(404)
-                .header("content-type", "application/json")
-                .body(lambda_http::Body::Text("Not Found".to_string()))
-                .map_err(|e| {
-                    tracing::error!("Failed to build response: {}", e);
-                    crate::error::Error::BuildResponse(e.to_string())
-                });
+        page_id: String,
+    ) -> Result<axum::response::Response<axum::body::Body>, (axum::http::StatusCode, String)> {
+        let Ok(blog) = self.blog_service.get_blog_by_id(&page_id).await else {
+            return Err((axum::http::StatusCode::NOT_FOUND, "Not Found".to_string()));
         };
 
-        let Ok(blog) = self.blog_service.get_blog_by_id(page_id).await else {
-            return lambda_http::Response::builder()
-                .status(404)
-                .header("content-type", "application/json")
-                .body(lambda_http::Body::Text("Not Found".to_string()))
-                .map_err(|e| {
-                    tracing::error!("Failed to build response: {}", e);
-                    crate::error::Error::BuildResponse(e.to_string())
-                });
+        let image_bytes = self
+            .blog_service
+            .fetch_ogp_image_by_id(&blog.id)
+            .await
+            .map_err(|e| {
+                tracing::error!("An error occurred while fetch ogp image: {}", e);
+                (axum::http::StatusCode::INTERNAL_SERVER_ERROR, e.to_string())
+            })?;
+
+        let response = match image_bytes {
+            Some(bytes) => {
+                let response = axum::response::Response::builder()
+                    .status(200)
+                    .header("content-type", "image/webp")
+                    .body(axum::body::Body::from(bytes))
+                    .map_err(|e| {
+                        tracing::error!("Failed to build response: {}", e);
+                        (axum::http::StatusCode::INTERNAL_SERVER_ERROR, e.to_string())
+                    })?;
+                Ok(response)
+            }
+            None => Err((axum::http::StatusCode::NOT_FOUND, "Not Found".to_string())),
         };
 
-        let image_bytes = self.blog_service.fetch_ogp_image_by_id(&blog.id).await?;
-
-        match image_bytes {
-            Some(bytes) => lambda_http::Response::builder()
-                .status(200)
-                .header("content-type", "image/webp")
-                .body(lambda_http::Body::Binary(bytes.into()))
-                .map_err(|e| {
-                    tracing::error!("Failed to build response: {}", e);
-                    crate::error::Error::BuildResponse(e.to_string())
-                }),
-            None => lambda_http::Response::builder()
-                .status(404)
-                .header("content-type", "application/json")
-                .body(lambda_http::Body::Text("Not Found".to_string()))
-                .map_err(|e| {
-                    tracing::error!("Failed to build response: {}", e);
-                    crate::error::Error::BuildResponse(e.to_string())
-                }),
-        }
+        response
     }
 
-    pub async fn fetch_block_image(
+    pub async fn handle_fetch_block_image(
         &self,
-        request: lambda_http::Request,
-    ) -> Result<lambda_http::Response<lambda_http::Body>, crate::error::Error> {
-        let Some(block_id) = request.uri().path().split('/').last() else {
-            return lambda_http::Response::builder()
-                .status(404)
-                .header("content-type", "application/json")
-                .body(lambda_http::Body::Text("Not Found".to_string()))
-                .map_err(|e| {
-                    tracing::error!("Failed to build response: {}", e);
-                    crate::error::Error::BuildResponse(e.to_string())
-                });
-        };
+        block_id: String,
+    ) -> Result<axum::response::Response<axum::body::Body>, (axum::http::StatusCode, String)> {
+        let image_bytes = self
+            .blog_service
+            .fetch_block_image_by_id(&block_id)
+            .await
+            .map_err(|e| {
+                tracing::error!("An error occurred while fetch block image: {}", e);
+                (axum::http::StatusCode::INTERNAL_SERVER_ERROR, e.to_string())
+            })?;
 
-        let image_bytes = self.blog_service.fetch_block_image_by_id(block_id).await?;
-
-        match image_bytes {
-            Some(bytes) => lambda_http::Response::builder()
+        let response = match image_bytes {
+            Some(bytes) => Ok(axum::response::Response::builder()
                 .status(200)
                 .header("content-type", "image/webp")
-                .body(lambda_http::Body::Binary(bytes.into()))
+                .body(axum::body::Body::from(bytes))
                 .map_err(|e| {
                     tracing::error!("Failed to build response: {}", e);
-                    crate::error::Error::BuildResponse(e.to_string())
-                }),
-            None => lambda_http::Response::builder()
-                .status(404)
-                .header("content-type", "application/json")
-                .body(lambda_http::Body::Text("Not Found".to_string()))
-                .map_err(|e| {
-                    tracing::error!("Failed to build response: {}", e);
-                    crate::error::Error::BuildResponse(e.to_string())
-                }),
-        }
+                    (axum::http::StatusCode::INTERNAL_SERVER_ERROR, e.to_string())
+                })),
+            None => Err((axum::http::StatusCode::NOT_FOUND, "Not Found".to_string())),
+        }?;
+
+        response
     }
 }
