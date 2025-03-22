@@ -10,21 +10,6 @@ pub mod repository;
 pub mod resolver;
 pub mod service;
 
-/// Thread-safe, write-once application configuration.
-static CONFIG: tokio::sync::OnceCell<crate::config::Config> = tokio::sync::OnceCell::const_new();
-
-/// Initialize the application configuration.
-pub async fn init_config() -> Result<&'static crate::config::Config, crate::error::Error> {
-    CONFIG
-        .get_or_try_init(|| async {
-            tracing::debug!("Initializing Config");
-
-            let config = crate::config::Config::try_new_async().await?;
-            Ok(config)
-        })
-        .await
-}
-
 /// Thread-safe, write-once GraphQL schema.
 static SCHEMA: tokio::sync::OnceCell<
     async_graphql::Schema<
@@ -79,7 +64,7 @@ pub async fn init_schema(
 pub async fn function_handler(
     event: lambda_http::Request,
 ) -> Result<lambda_http::Response<lambda_http::Body>, lambda_http::Error> {
-    let config = init_config().await?;
+    let config = crate::config::Config::init_config().await?;
 
     let blog_repository = std::sync::Arc::new(repository::blog::BlogRepositoryImpl {
         config: config.clone(),

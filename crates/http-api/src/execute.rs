@@ -44,7 +44,7 @@ pub async fn graphql_handler(
     axum::response::Response<axum::body::Body>,
     (axum::http::StatusCode, axum::Json<serde_json::Value>),
 > {
-    let config = crate::init_config().await.map_err(|_| {
+    let config = crate::config::Config::init_config().await.map_err(|_| {
         (
             axum::http::StatusCode::INTERNAL_SERVER_ERROR,
             axum::Json::from(serde_json::json!({"message": "Failed to initialize config."})),
