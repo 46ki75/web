@@ -11,9 +11,9 @@ impl QueryRoot {
     pub async fn blog(
         &self,
         ctx: &async_graphql::Context<'_>,
-        input: crate::resolver::blog::query::BlogInput,
+        page_id: String,
     ) -> Result<crate::resolver::blog::query::Blog, async_graphql::Error> {
-        self.blog_query_resolver.blog(ctx, input).await
+        self.blog_query_resolver.blog(ctx, page_id).await
     }
 
     /// Fetch a list of blog posts.

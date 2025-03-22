@@ -1,4 +1,11 @@
+#![deny(missing_docs)]
+
+//! Contains methods that resolve blogs and blog tags.
+
+/// Contains methods that resolve blogs and blog tags.
 pub struct BlogQueryResolver {}
+
+#[allow(missing_docs)]
 
 pub struct Blog {
     pub id: String,
@@ -52,10 +59,16 @@ impl From<crate::entity::blog::BlogEntity> for Blog {
     }
 }
 
+/// Tag associated with blog.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct BlogTag {
+    /// Unique identifier of the blog tag.
     pub id: String,
+
+    /// Name of the blog.
     pub name: String,
+
+    /// Color code (HEX) of the blog.
     pub color: String,
 }
 
@@ -83,18 +96,22 @@ impl From<crate::entity::blog::BlogTagEntity> for BlogTag {
 
 #[async_graphql::Object]
 impl BlogTag {
+    /// Unique identifier of the blog tag.
     pub async fn id(&self) -> Result<String, async_graphql::Error> {
         Ok(self.id.clone())
     }
 
+    /// Name of the blog tag.
     pub async fn name(&self) -> Result<String, async_graphql::Error> {
         Ok(self.name.clone())
     }
 
+    /// Color of the blog tag.
     pub async fn color(&self) -> Result<String, async_graphql::Error> {
         Ok(self.color.clone())
     }
 
+    /// Blogs associated with this tag.
     pub async fn blog_list(
         &self,
         ctx: &async_graphql::Context<'_>,
@@ -114,56 +131,65 @@ impl BlogTag {
     }
 }
 
+/// Status options for the blog.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, async_graphql::Enum)]
 pub enum Status {
+    /// Work in progress; not ready to be published.
     Draft,
+    /// Published and visible on the internet.
     Published,
+    /// Written but unpublished for some reason.
     Archived,
-}
-
-#[derive(Debug, async_graphql::InputObject)]
-pub struct BlogInput {
-    pub page_id: String,
 }
 
 #[async_graphql::Object]
 impl Blog {
+    /// Unique identifier of the blog.
     pub async fn id(&self) -> Result<String, async_graphql::Error> {
         Ok(self.id.clone())
     }
 
+    /// Slug of the blog. Currently unused.
     pub async fn slug(&self) -> Result<String, async_graphql::Error> {
         Ok(self.slug.clone())
     }
 
+    /// Title of the blog.
     pub async fn title(&self) -> Result<String, async_graphql::Error> {
         Ok(self.title.clone())
     }
 
+    /// Description of the blog.
     pub async fn description(&self) -> Result<String, async_graphql::Error> {
         Ok(self.description.clone())
     }
 
+    /// Signed S3 URL of the OGP image. Expires in 1 hour.
     pub async fn ogp_image_s3_url(&self) -> Result<Option<String>, async_graphql::Error> {
         Ok(self.ogp_image_s3_url.clone())
     }
 
+    /// Tags associated with the blog.
     pub async fn tags(&self) -> Result<Vec<BlogTag>, async_graphql::Error> {
         Ok(self.tags.clone())
     }
 
+    /// Publish status of the blog.
     pub async fn status(&self) -> Result<Status, async_graphql::Error> {
         Ok(self.status)
     }
 
+    /// RFC 3339-formatted creation timestamp.
     pub async fn created_at(&self) -> Result<String, async_graphql::Error> {
         Ok(self.created_at.clone())
     }
 
+    /// RFC 3339-formatted last update timestamp.
     pub async fn updated_at(&self) -> Result<String, async_graphql::Error> {
         Ok(self.updated_at.clone())
     }
 
+    /// Children blocks of the blog.
     pub async fn block_list(
         &self,
         ctx: &async_graphql::Context<'_>,
@@ -182,20 +208,22 @@ impl Blog {
 }
 
 impl BlogQueryResolver {
+    /// Returns a blog by its page ID.
     pub async fn blog(
         &self,
         ctx: &async_graphql::Context<'_>,
-        input: BlogInput,
+        page_id: String,
     ) -> Result<Blog, async_graphql::Error> {
         let blog_service = ctx.data::<crate::service::blog::BlogService>()?;
 
-        let blog_entity = blog_service.get_blog_by_id(&input.page_id).await?;
+        let blog_entity = blog_service.get_blog_by_id(&page_id).await?;
 
         let blog = Blog::from(blog_entity);
 
         Ok(blog)
     }
 
+    /// Returns all blogs.
     pub async fn blog_list(
         &self,
         ctx: &async_graphql::Context<'_>,
@@ -212,6 +240,7 @@ impl BlogQueryResolver {
         Ok(blogs)
     }
 
+    /// Returns a blog tag by its tag ID.
     pub async fn tag(
         &self,
         ctx: &async_graphql::Context<'_>,
@@ -227,6 +256,7 @@ impl BlogQueryResolver {
         Ok(tag)
     }
 
+    /// Returns all blog tags.
     pub async fn tag_list(
         &self,
         ctx: &async_graphql::Context<'_>,
