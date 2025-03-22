@@ -1,7 +1,7 @@
 //! BlogRepository module
 #![deny(missing_docs)]
 
-/// The repository trait for blog.
+/// Repository that fetches data from the Notion API endpoints.
 #[async_trait::async_trait]
 pub trait BlogRepository {
     /// Retrieves a blog by its page ID.
@@ -38,9 +38,9 @@ pub trait BlogRepository {
     ) -> Result<Vec<crate::record::blog::BlogRecord>, crate::error::Error>;
 }
 
-/// The implementation of `BlogRepository` trait.
+/// Implementation of `BlogRepository` trait.
 ///
-/// This struct provides the concrete implementation of the `BlogRepository` trait,
+/// This struct provides a concrete implementation of the `BlogRepository` trait,
 /// using external dependencies such as the Notion API client to interact with the blog database.
 #[derive(Debug, Clone)]
 pub struct BlogRepositoryImpl {
