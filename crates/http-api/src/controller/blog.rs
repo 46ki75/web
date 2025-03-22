@@ -1,8 +1,15 @@
+#![deny(missing_docs)]
+//! Controller that handles requests related to blog images.
+
+/// Controller that handles requests related to blog images.
 pub struct BlogController {
+    /// Shared instance of `BlogService`. Injected at the entory point.
     pub blog_service: std::sync::Arc<crate::service::blog::BlogService>,
 }
 
 impl BlogController {
+    /// Route handler for Axum.
+    /// Fetched the OGP image for a blog page by its page ID.
     pub async fn handle_fetch_ogp_image(
         &self,
         page_id: String,
@@ -38,6 +45,8 @@ impl BlogController {
         response
     }
 
+    /// Route handler for Axum.
+    /// Fetches a block image by its block ID.
     pub async fn handle_fetch_block_image(
         &self,
         block_id: String,
