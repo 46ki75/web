@@ -4,6 +4,8 @@ import * as route53 from "aws-cdk-lib/aws-route53";
 import { stageName } from "../../bin/app";
 
 export class Route53Stack extends cdk.NestedStack {
+  readonly hostedZone: route53.HostedZone;
+
   constructor(scope: Construct, id: string, props?: cdk.NestedStackProps) {
     super(scope, id, props);
 
@@ -18,9 +20,9 @@ export class Route53Stack extends cdk.NestedStack {
       throw new Error("ZONE_NAME is undefined.");
     }
 
-    const hostZone = new route53.HostedZone(
+    this.hostedZone = new route53.HostedZone(
       this,
-      `${stageName}-46ki75-web-route53-public_host_zone-main`,
+      `${stageName}-46ki75-web-route53-publichostedzone-main`,
       {
         zoneName: ZONE_NAME,
       }
