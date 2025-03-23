@@ -15,6 +15,7 @@ export class CloudWatchLogsStack extends cdk.NestedStack {
       {
         logGroupName: `/${stageName}/46ki75/web/cloudwatch/log_group/lambda_http_api`,
         retention: logs.RetentionDays.TWO_WEEKS,
+        removalPolicy: cdk.RemovalPolicy.DESTROY,
       }
     );
   }
