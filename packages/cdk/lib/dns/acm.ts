@@ -25,6 +25,22 @@ export class AcmStack extends cdk.NestedStack {
 
     new acm.Certificate(
       this,
+      `${stageName}-46ki75-web-acm-stack-certificate-cloudfront`,
+      {
+        domainName: `${ZONE_NAME}`,
+        certificateName: `${stageName}-46ki75-web-acm-stack-certificate-cloudfront`,
+        validation: {
+          method: acm.ValidationMethod.DNS,
+          props: {
+            hostedZone: props.hostedZone,
+            method: acm.ValidationMethod.DNS,
+          },
+        },
+      }
+    );
+
+    new acm.Certificate(
+      this,
       `${stageName}-46ki75-web-acm-stack-certificate-api`,
       {
         domainName: `api.${ZONE_NAME}`,
