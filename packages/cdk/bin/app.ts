@@ -1,8 +1,6 @@
 #!/usr/bin/env node
 import * as cdk from "aws-cdk-lib";
 import { ApiStack } from "../lib/api";
-import { Route53Stack } from "../lib/dns/route53";
-import { DnsStack } from "../lib/dns";
 
 const app = new cdk.App();
 
@@ -16,6 +14,9 @@ if (!["dev", "stg", "prod"].some((n) => n === stageName)) {
   );
 }
 
-new ApiStack(app, `${stageName}-46ki75-web-cloudformation-stack-api`);
-
-new DnsStack(app, `${stageName}-46ki75-web-cloudformation-stack-dns`);
+new ApiStack(app, `${stageName}-46ki75-web-cloudformation-stack-api`, {
+  env: {
+    account: process.env.CDK_DEFAULT_ACCOUNT,
+    region: process.env.CDK_DEFAULT_REGION,
+  },
+});

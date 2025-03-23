@@ -5,41 +5,19 @@ import * as route53 from "aws-cdk-lib/aws-route53";
 import { stageName } from "../../bin/app";
 
 interface AcmStackProps extends cdk.NestedStackProps {
-  hostedZone: route53.HostedZone;
+  hostedZone: route53.IHostedZone;
 }
 
 export class AcmStack extends cdk.NestedStack {
+  readonly certificate: acm.Certificate;
+
   constructor(scope: Construct, id: string, props: AcmStackProps) {
     super(scope, id, props);
 
     const ZONE_NAME =
-      stageName === "prod"
-        ? "www.46ki75.com"
-        : stageName === "dev" || stageName === "stg"
-        ? `${stageName}-www.46ki75.com`
-        : undefined;
+      stageName === "prod" ? "www.46ki75.com" : `${stageName}-www.46ki75.com`;
 
-    if (ZONE_NAME == null) {
-      throw new Error("ZONE_NAME is undefined.");
-    }
-
-    new acm.Certificate(
-      this,
-      `${stageName}-46ki75-web-acm-stack-certificate-cloudfront`,
-      {
-        domainName: `${ZONE_NAME}`,
-        certificateName: `${stageName}-46ki75-web-acm-stack-certificate-cloudfront`,
-        validation: {
-          method: acm.ValidationMethod.DNS,
-          props: {
-            hostedZone: props.hostedZone,
-            method: acm.ValidationMethod.DNS,
-          },
-        },
-      }
-    );
-
-    new acm.Certificate(
+    this.certificate = new acm.Certificate(
       this,
       `${stageName}-46ki75-web-acm-stack-certificate-api`,
       {
