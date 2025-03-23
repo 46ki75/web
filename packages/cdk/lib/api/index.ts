@@ -7,7 +7,6 @@ import { IamStack } from "./iam";
 import { CloudWatchLogsStack } from "./cloudwatch-logs";
 import { Route53Stack } from "./route53";
 import { AcmStack } from "./acm";
-import { Route53RecordStack } from "./route53-record";
 
 export class ApiStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -32,18 +31,9 @@ export class ApiStack extends cdk.Stack {
       }
     );
 
-    const route53Stack = new Route53Stack(
-      this,
-      `${stageName}-46ki75-web-cloudformation-stack-api-route53`,
-      {}
-    );
-
     const acmStack = new AcmStack(
       this,
-      `${stageName}-46ki75-web-cloudformation-stack-api-acm`,
-      {
-        hostedZone: route53Stack.hostedZone,
-      }
+      `${stageName}-46ki75-web-cloudformation-stack-api-acm`
     );
 
     const apigwStack = new ApigwStack(
@@ -55,9 +45,9 @@ export class ApiStack extends cdk.Stack {
       }
     );
 
-    const route53RecordStack = new Route53RecordStack(
+    const route53RecordStack = new Route53Stack(
       this,
-      `${stageName}-46ki75-web-cloudformation-stack-api-route53record`,
+      `${stageName}-46ki75-web-cloudformation-stack-api-route53`,
       {
         domainName: apigwStack.domainName,
       }
