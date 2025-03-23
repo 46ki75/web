@@ -1,10 +1,10 @@
 import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
 import * as route53 from "aws-cdk-lib/aws-route53";
-import { stageName } from "../bin/app";
+import { stageName } from "../../bin/app";
 
-export class Route53Stack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+export class Route53Stack extends cdk.NestedStack {
+  constructor(scope: Construct, id: string, props?: cdk.NestedStackProps) {
     super(scope, id, props);
 
     const ZONE_NAME =
