@@ -1,11 +1,18 @@
 import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
 import * as lambda from "aws-cdk-lib/aws-lambda";
+import * as iam from "aws-cdk-lib/aws-iam";
+import * as logs from "aws-cdk-lib/aws-logs";
 import { stageName } from "../../bin/app";
+
+interface LambdaStackProps extends cdk.NestedStackProps {
+  lambdaRole: iam.Role;
+  lambdaLogGroup: logs.LogGroup;
+}
 
 export class LambdaStack extends cdk.NestedStack {
   readonly lambdaAlias: lambda.Alias;
-  constructor(scope: Construct, id: string, props?: cdk.NestedStackProps) {
+  constructor(scope: Construct, id: string, props: LambdaStackProps) {
     super(scope, id, props);
 
     const lambdaFunction = new lambda.Function(
@@ -19,6 +26,14 @@ export class LambdaStack extends cdk.NestedStack {
         architecture: lambda.Architecture.X86_64,
         memorySize: 128,
         timeout: cdk.Duration.seconds(15),
+        role: props.lambdaRole,
+        environment: {
+          STAGE_NAME: stageName,
+          RUST_LOG: "RUST_LOG=http_api=info",
+          RUST_LOG_FORMAT: "json",
+        },
+        logGroup: props.lambdaLogGroup,
+        loggingFormat: lambda.LoggingFormat.JSON,
       }
     );
 
