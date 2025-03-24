@@ -1,5 +1,5 @@
 resource "aws_cloudwatch_metric_alarm" "lambda_graphql" {
-  alarm_name          = "${terraform.workspace}-46ki75-internal-cloudwatch-alarm-lambda-graphql"
+  alarm_name          = "${terraform.workspace}-46ki75-web-cloudwatch-alarm-lambda-graphql"
   alarm_description   = "Alarm when lambda graphql fails"
   comparison_operator = "GreaterThanOrEqualToThreshold"
 
@@ -20,7 +20,7 @@ resource "aws_cloudwatch_metric_alarm" "lambda_graphql" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "apigw_graphql" {
-  alarm_name          = "${terraform.workspace}-46ki75-internal-cloudwatch-alarm-apigw-graphql_5xx"
+  alarm_name          = "${terraform.workspace}-46ki75-web-cloudwatch-alarm-apigw-graphql_5xx"
   alarm_description   = "Alarm when apigw graphql fails"
   comparison_operator = "GreaterThanOrEqualToThreshold"
 

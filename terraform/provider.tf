@@ -13,7 +13,7 @@ terraform {
   # RUN: terraform workspace list
   # RUN: terraform workspace select dev
   backend "s3" {
-    bucket               = "shared-46ki75-internal-s3-bucket-terraform-tfstate"
+    bucket               = "shared-46ki75-web-s3-bucket-terraform-tfstate"
     workspace_key_prefix = "workspace"
     key                  = "terraform.tfstate"
     region               = "ap-northeast-1"

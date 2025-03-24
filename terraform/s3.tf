@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "web" {
-  bucket = "${terraform.workspace}-46ki75-internal-s3-bucket-web"
+  bucket = "${terraform.workspace}-46ki75-web-s3-bucket-web"
 }
 
 resource "aws_s3_bucket_policy" "web" {

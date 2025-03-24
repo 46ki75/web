@@ -1,5 +1,5 @@
 resource "aws_sns_topic" "error" {
-  name = "${terraform.workspace}-46ki75-internal-sns-topic-error"
+  name = "${terraform.workspace}-46ki75-web-sns-topic-error"
   policy = jsonencode({
     "Version" : "2012-10-17",
     "Statement" : [

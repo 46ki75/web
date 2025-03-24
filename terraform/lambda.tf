@@ -1,7 +1,7 @@
 # GraphQL ----------
 
 resource "aws_iam_role" "lambda_role_graphql" {
-  name = "${terraform.workspace}-46ki75-internal-iam-role-lambda-graphql"
+  name = "${terraform.workspace}-46ki75-web-iam-role-lambda-graphql"
   assume_role_policy = jsonencode({
     "Version" : "2012-10-17",
     "Statement" : [
@@ -17,7 +17,7 @@ resource "aws_iam_role" "lambda_role_graphql" {
 }
 
 resource "aws_iam_policy" "lambda_policy_graphql" {
-  name        = "${terraform.workspace}-46ki75-internal-iam-policy-lambda-graphql"
+  name        = "${terraform.workspace}-46ki75-web-iam-policy-lambda-graphql"
   description = "Allow lambda to access cloudwatch logs"
   policy = jsonencode({
     "Version" : "2012-10-17",
@@ -49,7 +49,7 @@ resource "aws_iam_role_policy_attachment" "lambda_policy_attachment_graphql" {
 }
 
 resource "aws_lambda_function" "graphql" {
-  function_name = "${terraform.workspace}-46ki75-internal-lambda-function-graphql"
+  function_name = "${terraform.workspace}-46ki75-web-lambda-function-graphql"
   role          = aws_iam_role.lambda_role_graphql.arn
   filename      = "./assets/bootstrap.zip"
   handler       = "bootstrap.handler"
