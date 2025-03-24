@@ -33,13 +33,9 @@ resource "aws_cloudfront_distribution" "default" {
   # >>> [S3 web] origin
   default_cache_behavior {
     allowed_methods = [
-      "DELETE",
       "GET",
       "HEAD",
-      "OPTIONS",
-      "PATCH",
-      "POST",
-      "PUT"
+      "OPTIONS"
     ]
     cached_methods         = ["GET", "HEAD"]
     viewer_protocol_policy = "redirect-to-https"
@@ -72,7 +68,7 @@ resource "aws_cloudfront_distribution" "default" {
 
   # >>> [API GW] origin
   ordered_cache_behavior {
-    path_pattern = "/api/graphql"
+    path_pattern = "/api"
     allowed_methods = [
       "DELETE",
       "GET",

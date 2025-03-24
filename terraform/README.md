@@ -1,52 +1,38 @@
-## ドメイン設計
+## Manually Managed Resources
 
-### CloudFront (メインドメイン)
+## S3 Bucket
 
-- `dev-internal.46ki75.com`: 開発環境の CloudFront
-- `stg-internal.46ki75.com`: ステージング環境の CloudFront
-- `internal.46ki75.com`: 本番環境の CloudFront
+- `shared-46ki75-web-s3-bucket-terraform-tfstate`: Used to manage Terraform state (tfstate) files.
+
+## Systems Manager Parameter Store
+
+- `/${STAGE_NAME}/46ki75/web/ssm/parameter/notion/secret`
+- `/shared/46ki75/web/ssm/parameter/notion/database/id`
+
+## Route53 Zones
+
+- `dev-www.46ki75.com`
+- `stg-www.46ki75.com`
+- `www.46ki75.com`
+
+## Route53 Record (external account)
+
+Please add the following records to the parent hosted zone:
+
+- `dev-www.46ki75.com` NS
+- `stg-www.46ki75.com` NS
+- `www.46ki75.com` NS
+
+## Domain Design
+
+### CloudFront (Main Domain)
+
+- `dev-internal.46ki75.com`: CloudFront for the development environment
+- `stg-internal.46ki75.com`: CloudFront for the staging environment
+- `internal.46ki75.com`: CloudFront for the production environment
 
 ### Amazon API Gateway
 
-- `api.dev-internal.46ki75.com: 開発環境
-- `api.stg-internal.46ki75.com: ステージング環境
-- `api.internal.46ki75.com: 本番環境
-
-## 手動管理リソース
-
-### Parameter Store
-
-| リソース名                                          | 説明                                                                                  | 環境            |
-| --------------------------------------------------- | ------------------------------------------------------------------------------------- | --------------- |
-| `/環境名/46ki75/web/notion/secret`                  | Notion の API キー / Lambda 環境変数として使用                                        | dev / stg/ prod |
-| `/環境名/46ki75/web/github/secret`                  | Notion の API キー / Lambda 環境変数として使用                                        | dev / stg/ prod |
-| `/環境名/46ki75/web/cognito/userpool/user/password` | Cognito ユーザーのログインパスワード                                                  | dev / stg/ prod |
-| `/shared/46ki75/web/notion/anki/database/id`        | Notion の Anki データベース / デプロイ時に Lambda 環境変数として使用                  | shared          |
-| `/shared/46ki75/web/notion/bookmark/database/id`    | Notion の Bookmark データベース ID / デプロイ時に Lambda 環境変数として使用           | shared          |
-| `/shared/46ki75/web/notion/todo/database/id`        | Notion の ToDO(Calender) データベース ID / デプロイ時に Lambda 環境変数として使用     | shared          |
-| `/shared/46ki75/web/notion/routine/database/id`     | Notion の Routine データベース ID / デプロイ時に Lambda 環境変数として使用            | shared          |
-| `/shared/46ki75/web/deepl/secret`                   | deepl の API シークレット・環境共通・Terraform デプロイ時に Lambda 環境変数として使用 | shared          |
-
-### S3
-
-- `shared-46ki75-web-s3-bucket-terraform-tfstate`: Terraform の tfstate 管理用バケット・全環境共通
-
-### SNS
-
-- EMail サブスクリプションの承認
-
-## Route 53 ゾーン
-
-以下のゾーンを手動作成する。NS レコードは後で使用する。
-
-- `dev-internal.46ki75.com`
-- `stg-internal.46ki75.com`
-- `internal.46ki75.com`
-
-## Route 53 レコード(別アカウント)
-
-以下の子ゾーンが作成されるので、`46ki75.com` を所持しているアカウントに NS レコードを追加する。執筆時点で `46ki75.com` のレコードは [こちらのリポジトリ](https://github.com/46ki75/iac) で管理されている。
-
-- `dev-internal.46ki75.com`
-- `stg-internal.46ki75.com`
-- `internal.46ki75.com`
+- `api.dev-internal.46ki75.com`: Development environment
+- `api.stg-internal.46ki75.com`: Staging environment
+- `api.internal.46ki75.com`: Production environment

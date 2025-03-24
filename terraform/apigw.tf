@@ -8,14 +8,14 @@ resource "aws_apigatewayv2_integration" "backend" {
   integration_type = "AWS_PROXY"
 
   connection_type = "INTERNET"
-  integration_uri = aws_lambda_alias.graphql.invoke_arn
+  integration_uri = aws_lambda_alias.http_api.invoke_arn
 
   timeout_milliseconds = 29 * 1000
 }
 
 resource "aws_apigatewayv2_route" "backend" {
   api_id             = aws_apigatewayv2_api.backend.id
-  route_key          = "ANY /api/graphql"
+  route_key          = "ANY /api"
   target             = "integrations/${aws_apigatewayv2_integration.backend.id}"
 }
 
@@ -63,8 +63,8 @@ resource "aws_route53_record" "api_gateway" {
 resource "aws_lambda_permission" "apigwv2" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_alias.graphql.function_name
-  qualifier     = aws_lambda_alias.graphql.name
+  function_name = aws_lambda_alias.http_api.function_name
+  qualifier     = aws_lambda_alias.http_api.name
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_apigatewayv2_api.backend.execution_arn}/*/*/*"
 }
@@ -73,6 +73,6 @@ output "backend_apigw_url" {
   value = "https://${aws_apigatewayv2_domain_name.backend.domain_name}"
 }
 
-output "backend_apigw_url_graphql" {
-  value = "https://${aws_apigatewayv2_domain_name.backend.domain_name}/graphql"
+output "backend_apigw_url_http_api" {
+  value = "https://${aws_apigatewayv2_domain_name.backend.domain_name}/http_api"
 }
