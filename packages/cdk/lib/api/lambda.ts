@@ -29,7 +29,7 @@ export class LambdaStack extends cdk.NestedStack {
         role: props.lambdaRole,
         environment: {
           STAGE_NAME: stageName,
-          RUST_LOG: "RUST_LOG=http_api=info",
+          RUST_LOG: "http_api=info",
           RUST_LOG_FORMAT: "json",
         },
         logGroup: props.lambdaLogGroup,

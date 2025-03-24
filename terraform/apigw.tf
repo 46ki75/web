@@ -11,12 +11,15 @@ resource "aws_apigatewayv2_integration" "backend" {
   integration_uri = aws_lambda_alias.http_api.invoke_arn
 
   timeout_milliseconds = 29 * 1000
+
+  payload_format_version = "2.0"
 }
 
 resource "aws_apigatewayv2_route" "backend" {
   api_id             = aws_apigatewayv2_api.backend.id
-  route_key          = "ANY /api"
+  route_key          = "ANY /"
   target             = "integrations/${aws_apigatewayv2_integration.backend.id}"
+  authorization_type = "NONE"
 }
 
 resource "aws_apigatewayv2_stage" "backend" {
@@ -24,16 +27,15 @@ resource "aws_apigatewayv2_stage" "backend" {
   name        = terraform.workspace
   auto_deploy = true
 
-
   route_settings {
-    route_key              = aws_apigatewayv2_route.backend.route_key
+    route_key              = "$default"
     throttling_burst_limit = 100000
     throttling_rate_limit  = 100000
   }
 }
 
 resource "aws_apigatewayv2_domain_name" "backend" {
-  depends_on  = [aws_acm_certificate.api_cert]
+  depends_on  = [aws_acm_certificate.api_cert, aws_acm_certificate_validation.api_cert]
   domain_name = aws_acm_certificate.api_cert.domain_name
   domain_name_configuration {
     certificate_arn = aws_acm_certificate.api_cert.arn
@@ -73,6 +75,3 @@ output "backend_apigw_url" {
   value = "https://${aws_apigatewayv2_domain_name.backend.domain_name}"
 }
 
-output "backend_apigw_url_http_api" {
-  value = "https://${aws_apigatewayv2_domain_name.backend.domain_name}/http_api"
-}

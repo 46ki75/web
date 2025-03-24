@@ -28,14 +28,16 @@ resource "aws_iam_policy" "lambda_policy_http_api" {
           "logs:CreateLogGroup",
           "logs:CreateLogStream",
           "logs:PutLogEvents",
-          "dynamodb:Scan",
-          "dynamodb:Query",
-          "dynamodb:GetItem",
-          "dynamodb:PutItem",
           "ssm:GetParameter",
-          "kms:Decrypt",
           "xray:PutTraceSegments",
           "xray:PutTelemetryRecords"
+        ],
+        "Resource" : "*"
+      },
+      {
+        "Effect" : "Allow",
+        "Action" : [
+          "ssm:GetParameter"
         ],
         "Resource" : "*"
       }
@@ -72,7 +74,7 @@ resource "aws_lambda_function" "http_api" {
   environment {
     variables = {
       STAGE_NAME      = terraform.workspace
-      RUST_LOG        = "internal_http_api=debug"
+      RUST_LOG        = "http_api=debug"
       RUST_LOG_FORMAT = "JSON"
     }
   }

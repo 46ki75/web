@@ -3,3 +3,6 @@ dev:
 
 build:
 	cargo lambda build --release
+
+deploy STAGE_NAME:	build
+	cargo lambda deploy --binary-name http-api "{{STAGE_NAME}}-46ki75-web-lambda-function-http_api"
