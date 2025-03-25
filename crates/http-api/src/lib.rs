@@ -37,7 +37,7 @@ pub async fn function_handler(
             axum::routing::post(crate::execute::graphql_handler),
         )
         .route(
-            "/api/blog/ogp/{page_id}",
+            "/api/blog/image/ogp/{page_id}",
             axum::routing::get(
                 |axum::extract::State(blog_controller): axum::extract::State<
                     std::sync::Arc<crate::controller::blog::BlogController>,
@@ -48,7 +48,7 @@ pub async fn function_handler(
             ),
         )
         .route(
-            "/api/blog/block/{block_id}",
+            "/api/blog/image/block/{block_id}",
             axum::routing::get(
                 |axum::extract::State(blog_controller): axum::extract::State<
                     std::sync::Arc<crate::controller::blog::BlogController>,

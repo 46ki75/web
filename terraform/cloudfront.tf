@@ -68,7 +68,7 @@ resource "aws_cloudfront_distribution" "default" {
 
   # >>> [API GW] origin
   ordered_cache_behavior {
-    path_pattern = "/api/blog/*"
+    path_pattern = "/api/blog/image/*"
     allowed_methods = [
       "GET",
       "HEAD",
