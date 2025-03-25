@@ -6,16 +6,25 @@
       class="card"
     >
       <ElmImage
-        :src="`https://dev-www.46ki75.com/api/blog/image/ogp/${blog.id}`"
+        :src="`${config.public.ENDPOINT}/api/blog/image/ogp/${blog.id}`"
       />
+
+      <div class="text">
+        <div><ElmInlineText size="1rem" bold :text="blog.title" /></div>
+        <div class="description">
+          <ElmInlineText size="0.8rem" :text="blog.description" />
+        </div>
+      </div>
     </NuxtLink>
   </nav>
 </template>
 
 <script setup lang="ts">
-import { ElmImage } from "@elmethis/core";
+import { ElmImage, ElmInlineText } from "@elmethis/core";
 
 const blogSide = useBlogSideStore();
+
+const config = useRuntimeConfig();
 </script>
 
 <style lang="scss" scoped>
@@ -27,7 +36,11 @@ const blogSide = useBlogSideStore();
 }
 
 .card {
+  all: unset;
+  box-shadow: 0 0 0.125rem rgba(black, 0.25);
+  background-color: rgba(white, 0.25);
   transition: opacity 200ms, transform 200ms;
+  cursor: pointer;
 
   &:hover {
     opacity: 0.9;
@@ -38,5 +51,15 @@ const blogSide = useBlogSideStore();
     opacity: 0.7;
     transform: translateX(1px) translateY(1px);
   }
+}
+
+.text {
+  box-sizing: border-box;
+  padding: 0.5rem;
+}
+
+.description {
+  line-height: 1.3rem;
+  opacity: 0.6;
 }
 </style>

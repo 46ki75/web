@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 
 export const useBlogSideStore = defineStore("BlogSide", {
   state: () => {
+    const config = useRuntimeConfig();
     const response = useFetch<{
       data: {
         blogList: Array<{
@@ -17,7 +18,7 @@ export const useBlogSideStore = defineStore("BlogSide", {
           updatedAt: string;
         }>;
       };
-    }>("https://dev-www.46ki75.com/api/graphql", {
+    }>(`${config.public.ENDPOINT}/api/graphql`, {
       method: "POST",
       body: {
         query: /* GraphQL */ `
