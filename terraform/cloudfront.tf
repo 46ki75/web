@@ -68,7 +68,30 @@ resource "aws_cloudfront_distribution" "default" {
 
   # >>> [API GW] origin
   ordered_cache_behavior {
-    path_pattern = "/api"
+    path_pattern = "/api/blog/*"
+    allowed_methods = [
+      "GET",
+      "HEAD",
+      "OPTIONS"
+    ]
+    cached_methods         = ["GET", "HEAD"]
+    viewer_protocol_policy = "redirect-to-https"
+    target_origin_id       = "api-backend"
+
+    default_ttl = 3600
+    min_ttl     = 3600
+    max_ttl     = 3600
+
+    forwarded_values {
+      query_string = true
+      cookies {
+        forward = "none"
+      }
+    }
+  }
+
+  ordered_cache_behavior {
+    path_pattern = "/api/*"
     allowed_methods = [
       "DELETE",
       "GET",

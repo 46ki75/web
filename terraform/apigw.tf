@@ -6,18 +6,6 @@ resource "aws_apigatewayv2_api" "backend" {
   target    = aws_lambda_alias.http_api.invoke_arn
 }
 
-resource "aws_apigatewayv2_stage" "backend" {
-  api_id      = aws_apigatewayv2_api.backend.id
-  name        = "api"
-  auto_deploy = true
-
-  route_settings {
-    route_key              = "$default"
-    throttling_burst_limit = 100000
-    throttling_rate_limit  = 100000
-  }
-}
-
 resource "aws_apigatewayv2_domain_name" "backend" {
   depends_on  = [aws_acm_certificate.api_cert, aws_acm_certificate_validation.api_cert]
   domain_name = aws_acm_certificate.api_cert.domain_name
@@ -31,7 +19,7 @@ resource "aws_apigatewayv2_domain_name" "backend" {
 resource "aws_apigatewayv2_api_mapping" "backend" {
   api_id      = aws_apigatewayv2_api.backend.id
   domain_name = aws_apigatewayv2_domain_name.backend.domain_name
-  stage       = aws_apigatewayv2_stage.backend.name
+  stage       = "$default"
 }
 
 resource "aws_route53_record" "api_gateway" {
