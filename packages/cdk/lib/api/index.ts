@@ -1,7 +1,7 @@
 import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
 import { LambdaStack } from "./lambda";
-import { stageName } from "../../bin/app";
+import { STAGE_NAME } from "../../bin/app";
 import { ApigwStack } from "./apigw";
 import { IamStack } from "./iam";
 import { CloudWatchLogsStack } from "./cloudwatch-logs";
@@ -14,17 +14,17 @@ export class ApiStack extends cdk.Stack {
 
     const cloudWatchLogsStack = new CloudWatchLogsStack(
       this,
-      `${stageName}-46ki75-web-cloudformation-stack-api-cloudwatchlogs`
+      `${STAGE_NAME}-46ki75-web-cloudformation-stack-api-cloudwatchlogs`
     );
 
     const iamStack = new IamStack(
       this,
-      `${stageName}-46ki75-web-cloudformation-stack-api-iam`
+      `${STAGE_NAME}-46ki75-web-cloudformation-stack-api-iam`
     );
 
     const lambdaStack = new LambdaStack(
       this,
-      `${stageName}-46ki75-web-cloudformation-stack-api-lambda`,
+      `${STAGE_NAME}-46ki75-web-cloudformation-stack-api-lambda`,
       {
         lambdaRole: iamStack.lambdaRole,
         lambdaLogGroup: cloudWatchLogsStack.lambdaLogGroup,
@@ -33,12 +33,12 @@ export class ApiStack extends cdk.Stack {
 
     const acmStack = new AcmStack(
       this,
-      `${stageName}-46ki75-web-cloudformation-stack-api-acm`
+      `${STAGE_NAME}-46ki75-web-cloudformation-stack-api-acm`
     );
 
     const apigwStack = new ApigwStack(
       this,
-      `${stageName}-46ki75-web-cloudformation-stack-api-apigw`,
+      `${STAGE_NAME}-46ki75-web-cloudformation-stack-api-apigw`,
       {
         lambdaAlias: lambdaStack.lambdaAlias,
         certificate: acmStack.certificate,
@@ -47,7 +47,7 @@ export class ApiStack extends cdk.Stack {
 
     const route53RecordStack = new Route53Stack(
       this,
-      `${stageName}-46ki75-web-cloudformation-stack-api-route53`,
+      `${STAGE_NAME}-46ki75-web-cloudformation-stack-api-route53`,
       {
         domainName: apigwStack.domainName,
       }

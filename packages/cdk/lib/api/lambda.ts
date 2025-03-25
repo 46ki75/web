@@ -3,7 +3,7 @@ import { Construct } from "constructs";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as logs from "aws-cdk-lib/aws-logs";
-import { stageName } from "../../bin/app";
+import { STAGE_NAME } from "../../bin/app";
 
 interface LambdaStackProps extends cdk.NestedStackProps {
   lambdaRole: iam.Role;
@@ -17,9 +17,9 @@ export class LambdaStack extends cdk.NestedStack {
 
     const lambdaFunction = new lambda.Function(
       this,
-      `${stageName}-46ki75-web-lambda-function-api`,
+      `${STAGE_NAME}-46ki75-web-lambda-function-api`,
       {
-        functionName: `${stageName}-46ki75-web-lambda-function-api`,
+        functionName: `${STAGE_NAME}-46ki75-web-lambda-function-api`,
         code: lambda.Code.fromAsset("../../target/lambda/http-api/"),
         handler: "DOES_NOT_MATTER",
         runtime: lambda.Runtime.PROVIDED_AL2023,
@@ -28,7 +28,7 @@ export class LambdaStack extends cdk.NestedStack {
         timeout: cdk.Duration.seconds(15),
         role: props.lambdaRole,
         environment: {
-          STAGE_NAME: stageName,
+          STAGE_NAME: STAGE_NAME,
           RUST_LOG: "http_api=info",
           RUST_LOG_FORMAT: "json",
         },
@@ -39,7 +39,7 @@ export class LambdaStack extends cdk.NestedStack {
 
     const lambdaVersion = new lambda.Version(
       this,
-      `${stageName}-46ki75-web-lambda-version-api`,
+      `${STAGE_NAME}-46ki75-web-lambda-version-api`,
       {
         lambda: lambdaFunction,
       }
@@ -47,7 +47,7 @@ export class LambdaStack extends cdk.NestedStack {
 
     this.lambdaAlias = new lambda.Alias(
       this,
-      `${stageName}-46ki75-web-lambda-alias-api_stable`,
+      `${STAGE_NAME}-46ki75-web-lambda-alias-api_stable`,
       {
         aliasName: "stable",
         version: lambdaVersion,

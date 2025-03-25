@@ -1,7 +1,7 @@
 import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
 import * as iam from "aws-cdk-lib/aws-iam";
-import { stageName } from "../../bin/app";
+import { STAGE_NAME } from "../../bin/app";
 
 export class IamStack extends cdk.NestedStack {
   readonly lambdaRole: iam.Role;
@@ -11,18 +11,18 @@ export class IamStack extends cdk.NestedStack {
 
     this.lambdaRole = new iam.Role(
       this,
-      `${stageName}-46ki75-web-iam-role-lambda_api`,
+      `${STAGE_NAME}-46ki75-web-iam-role-lambda_api`,
       {
-        roleName: `${stageName}-46ki75-web-iam-role-lambda_api`,
+        roleName: `${STAGE_NAME}-46ki75-web-iam-role-lambda_api`,
         assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"),
       }
     );
 
     const lambdaPolicy = new iam.Policy(
       this,
-      `${stageName}-46ki75-web-iam-policy-lambda_api`,
+      `${STAGE_NAME}-46ki75-web-iam-policy-lambda_api`,
       {
-        policyName: `${stageName}-46ki75-web-iam-policy-lambda_api`,
+        policyName: `${STAGE_NAME}-46ki75-web-iam-policy-lambda_api`,
         document: new iam.PolicyDocument({
           statements: [
             new iam.PolicyStatement({
@@ -30,7 +30,7 @@ export class IamStack extends cdk.NestedStack {
               actions: ["ssm:GetParameter"],
               resources: [
                 `arn:aws:ssm:${this.region}:${this.account}:parameter/shared/46ki75/web/ssm/parameter/notion/database/id`,
-                `arn:aws:ssm:${this.region}:${this.account}:parameter/${stageName}/46ki75/web/ssm/parameter/notion/secret`,
+                `arn:aws:ssm:${this.region}:${this.account}:parameter/${STAGE_NAME}/46ki75/web/ssm/parameter/notion/secret`,
               ],
             }),
             new iam.PolicyStatement({
