@@ -1,9 +1,8 @@
 #!/usr/bin/env node
 import * as cdk from "aws-cdk-lib";
 import { ApiStack } from "../lib/api";
-import { WebStack } from "../lib/web";
 import { CdnStack } from "../lib/cdn";
-import { WebBucketPolicyStack } from "../lib/web-bucket-policy";
+import { AcmGlobalStack } from "../lib/acm-global";
 
 const app = new cdk.App();
 
@@ -31,15 +30,14 @@ const apiStack = new ApiStack(
   }
 );
 
-const webStack = new WebStack(
+const acmGlobalStack = new AcmGlobalStack(
   app,
-  `${STAGE_NAME}-46ki75-web-cloudformation-stack-web`,
+  `${STAGE_NAME}-46ki75-web-cloudformation-stack-acmGlobal`,
   {
     env: {
       account: process.env.CDK_DEFAULT_ACCOUNT,
-      region: process.env.CDK_DEFAULT_REGION,
+      region: "us-east-1",
     },
-    crossRegionReferences: true,
   }
 );
 
@@ -49,22 +47,9 @@ const cdnStack = new CdnStack(
   {
     env: {
       account: process.env.CDK_DEFAULT_ACCOUNT,
-      region: "us-east-1",
-    },
-    crossRegionReferences: true,
-    bucket: webStack.bucket,
-  }
-);
-
-const webBucketPolicyStack = new WebBucketPolicyStack(
-  app,
-  `${STAGE_NAME}-46ki75-web-cloudformation-stack-webBucketPolicyStack`,
-  {
-    env: {
-      account: process.env.CDK_DEFAULT_ACCOUNT,
       region: process.env.CDK_DEFAULT_REGION,
     },
     crossRegionReferences: true,
-    bucket: webStack.bucket,
+    certificate: acmGlobalStack.certificate,
   }
 );

@@ -2,12 +2,12 @@ import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
 import * as acm from "aws-cdk-lib/aws-certificatemanager";
 import * as route53 from "aws-cdk-lib/aws-route53";
-import { STAGE_NAME, ZONE_NAME } from "../../bin/app";
+import { STAGE_NAME, ZONE_NAME } from "../bin/app";
 
-export class AcmGlobalStack extends cdk.NestedStack {
+export class AcmGlobalStack extends cdk.Stack {
   readonly certificate: acm.Certificate;
 
-  constructor(scope: Construct, id: string, props?: cdk.NestedStackProps) {
+  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
     const hostedZone = route53.HostedZone.fromLookup(
