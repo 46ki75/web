@@ -1,9 +1,9 @@
 <template>
   <div class="center">
-    <div class="main">
+    <main class="main">
       <slot />
-    </div>
-    <nav><BlogSide /></nav>
+    </main>
+    <aside><BlogSide /></aside>
   </div>
 </template>
 
@@ -17,10 +17,12 @@
 }
 
 .main {
+  max-width: 800px;
   background-color: rgba(grey, 0.5);
 }
 
 .side {
+  max-width: 420px;
   display: flex;
   justify-content: flex-start;
   align-items: center;

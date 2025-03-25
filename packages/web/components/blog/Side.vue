@@ -29,7 +29,6 @@ const config = useRuntimeConfig();
 
 <style lang="scss" scoped>
 .wrapper {
-  max-width: 420px;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
