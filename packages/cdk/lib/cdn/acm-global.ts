@@ -4,7 +4,7 @@ import * as acm from "aws-cdk-lib/aws-certificatemanager";
 import * as route53 from "aws-cdk-lib/aws-route53";
 import { STAGE_NAME, ZONE_NAME } from "../../bin/app";
 
-export class AcmStack extends cdk.NestedStack {
+export class AcmGlobalStack extends cdk.NestedStack {
   readonly certificate: acm.Certificate;
 
   constructor(scope: Construct, id: string, props?: cdk.NestedStackProps) {
@@ -22,7 +22,7 @@ export class AcmStack extends cdk.NestedStack {
       this,
       `${STAGE_NAME}-46ki75-web-acm-stack-certificate-cloudfront`,
       {
-        domainName: ZONE_NAME,
+        domainName: "dev-www.46ki75.com",
         certificateName: `${STAGE_NAME}-46ki75-web-acm-stack-certificate-cloudfront`,
         validation: {
           method: acm.ValidationMethod.DNS,
@@ -33,5 +33,7 @@ export class AcmStack extends cdk.NestedStack {
         },
       }
     );
+
+    new cdk.CfnOutput(this, "DomainName", { value: ZONE_NAME });
   }
 }
