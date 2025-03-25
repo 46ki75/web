@@ -37,9 +37,14 @@ const config = useRuntimeConfig();
 .card {
   all: unset;
   box-shadow: 0 0 0.125rem rgba(black, 0.25);
-  background-color: rgba(white, 0.25);
   transition: opacity 200ms, transform 200ms;
   cursor: pointer;
+
+  background-color: rgba(white, 0.25);
+
+  [data-theme="dark"] & {
+    background-color: rgba(white, 0.1);
+  }
 
   &:hover {
     opacity: 0.9;

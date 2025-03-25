@@ -1,5 +1,3 @@
 <template>
-  <NuxtLayout name="blog">
-    <NuxtPage />
-  </NuxtLayout>
+  <main>BLOG HOME PLACEHOLDER</main>
 </template>
