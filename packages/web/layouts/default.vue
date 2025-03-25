@@ -7,7 +7,7 @@
     <ElmToggleTheme />
   </header>
   <div>
-    <slot></slot>
+    <slot />
   </div>
 </template>
 
