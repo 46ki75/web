@@ -3,7 +3,7 @@
     <div class="main">
       <slot />
     </div>
-    <nav>SIDE (PLACEHOLDER)</nav>
+    <nav><BlogSide /></nav>
   </div>
 </template>
 
