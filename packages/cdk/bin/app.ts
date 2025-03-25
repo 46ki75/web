@@ -3,6 +3,7 @@ import * as cdk from "aws-cdk-lib";
 import { ApiStack } from "../lib/api";
 import { WebStack } from "../lib/web";
 import { CdnStack } from "../lib/cdn";
+import { WebBucketPolicyStack } from "../lib/web-bucket-policy";
 
 const app = new cdk.App();
 
@@ -49,6 +50,19 @@ const cdnStack = new CdnStack(
     env: {
       account: process.env.CDK_DEFAULT_ACCOUNT,
       region: "us-east-1",
+    },
+    crossRegionReferences: true,
+    bucket: webStack.bucket,
+  }
+);
+
+const webBucketPolicyStack = new WebBucketPolicyStack(
+  app,
+  `${STAGE_NAME}-46ki75-web-cloudformation-stack-webBucketPolicyStack`,
+  {
+    env: {
+      account: process.env.CDK_DEFAULT_ACCOUNT,
+      region: process.env.CDK_DEFAULT_REGION,
     },
     crossRegionReferences: true,
     bucket: webStack.bucket,

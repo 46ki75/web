@@ -26,6 +26,7 @@ export class CloudfrontStack extends cdk.NestedStack {
         },
         certificate: props.certificate,
         domainNames: [ZONE_NAME],
+        defaultRootObject: "index.html",
       }
     );
 
