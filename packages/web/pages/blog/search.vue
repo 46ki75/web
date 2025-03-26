@@ -62,12 +62,6 @@ import { Icon } from "@iconify/vue";
 
 const SearchIcon = h(Icon, { icon: "material-symbols:search" });
 
-interface BlogTag {
-  id: string;
-  name: string;
-  color: string;
-}
-
 const route = useRoute();
 const router = useRouter();
 
@@ -118,6 +112,7 @@ onMounted(async () => {
 
     blogSearchStore.selectedTags = queryTags;
   }
+  blogSearchStore.searchBlog()
 });
 </script>
 

@@ -74,25 +74,53 @@ export const useBlogSearchStore = defineStore("BlogSearchStore", {
       const tags = this.tags.filter((tag) => tag.id === tagId);
       if (tags.length === 1) {
         this.selectedTags.push(tags[0]);
+        this.searchBlog();
       }
     },
     tagDeselect(tagId: string) {
       this.selectedTags = this.selectedTags.filter((tag) => tag.id !== tagId);
+      this.searchBlog();
     },
     tagReset() {
       this.selectedTags = [];
+      this.searchBlog();
     },
     searchBlog() {
-      if (this.fuse == null) {
-        this.fuse = new Fuse(this.blogs, {
-          keys: ["title", "description"],
-          threshold: 0.5,
+      // Tag only searching
+      if (this.keyword == null || this.keyword.trim() === "") {
+        this.searchedBlogs = this.blogs.filter((blog) => {
+          const tagIds = blog.tags.map((tag) => tag.id);
+          const selectedTagIds = this.selectedTags.map((tag) => tag.id);
+          const flag = selectedTagIds.every((tagId) => tagIds.includes(tagId));
+          return flag;
         });
       }
+      // Tag and Keyword searching
+      else {
+        if (this.fuse == null) {
+          this.fuse = new Fuse(this.blogs, {
+            keys: ["title", "description"],
+            threshold: 0.5,
+          });
+        }
 
-      if (this.keyword && this.fuse) {
-        const fuzzyResults = this.fuse.search(this.keyword).map((r) => r.item);
-        this.searchedBlogs = fuzzyResults;
+        if (this.keyword && this.fuse) {
+          const fuzzyResults = this.fuse
+            .search(this.keyword)
+            .map((r) => r.item);
+          if (this.selectedTags.length > 0) {
+            this.searchedBlogs = fuzzyResults.filter((blog) => {
+              const tagIds = blog.tags.map((tag) => tag.id);
+              const selectedTagIds = this.selectedTags.map((tag) => tag.id);
+              const flag = selectedTagIds.every((tagId) =>
+                tagIds.includes(tagId)
+              );
+              return flag;
+            });
+          } else {
+            this.searchedBlogs = fuzzyResults;
+          }
+        }
       }
     },
   },
