@@ -1,28 +1,25 @@
 {
-    "folders": [
-        {
-            "path": ".",
-            "name": "root"
-        },
-        {
-            "path": "packages/frontend",
-            "name": "frontend"
-        },
-        {
-            "path": "crates/api",
-            "name": "api"
-        },
-        {
-            "path": "terraform",
-            "name": "terraform"
-        }
-    ],
-    "settings": {
-        "terminal.integrated.env.linux": {
-            "AWS_PROFILE": "web"
-        },
-        "files.associations": {
-            "Justfile": "makefile"
-        }
+  "folders": [
+    {
+      "path": ".",
+      "name": "root"
+    },
+    {
+      "path": "packages/web",
+      "name": "web (Vue)"
+    },
+    {
+      "path": "crates/http-api",
+      "name": "http-api (Rust)"
+    },
+    {
+      "path": "terraform",
+      "name": "terraform"
     }
+  ],
+  "settings": {
+    "files.associations": {
+      "Justfile": "makefile"
+    }
+  }
 }
