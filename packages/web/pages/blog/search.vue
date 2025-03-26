@@ -101,51 +101,60 @@ interface Blog {
 }
 
 const config = useRuntimeConfig();
-const tagsResponse = useFetch<{
-  data: { tagList: Array<BlogTag> };
-}>(`${config.public.ENDPOINT}/api/graphql`, {
-  method: "POST",
-  body: {
-    query: /* GraphQL */ `
-      {
-        tagList {
-          id
-          name
-          color
-        }
-      }
-    `,
-  },
-});
 
-const blogsResponse = useFetch<{
-  data: { blogList: Blog[] };
-}>(`${config.public.ENDPOINT}/api/graphql`, {
-  method: "POST",
-  body: {
-    query: /* GraphQL */ `
-      query ListBlogs {
-        blogList {
-          id
-          title
-          description
-          status
-          tags {
+const { data: tags } = await useAsyncData("SearchListTags", async () => {
+  const response = await $fetch<{
+    data: { tagList: Array<BlogTag> };
+  }>(`${config.public.ENDPOINT}/api/graphql`, {
+    method: "POST",
+    body: {
+      query: /* GraphQL */ `
+        query ListTags {
+          tagList {
             id
             name
             color
           }
-          createdAt
-          updatedAt
         }
-      }
-    `,
-  },
+      `,
+    },
+  });
+
+  return response.data.tagList;
+});
+
+const { data: blogs } = await useAsyncData("SearchListBlogs", async () => {
+  const response = await $fetch<{
+    data: { blogList: Blog[] };
+  }>(`${config.public.ENDPOINT}/api/graphql`, {
+    method: "POST",
+    body: {
+      query: /* GraphQL */ `
+        query ListBlogs {
+          blogList {
+            id
+            title
+            description
+            status
+            tags {
+              id
+              name
+              color
+            }
+            createdAt
+            updatedAt
+          }
+        }
+      `,
+    },
+  });
+
+  return response.data.blogList;
 });
 
 onMounted(async () => {
-  blogSearchStore.tags = tagsResponse.data.value?.data.tagList ?? [];
-  blogSearchStore.blogs = blogsResponse.data.value?.data.blogList ?? [];
+  blogSearchStore.tags = tags.value ?? [];
+  blogSearchStore.blogs = blogs.value ?? [];
 
   await nextTick();
 

@@ -1,7 +1,14 @@
 <template>
   <nav class="wrapper">
+    <!-- <NuxtLink to="/blog/search" :prefetch="false">
+      <ElmButton @click="" block>
+        <Icon icon="material-symbols:search" height="24px" />
+        <ElmInlineText text="記事を検索" />
+      </ElmButton>
+    </NuxtLink> -->
+
     <NuxtLink
-      v-for="blog in blogSide.blogs"
+      v-for="blog in data"
       :to="`/blog/article/${blog.id}`"
       class="card"
     >
@@ -30,11 +37,54 @@
 </template>
 
 <script setup lang="ts">
-import { ElmImage, ElmInlineText } from "@elmethis/core";
+import { ElmButton, ElmImage, ElmInlineText } from "@elmethis/core";
+import { Icon } from "@iconify/vue";
 
-const blogSide = useBlogSideStore();
+// const blogSide = useBlogSideStore();
 
 const config = useRuntimeConfig();
+
+const { data } = useAsyncData("BlogSide", async () => {
+  const response = await $fetch<{
+    data: {
+      blogList: Array<{
+        id: string;
+        title: string;
+        description: string;
+        tags: Array<{
+          id: string;
+          name: string;
+          color: string;
+        }>;
+        createdAt: string;
+        updatedAt: string;
+      }>;
+    };
+  }>(`${config.public.ENDPOINT}/api/graphql`, {
+    method: "POST",
+    body: {
+      query: /* GraphQL */ `
+        query ListBlogs {
+          blogList {
+            id
+            title
+            description
+            status
+            tags {
+              id
+              name
+              color
+            }
+            createdAt
+            updatedAt
+          }
+        }
+      `,
+    },
+  });
+
+  return response.data.blogList;
+});
 </script>
 
 <style lang="scss" scoped>
