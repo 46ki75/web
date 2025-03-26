@@ -11,33 +11,37 @@
       ]"
     />
 
-    <ElmTextField v-model="keyword" label="検索キーワード" :icon="SearchIcon" />
+    <ElmTextField
+      v-model="blogSearchStore.keyword"
+      label="検索キーワード"
+      :icon="SearchIcon"
+    />
 
     <div class="tag-container">
       <ElmHeading3 text="タグ一覧" />
-      <div class="tag-pool" v-if="data">
+      <div class="tag-pool" v-if="blogSearchStore.tags">
         <BlogTag
-          v-for="tag in data.data.tagList"
+          v-for="tag in blogSearchStore.tags"
           :id="tag.id"
           :label="tag.name"
           :color="tag.color"
-          @click="handleTagSelect(tag)"
+          @click="blogSearchStore.tagSelect(tag.id)"
         />
       </div>
     </div>
 
-    <div class="tag-container" v-if="selectedTags.length > 0">
+    <div class="tag-container" v-if="blogSearchStore.selectedTags.length > 0">
       <ElmHeading3 text="選択されたタグ" />
-      <div class="tag-pool" v-if="data">
+      <div class="tag-pool">
         <BlogTag
-          v-for="tag in selectedTags"
+          v-for="tag in blogSearchStore.selectedTags"
           :id="tag.id"
           :label="tag.name"
           :color="tag.color"
-          @click="handleTagDeselect(tag)"
+          @click="blogSearchStore.tagDeselect(tag.id)"
         />
       </div>
-      <ElmButton block @click="handleTagReset">
+      <ElmButton block @click="blogSearchStore.tagReset">
         <Icon icon="fluent:tag-reset-20-filled" height="20px" />
         選択されたタグのリセット</ElmButton
       >
@@ -49,84 +53,49 @@
 import { ElmButton, ElmHeading3, ElmTextField } from "@elmethis/core";
 import { Icon } from "@iconify/vue";
 
+const SearchIcon = h(Icon, { icon: "material-symbols:search" });
+
 interface BlogTag {
   id: string;
   name: string;
   color: string;
 }
 
-const config = useRuntimeConfig();
-
 const route = useRoute();
 const router = useRouter();
 
-const { data } = useFetch<{
-  data: { tagList: Array<BlogTag> };
-}>(`${config.public.ENDPOINT}/api/graphql`, {
-  method: "POST",
-  body: {
-    query: /* GraphQL */ `
-      {
-        tagList {
-          id
-          name
-          color
-        }
-      }
-    `,
-  },
-});
-
-const keyword = ref<string | undefined>();
-
-const selectedTags = ref<BlogTag[]>([]);
-
-const SearchIcon = h(Icon, { icon: "material-symbols:search" });
+const blogSearchStore = useBlogSearchStore();
 
 const updateQueryParams = () => {
   router.replace({
     query: {
-      keyword: keyword.value,
-      tags: selectedTags.value.map((tag) => tag.id),
+      keyword: blogSearchStore.keyword,
+      tags: blogSearchStore.selectedTags.map((tag) => tag.id),
     },
   });
 };
 
-const handleTagSelect = (tag: BlogTag) => {
-  if (!selectedTags.value.some((t) => t.id === tag.id)) {
-    selectedTags.value.push(tag);
+watch(
+  () => blogSearchStore.keyword,
+  () => {
     updateQueryParams();
   }
-};
-
-const handleTagDeselect = (tag: BlogTag) => {
-  selectedTags.value = selectedTags.value.filter((t) => t.id !== tag.id);
-  updateQueryParams();
-};
-
-const handleTagReset = () => {
-  selectedTags.value = [];
-};
-
-watch(keyword, () => {
-  updateQueryParams();
-});
+);
 
 onMounted(async () => {
   await nextTick();
   if (typeof route.query?.keyword === "string") {
-    keyword.value = route.query.keyword;
+    blogSearchStore.keyword = route.query.keyword;
   }
 
   if (typeof route.query?.tags === "string") {
     const queryTagId = route.query.tags;
 
-    const queryTags =
-      data.value != null
-        ? data.value?.data.tagList.filter((tag) => queryTagId === tag.id)
-        : [];
+    const queryTags = blogSearchStore.tags.filter(
+      (tag) => queryTagId === tag.id
+    );
 
-    selectedTags.value = queryTags;
+    blogSearchStore.selectedTags = queryTags;
   } else if (
     typeof route.query?.tags === "object" &&
     route.query.tags != null
@@ -135,12 +104,11 @@ onMounted(async () => {
       .filter((tagId) => tagId != null)
       .map((tagId) => tagId.toString());
 
-    const queryTags =
-      data.value != null
-        ? data.value?.data.tagList.filter((tag) => queryTagIds.includes(tag.id))
-        : [];
+    const queryTags = blogSearchStore.tags.filter((tag) =>
+      queryTagIds.includes(tag.id)
+    );
 
-    selectedTags.value = queryTags;
+    blogSearchStore.selectedTags = queryTags;
   }
 });
 </script>

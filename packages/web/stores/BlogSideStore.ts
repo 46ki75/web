@@ -1,5 +1,3 @@
-import { defineStore } from "pinia";
-
 export const useBlogSideStore = defineStore("BlogSide", {
   state: () => {
     const config = useRuntimeConfig();
