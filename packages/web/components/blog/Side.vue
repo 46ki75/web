@@ -42,7 +42,7 @@ import { Icon } from "@iconify/vue";
 
 const config = useRuntimeConfig();
 
-const { data } = useAsyncData("BlogSide", async () => {
+const { data } = await useAsyncData("BlogSide", async () => {
   const response = await $fetch<{
     data: {
       blogList: Array<{
