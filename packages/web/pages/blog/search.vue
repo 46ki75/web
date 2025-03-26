@@ -152,10 +152,10 @@ const { data: blogs } = await useAsyncData("SearchListBlogs", async () => {
   return response.data.blogList;
 });
 
-onMounted(async () => {
-  blogSearchStore.tags = tags.value ?? [];
-  blogSearchStore.blogs = blogs.value ?? [];
+blogSearchStore.tags = tags.value ?? [];
+blogSearchStore.blogs = blogs.value ?? [];
 
+onMounted(async () => {
   await nextTick();
 
   if (typeof route.query?.keyword === "string") {

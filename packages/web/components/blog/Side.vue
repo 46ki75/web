@@ -1,11 +1,11 @@
 <template>
   <nav class="wrapper">
-    <!-- <NuxtLink to="/blog/search" :prefetch="false">
-      <ElmButton @click="" block>
+    <NuxtLink to="/blog/search" :prefetch="false" :style="{ all: 'unset' }">
+      <ElmButton @click="() => {}" block>
         <Icon icon="material-symbols:search" height="24px" />
         <ElmInlineText text="記事を検索" />
       </ElmButton>
-    </NuxtLink> -->
+    </NuxtLink>
 
     <NuxtLink
       v-for="blog in data"
@@ -39,8 +39,6 @@
 <script setup lang="ts">
 import { ElmButton, ElmImage, ElmInlineText } from "@elmethis/core";
 import { Icon } from "@iconify/vue";
-
-// const blogSide = useBlogSideStore();
 
 const config = useRuntimeConfig();
 
