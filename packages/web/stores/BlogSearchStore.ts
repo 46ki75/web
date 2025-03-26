@@ -17,54 +17,11 @@ interface Blog {
 
 export const useBlogSearchStore = defineStore("BlogSearchStore", {
   state: () => {
-    const config = useRuntimeConfig();
-    const tagsResponse = useFetch<{
-      data: { tagList: Array<BlogTag> };
-    }>(`${config.public.ENDPOINT}/api/graphql`, {
-      method: "POST",
-      body: {
-        query: /* GraphQL */ `
-          {
-            tagList {
-              id
-              name
-              color
-            }
-          }
-        `,
-      },
-    });
-
-    const blogsResponse = useFetch<{
-      data: { blogList: Blog[] };
-    }>(`${config.public.ENDPOINT}/api/graphql`, {
-      method: "POST",
-      body: {
-        query: /* GraphQL */ `
-          query ListBlogs {
-            blogList {
-              id
-              title
-              description
-              status
-              tags {
-                id
-                name
-                color
-              }
-              createdAt
-              updatedAt
-            }
-          }
-        `,
-      },
-    });
-
     return {
-      tags: computed(() => tagsResponse.data.value?.data.tagList ?? []),
+      tags: [] as BlogTag[],
       selectedTags: [] as BlogTag[],
       keyword: undefined as string | undefined,
-      blogs: computed(() => blogsResponse.data.value?.data.blogList ?? []),
+      blogs: [] as Blog[],
       searchedBlogs: [] as Blog[],
       fuse: undefined as Fuse<Blog> | undefined,
     };

@@ -85,8 +85,70 @@ watch(
   }
 );
 
+interface BlogTag {
+  id: string;
+  name: string;
+  color: string;
+}
+
+interface Blog {
+  id: string;
+  title: string;
+  description: string;
+  tags: Array<BlogTag>;
+  createdAt: string;
+  updatedAt: string;
+}
+
+const config = useRuntimeConfig();
+const tagsResponse = useFetch<{
+  data: { tagList: Array<BlogTag> };
+}>(`${config.public.ENDPOINT}/api/graphql`, {
+  method: "POST",
+  body: {
+    query: /* GraphQL */ `
+      {
+        tagList {
+          id
+          name
+          color
+        }
+      }
+    `,
+  },
+});
+
+const blogsResponse = useFetch<{
+  data: { blogList: Blog[] };
+}>(`${config.public.ENDPOINT}/api/graphql`, {
+  method: "POST",
+  body: {
+    query: /* GraphQL */ `
+      query ListBlogs {
+        blogList {
+          id
+          title
+          description
+          status
+          tags {
+            id
+            name
+            color
+          }
+          createdAt
+          updatedAt
+        }
+      }
+    `,
+  },
+});
+
 onMounted(async () => {
+  blogSearchStore.tags = tagsResponse.data.value?.data.tagList ?? [];
+  blogSearchStore.blogs = blogsResponse.data.value?.data.blogList ?? [];
+
   await nextTick();
+
   if (typeof route.query?.keyword === "string") {
     blogSearchStore.keyword = route.query.keyword;
   }
