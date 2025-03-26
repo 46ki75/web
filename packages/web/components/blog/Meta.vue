@@ -10,7 +10,7 @@
     "
   />
 
-  <ElmHeading1 :text="title" />
+  <ElmHeading1 :text="title" disable-fragment-identifier />
 
   <BlogDate :created-at="createdAt" :updated-at="updatedAt" />
 

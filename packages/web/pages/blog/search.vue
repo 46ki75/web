@@ -18,7 +18,7 @@
     />
 
     <div class="tag-container">
-      <ElmHeading3 text="タグ一覧" />
+      <ElmHeading3 text="タグ一覧" disable-fragment-identifier />
       <div class="tag-pool" v-if="blogSearchStore.tags">
         <BlogTag
           v-for="tag in blogSearchStore.tags"
@@ -31,7 +31,7 @@
     </div>
 
     <div class="tag-container" v-if="blogSearchStore.selectedTags.length > 0">
-      <ElmHeading3 text="選択されたタグ" />
+      <ElmHeading3 text="選択されたタグ" disable-fragment-identifier/>
       <div class="tag-pool">
         <BlogTag
           v-for="tag in blogSearchStore.selectedTags"
