@@ -46,6 +46,13 @@
         選択されたタグのリセット</ElmButton
       >
     </div>
+
+    <div>
+      <p v-for="blog in blogSearchStore.searchedBlogs">
+        <div>Title: {{ blog.title }}</div>
+        <div>Description: {{ blog.description }}</div>
+      </p>
+    </div>
   </div>
 </template>
 
@@ -79,6 +86,7 @@ watch(
   () => blogSearchStore.keyword,
   () => {
     updateQueryParams();
+    blogSearchStore.searchBlog();
   }
 );
 
