@@ -19,6 +19,7 @@
       v-for="tag in tags"
       :to="`/blog/search?tags=${tag.id}`"
       :style="{ all: 'unset' }"
+      :prefetch="false"
     >
       <BlogTag :label="tag.label" :color="tag.color" />
     </NuxtLink>

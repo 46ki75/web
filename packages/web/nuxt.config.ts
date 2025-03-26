@@ -37,5 +37,9 @@ export default defineNuxtConfig({
       },
     },
   },
-  nitro: { prerender: { routes: routes } },
+  nitro: {
+    prerender: {
+      routes: [...routes, "/", "/blog", "/blog/article", "/blog/search"],
+    },
+  },
 });
