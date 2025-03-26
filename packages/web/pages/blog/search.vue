@@ -21,7 +21,7 @@
           :id="tag.id"
           :label="tag.name"
           :color="tag.color"
-          @click="handletagSelect(tag)"
+          @click="handleTagSelect(tag)"
         />
       </div>
     </div>
@@ -37,12 +37,16 @@
           @click="handleTagDeselect(tag)"
         />
       </div>
+      <ElmButton block @click="handleTagReset">
+        <Icon icon="fluent:tag-reset-20-filled" height="20px" />
+        選択されたタグのリセット</ElmButton
+      >
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ElmHeading3, ElmTextField } from "@elmethis/core";
+import { ElmButton, ElmHeading3, ElmTextField } from "@elmethis/core";
 import { Icon } from "@iconify/vue";
 
 interface BlogTag {
@@ -88,7 +92,7 @@ const updateQueryParams = () => {
   });
 };
 
-const handletagSelect = (tag: BlogTag) => {
+const handleTagSelect = (tag: BlogTag) => {
   if (!selectedTags.value.some((t) => t.id === tag.id)) {
     selectedTags.value.push(tag);
     updateQueryParams();
@@ -98,6 +102,10 @@ const handletagSelect = (tag: BlogTag) => {
 const handleTagDeselect = (tag: BlogTag) => {
   selectedTags.value = selectedTags.value.filter((t) => t.id !== tag.id);
   updateQueryParams();
+};
+
+const handleTagReset = () => {
+  selectedTags.value = [];
 };
 
 watch(keyword, () => {
@@ -143,6 +151,7 @@ onMounted(async () => {
 }
 
 .tag-pool {
+  margin-block: 2rem;
   display: flex;
 }
 </style>
