@@ -53,7 +53,7 @@ const config = useRuntimeConfig();
   background-color: rgba(white, 0.25);
 
   [data-theme="dark"] & {
-    background-color: rgba(white, 0.1);
+    background-color: rgba(black, 0.1);
   }
 
   &:hover {

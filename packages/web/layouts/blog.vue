@@ -8,11 +8,12 @@
       image-url1="/image/blog/bg1.webp"
       image-url2="/image/blog/bg2.webp"
     />
+    <ElmPagetop />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ElmParallax } from "@elmethis/core";
+import { ElmParallax, ElmPagetop } from "@elmethis/core";
 </script>
 
 <style lang="scss" scoped>
