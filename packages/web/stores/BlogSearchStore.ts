@@ -72,7 +72,10 @@ export const useBlogSearchStore = defineStore("BlogSearchStore", {
   actions: {
     tagSelect(tagId: string) {
       const tags = this.tags.filter((tag) => tag.id === tagId);
-      if (tags.length === 1) {
+      if (
+        tags.length === 1 &&
+        !this.selectedTags.map((tag) => tag.id).includes(tags[0].id)
+      ) {
         this.selectedTags.push(tags[0]);
         this.searchBlog();
       }
