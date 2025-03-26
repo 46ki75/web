@@ -12,6 +12,7 @@
       :image="`${config.public.ENDPOINT}/api/blog/image/ogp/${data.id}`"
       :tags="
         data.tags.map((tag) => ({
+          id: tag.id,
           label: tag.name,
           color: tag.color,
         }))

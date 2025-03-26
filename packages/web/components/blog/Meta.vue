@@ -15,7 +15,13 @@
   <BlogDate :created-at="createdAt" :updated-at="updatedAt" />
 
   <div class="tag" v-if="tags">
-    <BlogTag v-for="tag in tags" :label="tag.label" :color="tag.color" />
+    <NuxtLink
+      v-for="tag in tags"
+      :to="`/blog/search?tags=${tag.id}`"
+      :style="{ all: 'unset' }"
+    >
+      <BlogTag :label="tag.label" :color="tag.color" />
+    </NuxtLink>
   </div>
 
   <div class="image">
@@ -36,6 +42,7 @@ interface BlogMetaProps {
   updatedAt: string;
   image?: string;
   tags?: Array<{
+    id: string;
     label: string;
     color: string;
   }>;

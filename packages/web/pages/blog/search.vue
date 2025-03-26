@@ -17,6 +17,7 @@
     <div class="tag-pool" v-if="data">
       <BlogTag
         v-for="tag in data.data.tagList"
+        :id="tag.id"
         :label="tag.name"
         :color="tag.color"
         @click="handletagSelect(tag)"
@@ -27,6 +28,7 @@
     <div class="tag-pool" v-if="data">
       <BlogTag
         v-for="tag in selectedTags"
+        :id="tag.id"
         :label="tag.name"
         :color="tag.color"
         @click="handleTagDeselect(tag)"
@@ -67,24 +69,9 @@ const { data } = useFetch<{
   },
 });
 
-const queryKeyword =
-  typeof route.query?.keyword === "string" ? route.query.keyword : undefined;
+const keyword = ref<string | undefined>();
 
-const keyword = ref<string | undefined>(queryKeyword);
-
-const queryTagIds =
-  typeof route.query?.tags === "object" && route.query.tags != null
-    ? route.query.tags
-        .filter((tagId) => tagId != null)
-        .map((tagId) => tagId.toString())
-    : [];
-
-const queryTags =
-  data.value != null
-    ? data.value?.data.tagList.filter((tag) => queryTagIds.includes(tag.id))
-    : [];
-
-const selectedTags = ref<BlogTag[]>(queryTags);
+const selectedTags = ref<BlogTag[]>([]);
 
 const SearchIcon = h(Icon, { icon: "material-symbols:search" });
 
@@ -111,6 +98,38 @@ const handleTagDeselect = (tag: BlogTag) => {
 
 watch(keyword, () => {
   updateQueryParams();
+});
+
+onMounted(async () => {
+  await nextTick();
+  if (typeof route.query?.keyword === "string") {
+    keyword.value = route.query.keyword;
+  }
+
+  if (typeof route.query?.tags === "string") {
+    const queryTagId = route.query.tags;
+
+    const queryTags =
+      data.value != null
+        ? data.value?.data.tagList.filter((tag) => queryTagId === tag.id)
+        : [];
+
+    selectedTags.value = queryTags;
+  } else if (
+    typeof route.query?.tags === "object" &&
+    route.query.tags != null
+  ) {
+    const queryTagIds = route.query.tags
+      .filter((tagId) => tagId != null)
+      .map((tagId) => tagId.toString());
+
+    const queryTags =
+      data.value != null
+        ? data.value?.data.tagList.filter((tag) => queryTagIds.includes(tag.id))
+        : [];
+
+    selectedTags.value = queryTags;
+  }
 });
 </script>
 
