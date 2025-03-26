@@ -4,11 +4,14 @@
       <p><ElmInlineText text="FOOTER" /></p>
       <hr class="hr" />
       <div class="bottom">
-        <ElmInlineText
-          :text="`© Chomolungma Shirayuki ${new Date().getFullYear()}`"
-          size="0.8rem"
-        />
-        <div class="icon-container">
+        <div class="left">
+          <ElmInlineText
+            :text="`© Chomolungma Shirayuki 2022-${new Date().getFullYear()} ・ Build: ${data}`"
+            size="0.8rem"
+          />
+        </div>
+
+        <div class="right">
           <a
             href="https://x.com/46ki75"
             target="_blank"
@@ -32,6 +35,10 @@
 <script setup lang="ts">
 import { ElmInlineText } from "@elmethis/core";
 import { Icon } from "@iconify/vue";
+
+const { data } = useAsyncData("BuildDate", async () =>
+  new Date().toISOString().substring(0, 10)
+);
 </script>
 
 <style lang="scss" scoped>
@@ -71,7 +78,13 @@ import { Icon } from "@iconify/vue";
   justify-content: space-between;
 }
 
-.icon-container {
+.left {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.right {
   display: flex;
   gap: 1rem;
 }
