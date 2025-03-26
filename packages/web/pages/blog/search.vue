@@ -31,7 +31,7 @@
     </div>
 
     <div class="tag-container" v-if="blogSearchStore.selectedTags.length > 0">
-      <ElmHeading3 text="選択されたタグ" disable-fragment-identifier/>
+      <ElmHeading3 text="選択されたタグ" disable-fragment-identifier />
       <div class="tag-pool">
         <BlogTag
           v-for="tag in blogSearchStore.selectedTags"
@@ -48,10 +48,11 @@
     </div>
 
     <div>
-      <p v-for="blog in blogSearchStore.searchedBlogs">
+      <div v-for="blog in blogSearchStore.searchedBlogs">
         <div>Title: {{ blog.title }}</div>
         <div>Description: {{ blog.description }}</div>
-      </p>
+        <hr />
+      </div>
     </div>
   </div>
 </template>
@@ -112,7 +113,7 @@ onMounted(async () => {
 
     blogSearchStore.selectedTags = queryTags;
   }
-  blogSearchStore.searchBlog()
+  blogSearchStore.searchBlog();
 });
 </script>
 
