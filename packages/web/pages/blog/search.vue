@@ -13,32 +13,36 @@
 
     <ElmTextField v-model="keyword" label="検索キーワード" :icon="SearchIcon" />
 
-    <h3>POOL</h3>
-    <div class="tag-pool" v-if="data">
-      <BlogTag
-        v-for="tag in data.data.tagList"
-        :id="tag.id"
-        :label="tag.name"
-        :color="tag.color"
-        @click="handletagSelect(tag)"
-      />
+    <div class="tag-container">
+      <ElmHeading3 text="タグ一覧" />
+      <div class="tag-pool" v-if="data">
+        <BlogTag
+          v-for="tag in data.data.tagList"
+          :id="tag.id"
+          :label="tag.name"
+          :color="tag.color"
+          @click="handletagSelect(tag)"
+        />
+      </div>
     </div>
 
-    <h3>SELECTED</h3>
-    <div class="tag-pool" v-if="data">
-      <BlogTag
-        v-for="tag in selectedTags"
-        :id="tag.id"
-        :label="tag.name"
-        :color="tag.color"
-        @click="handleTagDeselect(tag)"
-      />
+    <div class="tag-container" v-if="selectedTags.length > 0">
+      <ElmHeading3 text="選択されたタグ" />
+      <div class="tag-pool" v-if="data">
+        <BlogTag
+          v-for="tag in selectedTags"
+          :id="tag.id"
+          :label="tag.name"
+          :color="tag.color"
+          @click="handleTagDeselect(tag)"
+        />
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ElmTextField } from "@elmethis/core";
+import { ElmHeading3, ElmTextField } from "@elmethis/core";
 import { Icon } from "@iconify/vue";
 
 interface BlogTag {
@@ -134,6 +138,10 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
+.tag-container {
+  margin-block: 2rem;
+}
+
 .tag-pool {
   display: flex;
 }
