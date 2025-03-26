@@ -1,9 +1,29 @@
 <template>
-  <div><ElmInlineText :text="`ID: ${$route.params.id}`" /></div>
+  <div v-if="data != null">
+    <BlogMeta
+      :title="data.title"
+      :created-at="data.createdAt"
+      :updated-at="data.updatedAt"
+      :links="[
+        { text: 'Home', href: '/' },
+        { text: 'Blog', href: '/blog' },
+        { text: 'Article', href: `/blog/article/${data.id}` },
+      ]"
+      :image="`${config.public.ENDPOINT}/api/blog/image/ogp/${data.id}`"
+      :tags="
+        data.tags.map((tag) => ({
+          label: tag.name,
+          color: tag.color,
+        }))
+      "
+    />
 
-  <article>
-    <ElmJsonRenderer :json="data?.blockList ?? []" />
-  </article>
+    <div><ElmInlineText :text="`ID: ${$route.params.id}`" /></div>
+
+    <article>
+      <ElmJsonRenderer :json="data?.blockList ?? []" />
+    </article>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -12,7 +32,6 @@ import {
   ElmJsonRenderer,
   type ElmJsonRendererProps,
 } from "@elmethis/core";
-import Blog from "~/layouts/blog.vue";
 
 const route = useRoute();
 
@@ -44,52 +63,55 @@ const convert = (
   return deserialized as ElmJsonRendererProps["json"];
 };
 
-const { data } = await useAsyncData(async () => {
-  const blog = await $fetch<{
-    data: {
-      blog: {
-        id: string;
-        title: string;
-        description: string;
-        tags: Array<{
+const { data } = await useAsyncData(
+  `/blog/article/${route.params.id}`,
+  async () => {
+    const blog = await $fetch<{
+      data: {
+        blog: {
           id: string;
-          name: string;
-          color: string;
-        }>;
-        createdAt: string;
-        updatedAt: string;
-        blockList: ElmJsonRendererProps["json"];
+          title: string;
+          description: string;
+          tags: Array<{
+            id: string;
+            name: string;
+            color: string;
+          }>;
+          createdAt: string;
+          updatedAt: string;
+          blockList: ElmJsonRendererProps["json"];
+        };
       };
-    };
-  }>(`${config.public.ENDPOINT}/api/graphql`, {
-    method: "POST",
-    body: {
-      query: /* GraphQL */ `
-        query GetBlog($pageId: String!) {
-          blog(pageId: $pageId) {
-            id
-            slug
-            title
-            description
-            status
-            tags {
+    }>(`${config.public.ENDPOINT}/api/graphql`, {
+      method: "POST",
+      body: {
+        query: /* GraphQL */ `
+          query GetBlog($pageId: String!) {
+            blog(pageId: $pageId) {
               id
-              name
-              color
+              slug
+              title
+              description
+              status
+              tags {
+                id
+                name
+                color
+              }
+              createdAt
+              updatedAt
+              blockList
             }
-            createdAt
-            updatedAt
-            blockList
           }
-        }
-      `,
-      variables: { pageId: route.params.id },
-    },
-  });
+        `,
+        variables: { pageId: route.params.id },
+      },
+    });
 
-  const blockList = convert(blog.data.blog.blockList, []);
-  blog.data.blog.blockList = blockList;
+    const blockList = convert(blog.data.blog.blockList, []);
+    blog.data.blog.blockList = blockList;
 
-  return blog.data.blog;
-});
+    return blog.data.blog;
+  }
+);
 </script>

@@ -4,8 +4,16 @@
       <slot />
     </main>
     <aside class="side"><BlogSide /></aside>
+    <ElmParallax
+      image-url1="/image/blog/bg1.webp"
+      image-url2="/image/blog/bg2.webp"
+    />
   </div>
 </template>
+
+<script setup lang="ts">
+import { ElmParallax } from "@elmethis/core";
+</script>
 
 <style lang="scss" scoped>
 .center {
