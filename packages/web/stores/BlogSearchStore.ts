@@ -66,6 +66,7 @@ export const useBlogSearchStore = defineStore("BlogSearchStore", {
       keyword: undefined as string | undefined,
       blogs: computed(() => blogsResponse.data.value?.data.blogList ?? []),
       searchedBlogs: [] as Blog[],
+      fuse: undefined as Fuse<Blog> | undefined,
     };
   },
   actions: {
@@ -82,16 +83,16 @@ export const useBlogSearchStore = defineStore("BlogSearchStore", {
       this.selectedTags = [];
     },
     searchBlog() {
-      const fuse = new Fuse(this.blogs, {
-        keys: ["title", "description"],
-        threshold: 0.5,
-      });
+      if (this.fuse == null) {
+        this.fuse = new Fuse(this.blogs, {
+          keys: ["title", "description"],
+          threshold: 0.5,
+        });
+      }
 
-      if (this.keyword) {
-        const fuzzyResults = fuse.search(this.keyword).map((r) => r.item);
+      if (this.keyword && this.fuse) {
+        const fuzzyResults = this.fuse.search(this.keyword).map((r) => r.item);
         this.searchedBlogs = fuzzyResults;
-      } else {
-        return [];
       }
     },
   },
