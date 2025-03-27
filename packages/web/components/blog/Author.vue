@@ -18,6 +18,10 @@
         </div>
 
         <div class="link-icons">
+          <NuxtLink to="/about" class="to-about">
+            <Icon icon="stash:chevron-double-right" height="1.25rem" />
+            <span>詳細</span>
+          </NuxtLink>
           <a
             href="https://github.com/46ki75"
             target="_blank"
@@ -87,6 +91,27 @@ import { Icon } from "@iconify/vue";
   height: 32px;
   justify-content: flex-end;
   align-items: center;
+}
+
+.to-about {
+  all: unset;
+  padding: 0.25rem 0.5rem;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  color: #6987b8;
+  transition: background-color 100ms;
+
+  &:hover {
+    background-color: rgba(#6987b8, 0.1);
+  }
+
+  &:active {
+    background-color: rgba(#59b57c, 0.1);
+  }
 }
 
 .icon {
