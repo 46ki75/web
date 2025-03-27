@@ -1,31 +1,35 @@
 <template>
-  <NuxtLink class="link" :to="`/blog/article/${id}`" :prefetch="false">
-    <div class="container">
-      <div class="top">
-        <div class="image">
-          <ElmImage
-            :src="`${config.public.ENDPOINT}/api/blog/image/ogp/${id}`"
-          />
-        </div>
-
-        <div class="text-container">
-          <div class="title">
-            <ElmInlineText :text="title" bold />
-          </div>
-          <div class="description">
-            <ElmInlineText :text="description" size="0.8rem" />
-          </div>
-          <div class="date">
-            <BlogDate :created-at="createdAt" :updated-at="updatedAt" />
-          </div>
-        </div>
+  <div class="container">
+    <NuxtLink class="top" :to="`/blog/article/${id}`" :prefetch="false">
+      <div class="image">
+        <ElmImage :src="`${config.public.ENDPOINT}/api/blog/image/ogp/${id}`" />
       </div>
 
-      <div class="bottom">
-        <BlogTag v-for="tag in tags" :color="tag.color" :label="tag.name" />
+      <div class="text-container">
+        <div class="title">
+          <ElmInlineText :text="title" bold />
+        </div>
+        <div class="description">
+          <ElmInlineText :text="description" size="0.8rem" />
+        </div>
+        <div class="date">
+          <BlogDate :created-at="createdAt" :updated-at="updatedAt" />
+        </div>
       </div>
+    </NuxtLink>
+
+    <div class="bottom">
+      <NuxtLink
+        v-for="tag in tags"
+        :key="tag.id"
+        :to="`/blog/search?tags=${tag.id}`"
+        :style="{ all: 'unset' }"
+        :prefetch="false"
+      >
+        <BlogTag :color="tag.color" :label="tag.name" />
+      </NuxtLink>
     </div>
-  </NuxtLink>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -52,18 +56,19 @@ defineProps<BlogSearchResultProps>();
 <style lang="scss" scoped>
 @use "../../styles/variables";
 
-.link {
-  all: unset;
-}
-
 .container {
   container-type: inline-size;
 
   overflow: hidden;
   border-radius: 0.25rem;
+}
+
+.top {
+  all: unset;
+  display: flex;
+  cursor: pointer;
 
   transition: opacity 200ms, transform 200ms, background-color 200ms;
-  cursor: pointer;
 
   background-color: rgba(white, 0.3);
   box-shadow: 0 0 0.125rem rgba(black, 0.25);
@@ -84,10 +89,6 @@ defineProps<BlogSearchResultProps>();
     transform: translateX(1px) translateY(1px);
     background-color: rgba(#a0d4b4, 0.15);
   }
-}
-
-.top {
-  display: flex;
 
   // Mobile
   flex-direction: column;

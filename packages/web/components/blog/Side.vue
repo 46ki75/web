@@ -9,6 +9,7 @@
 
     <BlogCard
       v-for="blog in data"
+      :key="blog.id"
       :id="blog.id"
       :title="blog.title"
       :description="blog.description"

@@ -11,8 +11,8 @@
       ]"
     />
 
-    <article key="/blog">
+    <div key="/blog">
       <div>BLOG HOME PLACEHOLDER</div>
-    </article>
+    </div>
   </div>
 </template>
