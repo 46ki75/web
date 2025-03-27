@@ -32,9 +32,9 @@
         </div>
       </div>
 
-      <div class="tag-container" v-if="blogStore.selectedTags.length > 0">
+      <div class="tag-container">
         <ElmHeading3 text="選択されたタグ" disable-fragment-identifier />
-        <div class="tag-pool">
+        <TransitionGroup name="tag" class="tag-pool" tag="dev">
           <BlogTag
             v-for="tag in blogStore.selectedTags"
             :key="tag.id"
@@ -43,12 +43,14 @@
             :color="tag.color"
             @click="blogStore.tagDeselect(tag.id)"
           />
-        </div>
+        </TransitionGroup>
         <ElmButton block @click="blogStore.tagReset">
           <Icon icon="fluent:tag-reset-20-filled" height="20px" />
           選択されたタグのリセット</ElmButton
         >
       </div>
+
+      <ElmHeading3 text="検索結果" disable-fragment-identifier />
 
       <TransitionGroup name="search" class="search-results" tag="div">
         <div
@@ -71,7 +73,12 @@
 </template>
 
 <script lang="ts" setup>
-import { ElmButton, ElmHeading3, ElmTextField } from "@elmethis/core";
+import {
+  ElmButton,
+  ElmHeading3,
+  ElmInlineText,
+  ElmTextField,
+} from "@elmethis/core";
 import { Icon } from "@iconify/vue";
 
 const SearchIcon = h(Icon, { icon: "material-symbols:search" });
@@ -167,6 +174,7 @@ onMounted(async () => {
   transition: flex 0.3s;
 }
 
+// Transition
 .search-enter-to,
 .search-leave-from {
   opacity: 1;
@@ -182,5 +190,22 @@ onMounted(async () => {
 .search-leave-to {
   opacity: 0;
   transform: translateX(-8px);
+}
+
+.tag-enter-to,
+.tag-leave-from {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.tag-enter-active,
+.tag-leave-active {
+  transition: opacity 100ms, transform 100ms;
+}
+
+.tag-enter-from,
+.tag-leave-to {
+  opacity: 0;
+  transform: translateY(8px);
 }
 </style>

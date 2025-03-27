@@ -40,7 +40,7 @@ export default defineNuxtConfig({
     prerender: {
       routes: [...routes, "/", "/blog", "/blog/article", "/blog/search"],
       crawlLinks: false,
-      concurrency: 1,
+      concurrency: 2,
     },
   },
 });
