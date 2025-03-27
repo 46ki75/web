@@ -38,7 +38,7 @@ import { Icon } from "@iconify/vue";
 
 <style lang="scss" scoped>
 .author {
-  margin-block: 1rem;
+  margin-block-start: 1rem;
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
