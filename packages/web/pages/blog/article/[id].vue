@@ -1,18 +1,18 @@
 <template>
-  <div :key="`/blog/article/${data.id}`" v-if="data != null">
+  <div :key="`/blog/article/${blog.id}`" v-if="blog != null">
     <BlogMeta
-      :key="`/blog/article/${data.id}`"
-      :title="data.title"
-      :created-at="data.createdAt"
-      :updated-at="data.updatedAt"
+      :key="`/blog/article/${blog.id}`"
+      :title="blog.title"
+      :created-at="blog.createdAt"
+      :updated-at="blog.updatedAt"
       :links="[
         { text: 'Home', href: '/' },
         { text: 'Blog', href: '/blog' },
-        { text: 'Article', href: `/blog/article/${data.id}` },
+        { text: 'Article', href: `/blog/article/${blog.id}` },
       ]"
-      :image="`${config.public.ENDPOINT}/api/blog/image/ogp/${data.id}`"
+      :image="`${config.public.ENDPOINT}/api/blog/image/ogp/${blog.id}`"
       :tags="
-        data.tags.map((tag) => ({
+        blog.tags.map((tag) => ({
           id: tag.id,
           label: tag.name,
           color: tag.color,
@@ -20,7 +20,7 @@
       "
     />
 
-    <article :key="`/blog/article/${data.id}`">
+    <article :key="`/blog/article/${blog.id}`">
       <ElmJsonRenderer :json="data?.blockList ?? []" />
     </article>
   </div>
@@ -29,9 +29,20 @@
 <script setup lang="ts">
 import { ElmJsonRenderer, type ElmJsonRendererProps } from "@elmethis/core";
 
-const route = useRoute();
+const blogStore = useBlogStore();
 
+const route = useRoute();
 const config = useRuntimeConfig();
+
+const blog = computed(() => {
+  if (blogStore.blogs) {
+    const [result] = blogStore.blogs.filter(
+      (blog) => blog.id === route.params.id
+    );
+
+    return result;
+  }
+});
 
 const convert = (
   blocks: ElmJsonRendererProps["json"],
@@ -63,21 +74,7 @@ const { data } = await useAsyncData(
   `/blog/article/${route.params.id}`,
   async () => {
     const blog = await $fetch<{
-      data: {
-        blog: {
-          id: string;
-          title: string;
-          description: string;
-          tags: Array<{
-            id: string;
-            name: string;
-            color: string;
-          }>;
-          createdAt: string;
-          updatedAt: string;
-          blockList: ElmJsonRendererProps["json"];
-        };
-      };
+      data: { blog: { blockList: ElmJsonRendererProps["json"] } };
     }>(`${config.public.ENDPOINT}/api/graphql`, {
       method: "POST",
       body: {
@@ -112,11 +109,11 @@ const { data } = await useAsyncData(
 );
 
 useSeoMeta({
-  title: data.value?.title,
-  ogTitle: data.value?.title,
-  description: data.value?.description,
-  ogDescription: data.value?.description,
-  ogImage: `${config.public.ENDPOINT}/api/blog/image/ogp/${data.value?.id}`,
+  title: blog.value?.title,
+  ogTitle: blog.value?.title,
+  description: blog.value?.description,
+  ogDescription: blog.value?.description,
+  ogImage: `${config.public.ENDPOINT}/api/blog/image/ogp/${blog.value?.id}`,
   twitterCard: "summary_large_image",
 });
 </script>
