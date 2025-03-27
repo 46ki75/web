@@ -7,6 +7,14 @@
   </div>
 </template>
 
+<script lang="ts" setup>
+useSeoMeta({
+  title: "DEAFULT",
+  ogTitle: "DEAFULT",
+  author: "Chomolungma Shirayuki",
+});
+</script>
+
 <style lang="scss">
 body {
   margin: 0;

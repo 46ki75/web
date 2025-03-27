@@ -27,11 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  ElmInlineText,
-  ElmJsonRenderer,
-  type ElmJsonRendererProps,
-} from "@elmethis/core";
+import { ElmJsonRenderer, type ElmJsonRendererProps } from "@elmethis/core";
 
 const route = useRoute();
 
@@ -114,4 +110,13 @@ const { data } = await useAsyncData(
     return blog.data.blog;
   }
 );
+
+useSeoMeta({
+  title: data.value?.title,
+  ogTitle: data.value?.title,
+  description: data.value?.description,
+  ogDescription: data.value?.description,
+  ogImage: `${config.public.ENDPOINT}/api/blog/image/ogp/${data.value?.id}`,
+  twitterCard: "summary_large_image",
+});
 </script>
