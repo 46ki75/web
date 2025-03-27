@@ -2,7 +2,7 @@
   <div>
     <NuxtRouteAnnouncer />
     <NuxtLayout>
-      <NuxtPage />
+      <NuxtPage :transition="{ mode: 'out-in' }" />
     </NuxtLayout>
   </div>
 </template>
@@ -14,6 +14,23 @@ useSeoMeta({
   author: "Chomolungma Shirayuki",
 });
 </script>
+
+<style lang="scss" scoped>
+.v-enter-to,
+.v-leave-from {
+  opacity: 1;
+}
+
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 150ms;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+}
+</style>
 
 <style lang="scss">
 body {

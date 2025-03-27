@@ -1,7 +1,9 @@
 <template>
-  <NuxtLayout name="blog">
-    <NuxtPage :transition="false" />
-  </NuxtLayout>
+  <div>
+    <NuxtLayout name="blog">
+      <NuxtPage :transition="false" />
+    </NuxtLayout>
+  </div>
 </template>
 
 <style lang="scss" scoped>

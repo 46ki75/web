@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div key="/about">
     <div>
       <ElmHeading1 text="about me" />
       <ElmInlineText text="about me" />
