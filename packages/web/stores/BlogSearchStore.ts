@@ -15,7 +15,7 @@ interface Blog {
   updatedAt: string;
 }
 
-export const useBlogSearchStore = defineStore("BlogSearchStore", {
+export const useBlogStore = defineStore("BlogSearchStore", {
   state: () => {
     return {
       tags: [] as BlogTag[],

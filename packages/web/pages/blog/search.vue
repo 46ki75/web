@@ -75,7 +75,7 @@ const SearchIcon = h(Icon, { icon: "material-symbols:search" });
 const route = useRoute();
 const router = useRouter();
 
-const blogSearchStore = useBlogSearchStore();
+const blogSearchStore = useBlogStore();
 
 const updateQueryParams = () => {
   router.replace({
