@@ -50,7 +50,7 @@
         >
       </div>
 
-      <TransitionGroup class="search-results" tag="div">
+      <TransitionGroup name="search" class="search-results" tag="div">
         <div
           class="search-results-item"
           v-for="blog in blogStore.searchedBlogs"
@@ -167,19 +167,19 @@ onMounted(async () => {
   transition: flex 0.3s;
 }
 
-.v-enter-to,
-.v-leave-from {
+.search-enter-to,
+.search-leave-from {
   opacity: 1;
   transform: translateX(0);
 }
 
-.v-enter-active,
-.v-leave-active {
+.search-enter-active,
+.search-leave-active {
   transition: opacity 300ms, transform 300ms;
 }
 
-.v-enter-from,
-.v-leave-to {
+.search-enter-from,
+.search-leave-to {
   opacity: 0;
   transform: translateX(-8px);
 }
