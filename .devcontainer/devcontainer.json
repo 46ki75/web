@@ -1,17 +1,35 @@
 {
-  "name": "Nuxt.js Dev Container",
-  "build": { "dockerfile": "Dockerfile" },
-  "postCreateCommand": "npm i",
+  "name": "Web Dev Container",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
   "customizations": {
     "vscode": {
       "settings": {},
       "extensions": [
+        "GitHub.copilot",
+        "GitHub.copilot-chat",
+        "usernamehw.errorlens",
+        "Gruntfuggly.todo-tree",
+        "christian-kohler.path-intellisense",
         "dbaeumer.vscode-eslint",
         "esbenp.prettier-vscode",
-        "usernamehw.errorlens",
-        "Gruntfuggly.todo-tree"
+        "ms-azuretools.vscode-docker",
+        "rust-lang.rust-analyzer",
+        "GraphQL.vscode-graphql",
+        "Vue.volar",
+        "hashicorp.terraform"
       ]
     }
   },
-  "forwardPorts": [3000]
+  "forwardPorts": [10000],
+  "features": {
+    "ghcr.io/devcontainers/features/aws-cli": {},
+    "ghcr.io/devcontainers/features/node": {},
+    "ghcr.io/devcontainers-extra/features/pnpm": {},
+    "ghcr.io/devcontainers-extra/features/zig": {},
+    "ghcr.io/devcontainers/features/rust": {},
+    "ghcr.io/devcontainers/features/terraform": {},
+    "ghcr.io/devcontainers-extra/features/starship": {}
+  }
 }

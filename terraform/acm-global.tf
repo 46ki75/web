@@ -1,14 +1,7 @@
 resource "aws_acm_certificate" "cloudfront_cert" {
   provider = aws.us-east-1 # us-east-1
 
-  domain_name = lookup(
-    {
-      "dev"  = "dev-www.46ki75.com",
-      "stg"  = "stg-www.46ki75.com",
-      "prod" = "www.46ki75.com"
-    },
-    terraform.workspace
-  )
+  domain_name       = data.aws_route53_zone.internal.name
   validation_method = "DNS"
 }
 
@@ -24,7 +17,7 @@ resource "aws_route53_record" "cloudfront_cert_validation" {
     }
   }
 
-  zone_id = aws_route53_zone.main.zone_id
+  zone_id = data.aws_route53_zone.internal.zone_id
   name    = each.value.name
   type    = each.value.type
   records = [each.value.value]

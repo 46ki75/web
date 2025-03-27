@@ -1,59 +1,87 @@
-// # --------------------------------------------------------------------------------
-//
-// Lambda Functions
-//
-// # --------------------------------------------------------------------------------
+# http_api ----------
 
-data "archive_file" "lambda" {
-  type        = "zip"
-  source_file = "../target/lambda/api/bootstrap"
-  output_path = "dist/bootstrap.zip"
+resource "aws_iam_role" "lambda_role_http_api" {
+  name = "${terraform.workspace}-46ki75-web-iam-role-lambda-http_api"
+  assume_role_policy = jsonencode({
+    "Version" : "2012-10-17",
+    "Statement" : [
+      {
+        "Effect" : "Allow",
+        "Principal" : {
+          "Service" : "lambda.amazonaws.com"
+        },
+        "Action" : "sts:AssumeRole"
+      }
+    ]
+  })
 }
 
-data "aws_iam_policy_document" "assume_role" {
-  statement {
-    effect = "Allow"
-
-    principals {
-      type        = "Service"
-      identifiers = ["lambda.amazonaws.com"]
-    }
-
-    actions = ["sts:AssumeRole"]
-  }
+resource "aws_iam_policy" "lambda_policy_http_api" {
+  name        = "${terraform.workspace}-46ki75-web-iam-policy-lambda-http_api"
+  description = "Allow lambda to access cloudwatch logs"
+  policy = jsonencode({
+    "Version" : "2012-10-17",
+    "Statement" : [
+      {
+        "Effect" : "Allow",
+        "Action" : [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents",
+          "ssm:GetParameter",
+          "xray:PutTraceSegments",
+          "xray:PutTelemetryRecords"
+        ],
+        "Resource" : "*"
+      },
+      {
+        "Effect" : "Allow",
+        "Action" : [
+          "ssm:GetParameter"
+        ],
+        "Resource" : "*"
+      }
+    ]
+  })
 }
 
-resource "aws_iam_role" "iam_for_lambda" {
-  name               = "${terraform.workspace}-46ki75-web-iam-role-api"
-  assume_role_policy = data.aws_iam_policy_document.assume_role.json
+resource "aws_iam_role_policy_attachment" "lambda_policy_attachment_http_api" {
+  role       = aws_iam_role.lambda_role_http_api.name
+  policy_arn = aws_iam_policy.lambda_policy_http_api.arn
 }
 
-data "aws_ssm_parameter" "api_env_NOTION_API_KEY" {
-  name            = "/${terraform.workspace}/46ki75/web/ssm/parameter/notion/secret"
-  with_decryption = true
-}
-
-data "aws_ssm_parameter" "api_env_NOTION_BLOG_DATABASE_ID" {
-  name = "/shared/46ki75/web/ssm/parameter/notion/database/id"
-}
-
-resource "aws_lambda_function" "api" {
-  function_name = "${terraform.workspace}-46ki75-web-lambda-function-api"
-  filename      = "./dist/bootstrap.zip"
-  role          = aws_iam_role.iam_for_lambda.arn
+resource "aws_lambda_function" "http_api" {
+  function_name = "${terraform.workspace}-46ki75-web-lambda-function-http_api"
+  role          = aws_iam_role.lambda_role_http_api.arn
+  filename      = "./assets/bootstrap.zip"
+  handler       = "bootstrap.handler"
   runtime       = "provided.al2023"
-  handler       = "does.not.matter"
+  architectures = ["x86_64"]
+  publish       = true # Publish a new version
+  timeout       = 30
+
+  logging_config {
+    log_group             = aws_cloudwatch_log_group.lambda_http.name
+    log_format            = "JSON"
+    application_log_level = "DEBUG"
+    system_log_level      = "INFO"
+  }
+
+  tracing_config {
+    mode = "Active"
+  }
 
   environment {
     variables = {
-      NOTION_API_KEY          = data.aws_ssm_parameter.api_env_NOTION_API_KEY.value
-      NOTION_BLOG_DATABASE_ID = data.aws_ssm_parameter.api_env_NOTION_BLOG_DATABASE_ID.value
+      STAGE_NAME      = terraform.workspace
+      RUST_LOG        = "http_api=debug"
+      RUST_LOG_FORMAT = "JSON"
     }
   }
 }
 
-resource "aws_lambda_function_url" "api" {
-  function_name      = aws_lambda_function.api.function_name
-  authorization_type = "NONE"
+resource "aws_lambda_alias" "http_api" {
+  name             = "stable"
+  function_name    = aws_lambda_function.http_api.function_name
+  function_version = "$LATEST"
 }
-
