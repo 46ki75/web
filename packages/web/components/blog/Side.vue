@@ -8,7 +8,7 @@
     </NuxtLink>
 
     <BlogCard
-      v-for="blog in data"
+      v-for="blog in blogStore.getSideBlogs"
       :key="blog.id"
       :id="blog.id"
       :title="blog.title"
@@ -21,52 +21,10 @@
 </template>
 
 <script setup lang="ts">
-import { ElmButton, ElmImage, ElmInlineText } from "@elmethis/core";
+import { ElmButton, ElmInlineText } from "@elmethis/core";
 import { Icon } from "@iconify/vue";
 
-const config = useRuntimeConfig();
-
-const { data } = await useAsyncData("BlogSide", async () => {
-  const response = await $fetch<{
-    data: {
-      blogList: Array<{
-        id: string;
-        title: string;
-        description: string;
-        tags: Array<{
-          id: string;
-          name: string;
-          color: string;
-        }>;
-        createdAt: string;
-        updatedAt: string;
-      }>;
-    };
-  }>(`${config.public.ENDPOINT}/api/graphql`, {
-    method: "POST",
-    body: {
-      query: /* GraphQL */ `
-        query ListBlogs {
-          blogList {
-            id
-            title
-            description
-            status
-            tags {
-              id
-              name
-              color
-            }
-            createdAt
-            updatedAt
-          }
-        }
-      `,
-    },
-  });
-
-  return response.data.blogList;
-});
+const blogStore = useBlogStore();
 </script>
 
 <style lang="scss" scoped>

@@ -13,38 +13,38 @@
 
     <div key="/blog/search">
       <ElmTextField
-        v-model="blogSearchStore.keyword"
+        v-model="blogStore.keyword"
         label="検索キーワード"
         :icon="SearchIcon"
       />
 
       <div class="tag-container">
         <ElmHeading3 text="タグ一覧" disable-fragment-identifier />
-        <div class="tag-pool" v-if="blogSearchStore.tags">
+        <div class="tag-pool" v-if="blogStore.tags">
           <BlogTag
-            v-for="tag in blogSearchStore.tags"
+            v-for="tag in blogStore.tags"
             :key="tag.id"
             :id="tag.id"
             :label="tag.name"
             :color="tag.color"
-            @click="blogSearchStore.tagSelect(tag.id)"
+            @click="blogStore.tagSelect(tag.id)"
           />
         </div>
       </div>
 
-      <div class="tag-container" v-if="blogSearchStore.selectedTags.length > 0">
+      <div class="tag-container" v-if="blogStore.selectedTags.length > 0">
         <ElmHeading3 text="選択されたタグ" disable-fragment-identifier />
         <div class="tag-pool">
           <BlogTag
-            v-for="tag in blogSearchStore.selectedTags"
+            v-for="tag in blogStore.selectedTags"
             :key="tag.id"
             :id="tag.id"
             :label="tag.name"
             :color="tag.color"
-            @click="blogSearchStore.tagDeselect(tag.id)"
+            @click="blogStore.tagDeselect(tag.id)"
           />
         </div>
-        <ElmButton block @click="blogSearchStore.tagReset">
+        <ElmButton block @click="blogStore.tagReset">
           <Icon icon="fluent:tag-reset-20-filled" height="20px" />
           選択されたタグのリセット</ElmButton
         >
@@ -52,7 +52,7 @@
 
       <div class="search-results">
         <BlogCard
-          v-for="blog in blogSearchStore.searchedBlogs"
+          v-for="blog in blogStore.searchedBlogs"
           :key="blog.id"
           :id="blog.id"
           :title="blog.title"
@@ -75,22 +75,22 @@ const SearchIcon = h(Icon, { icon: "material-symbols:search" });
 const route = useRoute();
 const router = useRouter();
 
-const blogSearchStore = useBlogStore();
+const blogStore = useBlogStore();
 
 const updateQueryParams = () => {
   router.replace({
     query: {
-      keyword: blogSearchStore.keyword,
-      tags: blogSearchStore.selectedTags.map((tag) => tag.id),
+      keyword: blogStore.keyword,
+      tags: blogStore.selectedTags.map((tag) => tag.id),
     },
   });
 };
 
 watch(
-  () => blogSearchStore.keyword,
+  () => blogStore.keyword,
   () => {
     updateQueryParams();
-    blogSearchStore.searchBlog();
+    blogStore.searchBlog();
   }
 );
 
@@ -109,76 +109,22 @@ interface Blog {
   updatedAt: string;
 }
 
-const config = useRuntimeConfig();
-
-const { data: tags } = await useAsyncData("SearchListTags", async () => {
-  const response = await $fetch<{
-    data: { tagList: Array<BlogTag> };
-  }>(`${config.public.ENDPOINT}/api/graphql`, {
-    method: "POST",
-    body: {
-      query: /* GraphQL */ `
-        query ListTags {
-          tagList {
-            id
-            name
-            color
-          }
-        }
-      `,
-    },
-  });
-
-  return response.data.tagList;
-});
-
-const { data: blogs } = await useAsyncData("SearchListBlogs", async () => {
-  const response = await $fetch<{
-    data: { blogList: Blog[] };
-  }>(`${config.public.ENDPOINT}/api/graphql`, {
-    method: "POST",
-    body: {
-      query: /* GraphQL */ `
-        query ListBlogs {
-          blogList {
-            id
-            title
-            description
-            status
-            tags {
-              id
-              name
-              color
-            }
-            createdAt
-            updatedAt
-          }
-        }
-      `,
-    },
-  });
-
-  return response.data.blogList;
-});
-
-blogSearchStore.tags = tags.value ?? [];
-blogSearchStore.blogs = blogs.value ?? [];
-
 onMounted(async () => {
   await nextTick();
 
+  if (blogStore.blogs == null) return;
+  if (blogStore.tags == null) return;
+
   if (typeof route.query?.keyword === "string") {
-    blogSearchStore.keyword = route.query.keyword;
+    blogStore.keyword = route.query.keyword;
   }
 
   if (typeof route.query?.tags === "string") {
     const queryTagId = route.query.tags;
 
-    const queryTags = blogSearchStore.tags.filter(
-      (tag) => queryTagId === tag.id
-    );
+    const queryTags = blogStore.tags.filter((tag) => queryTagId === tag.id);
 
-    blogSearchStore.selectedTags = queryTags;
+    blogStore.selectedTags = queryTags;
   } else if (
     typeof route.query?.tags === "object" &&
     route.query.tags != null
@@ -187,13 +133,13 @@ onMounted(async () => {
       .filter((tagId) => tagId != null)
       .map((tagId) => tagId.toString());
 
-    const queryTags = blogSearchStore.tags.filter((tag) =>
+    const queryTags = blogStore.tags.filter((tag) =>
       queryTagIds.includes(tag.id)
     );
 
-    blogSearchStore.selectedTags = queryTags;
+    blogStore.selectedTags = queryTags;
   }
-  blogSearchStore.searchBlog();
+  blogStore.searchBlog();
 });
 </script>
 

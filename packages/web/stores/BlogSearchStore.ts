@@ -17,17 +17,71 @@ interface Blog {
 
 export const useBlogStore = defineStore("BlogSearchStore", {
   state: () => {
+    const config = useRuntimeConfig();
+
+    const { data: tags } = useAsyncData("SearchListTags", async () => {
+      const response = await $fetch<{
+        data: { tagList: Array<BlogTag> };
+      }>(`${config.public.ENDPOINT}/api/graphql`, {
+        method: "POST",
+        body: {
+          query: /* GraphQL */ `
+            query ListTags {
+              tagList {
+                id
+                name
+                color
+              }
+            }
+          `,
+        },
+      });
+
+      return response.data.tagList;
+    });
+
+    const { data: blogs } = useAsyncData("SearchListBlogs", async () => {
+      const response = await $fetch<{
+        data: { blogList: Blog[] };
+      }>(`${config.public.ENDPOINT}/api/graphql`, {
+        method: "POST",
+        body: {
+          query: /* GraphQL */ `
+            query ListBlogs {
+              blogList {
+                id
+                title
+                description
+                status
+                tags {
+                  id
+                  name
+                  color
+                }
+                createdAt
+                updatedAt
+              }
+            }
+          `,
+        },
+      });
+
+      return response.data.blogList;
+    });
+
     return {
-      tags: [] as BlogTag[],
+      tags,
       selectedTags: [] as BlogTag[],
       keyword: undefined as string | undefined,
-      blogs: [] as Blog[],
+      blogs,
       searchedBlogs: [] as Blog[],
       fuse: undefined as Fuse<Blog> | undefined,
     };
   },
   actions: {
     tagSelect(tagId: string) {
+      if (this.tags == null) return;
+
       const tags = this.tags.filter((tag) => tag.id === tagId);
       if (
         tags.length === 1 &&
@@ -46,6 +100,9 @@ export const useBlogStore = defineStore("BlogSearchStore", {
       this.searchBlog();
     },
     searchBlog() {
+      if (this.blogs == null) return;
+      if (this.tags == null) return;
+
       // Tag only searching
       if (this.keyword == null || this.keyword.trim() === "") {
         this.searchedBlogs = this.blogs.filter((blog) => {
@@ -82,6 +139,17 @@ export const useBlogStore = defineStore("BlogSearchStore", {
           }
         }
       }
+    },
+  },
+  getters: {
+    getSideBlogs(): Blog[] {
+      if (this.blogs == null) return [];
+
+      const results = this.blogs.sort(
+        (pre, next) =>
+          new Date(next.createdAt).getTime() - new Date(pre.createdAt).getTime()
+      );
+      return results;
     },
   },
 });
