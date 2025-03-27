@@ -1,5 +1,5 @@
-FROM node:20
+FROM mcr.microsoft.com/devcontainers/base:debian
 
-RUN apt-get update -y && apt-get install vim -y
+USER vscode
 
-COPY .bashrc /root/.bashrc
+RUN echo 'eval "$(starship init bash)"' >> ~/.bashrc

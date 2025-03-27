@@ -1,5 +1,5 @@
 {
-  "name": "web",
+  "name": "nuxt-app",
   "private": true,
   "type": "module",
   "scripts": {
@@ -7,22 +7,23 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "deploy": "./scripts/deploy-s3.sh",
+    "postdeploy": "./scripts/invalidate.sh"
   },
   "dependencies": {
-    "@elmethis/core": "1.0.0-alpha.98",
-    "@elmethis/notion-node": "1.0.0-alpha.13",
-    "@heroicons/vue": "^2.2.0",
-    "@notionhq/client": "^2.2.15",
-    "nuxt": "^3.15.1",
-    "sharp": "^0.33.5",
-    "vue": "latest",
-    "vue-router": "latest",
-    "zod": "^3.24.1"
+    "@elmethis/core": "1.0.0-alpha.147",
+    "@iconify/vue": "^4.3.0",
+    "@pinia/nuxt": "0.10.1",
+    "fuse.js": "^7.1.0",
+    "nuxt": "^3.16.1",
+    "pinia": "^3.0.1",
+    "polished": "^4.3.1",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0"
   },
-  "packageManager": "pnpm@9.12.3+sha512.cce0f9de9c5a7c95bef944169cc5dfe8741abfb145078c0d508b868056848a87c81e626246cb60967cbd7fd29a6c062ef73ff840d96b3c86c40ac92cf4a813ee",
+  "packageManager": "pnpm@10.6.5+sha512.cdf928fca20832cd59ec53826492b7dc25dc524d4370b6b4adbf65803d32efaa6c1c88147c0ae4e8d579a6c9eec715757b50d4fa35eea179d868eada4ed043af",
   "devDependencies": {
-    "prettier": "^3.4.2",
-    "sass": "^1.83.1"
+    "sass": "^1.86.0"
   }
 }

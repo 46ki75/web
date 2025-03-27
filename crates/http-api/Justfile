@@ -1,0 +1,8 @@
+dev:
+	STAGE_NAME=dev RUST_LOG=http_api=debug cargo lambda watch -P 10000
+
+build:
+	cargo lambda build --release
+
+deploy STAGE_NAME:	build
+	cargo lambda deploy --binary-name http-api "{{STAGE_NAME}}-46ki75-web-lambda-function-http_api"

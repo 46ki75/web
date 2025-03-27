@@ -1,18 +1,18 @@
 <template>
-  <BlogInfo
-    :links="[
-      {
-        text: 'HOME',
-        path: '/'
-      },
-      {
-        text: 'BLOG',
-        path: '/blog'
-      }
-    ]"
-    title="BLOG"
-    created-at="2021-10-01"
-    updated-at="2021-10-01"
-  />
-  <div>BLOG TOP</div>
+  <div key="/blog">
+    <BlogMeta
+      key="/blog"
+      title="Blog Top"
+      created-at="2022-10-01"
+      updated-at="2025-03-26"
+      :links="[
+        { text: 'Home', href: '/' },
+        { text: 'Blog', href: '/blog' },
+      ]"
+    />
+
+    <div key="/blog">
+      <div>BLOG HOME PLACEHOLDER</div>
+    </div>
+  </div>
 </template>

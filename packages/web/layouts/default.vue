@@ -1,10 +1,9 @@
 <template>
-  <Header />
-  <slot />
-  <ElmPagetop />
-  <Footer />
-</template>
+  <BaseHeader />
 
-<script setup lang="ts">
-import { ElmPagetop } from '@elmethis/core'
-</script>
+  <div>
+    <slot />
+  </div>
+
+  <BaseFooter />
+</template>

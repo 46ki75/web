@@ -1,55 +1,46 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import { Client } from '@notionhq/client'
 
-const notion = new Client({ auth: process.env.NOTION_API_KEY })
+import { fetchArticleRoutes } from "./scripts/fetchArticleRoutes";
 
-const { results } = await notion.databases.query({
-  database_id: String(process.env.NOTION_BLOG_DATABASE_ID),
-  filter: {
-    property: 'status',
-    status: { equals: 'published' }
-  }
-})
+export const STAGE_NAME = process.env.STAGE_NAME ?? "dev";
 
-const ogpImageRoutes = results.map(
-  (page: any) =>
-    `/api/blog/image/${page.properties.slug.unique_id.number}/ogp.webp`
-)
+if (!["dev", "stg", "prod"].includes(STAGE_NAME)) {
+  throw new Error("STAGE_NAME is not valid.");
+}
 
-const articleRoutes = results.map(
-  (page: any) => `/blog/article/${page.properties.slug.unique_id.number}`
-)
+export const ENDPOINT =
+  STAGE_NAME === "prod"
+    ? `https://www.46ki75.com`
+    : `https://${STAGE_NAME}-www.46ki75.com`;
+
+const routes = await fetchArticleRoutes(ENDPOINT);
 
 export default defineNuxtConfig({
-  compatibilityDate: '2024-04-03',
+  compatibilityDate: "2024-11-01",
   devtools: { enabled: true },
-  vite: {
-    css: {
-      modules: {
-        scopeBehaviour: 'local'
-      },
-      preprocessorOptions: {
-        scss: {
-          api: 'modern-compiler'
-        }
-      }
+  modules: ["@pinia/nuxt"],
+  runtimeConfig: {
+    public: {
+      STAGE_NAME,
+      ENDPOINT,
     },
+  },
+  vite: {
     server: {
       proxy: {
-        '/graphql': {
-          target: 'http://localhost:10000/lambda-url/graphql',
-          changeOrigin: true
+        "^/api/.*": {
+          target: `${ENDPOINT}/api`,
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api/, ""),
         },
-        '/api/v1/blog/images': {
-          target: 'http://localhost:11000/lambda-url/blog-block-image',
-          changeOrigin: true
-        }
-      }
-    }
+      },
+    },
   },
   nitro: {
     prerender: {
-      routes: [...ogpImageRoutes, ...articleRoutes]
-    }
-  }
-})
+      routes: [...routes, "/", "/blog", "/blog/article", "/blog/search"],
+      crawlLinks: false,
+      concurrency: 1,
+    },
+  },
+});

@@ -1,48 +1,38 @@
 <template>
-  <div class="container">
-    <div class="inner-container">
-      <CalendarDateRangeIcon class="icon" />
-      <ElmInlineText :text="createdAt ?? '0000-00-00'" />
-    </div>
-    <div class="inner-container">
-      <ArrowPathIcon class="icon" />
-      <ElmInlineText :text="updatedAt ?? '0000-00-00'" />
-    </div>
+  <div class="date">
+    <Icon icon="mdi:calendar-month" class="icon" />
+    <ElmInlineText :text="createdAt.substring(0, 10)" size="0.8rem" />
+    <Icon icon="mdi:calendar-refresh" class="icon" />
+    <ElmInlineText :text="updatedAt.substring(0, 10)" size="0.8rem" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ElmInlineText } from '@elmethis/core'
-import { ArrowPathIcon, CalendarDateRangeIcon } from '@heroicons/vue/24/outline'
+import { Icon } from "@iconify/vue";
+import { ElmInlineText } from "@elmethis/core";
 
-defineProps<{
-  createdAt?: string
-  updatedAt?: string
-}>()
-</script>
-
-<style scoped lang="scss">
-.container {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.9rem;
-
-  color: rgba(black, 0.8);
-  [data-theme='dark'] & {
-    color: rgba(white, 0.8);
-  }
+interface BlogDateProps {
+  createdAt: string;
+  updatedAt: string;
 }
 
-.inner-container {
+const props = defineProps<BlogDateProps>();
+</script>
+
+<style lang="scss" scoped>
+.date {
+  opacity: 0.7;
   display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.25rem;
 }
 
 .icon {
-  width: 20px;
-  height: 20px;
+  color: rgba(black, 0.9);
+  [data-theme="dark"] & {
+    color: rgba(white, 0.9);
+  }
 }
 </style>

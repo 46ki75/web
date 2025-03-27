@@ -1,8 +1,6 @@
 <template>
-  <div>INDEX PAGE</div>
-  <div><NuxtLink to="/blog">BLOG</NuxtLink></div>
+  <div>INDEX</div>
+  <div>
+    <NuxtLink to="/blog">Blog</NuxtLink>
+  </div>
 </template>
-
-<script setup lang="ts"></script>
-
-<style scoped lang="scss"></style>
