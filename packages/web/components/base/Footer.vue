@@ -43,6 +43,7 @@ const { data } = useAsyncData("BuildDate", async () =>
 
 <style lang="scss" scoped>
 .footer {
+  margin-block-start: 4rem;
   width: 100%;
   height: 24rem;
   display: flex;

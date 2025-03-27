@@ -2,10 +2,9 @@
 
 import { fetchArticleRoutes } from "./scripts/fetchArticleRoutes";
 
-export const STAGE_NAME = process.env.STAGE_NAME;
-if (!STAGE_NAME) {
-  throw new Error("STAGE_NAME is not set.");
-} else if (!["dev", "stg", "prod"].includes(STAGE_NAME)) {
+export const STAGE_NAME = process.env.STAGE_NAME ?? "dev";
+
+if (!["dev", "stg", "prod"].includes(STAGE_NAME)) {
   throw new Error("STAGE_NAME is not valid.");
 }
 
