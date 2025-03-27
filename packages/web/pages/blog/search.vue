@@ -50,18 +50,22 @@
         >
       </div>
 
-      <div class="search-results">
-        <BlogCard
+      <TransitionGroup class="search-results" tag="div">
+        <div
+          class="search-results-item"
           v-for="blog in blogStore.searchedBlogs"
           :key="blog.id"
-          :id="blog.id"
-          :title="blog.title"
-          :description="blog.description"
-          :tags="blog.tags"
-          :created-at="blog.createdAt"
-          :updated-at="blog.updatedAt"
-        />
-      </div>
+        >
+          <BlogCard
+            :id="blog.id"
+            :title="blog.title"
+            :description="blog.description"
+            :tags="blog.tags"
+            :created-at="blog.createdAt"
+            :updated-at="blog.updatedAt"
+          />
+        </div>
+      </TransitionGroup>
     </div>
   </div>
 </template>
@@ -157,5 +161,26 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+}
+
+.search-results-item {
+  transition: flex 0.3s;
+}
+
+.v-enter-to,
+.v-leave-from {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 300ms, transform 300ms;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+  transform: translateX(-8px);
 }
 </style>
