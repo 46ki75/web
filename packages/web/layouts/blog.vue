@@ -2,6 +2,7 @@
   <div class="center">
     <main class="main">
       <slot />
+      <BlogAuthor />
     </main>
     <nav class="side"><BlogSide /></nav>
     <ElmParallax
