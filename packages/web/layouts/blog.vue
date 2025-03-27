@@ -2,7 +2,9 @@
   <div class="center">
     <main class="main">
       <div class="main-inner">
-        <slot />
+        <div>
+          <slot />
+        </div>
         <BlogAuthor />
       </div>
       <div class="icon-container">

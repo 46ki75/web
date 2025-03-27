@@ -1,28 +1,30 @@
 <template>
-  <div :key="`/blog/article/${blog.id}`" v-if="blog != null">
-    <BlogMeta
-      :key="`/blog/article/${blog.id}`"
-      :title="blog.title"
-      :created-at="blog.createdAt"
-      :updated-at="blog.updatedAt"
-      :links="[
-        { text: 'Home', href: '/' },
-        { text: 'Blog', href: '/blog' },
-        { text: 'Article', href: `/blog/article/${blog.id}` },
-      ]"
-      :image="`${config.public.ENDPOINT}/api/blog/image/ogp/${blog.id}`"
-      :tags="
-        blog.tags.map((tag) => ({
-          id: tag.id,
-          label: tag.name,
-          color: tag.color,
-        }))
-      "
-    />
+  <div>
+    <div :key="`/blog/article/${blog.id}`" v-if="blog != null">
+      <BlogMeta
+        :key="`/blog/article/${blog.id}`"
+        :title="blog.title"
+        :created-at="blog.createdAt"
+        :updated-at="blog.updatedAt"
+        :links="[
+          { text: 'Home', href: '/' },
+          { text: 'Blog', href: '/blog' },
+          { text: 'Article', href: `/blog/article/${blog.id}` },
+        ]"
+        :image="`${config.public.ENDPOINT}/api/blog/image/ogp/${blog.id}`"
+        :tags="
+          blog.tags.map((tag) => ({
+            id: tag.id,
+            label: tag.name,
+            color: tag.color,
+          }))
+        "
+      />
 
-    <article :key="`/blog/article/${blog.id}`">
-      <ElmJsonRenderer :json="data?.blockList ?? []" />
-    </article>
+      <article :key="`/blog/article/${blog.id}`">
+        <ElmJsonRenderer :json="data?.blockList ?? []" />
+      </article>
+    </div>
   </div>
 </template>
 
