@@ -145,10 +145,14 @@ export const useBlogStore = defineStore("BlogSearchStore", {
     getSideBlogs(): Blog[] {
       if (this.blogs == null) return [];
 
-      const results = this.blogs.sort(
-        (pre, next) =>
-          new Date(next.createdAt).getTime() - new Date(pre.createdAt).getTime()
-      );
+      const results = this.blogs
+        .sort(
+          (pre, next) =>
+            new Date(next.createdAt).getTime() -
+            new Date(pre.createdAt).getTime()
+        )
+        .slice(0, 10);
+
       return results;
     },
   },
