@@ -1,6 +1,7 @@
 <template>
-  <div v-if="data != null">
+  <div :key="`/blog/article/${data.id}`" v-if="data != null">
     <BlogMeta
+      :key="`/blog/article/${data.id}`"
       :title="data.title"
       :created-at="data.createdAt"
       :updated-at="data.updatedAt"
@@ -19,9 +20,7 @@
       "
     />
 
-    <div><ElmInlineText :text="`ID: ${$route.params.id}`" /></div>
-
-    <article>
+    <article :key="`/blog/article/${data.id}`">
       <ElmJsonRenderer :json="data?.blockList ?? []" />
     </article>
   </div>

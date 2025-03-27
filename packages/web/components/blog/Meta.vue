@@ -1,32 +1,34 @@
 <template>
-  <ElmBreadcrumb
-    :links="
-      links.map((link) => ({
-        text: link.text,
-        onClick: () => {
-          $router.push(link.href);
-        },
-      }))
-    "
-  />
+  <div>
+    <ElmBreadcrumb
+      :links="
+        links.map((link) => ({
+          text: link.text,
+          onClick: () => {
+            $router.push(link.href);
+          },
+        }))
+      "
+    />
 
-  <ElmHeading1 :text="title" disable-fragment-identifier />
+    <ElmHeading1 :text="title" disable-fragment-identifier />
 
-  <BlogDate :created-at="createdAt" :updated-at="updatedAt" />
+    <BlogDate :created-at="createdAt" :updated-at="updatedAt" />
 
-  <div class="tag" v-if="tags">
-    <NuxtLink
-      v-for="tag in tags"
-      :to="`/blog/search?tags=${tag.id}`"
-      :style="{ all: 'unset' }"
-      :prefetch="false"
-    >
-      <BlogTag :label="tag.label" :color="tag.color" />
-    </NuxtLink>
-  </div>
+    <div class="tag" v-if="tags">
+      <NuxtLink
+        v-for="tag in tags"
+        :to="`/blog/search?tags=${tag.id}`"
+        :style="{ all: 'unset' }"
+        :prefetch="false"
+      >
+        <BlogTag :label="tag.label" :color="tag.color" />
+      </NuxtLink>
+    </div>
 
-  <div class="image">
-    <ElmImage v-if="image" :src="image" />
+    <div class="image">
+      <ElmImage v-if="image" :src="image" />
+    </div>
   </div>
 </template>
 

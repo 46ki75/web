@@ -22,7 +22,6 @@ const props = defineProps<BlogDateProps>();
 <style lang="scss" scoped>
 .date {
   opacity: 0.7;
-  margin-block: 0.5rem;
   display: flex;
   flex-direction: row;
   justify-content: flex-end;

@@ -1,6 +1,7 @@
 <template>
-  <div>
+  <div key="/blog">
     <BlogMeta
+      key="/blog"
       title="Blog Top"
       created-at="2022-10-01"
       updated-at="2025-03-26"
@@ -9,6 +10,9 @@
         { text: 'Blog', href: '/blog' },
       ]"
     />
-    <main>BLOG HOME PLACEHOLDER</main>
+
+    <article key="/blog">
+      <div>BLOG HOME PLACEHOLDER</div>
+    </article>
   </div>
 </template>

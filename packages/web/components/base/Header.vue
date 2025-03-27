@@ -13,6 +13,8 @@ import { ElmInlineText, ElmToggleTheme } from "@elmethis/core";
 </script>
 
 <style lang="scss" scoped>
+@use "../../styles/variables";
+
 .header {
   position: sticky;
   top: 0;
@@ -20,7 +22,7 @@ import { ElmInlineText, ElmToggleTheme } from "@elmethis/core";
 
   box-sizing: border-box;
   padding: 0.5rem;
-  height: 3.5rem;
+  height: #{variables.$header-height};
 
   display: flex;
   flex-direction: row;
