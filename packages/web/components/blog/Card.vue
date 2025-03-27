@@ -61,6 +61,8 @@ defineProps<BlogSearchResultProps>();
 
   overflow: hidden;
   border-radius: 0.25rem;
+
+  box-shadow: 0 0 0.125rem rgba(black, 0.25);
 }
 
 .top {
@@ -71,7 +73,6 @@ defineProps<BlogSearchResultProps>();
   transition: opacity 200ms, transform 200ms, background-color 200ms;
 
   background-color: rgba(white, 0.3);
-  box-shadow: 0 0 0.125rem rgba(black, 0.25);
 
   [data-theme="dark"] & {
     background-color: rgba(black, 0.3);
