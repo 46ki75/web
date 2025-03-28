@@ -1,7 +1,17 @@
 <template>
   <div class="center">
     <main class="main">
-      <slot />
+      <div class="main-inner">
+        <div>
+          <slot />
+        </div>
+        <BlogAuthor />
+      </div>
+      <div class="icon-container">
+        <Icon icon="mdi:star-four-points-small" width="32px" />
+        <Icon icon="ion:fish" width="32px" />
+        <Icon icon="mdi:star-four-points-small" width="32px" />
+      </div>
     </main>
     <nav class="side"><BlogSide /></nav>
     <ElmParallax
@@ -14,6 +24,7 @@
 
 <script setup lang="ts">
 import { ElmParallax, ElmPagetop } from "@elmethis/core";
+import { Icon } from "@iconify/vue";
 </script>
 
 <style lang="scss" scoped>
@@ -40,17 +51,7 @@ import { ElmParallax, ElmPagetop } from "@elmethis/core";
 }
 
 .main {
-  overflow: hidden;
-  border-radius: 0.25rem;
-  box-sizing: border-box;
-  box-shadow: 0 0 0.125rem rgba(black, 0.25);
-  background-color: rgba(white, 0.3);
-  [data-theme="dark"] & {
-    background-color: rgba(black, 0.1);
-  }
-
   // mobile
-  padding: 0.5rem;
   flex-grow: 1;
   width: 100%;
   max-width: 100%;
@@ -61,6 +62,31 @@ import { ElmParallax, ElmPagetop } from "@elmethis/core";
     width: 65%;
     max-width: 840px;
   }
+}
+
+.main-inner {
+  padding: 0.5rem;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 0.25rem;
+  box-sizing: border-box;
+  box-shadow: 0 0 0.125rem rgba(black, 0.25);
+  background-color: rgba(white, 0.3);
+  [data-theme="dark"] & {
+    background-color: rgba(black, 0.1);
+  }
+}
+
+.icon-container {
+  width: 100%;
+  height: 64px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+
+  opacity: 0.75;
+  color: grey;
 }
 
 .side {

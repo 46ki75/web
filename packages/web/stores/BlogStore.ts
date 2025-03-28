@@ -69,13 +69,15 @@ export const useBlogStore = defineStore("BlogSearchStore", {
       return response.data.blogList;
     });
 
+    const fuse = shallowRef<Fuse<Blog> | undefined>();
+
     return {
       tags,
       selectedTags: [] as BlogTag[],
       keyword: undefined as string | undefined,
       blogs,
       searchedBlogs: [] as Blog[],
-      fuse: undefined as Fuse<Blog> | undefined,
+      fuse,
     };
   },
   actions: {

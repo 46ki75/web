@@ -142,12 +142,23 @@ resource "aws_cloudfront_distribution" "default" {
 
 
 # >>> CloudFront Function
+resource "aws_cloudfront_key_value_store" "basic" {
+  name = "${terraform.workspace}-46ki75-web-cloudfront-kvs-basic"
+}
+
+locals {
+  kvs_id = element(split("/", aws_cloudfront_key_value_store.basic.arn), length(split("/", aws_cloudfront_key_value_store.basic.arn)) - 1)
+}
+
 resource "aws_cloudfront_function" "rename_uri" {
   name    = "${terraform.workspace}-46ki75-cloudfront-web-function-rename-uri"
   runtime = "cloudfront-js-2.0"
   comment = "Rename URI to index.html"
   publish = true
-  code    = file("./assets/renameUri.js")
+  code = terraform.workspace == "prod" ? file("./assets/renameUriBasic.js") : templatefile("./assets/renameUriBasic.js", {
+    KVS_ID = local.kvs_id
+  })
+  key_value_store_associations = [aws_cloudfront_key_value_store.basic.arn]
 }
 # <<< CloudFront Function
 
