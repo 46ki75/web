@@ -24,6 +24,9 @@ pub struct BlogRecord {
     /// Status of the blog. Only `Published` blogs are returned.
     pub status: BlogStatusRecord,
 
+    /// Keywords of the blog. Used to improve article searchability.
+    pub keywords: String,
+
     /// RFC 3339-formatted creation timestamp.
     pub created_at: String,
 
@@ -208,10 +211,18 @@ impl TryFrom<notionrs::object::page::PageResponse> for BlogRecord {
             }
         };
 
+        let keywords = properties
+            .get("Keywords")
+            .ok_or_else(|| {
+                tracing::error!("Notion database property not found: Keywords");
+                crate::error::Error::NotionDatabasePropertyNotFound("Keywords".to_string())
+            })?
+            .to_string();
+
         let created_at = properties
             .get("CreatedAt")
             .ok_or_else(|| {
-                tracing::error!("Notion database property not found: Description");
+                tracing::error!("Notion database property not found: CreatedAt");
                 crate::error::Error::NotionDatabasePropertyNotFound("CreatedAt".to_string())
             })?
             .to_string();
@@ -219,8 +230,8 @@ impl TryFrom<notionrs::object::page::PageResponse> for BlogRecord {
         let updated_at = properties
             .get("UpdatedAt")
             .ok_or_else(|| {
-                tracing::error!("Notion database property not found: Description");
-                crate::error::Error::NotionDatabasePropertyNotFound("CreatedAt".to_string())
+                tracing::error!("Notion database property not found: UpdatedAt");
+                crate::error::Error::NotionDatabasePropertyNotFound("UpdatedAt".to_string())
             })?
             .to_string();
 
@@ -232,6 +243,7 @@ impl TryFrom<notionrs::object::page::PageResponse> for BlogRecord {
             ogp_image_s3_url,
             tags,
             status,
+            keywords,
             created_at,
             updated_at,
         })
