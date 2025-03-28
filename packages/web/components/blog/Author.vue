@@ -59,6 +59,7 @@ import { Icon } from "@iconify/vue";
 }
 
 .image {
+  display: block;
   width: 128px;
   height: 128px;
   border-radius: 0.25rem;
