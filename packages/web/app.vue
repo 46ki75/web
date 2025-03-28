@@ -35,6 +35,13 @@ useSeoMeta({
 </style>
 
 <style lang="scss">
+html {
+  font-family: "Noto Sans JP", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: normal;
+  font-style: normal;
+}
+
 body {
   margin: 0;
   padding: 0;
