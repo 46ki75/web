@@ -13,7 +13,7 @@
 
     <div key="/blog/search">
       <ElmTextField
-        v-model="blogStore.keyword"
+        v-model="debouncedKeyword"
         label="検索キーワード"
         :icon="SearchIcon"
       />
@@ -80,6 +80,7 @@ import {
   ElmTextField,
 } from "@elmethis/core";
 import { Icon } from "@iconify/vue";
+import { refDebounced, watchDebounced } from "@vueuse/core";
 
 const SearchIcon = h(Icon, { icon: "material-symbols:search" });
 
@@ -105,20 +106,15 @@ watch(
   }
 );
 
-interface BlogTag {
-  id: string;
-  name: string;
-  color: string;
-}
+const debouncedKeyword = shallowRef<string>("");
 
-interface Blog {
-  id: string;
-  title: string;
-  description: string;
-  tags: Array<BlogTag>;
-  createdAt: string;
-  updatedAt: string;
-}
+watchDebounced(
+  debouncedKeyword,
+  () => {
+    blogStore.keyword = debouncedKeyword.value;
+  },
+  { debounce: 200, maxWait: 500 }
+);
 
 onMounted(async () => {
   await nextTick();
