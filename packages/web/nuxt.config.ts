@@ -13,6 +13,13 @@ export const ENDPOINT =
     ? `https://www.46ki75.com`
     : `https://${STAGE_NAME}-www.46ki75.com`;
 
+const GTAG =
+  STAGE_NAME === "prod"
+    ? "G-TW1BVM24YT"
+    : STAGE_NAME === "stg"
+    ? "G-Q7K53RM4VC"
+    : "G-85QSG3WH5F";
+
 const routes = await fetchArticleRoutes(ENDPOINT);
 
 export default defineNuxtConfig({
@@ -38,7 +45,14 @@ export default defineNuxtConfig({
   },
   nitro: {
     prerender: {
-      routes: [...routes, "/", "/blog", "/blog/article", "/blog/search"],
+      routes: [
+        ...routes,
+        "/",
+        "/about",
+        "/blog",
+        "/blog/article",
+        "/blog/search",
+      ],
       crawlLinks: false,
       concurrency: 10,
     },
@@ -61,6 +75,21 @@ export default defineNuxtConfig({
         {
           rel: "stylesheet",
           href: "https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap",
+        },
+      ],
+      script: [
+        {
+          src: "https://www.googletagmanager.com/gtag/js?id=${GTAG}",
+          async: true,
+        },
+        {
+          innerHTML: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GTAG}');
+          `,
+          type: "text/javascript",
         },
       ],
     },
