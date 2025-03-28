@@ -33,6 +33,7 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
+        working-directory: packages/web
 
       - name: Run Build Test
         run: pnpm run generate
