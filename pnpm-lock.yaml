@@ -40,8 +40,8 @@ importers:
   packages/web:
     dependencies:
       '@elmethis/core':
-        specifier: 1.0.0-alpha.151
-        version: 1.0.0-alpha.151(vue@3.5.13(typescript@5.7.2))
+        specifier: 1.0.0-alpha.157
+        version: 1.0.0-alpha.157(vue@3.5.13(typescript@5.7.2))
       '@iconify/vue':
         specifier: ^4.3.0
         version: 4.3.0(vue@3.5.13(typescript@5.7.2))
@@ -325,8 +325,8 @@ packages:
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
     engines: {node: '>=12'}
 
-  '@elmethis/core@1.0.0-alpha.151':
-    resolution: {integrity: sha512-ECg9FK+2+YNUeiMHWSgCyOcGvx830wIargaScPVEroIWPPwQSZK1JxNa2Mhmby2YH1jmHadl7XGj8iidzw/e3Q==}
+  '@elmethis/core@1.0.0-alpha.157':
+    resolution: {integrity: sha512-45HNOKvzRoG28orys1A3Dlzqm5F1g1YfV2V1X6QkBvtzg7iPt4mBgaImVad+D2X0ZAhToAGqgFc25b5hTgvM0Q==}
     peerDependencies:
       vue: '>=3.4.0'
 
@@ -4405,7 +4405,7 @@ snapshots:
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
 
-  '@elmethis/core@1.0.0-alpha.151(vue@3.5.13(typescript@5.7.2))':
+  '@elmethis/core@1.0.0-alpha.157(vue@3.5.13(typescript@5.7.2))':
     dependencies:
       '@heroicons/vue': 2.2.0(vue@3.5.13(typescript@5.7.2))
       '@iconify/vue': 4.3.0(vue@3.5.13(typescript@5.7.2))
@@ -4413,7 +4413,6 @@ snapshots:
       katex: 0.16.21
       lodash-es: 4.17.21
       nanoid: 5.1.5
-      ofetch: 1.4.1
       polished: 4.3.1
       shiki: 3.2.1
       vue: 3.5.13(typescript@5.7.2)

@@ -93,22 +93,25 @@ const updateQueryParams = () => {
   });
 };
 
-watch(
-  () => blogStore.keyword,
-  () => {
-    updateQueryParams();
-    blogStore.searchBlog();
-  }
-);
-
 const debouncedKeyword = shallowRef<string>("");
 
 watchDebounced(
   debouncedKeyword,
   () => {
     blogStore.keyword = debouncedKeyword.value;
+    updateQueryParams();
+    blogStore.searchBlog();
   },
-  { debounce: 200, maxWait: 500 }
+  { debounce: 300, maxWait: 3000 }
+);
+
+watch(
+  () => blogStore.selectedTags,
+  () => {
+    updateQueryParams();
+    blogStore.searchBlog();
+  },
+  { deep: true }
 );
 
 onMounted(async () => {
@@ -118,7 +121,7 @@ onMounted(async () => {
   if (blogStore.tags == null) return;
 
   if (typeof route.query?.keyword === "string") {
-    blogStore.keyword = route.query.keyword;
+    debouncedKeyword.value = route.query.keyword;
   }
 
   if (typeof route.query?.tags === "string") {
