@@ -10,3 +10,33 @@ updates:
     schedule:
       interval: "daily"
     target-branch: "develop"
+    assignees:
+      - "dependabot[bot]"
+    reviewers:
+      - "46ki75"
+    labels:
+      - "npm"
+
+  - package-ecosystem: "cargo"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    target-branch: "develop"
+    assignees:
+      - "dependabot[bot]"
+    reviewers:
+      - "46ki75"
+    labels:
+      - "Rust"
+
+  - package-ecosystem: "terraform"
+    directory: "/terraform"
+    schedule:
+      interval: "daily"
+    target-branch: "develop"
+    assignees:
+      - "dependabot[bot]"
+    reviewers:
+      - "46ki75"
+    labels:
+      - "Terraform"
