@@ -24,6 +24,9 @@ pub struct BlogEntity {
     /// Status of the blog. Only `Published` blogs are returned.
     pub status: BlogStatusEntity,
 
+    /// Keywords of the blog. Used to improve article searchability.
+    pub keywords: Vec<String>,
+
     /// RFC 3339-formatted creation timestamp.
     pub created_at: String,
 
@@ -139,6 +142,12 @@ impl From<crate::record::blog::BlogRecord> for BlogEntity {
                     crate::entity::blog::BlogStatusEntity::Archived
                 }
             },
+            keywords: record
+                .keywords
+                .split(",")
+                .into_iter()
+                .map(|keyword| keyword.trim().to_string())
+                .collect::<Vec<String>>(),
             created_at: record.created_at.clone(),
             updated_at: record.updated_at.clone(),
         }

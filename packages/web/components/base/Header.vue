@@ -1,15 +1,24 @@
 <template>
   <header class="header">
-    <div></div>
-    <NuxtLink to="/" class="to-home">
-      <ElmInlineText text="HOME" />
+    <NuxtLink to="/" class="icon">
+      <Icon icon="mdi:home" width="28px" />
     </NuxtLink>
-    <ElmToggleTheme />
+
+    <div class="right">
+      <NuxtLink to="/blog" class="icon">
+        <Icon icon="mdi:book-open-page-variant-outline" width="28px" />
+      </NuxtLink>
+      <NuxtLink to="/about" class="icon">
+        <Icon icon="mdi:account-box-multiple-outline" width="28px" />
+      </NuxtLink>
+      <ElmToggleTheme />
+    </div>
   </header>
 </template>
 
 <script setup lang="ts">
 import { ElmInlineText, ElmToggleTheme } from "@elmethis/core";
+import { Icon } from "@iconify/vue";
 </script>
 
 <style lang="scss" scoped>
@@ -37,21 +46,28 @@ import { ElmInlineText, ElmToggleTheme } from "@elmethis/core";
   }
 }
 
-.to-home {
-  all: unset;
-  padding: 0.25rem 0.5rem;
+.right {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.icon {
+  padding: 0.25rem;
   border-radius: 0.25rem;
-  opacity: 1;
-  cursor: pointer;
-
-  transition: background-color 100ms, opacity 100ms;
-
-  &:hover {
-    background-color: rgba(#6987b8, 0.1);
+  width: 28px;
+  height: 28px;
+  color: rgba(black, 0.7);
+  [data-theme="dark"] & {
+    color: rgba(white, 0.7);
   }
 
-  &:active {
-    opacity: 0.5;
+  transition: background-color 100ms;
+
+  &:hover {
+    background-color: rgba(grey, 0.15);
   }
 }
 </style>

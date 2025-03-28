@@ -15,6 +15,7 @@ pub struct Blog {
     pub ogp_image_s3_url: Option<String>,
     pub tags: Vec<BlogTag>,
     pub status: Status,
+    pub keywords: Vec<String>,
     pub created_at: String,
     pub updated_at: String,
 }
@@ -53,6 +54,7 @@ impl From<crate::entity::blog::BlogEntity> for Blog {
                 crate::entity::blog::BlogStatusEntity::Published => Status::Published,
                 crate::entity::blog::BlogStatusEntity::Archived => Status::Archived,
             },
+            keywords: value.keywords,
             created_at: value.created_at,
             updated_at: value.updated_at,
         }
@@ -177,6 +179,11 @@ impl Blog {
     /// Publish status of the blog.
     pub async fn status(&self) -> Result<Status, async_graphql::Error> {
         Ok(self.status)
+    }
+
+    /// Keywords of the blog. Used to improve article searchability.
+    pub async fn keywords(&self) -> Result<Vec<String>, async_graphql::Error> {
+        Ok(self.keywords.clone())
     }
 
     /// RFC 3339-formatted creation timestamp.

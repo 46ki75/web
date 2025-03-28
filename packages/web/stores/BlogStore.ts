@@ -11,6 +11,7 @@ interface Blog {
   title: string;
   description: string;
   tags: Array<BlogTag>;
+  keywords: string[];
   createdAt: string;
   updatedAt: string;
 }
@@ -58,6 +59,7 @@ export const useBlogStore = defineStore("BlogSearchStore", {
                   name
                   color
                 }
+                keywords
                 createdAt
                 updatedAt
               }
@@ -69,13 +71,15 @@ export const useBlogStore = defineStore("BlogSearchStore", {
       return response.data.blogList;
     });
 
+    const fuse = shallowRef<Fuse<Blog> | undefined>();
+
     return {
       tags,
       selectedTags: [] as BlogTag[],
       keyword: undefined as string | undefined,
       blogs,
       searchedBlogs: [] as Blog[],
-      fuse: undefined as Fuse<Blog> | undefined,
+      fuse,
     };
   },
   actions: {
@@ -116,7 +120,7 @@ export const useBlogStore = defineStore("BlogSearchStore", {
       else {
         if (this.fuse == null) {
           this.fuse = new Fuse(this.blogs, {
-            keys: ["title", "description"],
+            keys: ["title", "description", "keywords"],
             threshold: 0.5,
           });
         }

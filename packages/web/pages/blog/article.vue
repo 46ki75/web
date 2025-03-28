@@ -1,8 +1,6 @@
 <template>
   <div>
-    <NuxtLayout name="blog">
-      <NuxtPage :transition="{ mode: 'out-in' }" />
-    </NuxtLayout>
+    <NuxtPage :transition="{ mode: 'out-in' }" />
   </div>
 </template>
 
