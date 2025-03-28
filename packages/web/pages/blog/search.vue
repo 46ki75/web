@@ -73,14 +73,9 @@
 </template>
 
 <script lang="ts" setup>
-import {
-  ElmButton,
-  ElmHeading3,
-  ElmInlineText,
-  ElmTextField,
-} from "@elmethis/core";
+import { ElmButton, ElmHeading3, ElmTextField } from "@elmethis/core";
 import { Icon } from "@iconify/vue";
-import { refDebounced, watchDebounced } from "@vueuse/core";
+import { watchDebounced } from "@vueuse/core";
 
 const SearchIcon = h(Icon, { icon: "material-symbols:search" });
 
