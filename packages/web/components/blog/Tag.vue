@@ -29,7 +29,7 @@ defineProps<BlogtagProps>();
   cursor: pointer;
 
   &:hover {
-    background-color: rgba(#888, 0.1);
+    background-color: rgba(grey, 0.1);
   }
 }
 
