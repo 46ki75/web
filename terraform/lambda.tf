@@ -85,3 +85,13 @@ resource "aws_lambda_alias" "http_api" {
   function_name    = aws_lambda_function.http_api.function_name
   function_version = "$LATEST"
 }
+
+resource "aws_lambda_function_url" "http_api" {
+  authorization_type = "NONE"
+  function_name      = aws_lambda_function.http_api.function_name
+  qualifier          = aws_lambda_alias.http_api.name
+}
+
+locals {
+  lambda_function_url_domain_http_api = split("/", replace(aws_lambda_function_url.http_api.function_url, "https://", ""))[0]
+}

@@ -105,7 +105,7 @@ resource "aws_cloudfront_distribution" "default" {
   }
   # <<< [S3 web] origin
 
-  # >>> [API GW] origin
+  # >>> [Lambda Function URLs] origin
   ordered_cache_behavior {
     path_pattern = "/api/*"
     allowed_methods = [
@@ -127,7 +127,7 @@ resource "aws_cloudfront_distribution" "default" {
   }
 
   origin {
-    domain_name = aws_apigatewayv2_domain_name.backend.domain_name
+    domain_name = local.lambda_function_url_domain_http_api
     origin_id   = "api-backend"
 
     custom_origin_config {
@@ -137,7 +137,7 @@ resource "aws_cloudfront_distribution" "default" {
       origin_ssl_protocols   = ["TLSv1.2"]
     }
   }
-  # <<< [API GW] origin
+  # <<< [Lambda Function URLs] origin
 
 
   custom_error_response {
