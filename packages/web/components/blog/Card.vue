@@ -2,7 +2,7 @@
   <div class="container">
     <NuxtLink class="top" :to="`/blog/article/${id}`" :prefetch="false">
       <div class="image">
-        <ElmImage :src="`${config.public.ENDPOINT}/api/blog/image/ogp/${id}`" />
+        <ElmImage :src="`/_notion/blog/image/${id}/ogp.webp`" />
       </div>
 
       <div class="text-container">

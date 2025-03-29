@@ -41,8 +41,8 @@ resource "aws_cloudfront_distribution" "default" {
     viewer_protocol_policy = "redirect-to-https"
     target_origin_id       = "s3-web"
 
-    default_ttl = 3600 * 24 * 30
-    min_ttl     = 0
+    default_ttl = 3600 * 24 * 30 * 6
+    min_ttl     = 3600 * 24 * 30 * 1
     max_ttl     = 3600 * 24 * 30 * 12
 
     forwarded_values {

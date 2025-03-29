@@ -1,22 +1,24 @@
 <template>
   <div class="side-container">
-    <NuxtLink to="/blog/search" :prefetch="false" :style="{ all: 'unset' }">
-      <ElmButton @click="() => {}" block>
-        <Icon icon="material-symbols:search" height="24px" />
-        <ElmInlineText text="記事を検索" />
-      </ElmButton>
-    </NuxtLink>
+    <div class="sticky">
+      <NuxtLink to="/blog/search" :prefetch="false" :style="{ all: 'unset' }">
+        <ElmButton @click="() => {}" block>
+          <Icon icon="mdi:folder-search-outline" height="24px" />
+          <ElmInlineText text="記事を検索" />
+        </ElmButton>
+      </NuxtLink>
+    </div>
 
-    <BlogCard
-      v-for="blog in blogStore.getSideBlogs"
-      :key="blog.id"
-      :id="blog.id"
-      :title="blog.title"
-      :description="blog.description"
-      :tags="blog.tags"
-      :created-at="blog.createdAt"
-      :updated-at="blog.updatedAt"
-    />
+    <div class="card" v-for="blog in blogStore.getSideBlogs" :key="blog.id">
+      <BlogCard
+        :id="blog.id"
+        :title="blog.title"
+        :description="blog.description"
+        :tags="blog.tags"
+        :created-at="blog.createdAt"
+        :updated-at="blog.updatedAt"
+      />
+    </div>
   </div>
 </template>
 
@@ -32,8 +34,25 @@ const blogStore = useBlogStore();
 
 .side-container {
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  height: 100%;
+}
+
+.sticky {
+  @media (min-width: variables.$breakpoint-tablet) {
+    width: 100%;
+    position: sticky;
+    top: 0;
+    opacity: 0.98;
+    z-index: 5;
+
+    background-color: #f2f2f2;
+    [data-theme="dark"] & {
+      background-color: #262626;
+    }
+  }
+}
+
+.card {
+  margin-block-start: 0.5rem;
 }
 </style>

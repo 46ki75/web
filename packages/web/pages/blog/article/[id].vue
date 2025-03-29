@@ -11,7 +11,7 @@
           { text: 'Blog', href: '/blog' },
           { text: 'Article', href: `/blog/article/${blog.id}` },
         ]"
-        :image="`${config.public.ENDPOINT}/api/blog/image/ogp/${blog.id}`"
+        :image="`/_notion/blog/image/${blog.id}/ogp.webp`"
         :tags="
           blog.tags.map((tag) => ({
             id: tag.id,
@@ -48,17 +48,18 @@ const blog = computed(() => {
 
 const convert = (
   blocks: ElmJsonRendererProps["json"],
-  results: Array<{ from: string; to: string }>
+  results: Array<{ from: string; to: string }>,
+  id: string
 ) => {
   for (const block of blocks) {
     if (block.type === "ElmImage" && block.props?.src && block.id) {
       results.push({
         from: block.props.src,
-        to: `${config.public.ENDPOINT}/api/blog/image/block/${block.id}`,
+        to: `${config.public.ENDPOINT}/_notion/blog/image/${id}/${block.id}.webp`,
       });
     }
     if (block.children && block.children.length > 0) {
-      convert(block.children, results);
+      convert(block.children, results, id);
     }
   }
 
@@ -76,7 +77,7 @@ const { data } = await useAsyncData(
   `/blog/article/${route.params.id}`,
   async () => {
     const blog = await $fetch<{
-      data: { blog: { blockList: ElmJsonRendererProps["json"] } };
+      data: { blog: { id: string; blockList: ElmJsonRendererProps["json"] } };
     }>(`${config.public.ENDPOINT}/api/graphql`, {
       method: "POST",
       body: {
@@ -84,17 +85,6 @@ const { data } = await useAsyncData(
           query GetBlog($pageId: String!) {
             blog(pageId: $pageId) {
               id
-              slug
-              title
-              description
-              status
-              tags {
-                id
-                name
-                color
-              }
-              createdAt
-              updatedAt
               blockList
             }
           }
@@ -103,7 +93,7 @@ const { data } = await useAsyncData(
       },
     });
 
-    const blockList = convert(blog.data.blog.blockList, []);
+    const blockList = convert(blog.data.blog.blockList, [], blog.data.blog.id);
     blog.data.blog.blockList = blockList;
 
     return blog.data.blog;
@@ -115,7 +105,7 @@ useSeoMeta({
   ogTitle: blog.value?.title,
   description: blog.value?.description,
   ogDescription: blog.value?.description,
-  ogImage: `${config.public.ENDPOINT}/api/blog/image/ogp/${blog.value?.id}`,
+  ogImage: `${config.public.ENDPOINT}/_notion/blog/image/${blog.value?.id}/ogp.webp`,
   twitterCard: "summary_large_image",
 });
 </script>
