@@ -91,6 +91,11 @@ resource "aws_cloudfront_distribution" "default" {
     cache_policy_id = aws_cloudfront_cache_policy.s3.id
 
     compress = true
+
+    function_association {
+      event_type   = "viewer-request"
+      function_arn = aws_cloudfront_function.rename_uri.arn
+    }
   }
 
   origin {
@@ -119,11 +124,6 @@ resource "aws_cloudfront_distribution" "default" {
     cache_policy_id = aws_cloudfront_cache_policy.http_api.id
 
     compress = true
-
-    function_association {
-      event_type   = "viewer-request"
-      function_arn = aws_cloudfront_function.rename_uri.arn
-    }
   }
 
   origin {
