@@ -27,7 +27,7 @@
     </div>
 
     <div class="image">
-      <ElmImage v-if="image" :src="image" />
+      <ElmImage v-if="image" :src="image" alt="ブログ記事のOGP画像" />
     </div>
   </div>
 </template>
