@@ -10,7 +10,8 @@
     "postinstall": "nuxt prepare",
     "predeploy": "pnpm run generate",
     "deploy": "./scripts/deploy-s3.sh",
-    "postdeploy": "./scripts/invalidate.sh"
+    "postdeploy": "./scripts/invalidate.sh",
+    "lint": "eslint"
   },
   "dependencies": {
     "@elmethis/core": "1.0.0-alpha.157",
@@ -26,6 +27,11 @@
     "vue-router": "^4.5.0"
   },
   "devDependencies": {
+    "eslint": "^9.23.0",
+    "eslint-config-prettier": "^10.1.1",
+    "eslint-plugin-vue": "^10.0.0",
+    "typescript-eslint": "^8.28.0",
+    "globals": "^16.0.0",
     "sass": "^1.86.0"
   }
 }
