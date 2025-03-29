@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElmInlineText, ElmToggleTheme } from "@elmethis/core";
+import { ElmToggleTheme } from "@elmethis/core";
 import { Icon } from "@iconify/vue";
 </script>
 
@@ -28,19 +28,17 @@ import { Icon } from "@iconify/vue";
   position: sticky;
   top: 0;
   z-index: 10;
-
   box-sizing: border-box;
   padding: 0.5rem;
   height: #{variables.$header-height};
-
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-
   backdrop-filter: blur(1px);
   box-shadow: 0 0 0.125rem rgba(black, 0.2);
   background-color: rgba(white, 0.3);
+
   [data-theme="dark"] & {
     background-color: rgba(black, 0.3);
   }
@@ -60,6 +58,7 @@ import { Icon } from "@iconify/vue";
   width: 28px;
   height: 28px;
   color: rgba(black, 0.7);
+
   [data-theme="dark"] & {
     color: rgba(white, 0.7);
   }
@@ -67,7 +66,7 @@ import { Icon } from "@iconify/vue";
   transition: background-color 100ms;
 
   &:hover {
-    background-color: rgba(grey, 0.15);
+    background-color: rgba(gray, 0.15);
   }
 }
 </style>

@@ -20,11 +20,11 @@
 
       <div class="tag-container">
         <ElmHeading3 text="タグ一覧" disable-fragment-identifier />
-        <div class="tag-pool" v-if="blogStore.tags">
+        <div v-if="blogStore.tags" class="tag-pool">
           <BlogTag
             v-for="tag in blogStore.tags"
-            :key="tag.id"
             :id="tag.id"
+            :key="tag.id"
             :label="tag.name"
             :color="tag.color"
             @click="blogStore.tagSelect(tag.id)"
@@ -37,8 +37,8 @@
         <TransitionGroup name="tag" class="tag-pool" tag="dev">
           <BlogTag
             v-for="tag in blogStore.selectedTags"
-            :key="tag.id"
             :id="tag.id"
+            :key="tag.id"
             :label="tag.name"
             :color="tag.color"
             @click="blogStore.tagDeselect(tag.id)"
@@ -54,9 +54,9 @@
 
       <TransitionGroup name="search" class="search-results" tag="div">
         <div
-          class="search-results-item"
           v-for="blog in blogStore.searchedBlogs"
           :key="blog.id"
+          class="search-results-item"
         >
           <BlogCard
             :id="blog.id"

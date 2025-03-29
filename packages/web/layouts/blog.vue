@@ -36,7 +36,6 @@ import { Icon } from "@iconify/vue";
   height: 100%;
   display: flex;
   gap: 0.5rem;
-
   justify-content: center;
   align-items: flex-start;
 
@@ -73,6 +72,7 @@ import { Icon } from "@iconify/vue";
   box-sizing: border-box;
   box-shadow: 0 0 0.125rem rgba(black, 0.25);
   background-color: rgba(white, 0.3);
+
   [data-theme="dark"] & {
     background-color: rgba(black, 0.1);
   }
@@ -85,14 +85,12 @@ import { Icon } from "@iconify/vue";
   justify-content: center;
   align-items: center;
   gap: 1.5rem;
-
   opacity: 0.75;
-  color: grey;
+  color: gray;
 }
 
 .side {
   box-sizing: border-box;
-
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -108,7 +106,6 @@ import { Icon } from "@iconify/vue";
     flex-grow: 35;
     width: 35%;
     max-width: 420px;
-
     position: sticky;
     top: calc(#{variables.$header-height} + 0.5rem);
     height: calc(100vh - #{variables.$header-height} - 1rem);

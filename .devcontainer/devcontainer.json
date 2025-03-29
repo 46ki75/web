@@ -13,6 +13,7 @@
         "Gruntfuggly.todo-tree",
         "christian-kohler.path-intellisense",
         "dbaeumer.vscode-eslint",
+        "stylelint.vscode-stylelint",
         "esbenp.prettier-vscode",
         "ms-azuretools.vscode-docker",
         "rust-lang.rust-analyzer",

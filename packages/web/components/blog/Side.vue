@@ -2,14 +2,14 @@
   <div class="side-container">
     <div class="sticky">
       <NuxtLink to="/blog/search" :prefetch="false" :style="{ all: 'unset' }">
-        <ElmButton @click="() => {}" block>
+        <ElmButton block @click="() => {}">
           <Icon icon="mdi:folder-search-outline" height="24px" />
           <ElmInlineText text="記事を検索" />
         </ElmButton>
       </NuxtLink>
     </div>
 
-    <div class="card" v-for="blog in blogStore.getSideBlogs" :key="blog.id">
+    <div v-for="blog in blogStore.getSideBlogs" :key="blog.id" class="card">
       <BlogCard
         :id="blog.id"
         :title="blog.title"
@@ -44,8 +44,8 @@ const blogStore = useBlogStore();
     top: 0;
     opacity: 0.98;
     z-index: 5;
-
     background-color: #f2f2f2;
+
     [data-theme="dark"] & {
       background-color: #262626;
     }
