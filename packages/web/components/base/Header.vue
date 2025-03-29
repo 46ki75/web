@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElmInlineText, ElmToggleTheme } from "@elmethis/core";
+import { ElmToggleTheme } from "@elmethis/core";
 import { Icon } from "@iconify/vue";
 </script>
 

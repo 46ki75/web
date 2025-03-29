@@ -23,9 +23,9 @@
             <span>詳細</span>
           </NuxtLink>
           <a
+            ref="noopener noreferrer"
             href="https://github.com/46ki75"
             target="_blank"
-            ref="noopener noreferrer"
           >
             <Icon class="icon" icon="mdi:github" height="32px" />
           </a>

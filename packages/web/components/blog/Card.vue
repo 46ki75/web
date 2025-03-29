@@ -35,8 +35,6 @@
 <script lang="ts" setup>
 import { ElmImage, ElmInlineText } from "@elmethis/core";
 
-const config = useRuntimeConfig();
-
 interface BlogSearchResultProps {
   id: string;
   title: string;

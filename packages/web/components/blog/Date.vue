@@ -16,7 +16,7 @@ interface BlogDateProps {
   updatedAt: string;
 }
 
-const props = defineProps<BlogDateProps>();
+defineProps<BlogDateProps>();
 </script>
 
 <style lang="scss" scoped>

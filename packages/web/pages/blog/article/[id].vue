@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div :key="`/blog/article/${blog.id}`" v-if="blog != null">
+    <div v-if="blog != null" :key="`/blog/article/${blog.id}`">
       <BlogMeta
         :key="`/blog/article/${blog.id}`"
         :title="blog.title"
