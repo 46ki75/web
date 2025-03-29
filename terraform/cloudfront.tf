@@ -6,6 +6,53 @@ resource "aws_cloudfront_origin_access_control" "web" {
   signing_protocol                  = "sigv4"
 }
 
+resource "aws_cloudfront_cache_policy" "s3" {
+  name = "${terraform.workspace}-46ki75-web-cloudfront-cache_policy-s3"
+
+  default_ttl = 3600 * 24 * 30 * 6
+  min_ttl     = 3600 * 24 * 30 * 1
+  max_ttl     = 3600 * 24 * 30 * 12
+
+  parameters_in_cache_key_and_forwarded_to_origin {
+    cookies_config {
+      cookie_behavior = "none"
+    }
+
+    headers_config {
+      header_behavior = "none"
+    }
+
+    query_strings_config {
+      query_string_behavior = "all"
+    }
+
+    enable_accept_encoding_brotli = true
+    enable_accept_encoding_gzip   = true
+  }
+}
+
+resource "aws_cloudfront_cache_policy" "http_api" {
+  name = "${terraform.workspace}-46ki75-web-cloudfront-cache_policy-http_api"
+
+  default_ttl = 0
+  min_ttl     = 0
+  max_ttl     = 0
+
+  parameters_in_cache_key_and_forwarded_to_origin {
+    cookies_config {
+      cookie_behavior = "none"
+    }
+
+    headers_config {
+      header_behavior = "none"
+    }
+
+    query_strings_config {
+      query_string_behavior = "none"
+    }
+  }
+}
+
 resource "aws_cloudfront_distribution" "default" {
   depends_on = [aws_acm_certificate.cloudfront_cert, aws_acm_certificate_validation.cloudfront_cert_cert]
 
@@ -41,17 +88,9 @@ resource "aws_cloudfront_distribution" "default" {
     viewer_protocol_policy = "redirect-to-https"
     target_origin_id       = "s3-web"
 
-    default_ttl = 3600 * 24 * 30 * 6
-    min_ttl     = 3600 * 24 * 30 * 1
-    max_ttl     = 3600 * 24 * 30 * 12
+    cache_policy_id = aws_cloudfront_cache_policy.s3.id
 
-    forwarded_values {
-      query_string = false
-      cookies {
-        forward = "none"
-      }
-      headers = ["etag"]
-    }
+    compress = true
 
     function_association {
       event_type   = "viewer-request"
@@ -66,30 +105,7 @@ resource "aws_cloudfront_distribution" "default" {
   }
   # <<< [S3 web] origin
 
-  # >>> [API GW] origin
-  ordered_cache_behavior {
-    path_pattern = "/api/blog/image/*"
-    allowed_methods = [
-      "GET",
-      "HEAD",
-      "OPTIONS"
-    ]
-    cached_methods         = ["GET", "HEAD"]
-    viewer_protocol_policy = "redirect-to-https"
-    target_origin_id       = "api-backend"
-
-    default_ttl = 3600
-    min_ttl     = 3600
-    max_ttl     = 3600
-
-    forwarded_values {
-      query_string = true
-      cookies {
-        forward = "none"
-      }
-    }
-  }
-
+  # >>> [Lambda Function URLs] origin
   ordered_cache_behavior {
     path_pattern = "/api/*"
     allowed_methods = [
@@ -105,21 +121,13 @@ resource "aws_cloudfront_distribution" "default" {
     viewer_protocol_policy = "redirect-to-https"
     target_origin_id       = "api-backend"
 
-    default_ttl = 0
-    min_ttl     = 0
-    max_ttl     = 0
+    cache_policy_id = aws_cloudfront_cache_policy.http_api.id
 
-    forwarded_values {
-      query_string = true
-      cookies {
-        forward = "none"
-      }
-      headers = ["Authorization"]
-    }
+    compress = true
   }
 
   origin {
-    domain_name = aws_apigatewayv2_domain_name.backend.domain_name
+    domain_name = local.lambda_function_url_domain_http_api
     origin_id   = "api-backend"
 
     custom_origin_config {
@@ -129,7 +137,7 @@ resource "aws_cloudfront_distribution" "default" {
       origin_ssl_protocols   = ["TLSv1.2"]
     }
   }
-  # <<< [API GW] origin
+  # <<< [Lambda Function URLs] origin
 
 
   custom_error_response {
