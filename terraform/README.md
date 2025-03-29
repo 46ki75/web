@@ -57,7 +57,7 @@ Please add the following records to the parent hosted zone:
 
 ### Data Streams
 
-| Stream Name     | Strem URL                  | Stream ID   | Measurement Id |
+| Stream Name     | Stream URL                 | Stream ID   | Measurement Id |
 | --------------- | -------------------------- | ----------- | -------------- |
 | dev-46ki75-web  | https://dev-www.46ki75.com | 10456169337 | G-85QSG3WH5F   |
 | stg-46ki75-web  | https://stg-www.46ki75.com | 10456381027 | G-Q7K53RM4VC   |
