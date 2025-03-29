@@ -51,8 +51,8 @@ import { Icon } from "@iconify/vue";
   border-radius: 0.25rem;
   padding: 0.25rem 0.5rem 0.25rem 0.25rem;
   box-shadow: 0 0 0.125rem rgba(black, 0.25);
-
   background-color: rgba(white, 0.3);
+
   [data-theme="dark"] & {
     background-color: rgba(black, 0.3);
   }
@@ -118,8 +118,8 @@ import { Icon } from "@iconify/vue";
 .icon {
   transition: opacity 200ms;
   cursor: pointer;
-
   color: rgba(black, 0.7);
+
   [data-theme="dark"] & {
     color: rgba(white, 0.7);
   }

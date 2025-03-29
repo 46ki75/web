@@ -31,6 +31,7 @@ defineProps<BlogDateProps>();
 
 .icon {
   color: rgba(black, 0.9);
+
   [data-theme="dark"] & {
     color: rgba(white, 0.9);
   }

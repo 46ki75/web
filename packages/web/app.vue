@@ -40,16 +40,13 @@ html {
   font-optical-sizing: auto;
   font-weight: normal;
   font-style: normal;
-
-  background-color: grey;
+  background-color: gray;
 }
 
 body {
   margin: 0;
   padding: 0;
-
   transition: background-color 200ms;
-
   background-color: #f2f2f2;
 
   [data-theme="dark"] & {

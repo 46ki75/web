@@ -44,8 +44,8 @@ const blogStore = useBlogStore();
     top: 0;
     opacity: 0.98;
     z-index: 5;
-
     background-color: #f2f2f2;
+
     [data-theme="dark"] & {
       background-color: #262626;
     }
