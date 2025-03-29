@@ -89,7 +89,7 @@ async function handler(event) {
     }
 
     if (basicAuth.password === storedPassword) {
-      if (uri && uri.indexOf(".") === -1 && !uri.startsWith("/api")) {
+      if (uri && uri.indexOf(".") === -1) {
         request.uri =
           uri.charAt(uri.length - 1) === "/"
             ? uri + "index.html"
