@@ -68,7 +68,7 @@ export const fetchImages = async () => {
     );
 
     const blockImageUrls = fetchBlockImageUrls(blog.blockList, []);
-    const blogkImagePromise = Promise.all(
+    const blockImagePromise = Promise.all(
       blockImageUrls.map(async (blogkImageUrl) => {
         const response = await fetch(blogkImageUrl.s3Url);
         const image = await response.arrayBuffer();
@@ -85,7 +85,7 @@ export const fetchImages = async () => {
       })
     );
 
-    return Promise.all([ogpImagePromise, blogkImagePromise]);
+    return Promise.all([ogpImagePromise, blockImagePromise]);
   });
 
   await Promise.all(promises);
