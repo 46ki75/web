@@ -2,8 +2,9 @@ resource "aws_apigatewayv2_api" "backend" {
   name          = "${terraform.workspace}-46ki75-web-apigwv2-http-backend"
   protocol_type = "HTTP"
 
-  route_key = "ANY /{proxy+}"
-  target    = aws_lambda_alias.http_api.invoke_arn
+  route_key                    = "ANY /{proxy+}"
+  target                       = aws_lambda_alias.http_api.invoke_arn
+  disable_execute_api_endpoint = true
 }
 
 resource "aws_apigatewayv2_domain_name" "backend" {
