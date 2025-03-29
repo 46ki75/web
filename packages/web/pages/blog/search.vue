@@ -156,6 +156,7 @@ onMounted(async () => {
 .tag-pool {
   margin-block: 2rem;
   display: flex;
+  flex-wrap: wrap;
 }
 
 .search-results {

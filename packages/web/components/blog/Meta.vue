@@ -38,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElmBreadcrumb, ElmHeading1, ElmImage, ElmTag } from "@elmethis/core";
+import { ElmBreadcrumb, ElmHeading1, ElmImage } from "@elmethis/core";
 
 interface BlogMetaProps {
   title: string;
