@@ -1,6 +1,7 @@
 import type { ElmJsonRendererProps } from "@elmethis/core";
 import { ENDPOINT } from "../nuxt.config";
 import { rm, mkdir, writeFile } from "node:fs/promises";
+import sharp from "sharp";
 
 export const fetchImages = async () => {
   await rm("./public/_notion/blog/image/", { recursive: true, force: true });
@@ -57,9 +58,13 @@ export const fetchImages = async () => {
     const response = await fetch(ogpS3Url);
     const image = await response.arrayBuffer();
     const buffer = Buffer.from(image);
+    const webpBuffer = await sharp(buffer)
+      .resize({ width: 1920, withoutEnlargement: true })
+      .webp()
+      .toBuffer();
     const ogpImagePromise: Promise<void> = writeFile(
       `./public/_notion/blog/image/${blog.id}/ogp.webp`,
-      buffer
+      webpBuffer
     );
 
     const blockImageUrls = fetchBlockImageUrls(blog.blockList, []);
@@ -68,9 +73,13 @@ export const fetchImages = async () => {
         const response = await fetch(blogkImageUrl.s3Url);
         const image = await response.arrayBuffer();
         const buffer = Buffer.from(image);
+        const webpBuffer = await sharp(buffer)
+          .resize({ width: 1920, withoutEnlargement: true })
+          .webp()
+          .toBuffer();
         const blockImagePromise: Promise<void> = writeFile(
           `./public/_notion/blog/image/${blog.id}/${blogkImageUrl.id}.webp`,
-          buffer
+          webpBuffer
         );
         return blockImagePromise;
       })
