@@ -7,16 +7,16 @@
       </ElmButton>
     </NuxtLink>
 
-    <BlogCard
-      v-for="blog in blogStore.getSideBlogs"
-      :key="blog.id"
-      :id="blog.id"
-      :title="blog.title"
-      :description="blog.description"
-      :tags="blog.tags"
-      :created-at="blog.createdAt"
-      :updated-at="blog.updatedAt"
-    />
+    <div class="card" v-for="blog in blogStore.getSideBlogs" :key="blog.id">
+      <BlogCard
+        :id="blog.id"
+        :title="blog.title"
+        :description="blog.description"
+        :tags="blog.tags"
+        :created-at="blog.createdAt"
+        :updated-at="blog.updatedAt"
+      />
+    </div>
   </div>
 </template>
 
@@ -32,8 +32,10 @@ const blogStore = useBlogStore();
 
 .side-container {
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  height: 100%;
+}
+
+.card {
+  margin-block-start: 0.5rem;
 }
 </style>
