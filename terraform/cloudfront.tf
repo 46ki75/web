@@ -29,7 +29,28 @@ resource "aws_cloudfront_cache_policy" "s3" {
     enable_accept_encoding_brotli = true
     enable_accept_encoding_gzip   = true
   }
+}
 
+resource "aws_cloudfront_cache_policy" "http_api" {
+  name = "${terraform.workspace}-46ki75-web-cloudfront-cache_policy-http_api"
+
+  default_ttl = 0
+  min_ttl     = 0
+  max_ttl     = 0
+
+  parameters_in_cache_key_and_forwarded_to_origin {
+    cookies_config {
+      cookie_behavior = "none"
+    }
+
+    headers_config {
+      header_behavior = "none"
+    }
+
+    query_strings_config {
+      query_string_behavior = "none"
+    }
+  }
 }
 
 resource "aws_cloudfront_distribution" "default" {
@@ -86,29 +107,6 @@ resource "aws_cloudfront_distribution" "default" {
 
   # >>> [API GW] origin
   ordered_cache_behavior {
-    path_pattern = "/api/blog/image/*"
-    allowed_methods = [
-      "GET",
-      "HEAD",
-      "OPTIONS"
-    ]
-    cached_methods         = ["GET", "HEAD"]
-    viewer_protocol_policy = "redirect-to-https"
-    target_origin_id       = "api-backend"
-
-    default_ttl = 3600
-    min_ttl     = 3600
-    max_ttl     = 3600
-
-    forwarded_values {
-      query_string = true
-      cookies {
-        forward = "none"
-      }
-    }
-  }
-
-  ordered_cache_behavior {
     path_pattern = "/api/*"
     allowed_methods = [
       "DELETE",
@@ -123,17 +121,9 @@ resource "aws_cloudfront_distribution" "default" {
     viewer_protocol_policy = "redirect-to-https"
     target_origin_id       = "api-backend"
 
-    default_ttl = 0
-    min_ttl     = 0
-    max_ttl     = 0
+    cache_policy_id = aws_cloudfront_cache_policy.http_api.id
 
-    forwarded_values {
-      query_string = true
-      cookies {
-        forward = "none"
-      }
-      headers = ["Authorization"]
-    }
+    compress = true
   }
 
   origin {
