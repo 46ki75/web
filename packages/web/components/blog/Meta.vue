@@ -27,13 +27,18 @@
     </div>
 
     <div class="image">
-      <ElmImage v-if="image" :src="image" />
+      <ElmImage
+        v-if="image"
+        :src="image"
+        alt="ブログ記事のOGP画像"
+        enable-modal
+      />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ElmBreadcrumb, ElmHeading1, ElmImage, ElmTag } from "@elmethis/core";
+import { ElmBreadcrumb, ElmHeading1, ElmImage } from "@elmethis/core";
 
 interface BlogMetaProps {
   title: string;

@@ -1,6 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 
 import { fetchArticleRoutes } from "./scripts/fetchArticleRoutes";
+import { fetchImages } from "./scripts/fetchImages";
 
 export const STAGE_NAME = process.env.STAGE_NAME ?? "dev";
 
@@ -21,6 +22,8 @@ const GTAG =
     : "G-85QSG3WH5F";
 
 const routes = await fetchArticleRoutes(ENDPOINT);
+
+await fetchImages();
 
 export default defineNuxtConfig({
   compatibilityDate: "2024-11-01",

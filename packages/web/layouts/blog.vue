@@ -33,6 +33,7 @@ import { Icon } from "@iconify/vue";
 .center {
   box-sizing: border-box;
   width: 100%;
+  height: 100%;
   display: flex;
   gap: 0.5rem;
 
@@ -90,6 +91,8 @@ import { Icon } from "@iconify/vue";
 }
 
 .side {
+  box-sizing: border-box;
+
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -105,6 +108,12 @@ import { Icon } from "@iconify/vue";
     flex-grow: 35;
     width: 35%;
     max-width: 420px;
+
+    position: sticky;
+    top: calc(#{variables.$header-height} + 0.5rem);
+    height: calc(100vh - #{variables.$header-height} - 1rem);
+    overflow-y: scroll;
+    padding-right: 0.25rem;
   }
 }
 </style>
