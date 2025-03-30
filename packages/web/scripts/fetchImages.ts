@@ -1,9 +1,11 @@
 import type { ElmJsonRendererProps } from "@elmethis/core";
-import { ENDPOINT } from "../nuxt.config";
+import { ENDPOINT } from "../scripts/fetchConfig";
 import { rm, mkdir, writeFile } from "node:fs/promises";
 import sharp from "sharp";
 
 export const fetchImages = async () => {
+  console.info("Execute fetchImages()...");
+
   await rm("./public/_notion/blog/image/", { recursive: true, force: true });
   await mkdir("./public/_notion/blog/image/", { recursive: true });
 
@@ -62,25 +64,23 @@ export const fetchImages = async () => {
       .resize({ width: 1920, withoutEnlargement: true })
       .webp()
       .toBuffer();
-    const ogpImagePromise: Promise<void> = writeFile(
-      `./public/_notion/blog/image/${blog.id}/ogp.webp`,
-      webpBuffer
-    );
+    const path = `./public/_notion/blog/image/${blog.id}/ogp.webp`;
+    const ogpImagePromise: Promise<void> = writeFile(path, webpBuffer);
+    console.info(`💾 Saved image: ${path}`);
 
     const blockImageUrls = fetchBlockImageUrls(blog.blockList, []);
     const blockImagePromise = Promise.all(
-      blockImageUrls.map(async (blogkImageUrl) => {
-        const response = await fetch(blogkImageUrl.s3Url);
+      blockImageUrls.map(async (blockImageUrl) => {
+        const response = await fetch(blockImageUrl.s3Url);
         const image = await response.arrayBuffer();
         const buffer = Buffer.from(image);
         const webpBuffer = await sharp(buffer)
           .resize({ width: 1920, withoutEnlargement: true })
           .webp()
           .toBuffer();
-        const blockImagePromise: Promise<void> = writeFile(
-          `./public/_notion/blog/image/${blog.id}/${blogkImageUrl.id}.webp`,
-          webpBuffer
-        );
+        const path = `./public/_notion/blog/image/${blog.id}/${blockImageUrl.id}.webp`;
+        const blockImagePromise: Promise<void> = writeFile(path, webpBuffer);
+        console.info(`💾 Saved image: ${path}`);
         return blockImagePromise;
       })
     );
