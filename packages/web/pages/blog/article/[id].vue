@@ -55,7 +55,7 @@ const convert = (
     if (block.type === "ElmImage" && block.props?.src && block.id) {
       results.push({
         from: block.props.src,
-        to: `${config.public.ENDPOINT}/_notion/blog/image/${id}/${block.id}.webp`,
+        to: `/_notion/blog/image/${id}/${block.id}.webp`,
       });
     }
     if (block.children && block.children.length > 0) {
