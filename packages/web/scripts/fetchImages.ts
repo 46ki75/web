@@ -70,15 +70,15 @@ export const fetchImages = async () => {
 
     const blockImageUrls = fetchBlockImageUrls(blog.blockList, []);
     const blockImagePromise = Promise.all(
-      blockImageUrls.map(async (blogkImageUrl) => {
-        const response = await fetch(blogkImageUrl.s3Url);
+      blockImageUrls.map(async (blockImageUrl) => {
+        const response = await fetch(blockImageUrl.s3Url);
         const image = await response.arrayBuffer();
         const buffer = Buffer.from(image);
         const webpBuffer = await sharp(buffer)
           .resize({ width: 1920, withoutEnlargement: true })
           .webp()
           .toBuffer();
-        const path = `./public/_notion/blog/image/${blog.id}/${blogkImageUrl.id}.webp`;
+        const path = `./public/_notion/blog/image/${blog.id}/${blockImageUrl.id}.webp`;
         const blockImagePromise: Promise<void> = writeFile(path, webpBuffer);
         console.info(`💾 Saved image: ${path}`);
         return blockImagePromise;
