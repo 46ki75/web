@@ -42,8 +42,8 @@ importers:
   packages/web:
     dependencies:
       '@elmethis/core':
-        specifier: 1.0.0-alpha.158
-        version: 1.0.0-alpha.158(vue@3.5.13(typescript@5.7.2))
+        specifier: 1.0.0-alpha.159
+        version: 1.0.0-alpha.159(vue@3.5.13(typescript@5.7.2))
       '@iconify/vue':
         specifier: ^4.3.0
         version: 4.3.0(vue@3.5.13(typescript@5.7.2))
@@ -389,8 +389,8 @@ packages:
   '@dual-bundle/import-meta-resolve@4.1.0':
     resolution: {integrity: sha512-+nxncfwHM5SgAtrVzgpzJOI1ol0PkumhVo469KCf9lUi21IGcY90G98VuHm9VRrUypmAzawAHO9bs6hqeADaVg==}
 
-  '@elmethis/core@1.0.0-alpha.158':
-    resolution: {integrity: sha512-dgq+CL7/t3RgnIVGTKlkFxL6yzIH+Kyb//6oTueSuwWmDQjFvtTEe5jpz7jK25LM1rRHq6kTuVhin/TNNntKMg==}
+  '@elmethis/core@1.0.0-alpha.159':
+    resolution: {integrity: sha512-kRKGo7ouDe/BdTWWUj28f9cqpalvpUUqTFE6hltxWnnKxMvkbvg8b+wZtqT5sL3E+xM8SimFoNVyJhUWbVGhVQ==}
     peerDependencies:
       vue: '>=3.4.0'
 
@@ -5139,7 +5139,7 @@ snapshots:
 
   '@dual-bundle/import-meta-resolve@4.1.0': {}
 
-  '@elmethis/core@1.0.0-alpha.158(vue@3.5.13(typescript@5.7.2))':
+  '@elmethis/core@1.0.0-alpha.159(vue@3.5.13(typescript@5.7.2))':
     dependencies:
       '@heroicons/vue': 2.2.0(vue@3.5.13(typescript@5.7.2))
       '@iconify/vue': 4.3.0(vue@3.5.13(typescript@5.7.2))
