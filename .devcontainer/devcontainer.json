@@ -27,13 +27,14 @@
   },
   "forwardPorts": [10000],
   "features": {
+    "ghcr.io/devcontainers-extra/features/starship": {},
+    "ghcr.io/devcontainers/features/github-cli": {},
     "ghcr.io/devcontainers/features/aws-cli": {},
     "ghcr.io/devcontainers/features/node": {},
     "ghcr.io/devcontainers-extra/features/zig": {},
     "ghcr.io/devcontainers/features/rust": {},
-    "ghcr.io/devcontainers/features/terraform": {},
-    "ghcr.io/devcontainers-extra/features/starship": {},
-    "ghcr.io/devcontainers/features/github-cli": {}
+    "./features/cargo-binstall": {},
+    "ghcr.io/devcontainers/features/terraform": {}
   },
   "postCreateCommand": "echo 'eval \"$(starship init bash)\"' >> ~/.bashrc"
 }
