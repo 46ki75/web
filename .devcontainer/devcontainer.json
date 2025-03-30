@@ -34,5 +34,6 @@
     "ghcr.io/devcontainers/features/terraform": {},
     "ghcr.io/devcontainers-extra/features/starship": {},
     "ghcr.io/devcontainers/features/github-cli": {}
-  }
+  },
+  "postCreateCommand": "echo 'eval \"$(starship init bash)\"' >> ~/.bashrc"
 }
