@@ -57,7 +57,13 @@ const convert = (
         from: block.props.src,
         to: `/_notion/blog/image/${id}/${block.id}.webp`,
       });
+    } else if (block.type === "ElmInlineIcon" && block.props?.src && block.id) {
+      results.push({
+        from: block.props.src,
+        to: `/_notion/blog/image/${id}/${block.id}.webp`,
+      });
     }
+
     if (block.children && block.children.length > 0) {
       convert(block.children, results, id);
     }
