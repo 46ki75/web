@@ -86,7 +86,7 @@ export const fetchImages = async () => {
       .toBuffer();
     const path = `./public/_notion/blog/image/${blog.id}/ogp.webp`;
     const ogpImagePromise: Promise<void> = writeFile(path, webpBuffer);
-    console.info(`💾 [OGP] Saved image: ${path}`);
+    console.info(`💾 [🖼️  OGP] Saved image: ${path}`);
 
     // Fetch Block Images
     const blockImageUrls = filterBlockImageUrlsRecursive(blog.blockList, []);
@@ -101,7 +101,7 @@ export const fetchImages = async () => {
           .toBuffer();
         const path = `./public/_notion/blog/image/${blog.id}/${blockImageUrl.id}.webp`;
         const blockImagePromise: Promise<void> = writeFile(path, webpBuffer);
-        console.info(`💾 [Block] Saved image: ${path}`);
+        console.info(`💾 [📷 Block] Saved image: ${path}`);
         return blockImagePromise;
       })
     );
@@ -122,7 +122,7 @@ export const fetchImages = async () => {
           .toBuffer();
         const path = `./public/_notion/blog/image/${blog.id}/${iconImageUrl.id}.webp`;
         const blockImagePromise: Promise<void> = writeFile(path, webpBuffer);
-        console.info(`💾 [Icon] Saved image: ${path}`);
+        console.info(`💾 [🤔 Icon] Saved image: ${path}`);
         return blockImagePromise;
       })
     );
