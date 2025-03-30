@@ -106,7 +106,7 @@ export const fetchImages = async () => {
       })
     );
 
-    // TODO: Fetch InlineIcon Images (RichText > Mention > CustomEmoji)
+    // Fetch InlineIcon Images (RichText > Mention > CustomEmoji)
     const iconImageUrls = filterInlineIconImageUrlsRecursive(
       blog.blockList,
       []
@@ -117,7 +117,7 @@ export const fetchImages = async () => {
         const image = await response.arrayBuffer();
         const buffer = Buffer.from(image);
         const webpBuffer = await sharp(buffer)
-          .resize({ width: 1920, withoutEnlargement: true })
+          .resize({ width: 256, withoutEnlargement: true })
           .webp()
           .toBuffer();
         const path = `./public/_notion/blog/image/${blog.id}/${iconImageUrl.id}.webp`;
