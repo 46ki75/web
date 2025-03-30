@@ -6,6 +6,7 @@
   "customizations": {
     "vscode": {
       "extensions": [
+        "GitHub.vscode-pull-request-github",
         "GitHub.copilot",
         "GitHub.copilot-chat",
         "usernamehw.errorlens",
@@ -20,7 +21,8 @@
         "rust-lang.rust-analyzer",
         "GraphQL.vscode-graphql",
         "Vue.volar",
-        "hashicorp.terraform"
+        "hashicorp.terraform",
+        "fill-labs.dependi"
       ]
     }
   },
