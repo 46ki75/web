@@ -1,0 +1,6 @@
+{
+  "stylelint.validate": ["css", "postcss", "scss", "vue"],
+  "files.associations": {
+    "Justfile": "makefile"
+  }
+}
