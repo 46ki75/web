@@ -121,9 +121,9 @@ export const fetchImages = async () => {
           .webp()
           .toBuffer();
         const path = `./public/_notion/blog/image/${blog.id}/${iconImageUrl.id}.webp`;
-        const blockImagePromise: Promise<void> = writeFile(path, webpBuffer);
+        const iconImagePromise: Promise<void> = writeFile(path, webpBuffer);
         console.info(`💾 [🤔 Icon] Saved image: ${path}`);
-        return blockImagePromise;
+        return iconImagePromise;
       })
     );
 
