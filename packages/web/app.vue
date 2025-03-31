@@ -1,10 +1,14 @@
 <template>
-  <div>
-    <NuxtRouteAnnouncer />
-    <NuxtLayout>
-      <NuxtPage :transition="{ mode: 'out-in' }" />
-    </NuxtLayout>
-  </div>
+  <NuxtLoadingIndicator
+    color="#59b57c"
+    :height="4"
+    :duration="2000"
+    :throttle="50"
+  />
+  <NuxtRouteAnnouncer />
+  <NuxtLayout>
+    <NuxtPage :transition="{ mode: 'out-in' }" />
+  </NuxtLayout>
 </template>
 
 <script lang="ts" setup>

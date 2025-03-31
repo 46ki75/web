@@ -154,6 +154,18 @@ resource "aws_cloudfront_key_value_store" "basic" {
   name = "${terraform.workspace}-46ki75-web-cloudfront-kvs-basic"
 }
 
+resource "aws_cloudfrontkeyvaluestore_key" "shirayuki" {
+  key_value_store_arn = aws_cloudfront_key_value_store.basic.arn
+  key                 = "shirayuki"
+  value               = data.aws_ssm_parameter.cloudfront_basic_shirayuki_password.value
+}
+
+resource "aws_cloudfrontkeyvaluestore_key" "postman" {
+  key_value_store_arn = aws_cloudfront_key_value_store.basic.arn
+  key                 = "shirayuki"
+  value               = data.aws_ssm_parameter.cloudfront_basic_postman_password.value
+}
+
 locals {
   kvs_id = element(split("/", aws_cloudfront_key_value_store.basic.arn), length(split("/", aws_cloudfront_key_value_store.basic.arn)) - 1)
 }
@@ -163,7 +175,7 @@ resource "aws_cloudfront_function" "rename_uri" {
   runtime = "cloudfront-js-2.0"
   comment = "Rename URI to index.html"
   publish = true
-  code = terraform.workspace == "prod" ? file("./assets/renameUriBasic.js") : templatefile("./assets/renameUriBasic.js", {
+  code = terraform.workspace == "prod" ? file("${path.module}/assets/renameUriBasic.js") : templatefile("${path.module}/assets/renameUriBasic.js", {
     KVS_ID = local.kvs_id
   })
   key_value_store_associations = [aws_cloudfront_key_value_store.basic.arn]
@@ -184,4 +196,14 @@ resource "aws_route53_record" "cloudfront" {
 
 output "cloudfront_url" {
   value = "https://${aws_route53_record.cloudfront.fqdn}"
+}
+
+data "aws_ssm_parameter" "cloudfront_basic_shirayuki_password" {
+  name            = "/shared/46ki75/web/ssm/parameter/basic-auth/shirayuki/password"
+  with_decryption = true
+}
+
+data "aws_ssm_parameter" "cloudfront_basic_postman_password" {
+  name            = "/shared/46ki75/web/ssm/parameter/basic-auth/postman/password"
+  with_decryption = true
 }
