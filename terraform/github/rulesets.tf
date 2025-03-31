@@ -18,6 +18,37 @@ resource "github_repository_ruleset" "branch_restrict_deletion" {
   }
 }
 
+resource "github_repository_ruleset" "branch_require_pr" {
+  name        = "branch-require-pr"
+  repository  = github_repository.web.name
+  target      = "branch"
+  enforcement = "active"
+
+  conditions {
+    ref_name {
+      include = ["~DEFAULT_BRANCH", "refs/heads/develop", "refs/heads/release/**/*"]
+      exclude = []
+    }
+  }
+
+  rules {
+    required_status_checks {
+      required_check {
+        context = "Unit Test (crates/http-api)"
+      }
+      required_check {
+        context = "Build Test (packages/web)"
+      }
+      required_check {
+        context = "Lint (packages/web) - ESLint"
+      }
+      required_check {
+        context = "Lint (packages/web) - Stylelint"
+      }
+    }
+  }
+}
+
 resource "github_repository_ruleset" "branch_restrict_creation_release" {
   name        = "branch-restrict-creation-release"
   repository  = github_repository.web.name
