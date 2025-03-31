@@ -20,7 +20,7 @@ resource "github_issue_label" "npm" {
 
 resource "github_issue_label" "terraform" {
   repository  = github_repository.web.name
-  name        = "terraform"
+  name        = "Terraform"
   color       = "7c53b4"
   description = "Pull requests that update terraform lock file."
 }
@@ -28,7 +28,7 @@ resource "github_issue_label" "terraform" {
 resource "github_issue_label" "rust" {
   repository  = github_repository.web.name
   name        = "Rust"
-  color       = "725cf5"
+  color       = "f6c5a2"
   description = "Pull requests that update Cargo.toml or its lock file."
 }
 
