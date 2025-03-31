@@ -48,8 +48,6 @@ resource "github_repository_ruleset" "branch_restrict_deletion" {
   }
 
   rules {
-    creation = true
-    update   = true
     deletion = true
   }
 }
