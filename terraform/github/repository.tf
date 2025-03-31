@@ -1,5 +1,5 @@
 resource "github_repository" "web" {
-  name = local.repository
+  name = "web"
 
   has_downloads        = false
   has_issues           = true
