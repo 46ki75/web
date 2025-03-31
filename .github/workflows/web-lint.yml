@@ -35,21 +35,19 @@ jobs:
         working-directory: packages/web
 
   eslint:
-    name: Lint Test (packages/web) - ESLint
+    name: Lint (packages/web) - ESLint
     needs: setup
     runs-on: ubuntu-latest
 
     steps:
       - name: Run ESLint
         run: pnpm run lint
-        working-directory: packages/web
 
   stylelint:
-    name: Lint Test (packages/web) - Stylelint
+    name: Lint (packages/web) - Stylelint
     needs: setup
     runs-on: ubuntu-latest
 
     steps:
       - name: Run Stylelint
         run: pnpm run stylelint
-        working-directory: packages/web
