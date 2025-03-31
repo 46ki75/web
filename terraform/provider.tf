@@ -45,4 +45,7 @@ resource "null_resource" "validate_workspace" {
   }
 }
 
-
+provider "github" {
+  # token = var.github_token # or use GITHUB_TOKEN env var
+  owner = "46ki75"
+}
