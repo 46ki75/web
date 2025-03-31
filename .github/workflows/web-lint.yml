@@ -11,8 +11,6 @@ jobs:
   eslint:
     name: Setup Environment
     runs-on: ubuntu-latest
-    outputs:
-      node-version: ${{ steps.set-node-version.outputs.node-version }}
 
     steps:
       - uses: actions/checkout@v4
@@ -36,12 +34,11 @@ jobs:
 
       - name: Run ESLint
         run: pnpm run lint
+        working-directory: packages/web
 
   stylelint:
     name: Setup Environment
     runs-on: ubuntu-latest
-    outputs:
-      node-version: ${{ steps.set-node-version.outputs.node-version }}
 
     steps:
       - uses: actions/checkout@v4
@@ -65,3 +62,4 @@ jobs:
 
       - name: Run Stylelint
         run: pnpm run stylelint
+        working-directory: packages/web
