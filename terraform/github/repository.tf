@@ -1,5 +1,5 @@
 resource "github_repository" "web" {
-  name = var.repository
+  name = local.repository
 
   has_downloads        = false
   has_issues           = true

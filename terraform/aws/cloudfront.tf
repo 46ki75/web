@@ -154,6 +154,18 @@ resource "aws_cloudfront_key_value_store" "basic" {
   name = "${terraform.workspace}-46ki75-web-cloudfront-kvs-basic"
 }
 
+resource "aws_cloudfrontkeyvaluestore_key" "shirayuki" {
+  key_value_store_arn = aws_cloudfront_key_value_store.basic.arn
+  key                 = "shirayuki"
+  value               = data.aws_ssm_parameter.cloudfront_basic_shirayuki_password.value
+}
+
+resource "aws_cloudfrontkeyvaluestore_key" "postman" {
+  key_value_store_arn = aws_cloudfront_key_value_store.basic.arn
+  key                 = "shirayuki"
+  value               = data.aws_ssm_parameter.cloudfront_basic_postman_password.value
+}
+
 locals {
   kvs_id = element(split("/", aws_cloudfront_key_value_store.basic.arn), length(split("/", aws_cloudfront_key_value_store.basic.arn)) - 1)
 }
@@ -184,4 +196,14 @@ resource "aws_route53_record" "cloudfront" {
 
 output "cloudfront_url" {
   value = "https://${aws_route53_record.cloudfront.fqdn}"
+}
+
+data "aws_ssm_parameter" "cloudfront_basic_shirayuki_password" {
+  name            = "/shared/46ki75/web/ssm/parameter/basic-auth/shirayuki/password"
+  with_decryption = true
+}
+
+data "aws_ssm_parameter" "cloudfront_basic_postman_password" {
+  name            = "/shared/46ki75/web/ssm/parameter/basic-auth/postman/password"
+  with_decryption = true
 }

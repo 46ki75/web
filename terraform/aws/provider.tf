@@ -14,7 +14,7 @@ terraform {
   # RUN: terraform workspace select dev
   backend "s3" {
     bucket               = "shared-46ki75-web-s3-bucket-terraform-tfstate"
-    workspace_key_prefix = "workspace"
+    workspace_key_prefix = "aws"
     key                  = "terraform.tfstate"
     region               = "ap-northeast-1"
     encrypt              = true
@@ -45,7 +45,17 @@ resource "null_resource" "validate_workspace" {
   }
 }
 
-provider "github" {
-  # token = var.github_token # or use GITHUB_TOKEN env var
-  owner = "46ki75"
+// @see https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity
+data "aws_caller_identity" "current" {}
+
+output "account_id" {
+  value = data.aws_caller_identity.current.account_id
+}
+
+output "caller_arn" {
+  value = data.aws_caller_identity.current.arn
+}
+
+output "caller_user" {
+  value = data.aws_caller_identity.current.user_id
 }
