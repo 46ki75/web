@@ -1,4 +1,4 @@
-name: Build Test - SSG (packages/web)
+name: Build Test (packages/web)
 
 on:
   push:
@@ -6,9 +6,10 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "0 0 * * *"
-    
+
 jobs:
   test:
+    name: Build Test (packages/web)
     runs-on: ubuntu-latest
 
     strategy:

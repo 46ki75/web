@@ -1,0 +1,55 @@
+name: Lint (packages/web)
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * *"
+
+jobs:
+  setup:
+    name: Setup Environment
+    runs-on: ubuntu-latest
+    outputs:
+      node-version: ${{ steps.set-node-version.outputs.node-version }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Use Node.js
+        id: set-node-version
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          registry-url: "https://registry.npmjs.org"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install
+        working-directory: packages/web
+
+  eslint:
+    name: Lint Test (packages/web) - ESLint
+    needs: setup
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Run ESLint
+        run: pnpm run lint
+        working-directory: packages/web
+
+  stylelint:
+    name: Lint Test (packages/web) - Stylelint
+    needs: setup
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Run Stylelint
+        run: pnpm run stylelint
+        working-directory: packages/web
