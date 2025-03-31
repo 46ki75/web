@@ -1,4 +1,4 @@
-name: Unit Test (crates/http-api)
+name: crates/http-api
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
 
 jobs:
   test:
-    name: cargo test
+    name: Unit Test (crates/http-api)
     runs-on: ubuntu-latest
 
     steps:
@@ -17,9 +17,10 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
-          
+
       - name: Setup Rust Toolchain
         uses: actions-rust-lang/setup-rust-toolchain@v1
-      
+
       - name: Run Unit Test
         run: cargo test --lib
+        working-directory: crates/http-api
