@@ -49,8 +49,8 @@ resource "github_repository_ruleset" "branch_require_pr" {
   }
 }
 
-resource "github_repository_ruleset" "branch_restrict_creation_release" {
-  name        = "branch-restrict-creation-release"
+resource "github_repository_ruleset" "branch_restrict_mutation_release" {
+  name        = "branch-restrict-mutation-release"
   repository  = github_repository.web.name
   target      = "branch"
   enforcement = "active"
@@ -64,6 +64,7 @@ resource "github_repository_ruleset" "branch_restrict_creation_release" {
 
   rules {
     creation = true
+    deletion = true
   }
 
   bypass_actors {
