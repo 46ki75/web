@@ -18,6 +18,10 @@ resource "github_repository_ruleset" "branch_restrict_deletion" {
   }
 }
 
+data "github_app" "github_actions" {
+  slug = "github-actions"
+}
+
 resource "github_repository_ruleset" "branch_require_pr" {
   name        = "branch-require-pr"
   repository  = github_repository.web.name
@@ -34,16 +38,20 @@ resource "github_repository_ruleset" "branch_require_pr" {
   rules {
     required_status_checks {
       required_check {
-        context = "Unit Test (crates/http-api)"
+        context        = "Unit Test (crates/http-api)"
+        integration_id = data.github_app.github_actions.id
       }
       required_check {
-        context = "Build Test (packages/web)"
+        context        = "Build Test (packages/web)"
+        integration_id = data.github_app.github_actions.id
       }
       required_check {
-        context = "Lint (packages/web) - ESLint"
+        context        = "Lint (packages/web) - ESLint"
+        integration_id = data.github_app.github_actions.id
       }
       required_check {
-        context = "Lint (packages/web) - Stylelint"
+        context        = "Lint (packages/web) - Stylelint"
+        integration_id = data.github_app.github_actions.id
       }
     }
   }
