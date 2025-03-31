@@ -1,4 +1,4 @@
-name: Unit Test (crates/http-api)
+name: crates/http-api
 
 on:
   push:
