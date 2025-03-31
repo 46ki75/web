@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-async-graphql = "7.0.15"
+async-graphql = "7.0.16"
 async-trait = "0.1.88"
 aws-config = "1.6.0"
 aws-sdk-ssm = "1.68.0"
