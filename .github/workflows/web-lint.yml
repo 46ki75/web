@@ -8,7 +8,7 @@ on:
     - cron: "0 0 * * *"
 
 jobs:
-  setup:
+  eslint:
     name: Setup Environment
     runs-on: ubuntu-latest
     outputs:
@@ -34,20 +34,34 @@ jobs:
         run: pnpm install
         working-directory: packages/web
 
-  eslint:
-    name: Lint (packages/web) - ESLint
-    needs: setup
-    runs-on: ubuntu-latest
-
-    steps:
       - name: Run ESLint
         run: pnpm run lint
 
   stylelint:
-    name: Lint (packages/web) - Stylelint
-    needs: setup
+    name: Setup Environment
     runs-on: ubuntu-latest
+    outputs:
+      node-version: ${{ steps.set-node-version.outputs.node-version }}
 
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Use Node.js
+        id: set-node-version
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          registry-url: "https://registry.npmjs.org"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install
+        working-directory: packages/web
+
       - name: Run Stylelint
         run: pnpm run stylelint
