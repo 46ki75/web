@@ -163,7 +163,7 @@ resource "aws_cloudfront_function" "rename_uri" {
   runtime = "cloudfront-js-2.0"
   comment = "Rename URI to index.html"
   publish = true
-  code = terraform.workspace == "prod" ? file("./assets/renameUriBasic.js") : templatefile("./assets/renameUriBasic.js", {
+  code = terraform.workspace == "prod" ? file("${path.module}/assets/renameUriBasic.js") : templatefile("${path.module}/assets/renameUriBasic.js", {
     KVS_ID = local.kvs_id
   })
   key_value_store_associations = [aws_cloudfront_key_value_store.basic.arn]
