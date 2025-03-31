@@ -1,39 +1,5 @@
 # @see <https://docs.github.com/en/rest/repos/rules?apiVersion=2022-11-28#create-a-repository-ruleset>
 
-data "github_app" "dependabot" {
-  slug = "dependabot"
-}
-
-resource "github_repository_ruleset" "branch_dependabot" {
-  name        = "branch-dependabot"
-  repository  = github_repository.web.name
-  target      = "branch"
-  enforcement = "active"
-
-  conditions {
-    ref_name {
-      include = ["refs/heads/dependabot/**/*"]
-      exclude = []
-    }
-  }
-
-  rules {
-    update   = true
-    deletion = true
-
-    pull_request {
-      require_last_push_approval        = true
-      required_review_thread_resolution = true
-    }
-  }
-
-  bypass_actors {
-    actor_id    = data.github_app.dependabot.id
-    actor_type  = "Integration"
-    bypass_mode = "always"
-  }
-}
-
 resource "github_repository_ruleset" "branch_restrict_deletion" {
   name        = "branch-restrict-deletion"
   repository  = github_repository.web.name
