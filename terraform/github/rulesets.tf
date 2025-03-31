@@ -78,15 +78,15 @@ resource "github_repository_ruleset" "branch_restrict_creation_release" {
   }
 }
 
-resource "github_repository_ruleset" "tag_restrict_mutation" {
-  name        = "tag-restrict-mutation"
+resource "github_repository_ruleset" "tag_release_restrict_mutation" {
+  name        = "tag-release-restrict-mutation"
   repository  = github_repository.web.name
   target      = "tag"
   enforcement = "active"
 
   conditions {
     ref_name {
-      include = ["~ALL"]
+      include = ["refs/tags/v*"]
       exclude = []
     }
   }
