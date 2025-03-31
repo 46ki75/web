@@ -2,7 +2,7 @@
   <NuxtLoadingIndicator
     color="#59b57c"
     :height="4"
-    :duration="3000"
+    :duration="2000"
     :throttle="50"
   />
   <NuxtRouteAnnouncer />
