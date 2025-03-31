@@ -23,3 +23,4 @@ jobs:
 
       - name: Run Unit Test
         run: cargo test --lib
+        working-directory: crates/http-api

@@ -9,7 +9,7 @@ on:
 
 jobs:
   eslint:
-    name: Setup Environment
+    name: Lint (packages/web) - ESLint
     runs-on: ubuntu-latest
 
     steps:
@@ -37,7 +37,7 @@ jobs:
         working-directory: packages/web
 
   stylelint:
-    name: Setup Environment
+    name: Lint (packages/web) - Stylelint
     runs-on: ubuntu-latest
 
     steps:
