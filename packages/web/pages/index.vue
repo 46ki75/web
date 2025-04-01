@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ElmButton } from "@elmethis/core";
+import { ElmButton, ElmKatex } from "@elmethis/core";
 
 const { start, finish } = useLoadingIndicator();
 </script>
@@ -8,6 +8,7 @@ const { start, finish } = useLoadingIndicator();
   <div key="/">
     <div>
       <div>INDEX</div>
+      <ElmKatex expression="x = \frac{ -b \pm \sqrt{b^2 - 4ac} }{2a}" block />
       <div>
         <NuxtLink to="/blog">Blog</NuxtLink>
       </div>
