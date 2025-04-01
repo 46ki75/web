@@ -8,7 +8,7 @@ const { start, finish } = useLoadingIndicator();
   <div key="/">
     <div>
       <div>INDEX</div>
-      <ElmKatex expression="x = \frac{ -b \pm \sqrt{b^2 - 4ac} }{2a}" />
+      <ElmKatex expression="x = \frac{ -b \pm \sqrt{b^2 - 4ac} }{2a}" block />
       <div>
         <NuxtLink to="/blog">Blog</NuxtLink>
       </div>
