@@ -70,5 +70,8 @@ defineProps<BlogMetaProps>();
 
 .image {
   margin-block: 1rem;
+  border-radius: 0.25rem;
+  overflow: hidden;
+  box-shadow: 0 0 0.125rem rgba(black, 0.3);
 }
 </style>
