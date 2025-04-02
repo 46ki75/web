@@ -1,9 +1,9 @@
 import type { ElmJsonRendererProps } from "@elmethis/core";
-import { ENDPOINT } from "../scripts/fetchConfig";
 import { rm, mkdir, writeFile } from "node:fs/promises";
 import sharp from "sharp";
+import type { PrerenderBlog } from "./fetchBlogList";
 
-export const fetchImages = async () => {
+export const fetchImages = async (blogs: PrerenderBlog[]) => {
   console.info("Execute fetchImages()...");
 
   await rm("./public/_notion/blog/image/", { recursive: true, force: true });
@@ -47,32 +47,7 @@ export const fetchImages = async () => {
     return results;
   };
 
-  const response = await fetch(`${ENDPOINT}/api/graphql`, {
-    method: "POST",
-    body: JSON.stringify({
-      query: /* GraphQL */ `
-        query ListBlog {
-          blogList {
-            id
-            ogpImageS3Url
-            blockList
-          }
-        }
-      `,
-    }),
-  });
-
-  const blog: {
-    data: {
-      blogList: Array<{
-        id: string;
-        ogpImageS3Url: string;
-        blockList: ElmJsonRendererProps["json"];
-      }>;
-    };
-  } = await response.json();
-
-  const promises = blog.data.blogList.map(async (blog) => {
+  const promises = blogs.map(async (blog) => {
     await mkdir(`./public/_notion/blog/image/${blog.id}/`, { recursive: true });
 
     // Fetch OGP Images

@@ -1,1 +1,3 @@
-
+User-agent: *
+Disallow:
+Sitemap: https://dev-www.46ki75.com/sitemap-index.xml

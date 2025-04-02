@@ -23,8 +23,6 @@ logs
 .env.*
 !.env.example
 
-_notion
-
 # Rust
 target
 
