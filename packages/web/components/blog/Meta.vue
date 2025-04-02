@@ -15,9 +15,10 @@
 
     <BlogDate :created-at="createdAt" :updated-at="updatedAt" />
 
-    <div class="tag" v-if="tags">
+    <div v-if="tags" class="tag">
       <NuxtLink
         v-for="tag in tags"
+        :key="tag.id"
         :to="`/blog/search?tags=${tag.id}`"
         :style="{ all: 'unset' }"
         :prefetch="false"
@@ -56,7 +57,7 @@ interface BlogMetaProps {
   }>;
 }
 
-const props = defineProps<BlogMetaProps>();
+defineProps<BlogMetaProps>();
 </script>
 
 <style lang="scss" scoped>
@@ -69,5 +70,8 @@ const props = defineProps<BlogMetaProps>();
 
 .image {
   margin-block: 1rem;
+  border-radius: 0.25rem;
+  overflow: hidden;
+  box-shadow: 0 0 0.125rem rgba(black, 0.3);
 }
 </style>

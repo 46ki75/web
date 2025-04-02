@@ -13,16 +13,16 @@
 
         <div class="right">
           <a
+            ref="noopener noreferrer"
             href="https://x.com/46ki75"
             target="_blank"
-            ref="noopener noreferrer"
           >
             <Icon class="icon" icon="mdi:twitter" height="32px" />
           </a>
           <a
+            ref="noopener noreferrer"
             href="https://github.com/46ki75/web"
             target="_blank"
-            ref="noopener noreferrer"
           >
             <Icon class="icon" icon="mdi:github" height="32px" />
           </a>
@@ -51,10 +51,9 @@ const { data } = useAsyncData("BuildDate", async () =>
   justify-content: center;
   align-items: center;
   box-shadow: 0 0 0.125rem rgba(black, 0.3);
-
   transition: background-color 200ms;
-
   background-color: rgba(white, 0.4);
+
   [data-theme="dark"] & {
     background-color: rgba(black, 0.2);
   }
@@ -69,6 +68,7 @@ const { data } = useAsyncData("BuildDate", async () =>
   width: 100%;
   border-width: 1px;
   border-color: rgba(black, 0.2);
+
   [data-theme="dark"] & {
     border-color: rgba(white, 0.3);
   }
@@ -93,8 +93,8 @@ const { data } = useAsyncData("BuildDate", async () =>
 .icon {
   transition: opacity 200ms;
   cursor: pointer;
-
   color: rgba(black, 0.7);
+
   [data-theme="dark"] & {
     color: rgba(white, 0.7);
   }

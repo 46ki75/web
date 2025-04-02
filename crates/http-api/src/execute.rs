@@ -26,7 +26,7 @@ pub async fn execute_axum(
     let status = axum_response.status();
     let headers = axum_response.headers().clone();
     let body = axum_response.into_body();
-    let body_bytes = axum::body::to_bytes(body, 1024 * 1024).await?;
+    let body_bytes = axum::body::to_bytes(body, usize::MAX).await?;
 
     let mut lambda_response = lambda_http::Response::builder().status(status);
 

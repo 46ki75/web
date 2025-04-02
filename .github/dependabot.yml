@@ -11,11 +11,12 @@ updates:
       interval: "daily"
     target-branch: "develop"
     assignees:
-      - "dependabot[bot]"
+      - "46ki75"
     reviewers:
       - "46ki75"
     labels:
       - "npm"
+      - "dependencies"
 
   - package-ecosystem: "cargo"
     directory: "/"
@@ -23,11 +24,12 @@ updates:
       interval: "daily"
     target-branch: "develop"
     assignees:
-      - "dependabot[bot]"
+      - "46ki75"
     reviewers:
       - "46ki75"
     labels:
       - "Rust"
+      - "dependencies"
 
   - package-ecosystem: "terraform"
     directory: "/terraform"
@@ -35,8 +37,9 @@ updates:
       interval: "daily"
     target-branch: "develop"
     assignees:
-      - "dependabot[bot]"
+      - "46ki75"
     reviewers:
       - "46ki75"
     labels:
       - "Terraform"
+      - "dependencies"

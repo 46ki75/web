@@ -14,7 +14,7 @@ terraform {
   # RUN: terraform workspace select dev
   backend "s3" {
     bucket               = "shared-46ki75-web-s3-bucket-terraform-tfstate"
-    workspace_key_prefix = "workspace"
+    workspace_key_prefix = "aws"
     key                  = "terraform.tfstate"
     region               = "ap-northeast-1"
     encrypt              = true
@@ -23,11 +23,12 @@ terraform {
 }
 
 provider "aws" {
+  alias  = "primary"
   region = "ap-northeast-1"
 }
 
 provider "aws" {
-  alias  = "us-east-1"
+  alias  = "global"
   region = "us-east-1"
 }
 
@@ -43,7 +44,6 @@ resource "null_resource" "validate_workspace" {
     }
   }
 }
-
 
 // @see https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity
 data "aws_caller_identity" "current" {}

@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div :key="`/blog/article/${blog.id}`" v-if="blog != null">
+  <article>
+    <div v-if="blog != null" :key="`/blog/article/${blog.id}`">
       <BlogMeta
         :key="`/blog/article/${blog.id}`"
         :title="blog.title"
@@ -21,11 +21,11 @@
         "
       />
 
-      <article :key="`/blog/article/${blog.id}`">
+      <div :key="`/blog/article/${blog.id}`">
         <ElmJsonRenderer :json="data?.blockList ?? []" />
-      </article>
+      </div>
     </div>
-  </div>
+  </article>
 </template>
 
 <script setup lang="ts">
@@ -55,9 +55,15 @@ const convert = (
     if (block.type === "ElmImage" && block.props?.src && block.id) {
       results.push({
         from: block.props.src,
-        to: `${config.public.ENDPOINT}/_notion/blog/image/${id}/${block.id}.webp`,
+        to: `/_notion/blog/image/${id}/${block.id}.webp`,
+      });
+    } else if (block.type === "ElmInlineIcon" && block.props?.src && block.id) {
+      results.push({
+        from: block.props.src,
+        to: `/_notion/blog/image/${id}/${block.id}.webp`,
       });
     }
+
     if (block.children && block.children.length > 0) {
       convert(block.children, results, id);
     }
@@ -100,12 +106,44 @@ const { data } = await useAsyncData(
   }
 );
 
-useSeoMeta({
-  title: blog.value?.title,
-  ogTitle: blog.value?.title,
-  description: blog.value?.description,
-  ogDescription: blog.value?.description,
-  ogImage: `${config.public.ENDPOINT}/_notion/blog/image/${blog.value?.id}/ogp.webp`,
-  twitterCard: "summary_large_image",
-});
+if (blog.value) {
+  useSeoMeta({
+    ogType: "article",
+    ogUrl: `${config.public.ENDPOINT}/blog/article/${blog.value.id}`,
+    title: blog.value.title,
+    ogTitle: blog.value.title,
+    description: blog.value.description,
+    ogDescription: blog.value.description,
+    ogImage: `${config.public.ENDPOINT}/_notion/blog/image/${blog.value.id}/ogp.webp`,
+    twitterCard: "summary_large_image",
+    articlePublishedTime: blog.value.createdAt,
+    articleModifiedTime: blog.value.updatedAt,
+    articleTag: blog.value.tags.map((tag) => tag.name),
+  });
+
+  // @see https://json-ld.org/playground/
+  useHead({
+    script: [
+      {
+        type: "application/ld+json",
+        innerHTML: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Article",
+          name: blog.value.title,
+          headline: blog.value.title,
+          abstract: blog.value.description,
+          image: `${config.public.ENDPOINT}/_notion/blog/image/${blog.value.id}/ogp.webp`,
+          url: `${config.public.ENDPOINT}/blog/article/${blog.value.id}`,
+          author: {
+            "@type": "Person",
+            givenName: "Shirayuki",
+            familyName: "Chomolungma",
+          },
+          datePublished: blog.value.createdAt,
+          dateModified: blog.value.updatedAt,
+        }),
+      },
+    ],
+  });
+}
 </script>

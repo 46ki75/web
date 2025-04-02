@@ -1,10 +1,14 @@
 <template>
-  <div>
-    <NuxtRouteAnnouncer />
-    <NuxtLayout>
-      <NuxtPage :transition="{ mode: 'out-in' }" />
-    </NuxtLayout>
-  </div>
+  <NuxtLoadingIndicator
+    color="#59b57c"
+    :height="4"
+    :duration="2000"
+    :throttle="50"
+  />
+  <NuxtRouteAnnouncer />
+  <NuxtLayout>
+    <NuxtPage :transition="{ mode: 'out-in' }" />
+  </NuxtLayout>
 </template>
 
 <script lang="ts" setup>
@@ -12,6 +16,8 @@ useSeoMeta({
   title: "DEAFULT",
   ogTitle: "DEAFULT",
   author: "Chomolungma Shirayuki",
+  articleAuthor: ["Chomolungma Shirayuki"],
+  twitterSite: "@46ki75",
 });
 </script>
 
@@ -40,16 +46,13 @@ html {
   font-optical-sizing: auto;
   font-weight: normal;
   font-style: normal;
-
-  background-color: grey;
+  background-color: gray;
 }
 
 body {
   margin: 0;
   padding: 0;
-
   transition: background-color 200ms;
-
   background-color: #f2f2f2;
 
   [data-theme="dark"] & {

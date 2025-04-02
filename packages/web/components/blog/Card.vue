@@ -35,8 +35,6 @@
 <script lang="ts" setup>
 import { ElmImage, ElmInlineText } from "@elmethis/core";
 
-const config = useRuntimeConfig();
-
 interface BlogSearchResultProps {
   id: string;
   title: string;
@@ -58,10 +56,8 @@ defineProps<BlogSearchResultProps>();
 
 .container {
   container-type: inline-size;
-
   overflow: hidden;
   border-radius: 0.25rem;
-
   box-shadow: 0 0 0.125rem rgba(black, 0.25);
 }
 
@@ -69,9 +65,7 @@ defineProps<BlogSearchResultProps>();
   all: unset;
   display: flex;
   cursor: pointer;
-
   transition: opacity 200ms, transform 200ms, background-color 200ms;
-
   background-color: rgba(white, 0.3);
 
   [data-theme="dark"] & {
@@ -138,9 +132,9 @@ defineProps<BlogSearchResultProps>();
 }
 
 .bottom {
-  border-top: solid 1px rgba(grey, 0.3);
-
+  border-top: solid 1px rgba(gray, 0.3);
   background-color: rgba(white, 0.5);
+
   [data-theme="dark"] & {
     background-color: rgba(black, 0.5);
   }

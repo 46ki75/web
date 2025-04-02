@@ -1,12 +1,12 @@
 resource "aws_acm_certificate" "cloudfront_cert" {
-  provider = aws.us-east-1 # us-east-1
+  provider = aws.global # us-east-1
 
   domain_name       = data.aws_route53_zone.internal.name
   validation_method = "DNS"
 }
 
 resource "aws_route53_record" "cloudfront_cert_validation" {
-  provider = aws.us-east-1 # us-east-1
+  provider = aws.global # us-east-1
 
   for_each = {
     for dvo in aws_acm_certificate.cloudfront_cert.domain_validation_options :
@@ -25,7 +25,7 @@ resource "aws_route53_record" "cloudfront_cert_validation" {
 }
 
 resource "aws_acm_certificate_validation" "cloudfront_cert_cert" {
-  provider = aws.us-east-1 # us-east-1
+  provider = aws.global # us-east-1
 
   certificate_arn = aws_acm_certificate.cloudfront_cert.arn
   validation_record_fqdns = [

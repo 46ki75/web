@@ -1,13 +1,15 @@
 import type { ElmJsonRendererProps } from "@elmethis/core";
-import { ENDPOINT } from "../nuxt.config";
 import { rm, mkdir, writeFile } from "node:fs/promises";
 import sharp from "sharp";
+import type { PrerenderBlog } from "./fetchBlogList";
 
-export const fetchImages = async () => {
+export const fetchImages = async (blogs: PrerenderBlog[]) => {
+  console.info("Execute fetchImages()...");
+
   await rm("./public/_notion/blog/image/", { recursive: true, force: true });
   await mkdir("./public/_notion/blog/image/", { recursive: true });
 
-  const fetchBlockImageUrls = (
+  const filterBlockImageUrlsRecursive = (
     blocks: ElmJsonRendererProps["json"],
     results: Array<{ id: string; s3Url: string }>
   ): Array<{ id: string; s3Url: string }> => {
@@ -19,41 +21,36 @@ export const fetchImages = async () => {
         });
       }
       if (block.children && block.children.length > 0) {
-        fetchBlockImageUrls(block.children, results);
+        filterBlockImageUrlsRecursive(block.children, results);
       }
     }
 
     return results;
   };
 
-  const response = await fetch(`${ENDPOINT}/api/graphql`, {
-    method: "POST",
-    body: JSON.stringify({
-      query: /* GraphQL */ `
-        query ListBlog {
-          blogList {
-            id
-            ogpImageS3Url
-            blockList
-          }
-        }
-      `,
-    }),
-  });
+  const filterInlineIconImageUrlsRecursive = (
+    blocks: ElmJsonRendererProps["json"],
+    results: Array<{ id: string; s3Url: string }>
+  ): Array<{ id: string; s3Url: string }> => {
+    for (const block of blocks) {
+      if (block.type === "ElmInlineIcon" && block.props?.src && block.id) {
+        results.push({
+          s3Url: block.props.src,
+          id: block.id,
+        });
+      }
+      if (block.children && block.children.length > 0) {
+        filterInlineIconImageUrlsRecursive(block.children, results);
+      }
+    }
 
-  const blog: {
-    data: {
-      blogList: Array<{
-        id: string;
-        ogpImageS3Url: string;
-        blockList: ElmJsonRendererProps["json"];
-      }>;
-    };
-  } = await response.json();
+    return results;
+  };
 
-  const promises = blog.data.blogList.map(async (blog) => {
+  const promises = blogs.map(async (blog) => {
     await mkdir(`./public/_notion/blog/image/${blog.id}/`, { recursive: true });
 
+    // Fetch OGP Images
     const ogpS3Url = blog.ogpImageS3Url;
     const response = await fetch(ogpS3Url);
     const image = await response.arrayBuffer();
@@ -62,30 +59,50 @@ export const fetchImages = async () => {
       .resize({ width: 1920, withoutEnlargement: true })
       .webp()
       .toBuffer();
-    const ogpImagePromise: Promise<void> = writeFile(
-      `./public/_notion/blog/image/${blog.id}/ogp.webp`,
-      webpBuffer
-    );
+    const path = `./public/_notion/blog/image/${blog.id}/ogp.webp`;
+    const ogpImagePromise: Promise<void> = writeFile(path, webpBuffer);
+    console.info(`💾 [🖼️  OGP] Saved image: ${path}`);
 
-    const blockImageUrls = fetchBlockImageUrls(blog.blockList, []);
+    // Fetch Block Images
+    const blockImageUrls = filterBlockImageUrlsRecursive(blog.blockList, []);
     const blockImagePromise = Promise.all(
-      blockImageUrls.map(async (blogkImageUrl) => {
-        const response = await fetch(blogkImageUrl.s3Url);
+      blockImageUrls.map(async (blockImageUrl) => {
+        const response = await fetch(blockImageUrl.s3Url);
         const image = await response.arrayBuffer();
         const buffer = Buffer.from(image);
         const webpBuffer = await sharp(buffer)
           .resize({ width: 1920, withoutEnlargement: true })
           .webp()
           .toBuffer();
-        const blockImagePromise: Promise<void> = writeFile(
-          `./public/_notion/blog/image/${blog.id}/${blogkImageUrl.id}.webp`,
-          webpBuffer
-        );
+        const path = `./public/_notion/blog/image/${blog.id}/${blockImageUrl.id}.webp`;
+        const blockImagePromise: Promise<void> = writeFile(path, webpBuffer);
+        console.info(`💾 [📷 Block] Saved image: ${path}`);
         return blockImagePromise;
       })
     );
 
-    return Promise.all([ogpImagePromise, blockImagePromise]);
+    // Fetch InlineIcon Images (RichText > Mention > CustomEmoji)
+    const iconImageUrls = filterInlineIconImageUrlsRecursive(
+      blog.blockList,
+      []
+    );
+    const iconImagePromise = Promise.all(
+      iconImageUrls.map(async (iconImageUrl) => {
+        const response = await fetch(iconImageUrl.s3Url);
+        const image = await response.arrayBuffer();
+        const buffer = Buffer.from(image);
+        const webpBuffer = await sharp(buffer)
+          .resize({ width: 256, withoutEnlargement: true })
+          .webp()
+          .toBuffer();
+        const path = `./public/_notion/blog/image/${blog.id}/${iconImageUrl.id}.webp`;
+        const iconImagePromise: Promise<void> = writeFile(path, webpBuffer);
+        console.info(`💾 [🤔 Icon] Saved image: ${path}`);
+        return iconImagePromise;
+      })
+    );
+
+    return Promise.all([ogpImagePromise, blockImagePromise, iconImagePromise]);
   });
 
   await Promise.all(promises);

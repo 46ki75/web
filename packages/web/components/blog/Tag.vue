@@ -14,7 +14,7 @@ interface BlogtagProps {
   color: string;
 }
 
-const props = defineProps<BlogtagProps>();
+defineProps<BlogtagProps>();
 </script>
 
 <style lang="scss" scoped>
