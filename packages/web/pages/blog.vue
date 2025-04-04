@@ -15,12 +15,12 @@
 
 .v-enter-active,
 .v-leave-active {
-  transition: opacity 150ms, transform 150ms;
+  transition: opacity 200ms, transform 200ms;
 }
 
 .v-enter-from,
 .v-leave-to {
   opacity: 0;
-  transform: translateY(-16px);
+  transform: translateY(-8px);
 }
 </style>
