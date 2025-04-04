@@ -10,8 +10,6 @@
 
 - `/${STAGE_NAME}/46ki75/web/ssm/parameter/notion/secret`
 - `/shared/46ki75/web/ssm/parameter/notion/database/id`
-- `/shared/46ki75/web/ssm/parameter/basic-auth/shirayuki/password`
-- `/shared/46ki75/web/ssm/parameter/basic-auth/postman/password`
 
 ## Route53 Zones
 
@@ -26,6 +24,11 @@ Please add the following records to the parent hosted zone:
 - `dev-www.46ki75.com` NS
 - `stg-www.46ki75.com` NS
 - `www.46ki75.com` NS
+
+## CloudFront Functions KVS
+
+- dev | stg : `$.key`: shirayuki, `$.value`: password
+- dev | stg : `$.key`: postman, `$.value`: password
 
 ## Domain Design
 
