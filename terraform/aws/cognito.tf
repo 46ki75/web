@@ -3,6 +3,12 @@ resource "aws_cognito_identity_pool" "rum" {
   allow_unauthenticated_identities = true
 }
 
+resource "aws_ssm_parameter" "rum_cognito" {
+  type  = "String"
+  name  = "/${terraform.workspace}/46ki75/web/cognito/id_pool/rum/id"
+  value = aws_cognito_identity_pool.rum.id
+}
+
 resource "aws_iam_role" "unauth" {
   name = "${terraform.workspace}-46ki75-web-iam-role-rum"
 
