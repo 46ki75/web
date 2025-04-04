@@ -48,7 +48,7 @@ resource "aws_s3_bucket_policy" "cloudfront" {
             "AWS:SourceAccount" = "${data.aws_caller_identity.current.account_id}"
           }
           ArnLike = {
-            "aws:SourceArn" = "${aws_cloudwatch_log_delivery_source.cloudfront.arn}:*"
+            "aws:SourceArn" = "arn:aws:logs:us-east-1:${data.aws_caller_identity.current.account_id}:delivery-source:*"
           }
         }
       }
