@@ -2,5 +2,6 @@
   "stylelint.validate": ["css", "postcss", "scss", "vue"],
   "files.associations": {
     "Justfile": "makefile"
-  }
+  },
+  "markdownlint.lintWorkspaceGlobs": ["!pull_request_template.md"]
 }
