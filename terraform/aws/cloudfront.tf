@@ -56,6 +56,8 @@ resource "aws_cloudfront_cache_policy" "http_api" {
 resource "aws_cloudfront_distribution" "default" {
   depends_on = [aws_acm_certificate.cloudfront_cert, aws_acm_certificate_validation.cloudfront_cert_cert]
 
+  comment = terraform.workspace
+
   http_version = "http2and3"
   enabled      = true
 
@@ -148,6 +150,53 @@ resource "aws_cloudfront_distribution" "default" {
   }
 }
 
+# <<< CloudFront Logging v2 <https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/standard-logging.html>
+resource "aws_cloudwatch_log_delivery_destination_policy" "s3_policy" {
+  provider                  = aws.global
+  delivery_destination_name = aws_cloudwatch_log_delivery_destination.cloudfront.name
+  delivery_destination_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "AllowLogsDeliveryToS3"
+        Effect = "Allow"
+        Principal = {
+          Service = "delivery.logs.amazonaws.com"
+        }
+        Action   = "logs:CreateDelivery"
+        Resource = "arn:aws:logs:us-east-1:${data.aws_caller_identity.current.account_id}:delivery-destination:${aws_cloudwatch_log_delivery_destination.cloudfront.name}"
+      }
+    ]
+  })
+}
+
+resource "aws_cloudwatch_log_delivery_destination" "cloudfront" {
+  provider      = aws.global
+  name          = "${terraform.workspace}-46ki75-web-cloudwatch-delivery_destination-cloudfront"
+  output_format = "parquet"
+
+  delivery_destination_configuration {
+    destination_resource_arn = aws_s3_bucket.cloudfront.arn
+  }
+}
+
+resource "aws_cloudwatch_log_delivery_source" "cloudfront" {
+  provider     = aws.global
+  name         = "${terraform.workspace}-46ki75-web-cloudwatch-delivery_source-cloudfront"
+  log_type     = "ACCESS_LOGS"
+  resource_arn = aws_cloudfront_distribution.default.arn
+}
+
+resource "aws_cloudwatch_log_delivery" "cloudfront" {
+  provider                 = aws.global
+  delivery_source_name     = aws_cloudwatch_log_delivery_source.cloudfront.name
+  delivery_destination_arn = aws_cloudwatch_log_delivery_destination.cloudfront.arn
+
+  s3_delivery_configuration {
+    suffix_path = "/{yyyy}/{MM}/{dd}/{HH}"
+  }
+}
+# >>> CloudFront Logging v2
 
 # >>> CloudFront Function
 resource "aws_cloudfront_key_value_store" "basic" {
