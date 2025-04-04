@@ -192,6 +192,21 @@ resource "aws_cloudwatch_log_delivery" "cloudfront" {
   delivery_source_name     = aws_cloudwatch_log_delivery_source.cloudfront.name
   delivery_destination_arn = aws_cloudwatch_log_delivery_destination.cloudfront.arn
 
+  record_fields = [
+    "date",
+    "time",
+    "c-ip",
+    "cs-method",
+    "cs-uri-stem",
+    "sc-status",
+    "cs(Referer)",
+    "cs-uri-query",
+    "x-edge-result-type",
+    "time-taken",
+    "cs-protocol-version",
+    "sc-content-type",
+  ]
+
   s3_delivery_configuration {
     suffix_path = "/{yyyy}/{MM}/{dd}/{HH}"
   }
