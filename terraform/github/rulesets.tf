@@ -18,15 +18,19 @@ resource "github_repository_ruleset" "branch_require_pr" {
   rules {
     required_status_checks {
       required_check {
-        context        = "Build Test (@elmethis/notion-node)"
+        context        = "Unit Test (crates/http-api)"
         integration_id = data.github_app.github_actions.id
       }
       required_check {
-        context        = "Build Test (@elmethis/core)"
+        context        = "Build Test (packages/web)"
         integration_id = data.github_app.github_actions.id
       }
       required_check {
-        context        = "Unit Test (crates/elmethis-notion)"
+        context        = "Lint (packages/web) - ESLint"
+        integration_id = data.github_app.github_actions.id
+      }
+      required_check {
+        context        = "Lint (packages/web) - Stylelint"
         integration_id = data.github_app.github_actions.id
       }
     }
