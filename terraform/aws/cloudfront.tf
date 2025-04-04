@@ -154,18 +154,6 @@ resource "aws_cloudfront_key_value_store" "basic" {
   name = "${terraform.workspace}-46ki75-web-cloudfront-kvs-basic"
 }
 
-resource "aws_cloudfrontkeyvaluestore_key" "shirayuki" {
-  key_value_store_arn = aws_cloudfront_key_value_store.basic.arn
-  key                 = "shirayuki"
-  value               = data.aws_ssm_parameter.cloudfront_basic_shirayuki_password.value
-}
-
-resource "aws_cloudfrontkeyvaluestore_key" "postman" {
-  key_value_store_arn = aws_cloudfront_key_value_store.basic.arn
-  key                 = "shirayuki"
-  value               = data.aws_ssm_parameter.cloudfront_basic_postman_password.value
-}
-
 locals {
   kvs_id = element(split("/", aws_cloudfront_key_value_store.basic.arn), length(split("/", aws_cloudfront_key_value_store.basic.arn)) - 1)
 }
