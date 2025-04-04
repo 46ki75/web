@@ -23,7 +23,7 @@ resource "aws_cloudfront_cache_policy" "s3" {
     }
 
     query_strings_config {
-      query_string_behavior = "all"
+      query_string_behavior = "none"
     }
 
     enable_accept_encoding_brotli = true
@@ -196,14 +196,4 @@ resource "aws_route53_record" "cloudfront" {
 
 output "cloudfront_url" {
   value = "https://${aws_route53_record.cloudfront.fqdn}"
-}
-
-data "aws_ssm_parameter" "cloudfront_basic_shirayuki_password" {
-  name            = "/shared/46ki75/web/ssm/parameter/basic-auth/shirayuki/password"
-  with_decryption = true
-}
-
-data "aws_ssm_parameter" "cloudfront_basic_postman_password" {
-  name            = "/shared/46ki75/web/ssm/parameter/basic-auth/postman/password"
-  with_decryption = true
 }
