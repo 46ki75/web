@@ -6,10 +6,21 @@ use async_graphql::*;
 pub struct QueryRoot {
     /// Instance of `BlogQueryResolver`. Injected at the entory point.
     pub blog_query_resolver: std::sync::Arc<crate::resolver::blog::query::BlogQueryResolver>,
+
+    /// Instance of `WebConfigResolver`. Injected at the entory point.
+    pub web_config_query_resolver:
+        std::sync::Arc<crate::resolver::web_config::query::WebConfigQueryResolver>,
 }
 
 #[async_graphql::Object]
 impl QueryRoot {
+    /// Returns a web runtime config.
+    pub async fn web_config(
+        &self,
+    ) -> Result<crate::resolver::web_config::query::WebConfig, async_graphql::Error> {
+        Ok(self.web_config_query_resolver.web_config())
+    }
+
     /// Returns a single blog post by page id.
     pub async fn blog(
         &self,

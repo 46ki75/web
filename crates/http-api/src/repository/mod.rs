@@ -5,3 +5,4 @@
 //! Repositories are injected into the Service layer.
 
 pub mod blog;
+pub mod web_config;
