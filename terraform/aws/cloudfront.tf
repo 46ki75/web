@@ -246,6 +246,21 @@ resource "aws_route53_record" "cloudfront" {
   }
 }
 
+// @see <https://docs.aws.amazon.com/acm/latest/userguide/setup.html#setup-caa>
+resource "aws_route53_record" "cloudfront_caa" {
+  zone_id = data.aws_route53_zone.internal.zone_id
+  name    = aws_acm_certificate.cloudfront_cert.domain_name
+  type    = "CAA"
+  ttl     = 300
+  records = [
+    "0 issue \"amazon.com\"",
+    "0 issue \"amazontrust.com\"",
+    "0 issue \"awstrust.com\"",
+    "0 issue \"amazonaws.com\"",
+    "0 issuewild \"amazon.com\""
+  ]
+}
+
 output "cloudfront_url" {
   value = "https://${aws_route53_record.cloudfront.fqdn}"
 }
