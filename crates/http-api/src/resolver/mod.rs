@@ -6,3 +6,5 @@
 
 #[allow(missing_docs)]
 pub mod blog;
+#[allow(missing_docs)]
+pub mod web_config;

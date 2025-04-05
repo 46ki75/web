@@ -26,6 +26,18 @@ pub async fn init_schema(
         .get_or_try_init(|| async {
             tracing::debug!("Initializing GraphQL schema");
 
+            let web_config_repository =
+                std::sync::Arc::new(crate::repository::web_config::WebConfigRepositoryImpl {
+                    config: config.clone(),
+                });
+
+            let web_config_service = crate::service::web_config::WebConfigService {
+                web_config_repository,
+            };
+
+            let web_config_query_resolver =
+                std::sync::Arc::new(crate::resolver::web_config::query::WebConfigQueryResolver {});
+
             let blog_repository =
                 std::sync::Arc::new(crate::repository::blog::BlogRepositoryImpl {
                     config: config.clone(),
@@ -43,11 +55,13 @@ pub async fn init_schema(
             > = async_graphql::Schema::build(
                 crate::query::QueryRoot {
                     blog_query_resolver,
+                    web_config_query_resolver,
                 },
                 async_graphql::EmptyMutation,
                 async_graphql::EmptySubscription,
             )
             .data(blog_service)
+            .data(web_config_service)
             .finish();
             Ok(schema)
         })
