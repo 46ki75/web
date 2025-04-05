@@ -1,5 +1,5 @@
 import { version } from "./package.json";
-import { ENDPOINT, GTAG, STAGE_NAME } from "./scripts/fetchConfig";
+import { ENDPOINT, STAGE_NAME } from "./scripts/fetchConfig";
 
 export default defineAppConfig({
   APPLICATION_VERSION: version,
