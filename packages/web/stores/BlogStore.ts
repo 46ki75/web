@@ -18,12 +18,12 @@ interface Blog {
 
 export const useBlogStore = defineStore("BlogSearchStore", {
   state: () => {
-    const config = useRuntimeConfig();
+    const config = useAppConfig();
 
     const { data: tags } = useAsyncData("SearchListTags", async () => {
       const response = await $fetch<{
         data: { tagList: Array<BlogTag> };
-      }>(`${config.public.ENDPOINT}/api/graphql`, {
+      }>(`${config.ENDPOINT}/api/graphql`, {
         method: "POST",
         body: {
           query: /* GraphQL */ `
@@ -44,7 +44,7 @@ export const useBlogStore = defineStore("BlogSearchStore", {
     const { data: blogs } = useAsyncData("SearchListBlogs", async () => {
       const response = await $fetch<{
         data: { blogList: Blog[] };
-      }>(`${config.public.ENDPOINT}/api/graphql`, {
+      }>(`${config.ENDPOINT}/api/graphql`, {
         method: "POST",
         body: {
           query: /* GraphQL */ `

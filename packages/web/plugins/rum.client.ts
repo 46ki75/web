@@ -1,23 +1,24 @@
-import { AwsRum, type AwsRumConfig } from "aws-rum-web";
+import { AwsRum } from "aws-rum-web";
 
-const config: AwsRumConfig = {
-  sessionSampleRate: 1,
-  endpoint: "https://dataplane.rum.ap-northeast-1.amazonaws.com",
-  telemetries: ["performance", "errors", "http"],
-  identityPoolId: "", // TODO: implement
-  allowCookies: false,
-  enableXRay: false,
-};
+export default defineNuxtPlugin(async () => {
+  const appConfig = useAppConfig();
+  const runtimeConfig = useRuntimeConfig();
 
-const APPLICATION_ID: string = "uuid"; // TODO: implement
-const APPLICATION_VERSION: string = "0.1.0";
-const APPLICATION_REGION: string = "ap-northeast-1";
+  const APPLICATION_ID = runtimeConfig.public.RUM_APP_MONITOR_ID;
+  const APPLICATION_VERSION = appConfig.APPLICATION_VERSION;
+  const APPLICATION_REGION = "ap-northeast-1";
 
-export default defineNuxtPlugin(() => {
   const _awsRum: AwsRum = new AwsRum(
     APPLICATION_ID,
     APPLICATION_VERSION,
     APPLICATION_REGION,
-    config
+    {
+      sessionSampleRate: 1,
+      endpoint: "https://dataplane.rum.ap-northeast-1.amazonaws.com",
+      telemetries: ["performance", "errors", "http"],
+      identityPoolId: runtimeConfig.public.RUM_IDPOOL_ID,
+      allowCookies: false,
+      enableXRay: false,
+    }
   );
 });

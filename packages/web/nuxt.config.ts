@@ -2,6 +2,9 @@
 
 import { ENDPOINT, GTAG, STAGE_NAME } from "./scripts/fetchConfig";
 import { fetchPrerenderRoutes } from "./scripts/fetchRoutes";
+import { fetchCloudWatchRumConfig } from "./scripts/fetchCloudWatchRumConfig";
+
+const { RUM_IDPOOL_ID, RUM_APP_MONITOR_ID } = await fetchCloudWatchRumConfig();
 
 export default defineNuxtConfig({
   compatibilityDate: "2024-11-01",
@@ -11,6 +14,8 @@ export default defineNuxtConfig({
     public: {
       STAGE_NAME,
       ENDPOINT,
+      RUM_IDPOOL_ID,
+      RUM_APP_MONITOR_ID,
     },
   },
   vite: {
