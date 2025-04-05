@@ -34,7 +34,7 @@ import { ElmJsonRenderer, type ElmJsonRendererProps } from "@elmethis/core";
 const blogStore = useBlogStore();
 
 const route = useRoute();
-const config = useRuntimeConfig();
+const appConfig = useAppConfig();
 
 const blog = computed(() => {
   if (blogStore.blogs) {
@@ -84,7 +84,7 @@ const { data } = await useAsyncData(
   async () => {
     const blog = await $fetch<{
       data: { blog: { id: string; blockList: ElmJsonRendererProps["json"] } };
-    }>(`${config.public.ENDPOINT}/api/graphql`, {
+    }>(`${appConfig.ENDPOINT}/api/graphql`, {
       method: "POST",
       body: {
         query: /* GraphQL */ `
@@ -109,12 +109,12 @@ const { data } = await useAsyncData(
 if (blog.value) {
   useSeoMeta({
     ogType: "article",
-    ogUrl: `${config.public.ENDPOINT}/blog/article/${blog.value.id}`,
+    ogUrl: `${appConfig.ENDPOINT}/blog/article/${blog.value.id}`,
     title: blog.value.title,
     ogTitle: blog.value.title,
     description: blog.value.description,
     ogDescription: blog.value.description,
-    ogImage: `${config.public.ENDPOINT}/_notion/blog/image/${blog.value.id}/ogp.webp`,
+    ogImage: `${appConfig.ENDPOINT}/_notion/blog/image/${blog.value.id}/ogp.webp`,
     twitterCard: "summary_large_image",
     articlePublishedTime: blog.value.createdAt,
     articleModifiedTime: blog.value.updatedAt,
@@ -132,8 +132,8 @@ if (blog.value) {
           name: blog.value.title,
           headline: blog.value.title,
           abstract: blog.value.description,
-          image: `${config.public.ENDPOINT}/_notion/blog/image/${blog.value.id}/ogp.webp`,
-          url: `${config.public.ENDPOINT}/blog/article/${blog.value.id}`,
+          image: `${appConfig.ENDPOINT}/_notion/blog/image/${blog.value.id}/ogp.webp`,
+          url: `${appConfig.ENDPOINT}/blog/article/${blog.value.id}`,
           author: {
             "@type": "Person",
             givenName: "Shirayuki",

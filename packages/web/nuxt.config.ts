@@ -1,6 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 
-import { ENDPOINT, GTAG, STAGE_NAME } from "./scripts/fetchConfig";
+import { ENDPOINT, GTAG } from "./scripts/fetchConfig";
 import { fetchPrerenderRoutes } from "./scripts/fetchRoutes";
 import { fetchCloudWatchRumConfig } from "./scripts/fetchCloudWatchRumConfig";
 
@@ -12,8 +12,6 @@ export default defineNuxtConfig({
   modules: ["@pinia/nuxt"],
   runtimeConfig: {
     public: {
-      STAGE_NAME,
-      ENDPOINT,
       RUM_IDPOOL_ID,
       RUM_APP_MONITOR_ID,
     },
