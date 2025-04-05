@@ -21,4 +21,18 @@ impl WebConfigService {
 
         Ok(result)
     }
+
+    /// Fetches a CloudWatch RUM App Monitor ID from AWS SSM Parameter Store.
+    pub async fn fetch_rum_app_monitor_id(&self) -> Result<String, crate::error::Error> {
+        let stage_name = self.web_config_repository.get_stage_name();
+
+        let parameter_name = format!("/{}/46ki75/web/rum/monitor/id", stage_name);
+
+        let result = self
+            .web_config_repository
+            .fetch_parameter(&parameter_name)
+            .await?;
+
+        Ok(result)
+    }
 }
