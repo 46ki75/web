@@ -7,7 +7,6 @@ resource "aws_cloudwatch_metric_alarm" "lambda_http" {
   metric_name = "Errors"
   dimensions = {
     FunctionName = aws_lambda_alias.http_api.function_name
-    Resource     = aws_lambda_alias.http_api.function_name
   }
 
   period              = 60
