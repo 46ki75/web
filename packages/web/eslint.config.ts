@@ -1,5 +1,5 @@
 import type { Linter } from "eslint";
-import configs from "eslint/config";
+import configs, { globalIgnores } from "eslint/config";
 
 import pluginVue from "eslint-plugin-vue";
 import globals from "globals";
@@ -40,9 +40,12 @@ const config = configs.defineConfig([
   eslintConfigPrettier,
 
   // General
-  {
-    ignores: [".nuxt/**/*", ".output/**/*", "dist/**/*", "node_modules/**/*"],
-  },
+  globalIgnores([
+    "**/.nuxt/**/*",
+    "**/.output/**/*",
+    "**/dist/**/*",
+    "**/node_modules/**/*",
+  ]),
 ]);
 
 export default config;

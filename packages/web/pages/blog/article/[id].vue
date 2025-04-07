@@ -52,7 +52,7 @@ const convert = (
   id: string
 ) => {
   for (const block of blocks) {
-    if (block.type === "ElmImage" && block.props?.src && block.id) {
+    if (block.type === "ElmBlockImage" && block.props?.src && block.id) {
       results.push({
         from: block.props.src,
         to: `/_notion/blog/image/${id}/${block.id}.webp`,
