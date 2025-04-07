@@ -33,6 +33,19 @@ pub async fn function_handler(
 
     let app = axum::Router::new()
         .route(
+            "/api/health",
+            axum::routing::get(|| async {
+                #[derive(serde::Serialize)]
+                struct Status {
+                    status: String,
+                }
+
+                axum::Json(Status {
+                    status: "ok".to_string(),
+                })
+            }),
+        )
+        .route(
             "/api/graphql",
             axum::routing::post(crate::execute::graphql_handler),
         )
