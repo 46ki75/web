@@ -17,7 +17,7 @@
     "stylelint": "stylelint '**/*.vue'"
   },
   "dependencies": {
-    "@elmethis/core": "1.0.0-alpha.178",
+    "@elmethis/core": "1.0.0-alpha.181",
     "@iconify/vue": "^4.3.0",
     "@pinia/nuxt": "0.10.1",
     "@vueuse/core": "^13.0.0",
