@@ -23,7 +23,7 @@ pub struct Config {
     pub notionrs_client: std::sync::Arc<notionrs::client::Client>,
 
     /// Extended Notion API client.
-    pub elmethis_notion_client: std::sync::Arc<elmethis_notion::client::Client>,
+    pub elmethis_notion_client: std::sync::Arc<notion_to_jarkup::client::Client>,
 }
 
 impl Config {
@@ -109,8 +109,12 @@ impl Config {
     /// Creates a new elmethis-notion client using the Notion API key.
     pub fn get_elmethis_notion_client(
         notion_api_key: &str,
-    ) -> std::sync::Arc<elmethis_notion::client::Client> {
-        let get_elmethis_notion_client = elmethis_notion::client::Client::new(notion_api_key);
+    ) -> std::sync::Arc<notion_to_jarkup::client::Client> {
+        let get_elmethis_notion_client = notion_to_jarkup::client::Client {
+            notionrs_client: notionrs::client::Client::new().secret(notion_api_key),
+            reqwest_client: reqwest::Client::new(),
+            enable_unsupported_block: true,
+        };
         std::sync::Arc::new(get_elmethis_notion_client)
     }
 

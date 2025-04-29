@@ -91,7 +91,11 @@ impl BlogRepository for BlogRepositoryImpl {
     }
 
     async fn get_block_children(&self, page_id: &str) -> Result<String, crate::error::Error> {
-        let mut client = elmethis_notion::client::Client::new(&self.config.notion_api_key);
+        let client = notion_to_jarkup::client::Client {
+            notionrs_client: notionrs::client::Client::new().secret(&self.config.notion_api_key),
+            reqwest_client: reqwest::Client::new(),
+            enable_unsupported_block: true,
+        };
 
         let response = client.convert_block(page_id).await.map_err(|e| {
             tracing::error!("An error occurred while invoke Notion API: {}", e);
