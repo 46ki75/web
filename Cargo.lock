@@ -2358,9 +2358,9 @@ checksum = "0676bb32a98c1a483ce53e500a81ad9c3d5b3f7c920c28c24e9cb0980d0b5bc8"
 
 [[package]]
 name = "notion-to-jarkup"
-version = "0.2.0"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "61ae0ed1fc660d0c2eed1e88de9d581935adf7dabc5cbdd0da612389c0c32fde"
+checksum = "220a5cb6d7c8cdede89302da40ca6451360c8dfbc35c2616e63ca02bee70b28f"
 dependencies = [
  "async-recursion",
  "html-meta-scraper",
