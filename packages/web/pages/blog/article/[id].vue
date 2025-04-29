@@ -22,14 +22,17 @@
       />
 
       <div :key="`/blog/article/${blog.id}`">
-        <ElmJsonRenderer :json="data?.blockList ?? []" />
+        <ElmJsonComponentRenderer :json-components="data?.blockList ?? []" />
       </div>
     </div>
   </article>
 </template>
 
 <script setup lang="ts">
-import { ElmJsonRenderer, type ElmJsonRendererProps } from "@elmethis/core";
+import {
+  ElmJsonComponentRenderer,
+  type ElmJsonComponentRendererProps,
+} from "@elmethis/core";
 
 const blogStore = useBlogStore();
 
@@ -47,7 +50,7 @@ const blog = computed(() => {
 });
 
 const convert = (
-  blocks: ElmJsonRendererProps["json"],
+  blocks: ElmJsonComponentRendererProps["jsonComponents"],
   results: Array<{ from: string; to: string }>,
   id: string
 ) => {

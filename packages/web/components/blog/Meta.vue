@@ -11,7 +11,7 @@
       "
     />
 
-    <ElmHeading1 :text="title" disable-fragment-identifier />
+    <ElmHeading :level="1" :text="title" disable-fragment-identifier />
 
     <BlogDate :created-at="createdAt" :updated-at="updatedAt" />
 
@@ -39,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElmBreadcrumb, ElmHeading1, ElmImage } from "@elmethis/core";
+import { ElmBreadcrumb, ElmHeading, ElmImage } from "@elmethis/core";
 
 interface BlogMetaProps {
   title: string;

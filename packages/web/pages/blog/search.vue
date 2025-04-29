@@ -19,7 +19,7 @@
       />
 
       <div class="tag-container">
-        <ElmHeading3 text="タグ一覧" disable-fragment-identifier />
+        <ElmHeading :level="3" text="タグ一覧" disable-fragment-identifier />
         <div v-if="blogStore.tags" class="tag-pool">
           <BlogTag
             v-for="tag in blogStore.tags"
@@ -33,7 +33,11 @@
       </div>
 
       <div class="tag-container">
-        <ElmHeading3 text="選択されたタグ" disable-fragment-identifier />
+        <ElmHeading
+          :level="3"
+          text="選択されたタグ"
+          disable-fragment-identifier
+        />
         <TransitionGroup name="tag" class="tag-pool" tag="dev">
           <BlogTag
             v-for="tag in blogStore.selectedTags"
@@ -50,7 +54,7 @@
         >
       </div>
 
-      <ElmHeading3 text="検索結果" disable-fragment-identifier />
+      <ElmHeading :level="3" text="検索結果" disable-fragment-identifier />
 
       <TransitionGroup name="search" class="search-results" tag="div">
         <div
@@ -73,7 +77,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ElmButton, ElmHeading3, ElmTextField } from "@elmethis/core";
+import { ElmButton, ElmHeading, ElmTextField } from "@elmethis/core";
 import { Icon } from "@iconify/vue";
 import { watchDebounced } from "@vueuse/core";
 
