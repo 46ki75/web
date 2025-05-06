@@ -13,6 +13,10 @@ const { start, finish } = useLoadingIndicator();
         <NuxtLink to="/blog">Blog</NuxtLink>
       </div>
 
+      <div>
+        <NuxtLink to="/image-converter">Image Converter</NuxtLink>
+      </div>
+
       <ElmButton block @click="start">LOADING START</ElmButton>
       <ElmButton block @click="finish">LOADING STOP</ElmButton>
     </div>

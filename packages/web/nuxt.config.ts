@@ -27,6 +27,9 @@ export default defineNuxtConfig({
         },
       },
     },
+    optimizeDeps: {
+      exclude: ["web-image-converter"],
+    },
   },
   nitro: {
     prerender: {

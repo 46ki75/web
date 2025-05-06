@@ -63,6 +63,9 @@ importers:
       aws-rum-web:
         specifier: ^1.21.0
         version: 1.21.0
+      comlink:
+        specifier: ^4.4.2
+        version: 4.4.2
       fuse.js:
         specifier: ^7.1.0
         version: 7.1.0
@@ -84,9 +87,15 @@ importers:
       vue:
         specifier: ^3.5.13
         version: 3.5.13(typescript@5.8.2)
+      vue-image-converter:
+        specifier: ^0.1.0
+        version: 0.1.0(vue@3.5.13(typescript@5.8.2))
       vue-router:
         specifier: ^4.5.0
         version: 4.5.0(vue@3.5.13(typescript@5.8.2))
+      web-image-converter:
+        specifier: ^0.1.0
+        version: 0.1.0
     devDependencies:
       eslint:
         specifier: ^9.23.0
@@ -1206,6 +1215,7 @@ packages:
 
   '@oxc-parser/wasm@0.60.0':
     resolution: {integrity: sha512-Dkf9/D87WGBCW3L0+1DtpAfL4SrNsgeRvxwjpKCtbH7Kf6K+pxrT0IridaJfmWKu1Ml+fDvj+7HEyBcfUC/TXQ==}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
 
   '@oxc-project/types@0.56.5':
     resolution: {integrity: sha512-skY3kOJwp22W4RkaadH1hZ3hqFHjkRrIIE0uQ4VUg+/Chvbl+2pF+B55IrIk2dgsKXS57YEUsJuN6I6s4rgFjA==}
@@ -2250,6 +2260,9 @@ packages:
 
   colord@2.9.3:
     resolution: {integrity: sha512-jeC1axXpnb0/2nn/Y1LPuLdgXBLH7aDcHu4KEKfqw3CUhX7ZpfBSlPKyqXE6btIgEzfWtrX3/tyBCaCvXvMkOw==}
+
+  comlink@4.4.2:
+    resolution: {integrity: sha512-OxGdvBmJuNKSCMO4NTl1L47VRp6xn2wG4F/2hYzB6tiCb709otOxtEYCSvK80PtjODfXXZu8ds+Nw5kVCjqd2g==}
 
   comma-separated-tokens@2.0.3:
     resolution: {integrity: sha512-Fu4hJdvzeylCfQPp9SGWidpzrMs7tTrlu6Vb8XGaRGck8QSNZJJp538Wrb60Lax4fPwR64ViY468OIUTbRlGZg==}
@@ -5103,6 +5116,11 @@ packages:
     peerDependencies:
       eslint: ^8.57.0 || ^9.0.0
 
+  vue-image-converter@0.1.0:
+    resolution: {integrity: sha512-fYo3Fyq9SjdLCsMkXjr4jaiIuQSoAyrYWI9j+jAOi7jW1hjGxsxBAynUxtMLbtYvGtCjO5MDXP3ltadn0WmejA==}
+    peerDependencies:
+      vue: '3.5'
+
   vue-router@4.5.0:
     resolution: {integrity: sha512-HDuk+PuH5monfNuY+ct49mNmkCRK4xJAV9Ts4z9UFc4rzdDnxQLyCMGGc8pKhZhHTVzfanpNwB/lwqevcBwI4w==}
     peerDependencies:
@@ -5118,6 +5136,9 @@ packages:
 
   walker@1.0.8:
     resolution: {integrity: sha512-ts/8E8l5b7kY0vlWLewOkDXMmPdLcVV4GmOQLyxuSswIJsweeFZtAsMF7k1Nszz+TYBQrlYRmzOnr398y1JemQ==}
+
+  web-image-converter@0.1.0:
+    resolution: {integrity: sha512-IDANm1hJcG1Vgng5lbGokCknENifCoblOFhAmHSPEx+9aYQBk8jsPSFq9H90mUDbFykk79LPL9PTz583ot0w8A==}
 
   web-vitals@3.5.2:
     resolution: {integrity: sha512-c0rhqNcHXRkY/ogGDJQxZ9Im9D19hDihbzSQJrsioex+KnFgmMzBiy57Z1EjkhX/+OjyBpclDCzz2ITtjokFmg==}
@@ -7637,6 +7658,8 @@ snapshots:
       color-string: 1.9.1
 
   colord@2.9.3: {}
+
+  comlink@4.4.2: {}
 
   comma-separated-tokens@2.0.3: {}
 
@@ -10925,6 +10948,13 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  vue-image-converter@0.1.0(vue@3.5.13(typescript@5.8.2)):
+    dependencies:
+      '@elmethis/core': 0.1.0(vue@3.5.13(typescript@5.8.2))
+      '@mdi/js': 7.4.47
+      '@vueuse/core': 13.1.0(vue@3.5.13(typescript@5.8.2))
+      vue: 3.5.13(typescript@5.8.2)
+
   vue-router@4.5.0(vue@3.5.13(typescript@5.8.2)):
     dependencies:
       '@vue/devtools-api': 6.6.4
@@ -10943,6 +10973,8 @@ snapshots:
   walker@1.0.8:
     dependencies:
       makeerror: 1.0.12
+
+  web-image-converter@0.1.0: {}
 
   web-vitals@3.5.2: {}
 
