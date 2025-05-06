@@ -8,6 +8,7 @@ export const fetchPrerenderRoutes = async (
   const routes = [
     "/",
     "/about",
+    "/image-converter",
     "/blog",
     "/blog/article",
     ...articleRoutes,
