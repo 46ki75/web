@@ -1,9 +1,11 @@
 <template>
   <div class="wrapper">
-    <ImageConverter
-      v-if="imageConverterFunctionMap"
-      :image-converter-function-map="imageConverterFunctionMap"
-    />
+    <div class="inner">
+      <ImageConverter
+        v-if="imageConverterFunctionMap"
+        :image-converter-function-map="imageConverterFunctionMap"
+      />
+    </div>
   </div>
 </template>
 
@@ -34,13 +36,17 @@ onMounted(() => {
 });
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 .wrapper {
+  width: 100%;
   box-sizing: border-box;
   padding: 1rem;
-  max-width: 1200px;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.inner {
+  max-width: 1200px;
 }
 </style>
