@@ -44,6 +44,10 @@ onMounted(() => {
   display: flex;
   justify-content: center;
   align-items: center;
+
+  @media (width <= 600px) {
+    padding: 0.5rem;
+  }
 }
 
 .inner {

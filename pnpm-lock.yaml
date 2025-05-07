@@ -88,8 +88,8 @@ importers:
         specifier: ^3.5.13
         version: 3.5.13(typescript@5.8.2)
       vue-image-converter:
-        specifier: ^0.1.0
-        version: 0.1.0(vue@3.5.13(typescript@5.8.2))
+        specifier: ^0.1.1
+        version: 0.1.1(vue@3.5.13(typescript@5.8.2))
       vue-router:
         specifier: ^4.5.0
         version: 4.5.0(vue@3.5.13(typescript@5.8.2))
@@ -5122,8 +5122,8 @@ packages:
     peerDependencies:
       eslint: ^8.57.0 || ^9.0.0
 
-  vue-image-converter@0.1.0:
-    resolution: {integrity: sha512-fYo3Fyq9SjdLCsMkXjr4jaiIuQSoAyrYWI9j+jAOi7jW1hjGxsxBAynUxtMLbtYvGtCjO5MDXP3ltadn0WmejA==}
+  vue-image-converter@0.1.1:
+    resolution: {integrity: sha512-xkdiYbD5HlStynI9hzn57KQlbUcYEIjLLlOXYlrjf9M1pQ+qkhF97rH5CDdhIndFsWxrDMR5B/vCqp1nIfAaYw==}
     peerDependencies:
       vue: '3.5'
 
@@ -10956,7 +10956,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  vue-image-converter@0.1.0(vue@3.5.13(typescript@5.8.2)):
+  vue-image-converter@0.1.1(vue@3.5.13(typescript@5.8.2)):
     dependencies:
       '@elmethis/core': 0.1.2(vue@3.5.13(typescript@5.8.2))
       '@mdi/js': 7.4.47
