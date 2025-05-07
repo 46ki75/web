@@ -41,6 +41,12 @@ export default defineNuxtConfig({
   app: {
     head: {
       htmlAttrs: { lang: "ja" },
+      meta: [
+        {
+          name: "theme-color",
+          content: "#cccfd5",
+        },
+      ],
       link: [
         { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
         { rel: "preconnect", href: "https://fonts.googleapis.com" },
