@@ -41,6 +41,12 @@ useSeoMeta({
 </style>
 
 <style lang="scss">
+* {
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+  box-shadow: none;
+}
+
 html {
   font-family: "Noto Sans JP", sans-serif;
   font-optical-sizing: auto;
