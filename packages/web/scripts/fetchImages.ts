@@ -1,4 +1,4 @@
-import type { ElmJsonRendererProps } from "@elmethis/core";
+import type { Component } from "jarkup-ts";
 import { rm, mkdir, writeFile } from "node:fs/promises";
 import sharp from "sharp";
 import type { PrerenderBlog } from "./fetchBlogList";
@@ -10,18 +10,18 @@ export const fetchImages = async (blogs: PrerenderBlog[]) => {
   await mkdir("./public/_notion/blog/image/", { recursive: true });
 
   const filterBlockImageUrlsRecursive = (
-    blocks: ElmJsonRendererProps["json"],
+    components: Component[],
     results: Array<{ id: string; s3Url: string }>
   ): Array<{ id: string; s3Url: string }> => {
-    for (const block of blocks) {
-      if (block.type === "ElmBlockImage" && block.props?.src && block.id) {
+    for (const component of components) {
+      if (component.type === "Image" && component.props?.src && component.id) {
         results.push({
-          s3Url: block.props.src,
-          id: block.id,
+          s3Url: component.props.src,
+          id: component.id,
         });
       }
-      if (block.children && block.children.length > 0) {
-        filterBlockImageUrlsRecursive(block.children, results);
+      if (component.slots && "default" in component.slots) {
+        filterBlockImageUrlsRecursive(component.slots.default, results);
       }
     }
 
@@ -29,18 +29,18 @@ export const fetchImages = async (blogs: PrerenderBlog[]) => {
   };
 
   const filterInlineIconImageUrlsRecursive = (
-    blocks: ElmJsonRendererProps["json"],
+    components: Component[],
     results: Array<{ id: string; s3Url: string }>
   ): Array<{ id: string; s3Url: string }> => {
-    for (const block of blocks) {
-      if (block.type === "ElmInlineIcon" && block.props?.src && block.id) {
+    for (const component of components) {
+      if (component.type === "Icon" && component.props?.src && component.id) {
         results.push({
-          s3Url: block.props.src,
-          id: block.id,
+          s3Url: component.props.src,
+          id: component.id,
         });
       }
-      if (block.children && block.children.length > 0) {
-        filterInlineIconImageUrlsRecursive(block.children, results);
+      if (component.slots && "default" in component.slots) {
+        filterInlineIconImageUrlsRecursive(component.slots.default, results);
       }
     }
 

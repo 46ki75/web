@@ -29,10 +29,8 @@
 </template>
 
 <script setup lang="ts">
-import {
-  ElmJsonComponentRenderer,
-  type ElmJsonComponentRendererProps,
-} from "@elmethis/core";
+import { ElmJsonComponentRenderer } from "@elmethis/core";
+import type { Component } from "jarkup-ts";
 
 const blogStore = useBlogStore();
 
@@ -50,25 +48,25 @@ const blog = computed(() => {
 });
 
 const convert = (
-  blocks: ElmJsonComponentRendererProps["jsonComponents"],
+  blocks: Component[],
   results: Array<{ from: string; to: string }>,
   id: string
 ) => {
   for (const block of blocks) {
-    if (block.type === "ElmBlockImage" && block.props?.src && block.id) {
+    if (block.type === "Image" && block.props?.src && block.id) {
       results.push({
         from: block.props.src,
         to: `/_notion/blog/image/${id}/${block.id}.webp`,
       });
-    } else if (block.type === "ElmInlineIcon" && block.props?.src && block.id) {
+    } else if (block.type === "Icon" && block.props?.src && block.id) {
       results.push({
         from: block.props.src,
         to: `/_notion/blog/image/${id}/${block.id}.webp`,
       });
     }
 
-    if (block.children && block.children.length > 0) {
-      convert(block.children, results, id);
+    if (block.slots && "default" in block.slots) {
+      convert(block.slots.default, results, id);
     }
   }
 
@@ -79,14 +77,14 @@ const convert = (
   );
   const deserialized = JSON.parse(converted);
 
-  return deserialized as ElmJsonRendererProps["json"];
+  return deserialized as Component[];
 };
 
 const { data } = await useAsyncData(
   `/blog/article/${route.params.id}`,
   async () => {
     const blog = await $fetch<{
-      data: { blog: { id: string; blockList: ElmJsonRendererProps["json"] } };
+      data: { blog: { id: string; blockList: Component[] } };
     }>(`${appConfig.ENDPOINT}/api/graphql`, {
       method: "POST",
       body: {
