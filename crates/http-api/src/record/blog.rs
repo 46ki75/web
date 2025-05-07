@@ -75,10 +75,10 @@ pub enum BlogStatusRecord {
     Archived,
 }
 
-impl TryFrom<notionrs::object::select::Select> for BlogTagRecord {
+impl TryFrom<notionrs_types::object::select::Select> for BlogTagRecord {
     type Error = crate::error::Error;
 
-    fn try_from(tag: notionrs::object::select::Select) -> Result<Self, Self::Error> {
+    fn try_from(tag: notionrs_types::object::select::Select) -> Result<Self, Self::Error> {
         let id = tag.id.ok_or_else(|| {
             tracing::error!("Notion database invalid schema: Tags.id");
             crate::error::Error::NotionDatabaseInvalidSchema("Tags.id".to_string())
@@ -92,34 +92,34 @@ impl TryFrom<notionrs::object::select::Select> for BlogTagRecord {
         })?;
 
         let color = match select_color {
-            notionrs::object::select::SelectColor::Blue => {
+            notionrs_types::object::select::SelectColor::Blue => {
                 crate::record::blog::BlogTagColorRecord::Blue
             }
-            notionrs::object::select::SelectColor::Default => {
+            notionrs_types::object::select::SelectColor::Default => {
                 crate::record::blog::BlogTagColorRecord::Default
             }
-            notionrs::object::select::SelectColor::Brown => {
+            notionrs_types::object::select::SelectColor::Brown => {
                 crate::record::blog::BlogTagColorRecord::Brown
             }
-            notionrs::object::select::SelectColor::Gray => {
+            notionrs_types::object::select::SelectColor::Gray => {
                 crate::record::blog::BlogTagColorRecord::Gray
             }
-            notionrs::object::select::SelectColor::Green => {
+            notionrs_types::object::select::SelectColor::Green => {
                 crate::record::blog::BlogTagColorRecord::Green
             }
-            notionrs::object::select::SelectColor::Orange => {
+            notionrs_types::object::select::SelectColor::Orange => {
                 crate::record::blog::BlogTagColorRecord::Orange
             }
-            notionrs::object::select::SelectColor::Pink => {
+            notionrs_types::object::select::SelectColor::Pink => {
                 crate::record::blog::BlogTagColorRecord::Pink
             }
-            notionrs::object::select::SelectColor::Purple => {
+            notionrs_types::object::select::SelectColor::Purple => {
                 crate::record::blog::BlogTagColorRecord::Purple
             }
-            notionrs::object::select::SelectColor::Red => {
+            notionrs_types::object::select::SelectColor::Red => {
                 crate::record::blog::BlogTagColorRecord::Red
             }
-            notionrs::object::select::SelectColor::Yellow => {
+            notionrs_types::object::select::SelectColor::Yellow => {
                 crate::record::blog::BlogTagColorRecord::Yellow
             }
         };
@@ -128,10 +128,10 @@ impl TryFrom<notionrs::object::select::Select> for BlogTagRecord {
     }
 }
 
-impl TryFrom<notionrs::object::page::PageResponse> for BlogRecord {
+impl TryFrom<notionrs_types::object::page::PageResponse> for BlogRecord {
     type Error = crate::error::Error;
 
-    fn try_from(value: notionrs::object::page::PageResponse) -> Result<Self, Self::Error> {
+    fn try_from(value: notionrs_types::object::page::PageResponse) -> Result<Self, Self::Error> {
         let page = value;
 
         let id = page.id;
@@ -177,7 +177,7 @@ impl TryFrom<notionrs::object::page::PageResponse> for BlogRecord {
             tracing::error!("Notion database property not found: Tags");
             crate::error::Error::NotionDatabasePropertyNotFound("Tags".to_string())
         })? {
-            notionrs::object::page::PageProperty::MultiSelect(multi_select) => multi_select
+            notionrs_types::object::page::PageProperty::MultiSelect(multi_select) => multi_select
                 .clone()
                 .multi_select
                 .into_iter()

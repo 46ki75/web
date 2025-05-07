@@ -1,10 +1,10 @@
-import type { ElmJsonRendererProps } from "@elmethis/core";
+import type { Component } from "jarkup-ts";
 import { ENDPOINT } from "./fetchConfig";
 
 export interface PrerenderBlog {
   id: string;
   ogpImageS3Url: string;
-  blockList: ElmJsonRendererProps["json"];
+  blockList: Component[];
   updatedAt: string;
 }
 

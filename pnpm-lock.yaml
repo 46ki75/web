@@ -109,6 +109,9 @@ importers:
       globals:
         specifier: ^16.0.0
         version: 16.0.0
+      jarkup-ts:
+        specifier: ^0.4.1
+        version: 0.4.1
       postcss-html:
         specifier: ^1.8.0
         version: 1.8.0
@@ -3234,6 +3237,9 @@ packages:
     resolution: {integrity: sha512-2P4SQ0HrLQ+fw6llpLnOaGAvN2Zu6778SJMrCUwns4fOoG9ayrTiZk3VV8sCPkVZF8ab0zksVpS8FDY5pRCNBA==}
     engines: {node: '>=10'}
     hasBin: true
+
+  jarkup-ts@0.4.1:
+    resolution: {integrity: sha512-am2irSmB84S9aWtpcXnOGqvbXlr7WCemD2trA0HXeE7P0sjH/3nhsOo/kzIOjQdYeeNkyCy6yZxk1LTHR7onBw==}
 
   jest-changed-files@29.7.0:
     resolution: {integrity: sha512-fEArFiwf1BpQ+4bXSprcDc3/x4HSzL4al2tozwVpDFpsxALjLYdyiIK4e5Vz66GQJIbXJ82+35PtysofptNX2w==}
@@ -8663,6 +8669,8 @@ snapshots:
       chalk: 4.1.2
       filelist: 1.0.4
       minimatch: 3.1.2
+
+  jarkup-ts@0.4.1: {}
 
   jest-changed-files@29.7.0:
     dependencies:

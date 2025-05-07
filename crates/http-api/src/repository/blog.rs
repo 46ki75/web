@@ -68,7 +68,7 @@ impl BlogRepository for BlogRepositoryImpl {
         &self,
     ) -> Result<Vec<crate::record::blog::BlogRecord>, crate::error::Error> {
         let filter =
-            notionrs::object::request::filter::Filter::status_equals("Status", "Published");
+            notionrs_types::object::request::filter::Filter::status_equals("Status", "Published");
 
         let request = self
             .config
@@ -134,7 +134,7 @@ impl BlogRepository for BlogRepositoryImpl {
         })?;
 
         let url = match response.block {
-            notionrs::object::block::Block::Image { image } => image.get_url(),
+            notionrs_types::object::block::Block::Image { image } => image.get_url(),
             _ => {
                 return Err(crate::error::Error::NotionDatabaseInvalidSchema(
                     "The requested block is not an Image block.".to_string(),
@@ -175,7 +175,7 @@ impl BlogRepository for BlogRepositoryImpl {
         })?;
 
         let tags_property = match properties {
-            notionrs::object::database::DatabaseProperty::MultiSelect(property) => {
+            notionrs_types::object::database::DatabaseProperty::MultiSelect(property) => {
                 &property.multi_select.options
             }
             _ => {
@@ -199,15 +199,13 @@ impl BlogRepository for BlogRepositoryImpl {
         &self,
         tags: Vec<String>,
     ) -> Result<Vec<crate::record::blog::BlogRecord>, crate::error::Error> {
-        let mut filters: Vec<notionrs::object::request::filter::Filter> =
-            vec![notionrs::object::request::filter::Filter::status_equals(
-                "Status",
-                "Published",
-            )];
+        let mut filters: Vec<notionrs_types::object::request::filter::Filter> = vec![
+            notionrs_types::object::request::filter::Filter::status_equals("Status", "Published"),
+        ];
 
         for tag in tags {
             filters.push(
-                notionrs::object::request::filter::Filter::multi_select_contains("Tags", tag),
+                notionrs_types::object::request::filter::Filter::multi_select_contains("Tags", tag),
             );
         }
 
@@ -215,7 +213,9 @@ impl BlogRepository for BlogRepositoryImpl {
             .config
             .notionrs_client
             .query_database()
-            .filter(notionrs::object::request::filter::Filter::and(filters))
+            .filter(notionrs_types::object::request::filter::Filter::and(
+                filters,
+            ))
             .database_id(&self.config.notion_blog_database_id);
 
         let response = request.send().await.map_err(|e| {
