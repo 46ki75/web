@@ -56,7 +56,7 @@ body {
   background-color: #f2f2f2;
 
   [data-theme="dark"] & {
-    background-color: #262626;
+    background-color: #25282e;
   }
 }
 </style>
