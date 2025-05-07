@@ -14,16 +14,12 @@
       </div>
     </main>
     <nav class="side"><BlogSide /></nav>
-    <ElmParallax
-      image-url1="/image/blog/bg1.webp"
-      image-url2="/image/blog/bg2.webp"
-    />
     <ElmPagetop />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ElmParallax, ElmPagetop } from "@elmethis/core";
+import { ElmPagetop } from "@elmethis/core";
 import { Icon } from "@iconify/vue";
 </script>
 

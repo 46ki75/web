@@ -46,7 +46,6 @@ html {
   font-optical-sizing: auto;
   font-weight: normal;
   font-style: normal;
-  background-color: gray;
 }
 
 body {
