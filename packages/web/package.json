@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "predev": "tsx ./scripts/prepare.ts",
-    "dev": "nuxt dev",
+    "dev": "nuxt dev --no-fork",
     "pregenerate": "tsx ./scripts/prepare.ts",
     "generate": "nuxt generate",
     "preview": "serve .output/public",
