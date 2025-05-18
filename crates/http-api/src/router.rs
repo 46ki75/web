@@ -10,9 +10,6 @@ pub async fn init_router() -> Result<axum::Router, lambda_http::Error> {
 
     let blog_service = std::sync::Arc::new(crate::service::blog::BlogService { blog_repository });
 
-    let blog_controller =
-        std::sync::Arc::new(crate::controller::blog::BlogController { blog_service });
-
     let app = axum::Router::new()
         .route(
             "/api/health",
@@ -33,27 +30,13 @@ pub async fn init_router() -> Result<axum::Router, lambda_http::Error> {
         )
         .route(
             "/api/blog/image/ogp/{page_id}",
-            axum::routing::get(
-                |axum::extract::State(blog_controller): axum::extract::State<
-                    std::sync::Arc<crate::controller::blog::BlogController>,
-                >,
-                 axum::extract::Path(page_id): axum::extract::Path<String>| async move {
-                    blog_controller.handle_fetch_ogp_image(page_id).await
-                },
-            ),
+            axum::routing::get(crate::controller::blog::handle_fetch_ogp_image),
         )
         .route(
             "/api/blog/image/block/{block_id}",
-            axum::routing::get(
-                |axum::extract::State(blog_controller): axum::extract::State<
-                    std::sync::Arc<crate::controller::blog::BlogController>,
-                >,
-                 axum::extract::Path(block_id): axum::extract::Path<String>| async move {
-                    blog_controller.handle_fetch_block_image(block_id).await
-                },
-            ),
+            axum::routing::get(crate::controller::blog::handle_fetch_ogp_image),
         )
-        .with_state(blog_controller.clone());
+        .with_state(blog_service);
 
     Ok(app)
 }
