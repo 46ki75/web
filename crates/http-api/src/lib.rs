@@ -24,7 +24,7 @@ pub async fn function_handler(
 
     let app = crate::router::init_router().await?;
 
-    let response = crate::execute::execute_axum(app, event).await?;
+    let response = crate::execute::execute_axum(app.clone(), event).await?;
 
     Ok(response)
 }
