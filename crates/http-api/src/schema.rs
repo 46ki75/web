@@ -12,9 +12,7 @@ static SCHEMA: tokio::sync::OnceCell<
 > = tokio::sync::OnceCell::const_new();
 
 /// Initializes the GraphQL schema.
-pub async fn init_schema(
-    config: &crate::config::Config,
-) -> Result<
+pub async fn init_schema() -> Result<
     &'static async_graphql::Schema<
         crate::query::QueryRoot,
         async_graphql::EmptyMutation,
@@ -27,9 +25,7 @@ pub async fn init_schema(
             tracing::debug!("Initializing GraphQL schema");
 
             let web_config_repository =
-                std::sync::Arc::new(crate::repository::web_config::WebConfigRepositoryImpl {
-                    config: config.clone(),
-                });
+                std::sync::Arc::new(crate::repository::web_config::WebConfigRepositoryImpl {});
 
             let web_config_service = crate::service::web_config::WebConfigService {
                 web_config_repository,
@@ -39,9 +35,7 @@ pub async fn init_schema(
                 std::sync::Arc::new(crate::resolver::web_config::query::WebConfigQueryResolver {});
 
             let blog_repository =
-                std::sync::Arc::new(crate::repository::blog::BlogRepositoryImpl {
-                    config: config.clone(),
-                });
+                std::sync::Arc::new(crate::repository::blog::BlogRepositoryImpl {});
 
             let blog_service = crate::service::blog::BlogService { blog_repository };
 
