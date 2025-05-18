@@ -4,9 +4,6 @@
 /// Repository that fetches data regarding web frontend runtime config.
 #[async_trait::async_trait]
 pub trait WebConfigRepository {
-    /// Get a current stage name (e.g, `dev``).
-    fn get_stage_name(&self) -> String;
-
     /// Fetches a string parameter from SSM Parameter Store.
     async fn fetch_parameter(&self, parameter_name: &str) -> Result<String, crate::error::Error>;
 }
@@ -15,21 +12,14 @@ pub trait WebConfigRepository {
 ///
 /// This struct provides a concrete implementation of the `WebConfigRepository` trait.
 #[derive(Debug, Clone)]
-pub struct WebConfigRepositoryImpl {
-    /// The application configuration.
-    pub config: crate::config::Config,
-}
+pub struct WebConfigRepositoryImpl {}
 
 #[async_trait::async_trait]
 impl WebConfigRepository for WebConfigRepositoryImpl {
-    fn get_stage_name(&self) -> String {
-        self.config.stage_name.clone()
-    }
-
     async fn fetch_parameter(&self, parameter_name: &str) -> Result<String, crate::error::Error> {
-        let parameter = self
-            .config
-            .ssm_client
+        let ssm_client = crate::cache::get_or_init_ssm_client().await;
+
+        let parameter = ssm_client
             .get_parameter()
             .name(parameter_name)
             .send()

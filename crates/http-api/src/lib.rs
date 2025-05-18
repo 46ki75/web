@@ -2,7 +2,7 @@
 
 //! // TODO: Write documentation for this crate.
 
-pub mod config;
+pub mod cache;
 pub mod controller;
 pub mod entity;
 pub mod error;

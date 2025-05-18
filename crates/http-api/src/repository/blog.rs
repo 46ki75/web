@@ -43,10 +43,7 @@ pub trait BlogRepository {
 /// This struct provides a concrete implementation of the `BlogRepository` trait,
 /// using external dependencies such as the Notion API client to interact with the blog database.
 #[derive(Debug, Clone)]
-pub struct BlogRepositoryImpl {
-    /// The application configuration.
-    pub config: crate::config::Config,
-}
+pub struct BlogRepositoryImpl {}
 
 #[async_trait::async_trait]
 impl BlogRepository for BlogRepositoryImpl {
@@ -54,7 +51,9 @@ impl BlogRepository for BlogRepositoryImpl {
         &self,
         page_id: &str,
     ) -> Result<crate::record::blog::BlogRecord, crate::error::Error> {
-        let request = self.config.notionrs_client.get_page().page_id(page_id);
+        let notionrs_client = crate::cache::get_or_init_notionrs_client().await?;
+
+        let request = notionrs_client.get_page().page_id(page_id);
 
         let blog = request.send().await.map_err(|e| {
             tracing::error!("An error occurred while invoke Notion API: {}", e);
@@ -67,15 +66,17 @@ impl BlogRepository for BlogRepositoryImpl {
     async fn list_blogs(
         &self,
     ) -> Result<Vec<crate::record::blog::BlogRecord>, crate::error::Error> {
+        let notionrs_client = crate::cache::get_or_init_notionrs_client().await?;
+
+        let notion_blog_database_id = crate::cache::get_or_init_notion_blog_database_id().await?;
+
         let filter =
             notionrs_types::object::request::filter::Filter::status_equals("Status", "Published");
 
-        let request = self
-            .config
-            .notionrs_client
+        let request = notionrs_client
             .query_database_all()
             .filter(filter)
-            .database_id(&self.config.notion_blog_database_id);
+            .database_id(notion_blog_database_id);
 
         let response = request.send().await.map_err(|e| {
             tracing::error!("An error occurred while invoke Notion API: {}", e);
@@ -91,11 +92,7 @@ impl BlogRepository for BlogRepositoryImpl {
     }
 
     async fn get_block_children(&self, page_id: &str) -> Result<String, crate::error::Error> {
-        let client = notion_to_jarkup::client::Client {
-            notionrs_client: notionrs::client::Client::new().secret(&self.config.notion_api_key),
-            reqwest_client: reqwest::Client::new(),
-            enable_unsupported_block: true,
-        };
+        let client = crate::cache::get_or_init_notion_to_jarkup_client().await?;
 
         let response = client.convert_block(page_id).await.map_err(|e| {
             tracing::error!("An error occurred while invoke Notion API: {}", e);
@@ -126,7 +123,9 @@ impl BlogRepository for BlogRepositoryImpl {
         &self,
         block_id: &str,
     ) -> Result<bytes::Bytes, crate::error::Error> {
-        let request = self.config.notionrs_client.get_block().block_id(block_id);
+        let notionrs_client = crate::cache::get_or_init_notionrs_client().await?;
+
+        let request = notionrs_client.get_block().block_id(block_id);
 
         let response = request.send().await.map_err(|e| {
             tracing::error!("An error occurred while invoke Notion API: {}", e);
@@ -158,11 +157,13 @@ impl BlogRepository for BlogRepositoryImpl {
     async fn list_tags(
         &self,
     ) -> Result<Vec<crate::record::blog::BlogTagRecord>, crate::error::Error> {
-        let request = self
-            .config
-            .notionrs_client
+        let notionrs_client = crate::cache::get_or_init_notionrs_client().await?;
+
+        let notion_blog_database_id = crate::cache::get_or_init_notion_blog_database_id().await?;
+
+        let request = notionrs_client
             .retrieve_database()
-            .database_id(&self.config.notion_blog_database_id);
+            .database_id(notion_blog_database_id);
 
         let response = request.send().await.map_err(|e| {
             tracing::error!("An error occurred while invoke Notion API: {}", e);
@@ -199,6 +200,10 @@ impl BlogRepository for BlogRepositoryImpl {
         &self,
         tags: Vec<String>,
     ) -> Result<Vec<crate::record::blog::BlogRecord>, crate::error::Error> {
+        let notionrs_client = crate::cache::get_or_init_notionrs_client().await?;
+
+        let notion_blog_database_id = crate::cache::get_or_init_notion_blog_database_id().await?;
+
         let mut filters: Vec<notionrs_types::object::request::filter::Filter> = vec![
             notionrs_types::object::request::filter::Filter::status_equals("Status", "Published"),
         ];
@@ -209,14 +214,12 @@ impl BlogRepository for BlogRepositoryImpl {
             );
         }
 
-        let request = self
-            .config
-            .notionrs_client
+        let request = notionrs_client
             .query_database()
             .filter(notionrs_types::object::request::filter::Filter::and(
                 filters,
             ))
-            .database_id(&self.config.notion_blog_database_id);
+            .database_id(notion_blog_database_id);
 
         let response = request.send().await.map_err(|e| {
             tracing::error!("An error occurred while invoke Notion API: {}", e);

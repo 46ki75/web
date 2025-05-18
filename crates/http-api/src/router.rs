@@ -6,12 +6,8 @@ static ROUTER: tokio::sync::OnceCell<axum::Router> = tokio::sync::OnceCell::cons
 pub async fn init_router() -> Result<&'static axum::Router, crate::error::Error> {
     ROUTER
         .get_or_try_init(|| async {
-            let config = crate::config::Config::init_config().await?;
-
             let blog_repository =
-                std::sync::Arc::new(crate::repository::blog::BlogRepositoryImpl {
-                    config: config.clone(),
-                });
+                std::sync::Arc::new(crate::repository::blog::BlogRepositoryImpl {});
 
             let blog_service =
                 std::sync::Arc::new(crate::service::blog::BlogService { blog_repository });
