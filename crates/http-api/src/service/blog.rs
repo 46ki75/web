@@ -40,6 +40,13 @@ impl BlogService {
         Ok(block_children)
     }
 
+    /// Infers mime-type from bytes.
+    pub fn infer_mime_type(&self, image_bytes: &bytes::Bytes) -> String {
+        infer::get(&image_bytes)
+            .map(|t| t.to_string())
+            .unwrap_or(String::from("application/octet-stream"))
+    }
+
     /// Fetches OGP image binary by its blog page ID.
     pub async fn fetch_ogp_image_by_id(
         &self,
@@ -57,26 +64,7 @@ impl BlogService {
             .fetch_image_by_url(&ogp_image_s3_url)
             .await?;
 
-        let img = image::ImageReader::new(std::io::Cursor::new(image_bytes))
-            .with_guessed_format()
-            .map_err(|e| {
-                tracing::error!("Failed to guess image format: {}", e);
-                crate::error::Error::ImageFormat(e.to_string())
-            })?
-            .decode()
-            .map_err(|e| {
-                tracing::error!("Failed to decode image: {}", e);
-                crate::error::Error::ImageDecode(e.to_string())
-            })?;
-
-        let encoder = webp::Encoder::from_image(&img).map_err(|e| {
-            tracing::error!("Failed to encode image: {}", e);
-            crate::error::Error::ImageEncode(e.to_string())
-        })?;
-
-        let webp_bytes = bytes::Bytes::from(encoder.encode(80.0).to_vec());
-
-        Ok(Some(webp_bytes))
+        Ok(Some(image_bytes))
     }
 
     /// Fetches image bynary of the block by its block ID.
@@ -89,26 +77,7 @@ impl BlogService {
             .fetch_image_by_block_id(block_id)
             .await?;
 
-        let img = image::ImageReader::new(std::io::Cursor::new(image_bytes))
-            .with_guessed_format()
-            .map_err(|e| {
-                tracing::error!("Failed to guess image format: {}", e);
-                crate::error::Error::ImageFormat(e.to_string())
-            })?
-            .decode()
-            .map_err(|e| {
-                tracing::error!("Failed to decode image: {}", e);
-                crate::error::Error::ImageDecode(e.to_string())
-            })?;
-
-        let encoder = webp::Encoder::from_image(&img).map_err(|e| {
-            tracing::error!("Failed to encode image: {}", e);
-            crate::error::Error::ImageEncode(e.to_string())
-        })?;
-
-        let webp_bytes = bytes::Bytes::from(encoder.encode(80.0).to_vec());
-
-        Ok(Some(webp_bytes))
+        Ok(Some(image_bytes))
     }
 
     /// Fetches the tag by its tag ID.
