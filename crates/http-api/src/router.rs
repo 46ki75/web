@@ -36,7 +36,7 @@ pub async fn init_router() -> Result<&'static axum::Router, crate::error::Error>
                 )
                 .route(
                     "/api/blog/image/block/{block_id}",
-                    axum::routing::get(crate::controller::blog::handle_fetch_ogp_image),
+                    axum::routing::get(crate::controller::blog::handle_fetch_block_image),
                 )
                 .with_state(blog_service);
 

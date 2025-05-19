@@ -23,9 +23,10 @@ pub async fn handle_fetch_ogp_image(
 
     let response = match image_bytes {
         Some(bytes) => {
+            let mime_type = blog_service.infer_mime_type(&bytes);
             let response = axum::response::Response::builder()
                 .status(200)
-                .header("content-type", "image/webp")
+                .header("content-type", mime_type)
                 .body(axum::body::Body::from(bytes))
                 .map_err(|e| {
                     tracing::error!("Failed to build response: {}", e);
@@ -56,14 +57,17 @@ pub async fn handle_fetch_block_image(
         })?;
 
     let response = match image_bytes {
-        Some(bytes) => Ok(axum::response::Response::builder()
-            .status(200)
-            .header("content-type", "image/webp")
-            .body(axum::body::Body::from(bytes))
-            .map_err(|e| {
-                tracing::error!("Failed to build response: {}", e);
-                (axum::http::StatusCode::INTERNAL_SERVER_ERROR, e.to_string())
-            })),
+        Some(bytes) => {
+            let mime_type = blog_service.infer_mime_type(&bytes);
+            Ok(axum::response::Response::builder()
+                .status(200)
+                .header("content-type", mime_type)
+                .body(axum::body::Body::from(bytes))
+                .map_err(|e| {
+                    tracing::error!("Failed to build response: {}", e);
+                    (axum::http::StatusCode::INTERNAL_SERVER_ERROR, e.to_string())
+                }))
+        }
         None => Err((axum::http::StatusCode::NOT_FOUND, "Not Found".to_string())),
     }?;
 
