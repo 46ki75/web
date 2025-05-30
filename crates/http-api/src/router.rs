@@ -38,7 +38,16 @@ pub async fn init_router() -> Result<&'static axum::Router, crate::error::Error>
                     "/api/blog/image/block/{block_id}",
                     axum::routing::get(crate::controller::blog::handle_fetch_block_image),
                 )
-                .with_state(blog_service);
+                .with_state(blog_service)
+                .layer(
+                    tower_http::compression::CompressionLayer::new()
+                        .deflate(true)
+                        .gzip(true)
+                        .br(true)
+                        .zstd(true),
+                )
+                .layer(tower_http::normalize_path::NormalizePathLayer::trim_trailing_slash())
+                .layer(tower_http::catch_panic::CatchPanicLayer::new());
 
             Ok(app)
         })

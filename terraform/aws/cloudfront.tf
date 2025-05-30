@@ -53,6 +53,58 @@ resource "aws_cloudfront_cache_policy" "http_api" {
   }
 }
 
+resource "aws_cloudfront_origin_request_policy" "all_viewer" {
+
+  name = "${terraform.workspace}-46ki75-web-cloudfront-origin_request_policy-all_viewer"
+
+  cookies_config {
+    cookie_behavior = "all"
+  }
+  headers_config {
+    header_behavior = "allExcept"
+    headers {
+      items = ["Host"]
+    }
+  }
+  query_strings_config {
+    query_string_behavior = "all"
+  }
+}
+
+resource "aws_cloudfront_response_headers_policy" "security" {
+
+  name = "${terraform.workspace}-46ki75-web-cloudfront-response_headers_policy-security"
+
+  security_headers_config {
+
+    strict_transport_security {
+      override                   = true
+      access_control_max_age_sec = 31536000
+      include_subdomains         = true
+    }
+
+    content_type_options {
+      override = true
+    }
+
+    frame_options {
+      override     = true
+      frame_option = "SAMEORIGIN"
+    }
+
+    xss_protection {
+      override   = true
+      mode_block = true
+      protection = true
+    }
+
+    referrer_policy {
+      override        = true
+      referrer_policy = "no-referrer"
+    }
+  }
+}
+
 resource "aws_cloudfront_distribution" "default" {
   depends_on = [aws_acm_certificate.cloudfront_cert, aws_acm_certificate_validation.cloudfront_cert_cert]
 
@@ -90,7 +142,9 @@ resource "aws_cloudfront_distribution" "default" {
     viewer_protocol_policy = "redirect-to-https"
     target_origin_id       = "s3-web"
 
-    cache_policy_id = aws_cloudfront_cache_policy.s3.id
+    cache_policy_id            = aws_cloudfront_cache_policy.s3.id
+    origin_request_policy_id   = aws_cloudfront_origin_request_policy.all_viewer.id
+    response_headers_policy_id = aws_cloudfront_response_headers_policy.security.id
 
     compress = true
 
@@ -123,7 +177,9 @@ resource "aws_cloudfront_distribution" "default" {
     viewer_protocol_policy = "redirect-to-https"
     target_origin_id       = "api-backend"
 
-    cache_policy_id = aws_cloudfront_cache_policy.http_api.id
+    cache_policy_id            = aws_cloudfront_cache_policy.http_api.id
+    origin_request_policy_id   = aws_cloudfront_origin_request_policy.all_viewer.id
+    response_headers_policy_id = aws_cloudfront_response_headers_policy.security.id
 
     compress = true
   }
