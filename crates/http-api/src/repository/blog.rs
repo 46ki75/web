@@ -74,11 +74,11 @@ impl BlogRepository for BlogRepositoryImpl {
             notionrs_types::object::request::filter::Filter::status_equals("Status", "Published");
 
         let request = notionrs_client
-            .query_database_all()
+            .query_database()
             .filter(filter)
             .database_id(notion_blog_database_id);
 
-        let response = request.send().await.map_err(|e| {
+        let response = notionrs::Client::paginate(request).await.map_err(|e| {
             tracing::error!("An error occurred while invoke Notion API: {}", e);
             crate::error::Error::NotionAPI(e.to_string())
         })?;
