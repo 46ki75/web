@@ -8,9 +8,9 @@ if [ -z "$STAGE_NAME" ]; then
 fi
 
 if [ "$STAGE_NAME" = "prod" ]; then
-    DISTRIBUTION_ALIAS_DOMAIN="internal.46ki75.com"
+    DISTRIBUTION_ALIAS_DOMAIN="internal.ikuma.cloud"
 else
-    DISTRIBUTION_ALIAS_DOMAIN="${STAGE_NAME}-www.46ki75.com"
+    DISTRIBUTION_ALIAS_DOMAIN="${STAGE_NAME}-www.ikuma.cloud"
 fi
 
 echo "Invalidating cache for $DISTRIBUTION_ALIAS_DOMAIN"

@@ -6,8 +6,8 @@ if (!["dev", "stg", "prod"].includes(STAGE_NAME)) {
 
 export const ENDPOINT =
   STAGE_NAME === "prod"
-    ? `https://www.46ki75.com`
-    : `https://${STAGE_NAME}-www.46ki75.com`;
+    ? `https://www.ikuma.cloud`
+    : `https://${STAGE_NAME}-www.ikuma.cloud`;
 
 export const GTAG =
   STAGE_NAME === "prod"

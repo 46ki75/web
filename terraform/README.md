@@ -13,17 +13,17 @@
 
 ## Route53 Zones
 
-- `dev-www.46ki75.com`
-- `stg-www.46ki75.com`
-- `www.46ki75.com`
+- `dev-www.ikuma.cloud`
+- `stg-www.ikuma.cloud`
+- `www.ikuma.cloud`
 
 ## Route53 Record (external account)
 
 Please add the following records to the parent hosted zone:
 
-- `dev-www.46ki75.com` NS
-- `stg-www.46ki75.com` NS
-- `www.46ki75.com` NS
+- `dev-www.ikuma.cloud` NS
+- `stg-www.ikuma.cloud` NS
+- `www.ikuma.cloud` NS
 
 ## CloudFront Functions KVS
 
@@ -34,15 +34,15 @@ Please add the following records to the parent hosted zone:
 
 ### CloudFront (Main Domain)
 
-- `dev-internal.46ki75.com`: CloudFront for the development environment
-- `stg-internal.46ki75.com`: CloudFront for the staging environment
-- `internal.46ki75.com`: CloudFront for the production environment
+- `dev-internal.ikuma.cloud`: CloudFront for the development environment
+- `stg-internal.ikuma.cloud`: CloudFront for the staging environment
+- `internal.ikuma.cloud`: CloudFront for the production environment
 
 ### Amazon API Gateway
 
-- `api.dev-internal.46ki75.com`: Development environment
-- `api.stg-internal.46ki75.com`: Staging environment
-- `api.internal.46ki75.com`: Production environment
+- `api.dev-internal.ikuma.cloud`: Development environment
+- `api.stg-internal.ikuma.cloud`: Staging environment
+- `api.internal.ikuma.cloud`: Production environment
 
 ## Google Analytics
 
@@ -62,8 +62,8 @@ Please add the following records to the parent hosted zone:
 
 ### Data Streams
 
-| Stream Name     | Stream URL                   | Stream ID   | Measurement Id |
-| --------------- | ---------------------------- | ----------- | -------------- |
-| dev-46ki75-web  | <https://dev-www.46ki75.com> | 10456169337 | G-85QSG3WH5F   |
-| stg-46ki75-web  | <https://stg-www.46ki75.com> | 10456381027 | G-Q7K53RM4VC   |
-| prod-46ki75-web | <https://www.46ki75.com>     | 10456452308 | G-TW1BVM24YT   |
+| Stream Name     | Stream URL                    | Stream ID   | Measurement Id |
+| --------------- | ----------------------------- | ----------- | -------------- |
+| dev-46ki75-web  | <https://dev-www.ikuma.cloud> | 10456169337 | G-85QSG3WH5F   |
+| stg-46ki75-web  | <https://stg-www.ikuma.cloud> | 10456381027 | G-Q7K53RM4VC   |
+| prod-46ki75-web | <https://www.ikuma.cloud>     | 10456452308 | G-TW1BVM24YT   |
