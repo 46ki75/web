@@ -68,7 +68,8 @@ impl BlogRepository for BlogRepositoryImpl {
     ) -> Result<Vec<crate::record::blog::BlogRecord>, crate::error::Error> {
         let notionrs_client = crate::cache::get_or_init_notionrs_client().await?;
 
-        let notion_blog_database_id = crate::cache::get_or_init_notion_blog_database_id().await?;
+        let notion_blog_database_id =
+            crate::cache::get_or_init_notion_blog_database_id_ja().await?;
 
         let filter =
             notionrs_types::object::request::filter::Filter::status_equals("Status", "Published");
@@ -159,7 +160,8 @@ impl BlogRepository for BlogRepositoryImpl {
     ) -> Result<Vec<crate::record::blog::BlogTagRecord>, crate::error::Error> {
         let notionrs_client = crate::cache::get_or_init_notionrs_client().await?;
 
-        let notion_blog_database_id = crate::cache::get_or_init_notion_blog_database_id().await?;
+        let notion_blog_database_id =
+            crate::cache::get_or_init_notion_blog_database_id_ja().await?;
 
         let request = notionrs_client
             .retrieve_database()
@@ -202,7 +204,8 @@ impl BlogRepository for BlogRepositoryImpl {
     ) -> Result<Vec<crate::record::blog::BlogRecord>, crate::error::Error> {
         let notionrs_client = crate::cache::get_or_init_notionrs_client().await?;
 
-        let notion_blog_database_id = crate::cache::get_or_init_notion_blog_database_id().await?;
+        let notion_blog_database_id =
+            crate::cache::get_or_init_notion_blog_database_id_ja().await?;
 
         let mut filters: Vec<notionrs_types::object::request::filter::Filter> = vec![
             notionrs_types::object::request::filter::Filter::status_equals("Status", "Published"),
