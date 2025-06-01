@@ -13,7 +13,7 @@ export const fetchPrerenderRoutes = async (
     "/blog/article",
     ...articleRoutes,
     "/blog/search",
-  ];
+  ].map((route) => `/ja${route}`);
 
   console.info("Routes:");
   routes.forEach((route) => console.log(`🔗 ${route}`));
