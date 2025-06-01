@@ -110,6 +110,26 @@ pub async fn get_or_init_notion_blog_database_id_ja() -> Result<&'static String,
         .await
 }
 
+static NOTION_BLOG_DATABASE_ID_EN: tokio::sync::OnceCell<String> =
+    tokio::sync::OnceCell::const_new();
+
+/// Fetches the Notion Database ID from cache or initializes it if not already loaded.
+pub async fn get_or_init_notion_blog_database_id_en() -> Result<&'static String, crate::error::Error>
+{
+    NOTION_BLOG_DATABASE_ID_EN
+        .get_or_try_init(|| async {
+            let stage_name = get_or_init_stage_name().await?;
+            let notion_blog_database_id = try_get_ssm_parameter_async(
+                get_or_init_ssm_client().await.clone(),
+                format!("/{stage_name}/46ki75/web/ssm/parameter/notion/database/id/en").as_str(),
+            )
+            .await?;
+
+            Ok(notion_blog_database_id)
+        })
+        .await
+}
+
 static NOTIONRS_CLIENT: tokio::sync::OnceCell<notionrs::Client> =
     tokio::sync::OnceCell::const_new();
 
