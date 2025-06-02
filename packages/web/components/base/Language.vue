@@ -28,10 +28,11 @@ const toggle = async () => {
 <style module lang="scss">
 .language {
   display: flex;
-  justify-content: center;
+  flex-direction: row;
+  justify-content: space-between;
   align-items: center;
-  gap: 0.5rem;
   padding: 0.5rem;
+  gap: 0.5rem;
   border-radius: 0.25rem;
   transition: background-color 150ms;
   user-select: none;
@@ -46,6 +47,6 @@ const toggle = async () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 4rem;
+  width: 3.5rem;
 }
 </style>
