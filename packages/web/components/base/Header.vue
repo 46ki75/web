@@ -5,13 +5,15 @@
     </NuxtLinkLocale>
 
     <div class="right">
-      <BaseLanguage />
       <NuxtLinkLocale to="/blog" class="icon">
         <Icon icon="mdi:book-open-page-variant-outline" width="28px" />
       </NuxtLinkLocale>
       <NuxtLinkLocale to="/about" class="icon">
         <Icon icon="mdi:account-box-multiple-outline" width="28px" />
       </NuxtLinkLocale>
+
+      <BaseLanguage />
+
       <ElmToggleTheme />
     </div>
   </header>
@@ -51,6 +53,7 @@ import { Icon } from "@iconify/vue";
   justify-content: space-between;
   align-items: center;
   gap: 0.75rem;
+  margin-right: 0.5rem;
 }
 
 .icon {

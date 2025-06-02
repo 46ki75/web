@@ -51,6 +51,9 @@ importers:
       '@iconify/vue':
         specifier: ^4.3.0
         version: 4.3.0(vue@3.5.13(typescript@5.8.2))
+      '@mdi/js':
+        specifier: ^7.4.47
+        version: 7.4.47
       '@nuxtjs/i18n':
         specifier: 9.5.5
         version: 9.5.5(@vue/compiler-dom@3.5.13)(eslint@9.23.0(jiti@2.4.2))(magicast@0.3.5)(rollup@4.39.0)(vue@3.5.13(typescript@5.8.2))
@@ -11703,7 +11706,7 @@ snapshots:
       espree: 10.3.0
       esquery: 1.6.0
       lodash: 4.17.21
-      semver: 7.7.1
+      semver: 7.7.2
     transitivePeerDependencies:
       - supports-color
 
