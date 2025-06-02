@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :key="`/${locale}/blog/search`">
     <BlogMeta
       title="Search"
       created-at="2022-10-01"
@@ -91,7 +91,8 @@ const router = useRouter();
 
 const blogStore = useBlogStore();
 
-const updateQueryParams = () => {
+const updateQueryParams = async () => {
+  await nextTick();
   router.replace({
     query: {
       keyword: blogStore[locale.value].keyword,
@@ -113,8 +114,9 @@ watchDebounced(
 );
 
 watch(
-  () => blogStore[locale.value].selectedTags,
-  () => {
+  [() => blogStore[locale.value].selectedTags],
+  async () => {
+    await nextTick();
     updateQueryParams();
     blogStore.searchBlog();
   },

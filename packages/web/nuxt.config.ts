@@ -76,7 +76,7 @@ export default defineNuxtConfig({
       ],
       script: [
         {
-          src: "https://www.googletagmanager.com/gtag/js?id=${GTAG}",
+          src: `https://www.googletagmanager.com/gtag/js?id=${GTAG}`,
           async: true,
         },
         {
