@@ -5,15 +5,18 @@ export const fetchPrerenderRoutes = async (
 
   const articleRoutes = await fetchArticleRoutes(endpoint);
 
-  const routes = [
+  const staticRoutes = [
     "/",
     "/about",
     "/image-converter",
     "/blog",
     "/blog/article",
-    ...articleRoutes,
     "/blog/search",
-  ];
+  ]
+    .map((route) => [route, `/ja${route}`])
+    .flat();
+
+  const routes = [...staticRoutes, ...articleRoutes];
 
   console.info("Routes:");
   routes.forEach((route) => console.log(`🔗 ${route}`));
@@ -24,12 +27,12 @@ export const fetchPrerenderRoutes = async (
 const fetchArticleRoutes = async (endpoint: string) => {
   console.info("Execute fetchArticleRoutes()...");
 
-  const res = await fetch(`${endpoint}/api/graphql`, {
+  const englishResponse = await fetch(`${endpoint}/api/graphql`, {
     method: "POST",
     body: JSON.stringify({
       query: /* GraphQL */ `
         query Routes {
-          blogList {
+          blogList(language: EN) {
             id
           }
         }
@@ -37,9 +40,32 @@ const fetchArticleRoutes = async (endpoint: string) => {
     }),
   });
 
-  const json: { data: { blogList: Array<{ id: string }> } } = await res.json();
+  const englishJson: { data: { blogList: Array<{ id: string }> } } =
+    await englishResponse.json();
 
-  const routes = json.data.blogList.map((blog) => `/blog/article/${blog.id}`);
+  const englishRoutes = englishJson.data.blogList.map(
+    (blog) => `/blog/article/${blog.id}`
+  );
 
-  return routes;
+  const japaneseResponse = await fetch(`${endpoint}/api/graphql`, {
+    method: "POST",
+    body: JSON.stringify({
+      query: /* GraphQL */ `
+        query Routes {
+          blogList(language: JA) {
+            id
+          }
+        }
+      `,
+    }),
+  });
+
+  const japaneseJson: { data: { blogList: Array<{ id: string }> } } =
+    await japaneseResponse.json();
+
+  const japaneseRoutes = japaneseJson.data.blogList.map(
+    (blog) => `/ja/blog/article/${blog.id}`
+  );
+
+  return englishRoutes.concat(japaneseRoutes);
 };

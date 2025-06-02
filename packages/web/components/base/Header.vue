@@ -5,6 +5,7 @@
     </NuxtLink>
 
     <div class="right">
+      <BaseLanguage />
       <NuxtLink to="/blog" class="icon">
         <Icon icon="mdi:book-open-page-variant-outline" width="28px" />
       </NuxtLink>

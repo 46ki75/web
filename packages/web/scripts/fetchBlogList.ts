@@ -9,12 +9,12 @@ export interface PrerenderBlog {
 }
 
 export const fetchBlogList = async (): Promise<PrerenderBlog[]> => {
-  const response = await fetch(`${ENDPOINT}/api/graphql`, {
+  const englishResponse = await fetch(`${ENDPOINT}/api/graphql`, {
     method: "POST",
     body: JSON.stringify({
       query: /* GraphQL */ `
         query ListBlog {
-          blogList {
+          blogList(language: EN) {
             id
             ogpImageS3Url
             blockList
@@ -25,11 +25,33 @@ export const fetchBlogList = async (): Promise<PrerenderBlog[]> => {
     }),
   });
 
-  const blog: {
+  const englishBlog: {
     data: {
       blogList: PrerenderBlog[];
     };
-  } = await response.json();
+  } = await englishResponse.json();
 
-  return blog.data.blogList;
+  const japaneseResponse = await fetch(`${ENDPOINT}/api/graphql`, {
+    method: "POST",
+    body: JSON.stringify({
+      query: /* GraphQL */ `
+        query ListBlog {
+          blogList(language: JA) {
+            id
+            ogpImageS3Url
+            blockList
+            updatedAt
+          }
+        }
+      `,
+    }),
+  });
+
+  const japaneseBlog: {
+    data: {
+      blogList: PrerenderBlog[];
+    };
+  } = await japaneseResponse.json();
+
+  return japaneseBlog.data.blogList.concat(englishBlog.data.blogList);
 };

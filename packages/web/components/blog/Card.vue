@@ -1,6 +1,14 @@
 <template>
-  <div class="container">
-    <NuxtLink class="top" :to="`/blog/article/${id}`" :prefetch="false">
+  <div :key="id" class="container">
+    <NuxtLink
+      class="top"
+      :to="
+        locale === 'en'
+          ? `/blog/article/${id}`
+          : `/${locale}/blog/article/${id}`
+      "
+      :prefetch="false"
+    >
       <div class="image">
         <ElmImage :src="`/_notion/blog/image/${id}/ogp.webp`" />
       </div>
@@ -46,6 +54,7 @@ interface BlogSearchResultProps {
   }>;
   createdAt: string;
   updatedAt: string;
+  locale: "en" | "ja";
 }
 
 defineProps<BlogSearchResultProps>();

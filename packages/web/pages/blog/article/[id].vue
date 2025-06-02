@@ -1,8 +1,7 @@
 <template>
   <article>
-    <div v-if="blog != null" :key="`/blog/article/${blog.id}`">
+    <div v-if="blog != null">
       <BlogMeta
-        :key="`/blog/article/${blog.id}`"
         :title="blog.title"
         :created-at="blog.createdAt"
         :updated-at="blog.updatedAt"
@@ -32,16 +31,18 @@
 import { ElmJsonComponentRenderer } from "@elmethis/core";
 import type { Component } from "jarkup-ts";
 
+const { locale } = useI18n();
+
 const blogStore = useBlogStore();
 
 const route = useRoute();
 const appConfig = useAppConfig();
 
 const blog = computed(() => {
-  if (blogStore.blogs) {
-    const [result] = blogStore.blogs.filter(
-      (blog) => blog.id === route.params.id
-    );
+  const blogs = blogStore[locale.value].blogs;
+
+  if (blogs != null) {
+    const [result] = blogs.filter((blog) => blog.id === route.params.id);
 
     return result;
   }
