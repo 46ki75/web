@@ -15,8 +15,8 @@
 useSeoMeta({
   title: "DEAFULT",
   ogTitle: "DEAFULT",
-  author: "Chomolungma Shirayuki",
-  articleAuthor: ["Chomolungma Shirayuki"],
+  author: "Ikuma Yamashita",
+  articleAuthor: ["Ikuma Yamashita"],
   twitterSite: "@46ki75",
 });
 </script>
