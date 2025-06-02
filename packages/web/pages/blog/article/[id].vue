@@ -37,7 +37,9 @@
 import { ElmJsonComponentRenderer } from "@elmethis/core";
 import type { Component } from "jarkup-ts";
 
-const { locale } = useI18n();
+const { locale, defaultLocale } = useI18n();
+
+const router = useRouter();
 
 const blogStore = useBlogStore();
 
@@ -113,6 +115,19 @@ const { data } = await useAsyncData(
     return blog.data.blog;
   }
 );
+
+const isExistBlog = () => {
+  const id = route.params.id;
+  const flag = blogStore[locale.value].blogs?.some((blog) => blog.id === id);
+  return flag;
+};
+
+onMounted(() => {
+  if (!isExistBlog())
+    router.push(
+      locale.value === defaultLocale ? "/blog" : `/${locale.value}/blog`
+    );
+});
 
 if (blog.value) {
   useSeoMeta({
