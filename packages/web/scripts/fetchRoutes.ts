@@ -8,6 +8,7 @@ export const fetchPrerenderRoutes = async (
   const staticRoutes = [
     "/",
     "/about",
+    "/privacy",
     "/image-converter",
     "/blog",
     "/blog/article",

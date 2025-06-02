@@ -16,7 +16,7 @@
       :class="$style.section"
     >
       <ElmHeading :level="2" disable-fragment-identifier>
-        {{ body.heading }}
+        {{ `${index + 1}. ${body.heading}` }}
       </ElmHeading>
       <ElmParagraph>
         <ElmInlineText
