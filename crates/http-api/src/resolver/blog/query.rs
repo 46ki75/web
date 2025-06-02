@@ -18,6 +18,7 @@ pub struct Blog {
     pub keywords: Vec<String>,
     pub created_at: String,
     pub updated_at: String,
+    pub url: String,
 }
 
 impl From<crate::entity::blog::BlogEntity> for Blog {
@@ -57,6 +58,7 @@ impl From<crate::entity::blog::BlogEntity> for Blog {
             keywords: value.keywords,
             created_at: value.created_at,
             updated_at: value.updated_at,
+            url: value.url,
         }
     }
 }
@@ -212,6 +214,11 @@ impl Blog {
     /// RFC 3339-formatted last update timestamp.
     pub async fn updated_at(&self) -> Result<String, async_graphql::Error> {
         Ok(self.updated_at.clone())
+    }
+
+    /// Notion Page URL.
+    pub async fn url(&self) -> Result<String, async_graphql::Error> {
+        Ok(self.url.clone())
     }
 
     /// Children blocks of the blog.

@@ -15,6 +15,7 @@ interface Blog {
   keywords: string[];
   createdAt: string;
   updatedAt: string;
+  url: string;
 }
 
 export const useBlogStore = defineStore("BlogSearchStore", {
@@ -69,6 +70,7 @@ export const useBlogStore = defineStore("BlogSearchStore", {
                   keywords
                   createdAt
                   updatedAt
+                  url
                 }
               }
             `,
@@ -128,6 +130,7 @@ export const useBlogStore = defineStore("BlogSearchStore", {
                   keywords
                   createdAt
                   updatedAt
+                  url
                 }
               }
             `,

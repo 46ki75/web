@@ -29,6 +29,8 @@
       <div :key="`/blog/article/${blog.id}`">
         <ElmJsonComponentRenderer :json-components="data?.blockList ?? []" />
       </div>
+
+      <BlogEditOnNotion :url="blog.url" />
     </div>
   </article>
 </template>
