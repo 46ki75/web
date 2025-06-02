@@ -96,6 +96,24 @@ impl From<crate::entity::blog::BlogTagEntity> for BlogTag {
     }
 }
 
+/// Language of Blog Articles.
+#[derive(Debug, Clone, Copy, Eq, PartialEq, async_graphql::Enum)]
+pub enum BlogLanguage {
+    /// English
+    En,
+    /// Japanese
+    Ja,
+}
+
+impl From<BlogLanguage> for crate::service::blog::BlogLanguageServiceInput {
+    fn from(value: BlogLanguage) -> Self {
+        match value {
+            BlogLanguage::En => Self::En,
+            BlogLanguage::Ja => Self::Ja,
+        }
+    }
+}
+
 #[async_graphql::Object]
 impl BlogTag {
     /// Unique identifier of the blog tag.
@@ -234,10 +252,15 @@ impl BlogQueryResolver {
     pub async fn blog_list(
         &self,
         ctx: &async_graphql::Context<'_>,
+        language: BlogLanguage,
     ) -> Result<Vec<Blog>, async_graphql::Error> {
         let blog_service = ctx.data::<crate::service::blog::BlogService>()?;
 
-        let blog_entities = blog_service.list_blogs().await?;
+        let blog_entities = blog_service
+            .list_blogs(crate::service::blog::BlogLanguageServiceInput::from(
+                language,
+            ))
+            .await?;
 
         let blogs = blog_entities
             .into_iter()
@@ -252,11 +275,15 @@ impl BlogQueryResolver {
         &self,
         ctx: &async_graphql::Context<'_>,
         tag_id: String,
+        language: BlogLanguage,
     ) -> Result<Option<BlogTag>, async_graphql::Error> {
         let blog_service = ctx.data::<crate::service::blog::BlogService>()?;
 
         let tag = blog_service
-            .get_tag_by_id(&tag_id)
+            .get_tag_by_id(
+                &tag_id,
+                crate::service::blog::BlogLanguageServiceInput::from(language),
+            )
             .await?
             .map(BlogTag::from);
 
@@ -267,10 +294,15 @@ impl BlogQueryResolver {
     pub async fn tag_list(
         &self,
         ctx: &async_graphql::Context<'_>,
+        language: BlogLanguage,
     ) -> Result<Vec<BlogTag>, async_graphql::Error> {
         let blog_service = ctx.data::<crate::service::blog::BlogService>()?;
 
-        let tags = blog_service.list_tags().await?;
+        let tags = blog_service
+            .list_tags(crate::service::blog::BlogLanguageServiceInput::from(
+                language,
+            ))
+            .await?;
 
         let blog_tags = tags
             .into_iter()

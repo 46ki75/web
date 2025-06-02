@@ -34,8 +34,9 @@ impl QueryRoot {
     pub async fn blog_list(
         &self,
         ctx: &async_graphql::Context<'_>,
+        language: crate::resolver::blog::query::BlogLanguage,
     ) -> Result<Vec<crate::resolver::blog::query::Blog>, async_graphql::Error> {
-        self.blog_query_resolver.blog_list(ctx).await
+        self.blog_query_resolver.blog_list(ctx, language).await
     }
 
     /// Returns a single blog tag by tag id.
@@ -43,15 +44,17 @@ impl QueryRoot {
         &self,
         ctx: &async_graphql::Context<'_>,
         tag_id: String,
+        language: crate::resolver::blog::query::BlogLanguage,
     ) -> Result<Option<crate::resolver::blog::query::BlogTag>, async_graphql::Error> {
-        self.blog_query_resolver.tag(ctx, tag_id).await
+        self.blog_query_resolver.tag(ctx, tag_id, language).await
     }
 
     /// Returns a list of blog tags.
     pub async fn tag_list(
         &self,
         ctx: &async_graphql::Context<'_>,
+        language: crate::resolver::blog::query::BlogLanguage,
     ) -> Result<Vec<crate::resolver::blog::query::BlogTag>, async_graphql::Error> {
-        self.blog_query_resolver.tag_list(ctx).await
+        self.blog_query_resolver.tag_list(ctx, language).await
     }
 }
