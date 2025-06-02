@@ -120,7 +120,7 @@ const { locale } = useI18n();
 
 .inner {
   box-sizing: border-box;
-  margin-block: 0.5rem;
+  margin: 0.5rem 0.25rem;
   padding: 0 2rem 4rem;
   border-radius: 0.25rem;
   max-width: 800px;
