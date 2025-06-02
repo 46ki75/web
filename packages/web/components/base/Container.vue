@@ -6,11 +6,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
-// export interface ContainerProps {}
-
-// withDefaults(defineProps<ContainerProps>(), {});
-</script>
+<script setup lang="ts"></script>
 
 <style module lang="scss">
 .wrapper {
@@ -21,7 +17,7 @@
 .inner {
   box-sizing: border-box;
   margin: 0.5rem 0.25rem;
-  padding: 2rem 4rem;
+  padding: 2rem;
   border-radius: 0.25rem;
   max-width: 800px;
   width: 100%;

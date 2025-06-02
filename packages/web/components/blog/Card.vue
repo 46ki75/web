@@ -13,7 +13,7 @@
           <ElmInlineText :text="description" size="0.8rem" />
         </div>
         <div class="date">
-          <BlogDate :created-at="createdAt" :updated-at="updatedAt" />
+          <BaseDate :created-at="createdAt" :updated-at="updatedAt" />
         </div>
       </div>
     </NuxtLinkLocale>

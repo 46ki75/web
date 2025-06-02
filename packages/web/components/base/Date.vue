@@ -11,12 +11,12 @@
 import { Icon } from "@iconify/vue";
 import { ElmInlineText } from "@elmethis/core";
 
-interface BlogDateProps {
+interface BaseDateProps {
   createdAt: string;
   updatedAt: string;
 }
 
-defineProps<BlogDateProps>();
+defineProps<BaseDateProps>();
 </script>
 
 <style lang="scss" scoped>

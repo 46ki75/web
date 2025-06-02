@@ -13,7 +13,7 @@
 
     <ElmHeading :level="1" :text="title" disable-fragment-identifier />
 
-    <BlogDate :created-at="createdAt" :updated-at="updatedAt" />
+    <BaseDate :created-at="createdAt" :updated-at="updatedAt" />
 
     <div v-if="tags" class="tag">
       <NuxtLinkLocale
