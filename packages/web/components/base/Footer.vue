@@ -2,6 +2,7 @@
   <footer class="footer">
     <div class="container">
       <p><ElmInlineText text="FOOTER" /></p>
+      <NuxtLinkLocale to="/privacy">privacy</NuxtLinkLocale>
       <hr class="hr" />
       <div class="bottom">
         <div class="left">
