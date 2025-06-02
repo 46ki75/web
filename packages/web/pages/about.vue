@@ -97,8 +97,18 @@ import {
 .greet {
   color: #3e434b;
 
+  &::selection {
+    color: #cccfd5;
+    background-color: #3e434b;
+  }
+
   [data-theme="dark"] & {
     color: #cccfd5;
+
+    &::selection {
+      color: #3e434b;
+      background-color: #cccfd5;
+    }
   }
 }
 
@@ -108,5 +118,13 @@ import {
   justify-content: flex-start;
   align-items: center;
   gap: 1rem;
+  user-select: none;
+  opacity: 0.7;
+
+  [data-theme="dark"] & {
+    img {
+      filter: invert(1);
+    }
+  }
 }
 </style>
