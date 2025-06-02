@@ -1,15 +1,23 @@
 <template>
   <div class="side-container">
     <div class="sticky">
-      <NuxtLink to="/blog/search" :prefetch="false" :style="{ all: 'unset' }">
+      <NuxtLinkLocale
+        to="/blog/search"
+        :prefetch="false"
+        :style="{ all: 'unset' }"
+      >
         <ElmButton block @click="() => {}">
           <Icon icon="mdi:folder-search-outline" height="24px" />
-          <ElmInlineText text="記事を検索" />
+          <ElmInlineText :text="t('blog.side.searchButton')" />
         </ElmButton>
-      </NuxtLink>
+      </NuxtLinkLocale>
     </div>
 
-    <div v-for="blog in blogStore.getSideBlogs" :key="blog.id" class="card">
+    <div
+      v-for="blog in getSideBlogs(blogStore[locale].blogs)"
+      :key="blog.id"
+      class="card"
+    >
       <BlogCard
         :id="blog.id"
         :title="blog.title"
@@ -17,6 +25,7 @@
         :tags="blog.tags"
         :created-at="blog.createdAt"
         :updated-at="blog.updatedAt"
+        :locale="locale"
       />
     </div>
   </div>
@@ -26,7 +35,21 @@
 import { ElmButton, ElmInlineText } from "@elmethis/core";
 import { Icon } from "@iconify/vue";
 
+const { locale, t } = useI18n();
+
 const blogStore = useBlogStore();
+
+const getSideBlogs = (
+  blogs?: typeof blogStore.en.blogs
+): typeof blogStore.en.blogs => {
+  if (!blogs) return [];
+  return blogs
+    .sort(
+      (pre, next) =>
+        new Date(next.createdAt).getTime() - new Date(pre.createdAt).getTime()
+    )
+    .slice(0, 10);
+};
 </script>
 
 <style lang="scss" scoped>

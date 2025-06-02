@@ -1,6 +1,13 @@
 //! BlogRepository module
 #![deny(missing_docs)]
 
+#[allow(missing_docs)]
+#[derive(Debug)]
+pub enum BlogLanguageRepositoryInput {
+    En,
+    Ja,
+}
+
 /// Repository that fetches data from the Notion API endpoints.
 #[async_trait::async_trait]
 pub trait BlogRepository {
@@ -11,8 +18,10 @@ pub trait BlogRepository {
     ) -> Result<crate::record::blog::BlogRecord, crate::error::Error>;
 
     /// Retrieves all blogs.
-    async fn list_blogs(&self)
-    -> Result<Vec<crate::record::blog::BlogRecord>, crate::error::Error>;
+    async fn list_blogs(
+        &self,
+        language: BlogLanguageRepositoryInput,
+    ) -> Result<Vec<crate::record::blog::BlogRecord>, crate::error::Error>;
 
     /// Retrieves the children of the page by its page ID.
     async fn get_block_children(&self, page_id: &str) -> Result<String, crate::error::Error>;
@@ -29,6 +38,7 @@ pub trait BlogRepository {
     /// Lists all tags.
     async fn list_tags(
         &self,
+        language: BlogLanguageRepositoryInput,
     ) -> Result<Vec<crate::record::blog::BlogTagRecord>, crate::error::Error>;
 
     /// Lists all blogs that contain the specified tags.
@@ -65,10 +75,18 @@ impl BlogRepository for BlogRepositoryImpl {
 
     async fn list_blogs(
         &self,
+        language: BlogLanguageRepositoryInput,
     ) -> Result<Vec<crate::record::blog::BlogRecord>, crate::error::Error> {
         let notionrs_client = crate::cache::get_or_init_notionrs_client().await?;
 
-        let notion_blog_database_id = crate::cache::get_or_init_notion_blog_database_id().await?;
+        let notion_blog_database_id = match language {
+            BlogLanguageRepositoryInput::En => {
+                crate::cache::get_or_init_notion_blog_database_id_en().await?
+            }
+            BlogLanguageRepositoryInput::Ja => {
+                crate::cache::get_or_init_notion_blog_database_id_ja().await?
+            }
+        };
 
         let filter =
             notionrs_types::object::request::filter::Filter::status_equals("Status", "Published");
@@ -156,10 +174,18 @@ impl BlogRepository for BlogRepositoryImpl {
 
     async fn list_tags(
         &self,
+        language: BlogLanguageRepositoryInput,
     ) -> Result<Vec<crate::record::blog::BlogTagRecord>, crate::error::Error> {
         let notionrs_client = crate::cache::get_or_init_notionrs_client().await?;
 
-        let notion_blog_database_id = crate::cache::get_or_init_notion_blog_database_id().await?;
+        let notion_blog_database_id = match language {
+            BlogLanguageRepositoryInput::En => {
+                crate::cache::get_or_init_notion_blog_database_id_en().await?
+            }
+            BlogLanguageRepositoryInput::Ja => {
+                crate::cache::get_or_init_notion_blog_database_id_ja().await?
+            }
+        };
 
         let request = notionrs_client
             .retrieve_database()
@@ -202,7 +228,8 @@ impl BlogRepository for BlogRepositoryImpl {
     ) -> Result<Vec<crate::record::blog::BlogRecord>, crate::error::Error> {
         let notionrs_client = crate::cache::get_or_init_notionrs_client().await?;
 
-        let notion_blog_database_id = crate::cache::get_or_init_notion_blog_database_id().await?;
+        let notion_blog_database_id =
+            crate::cache::get_or_init_notion_blog_database_id_ja().await?;
 
         let mut filters: Vec<notionrs_types::object::request::filter::Filter> = vec![
             notionrs_types::object::request::filter::Filter::status_equals("Status", "Published"),

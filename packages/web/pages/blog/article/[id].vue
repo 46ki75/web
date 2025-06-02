@@ -1,15 +1,20 @@
 <template>
   <article>
-    <div v-if="blog != null" :key="`/blog/article/${blog.id}`">
+    <div v-if="blog != null">
       <BlogMeta
-        :key="`/blog/article/${blog.id}`"
         :title="blog.title"
         :created-at="blog.createdAt"
         :updated-at="blog.updatedAt"
         :links="[
-          { text: 'Home', href: '/' },
-          { text: 'Blog', href: '/blog' },
-          { text: 'Article', href: `/blog/article/${blog.id}` },
+          { text: 'Home', href: locale === 'en' ? '/' : `/${locale}` },
+          { text: 'Blog', href: locale === 'en' ? '/blog' : `/${locale}/blog` },
+          {
+            text: 'Article',
+            href:
+              locale === 'en'
+                ? `/blog/article/${blog.id}`
+                : `/${locale}/blog/article/${blog.id}`,
+          },
         ]"
         :image="`/_notion/blog/image/${blog.id}/ogp.webp`"
         :tags="
@@ -24,6 +29,8 @@
       <div :key="`/blog/article/${blog.id}`">
         <ElmJsonComponentRenderer :json-components="data?.blockList ?? []" />
       </div>
+
+      <BlogEditOnNotion :url="blog.url" />
     </div>
   </article>
 </template>
@@ -32,16 +39,20 @@
 import { ElmJsonComponentRenderer } from "@elmethis/core";
 import type { Component } from "jarkup-ts";
 
+const { locale, defaultLocale } = useI18n();
+
+const router = useRouter();
+
 const blogStore = useBlogStore();
 
 const route = useRoute();
 const appConfig = useAppConfig();
 
 const blog = computed(() => {
-  if (blogStore.blogs) {
-    const [result] = blogStore.blogs.filter(
-      (blog) => blog.id === route.params.id
-    );
+  const blogs = blogStore[locale.value].blogs;
+
+  if (blogs != null) {
+    const [result] = blogs.filter((blog) => blog.id === route.params.id);
 
     return result;
   }
@@ -107,10 +118,26 @@ const { data } = await useAsyncData(
   }
 );
 
+const isExistBlog = () => {
+  const id = route.params.id;
+  const flag = blogStore[locale.value].blogs?.some((blog) => blog.id === id);
+  return flag;
+};
+
+onMounted(() => {
+  if (!isExistBlog())
+    router.push(
+      locale.value === defaultLocale ? "/blog" : `/${locale.value}/blog`
+    );
+});
+
 if (blog.value) {
   useSeoMeta({
     ogType: "article",
-    ogUrl: `${appConfig.ENDPOINT}/blog/article/${blog.value.id}`,
+    ogUrl:
+      locale.value === defaultLocale
+        ? `${appConfig.ENDPOINT}/blog/article/${blog.value.id}`
+        : `${appConfig.ENDPOINT}/${locale}/blog/article/${blog.value.id}`,
     title: blog.value.title,
     ogTitle: blog.value.title,
     description: blog.value.description,
@@ -134,7 +161,10 @@ if (blog.value) {
           headline: blog.value.title,
           abstract: blog.value.description,
           image: `${appConfig.ENDPOINT}/_notion/blog/image/${blog.value.id}/ogp.webp`,
-          url: `${appConfig.ENDPOINT}/blog/article/${blog.value.id}`,
+          url:
+            locale.value === defaultLocale
+              ? `${appConfig.ENDPOINT}/blog/article/${blog.value.id}`
+              : `${appConfig.ENDPOINT}/${locale}/blog/article/${blog.value.id}`,
           author: {
             "@type": "Person",
             givenName: "Shirayuki",

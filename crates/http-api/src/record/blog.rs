@@ -32,6 +32,9 @@ pub struct BlogRecord {
 
     /// RFC 3339-formatted last update timestamp.
     pub updated_at: String,
+
+    /// Notion Page URL
+    pub url: String,
 }
 
 /// Blog tag record returned by `BlogRepository`.
@@ -246,6 +249,7 @@ impl TryFrom<notionrs_types::object::page::PageResponse> for BlogRecord {
             keywords,
             created_at,
             updated_at,
+            url: page.url,
         })
     }
 }

@@ -10,7 +10,17 @@ export default defineNuxtConfig({
   compatibilityDate: "2024-11-01",
   devtools: { enabled: true },
   devServer: { host: "127.0.0.1" },
-  modules: ["@pinia/nuxt"],
+  modules: ["@pinia/nuxt", "@nuxtjs/i18n"],
+
+  i18n: {
+    strategy: "prefix_except_default",
+    defaultLocale: "en",
+    locales: [
+      { code: "en", name: "English", file: "en.json" },
+      { code: "ja", name: "日本語", file: "ja.json" },
+    ],
+  },
+
   runtimeConfig: {
     public: {
       RUM_IDPOOL_ID,
@@ -35,7 +45,7 @@ export default defineNuxtConfig({
     prerender: {
       routes: await fetchPrerenderRoutes(ENDPOINT),
       crawlLinks: false,
-      concurrency: 10,
+      concurrency: 20,
     },
   },
   app: {
@@ -66,7 +76,7 @@ export default defineNuxtConfig({
       ],
       script: [
         {
-          src: "https://www.googletagmanager.com/gtag/js?id=${GTAG}",
+          src: `https://www.googletagmanager.com/gtag/js?id=${GTAG}`,
           async: true,
         },
         {

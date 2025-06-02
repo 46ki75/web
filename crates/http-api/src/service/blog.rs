@@ -6,6 +6,22 @@ pub struct BlogService {
     pub blog_repository: std::sync::Arc<dyn crate::repository::blog::BlogRepository + Send + Sync>,
 }
 
+#[allow(missing_docs)]
+#[derive(Debug)]
+pub enum BlogLanguageServiceInput {
+    En,
+    Ja,
+}
+
+impl From<BlogLanguageServiceInput> for crate::repository::blog::BlogLanguageRepositoryInput {
+    fn from(value: BlogLanguageServiceInput) -> Self {
+        match value {
+            BlogLanguageServiceInput::En => Self::En,
+            BlogLanguageServiceInput::Ja => Self::Ja,
+        }
+    }
+}
+
 impl BlogService {
     /// Fetches the blog by its page ID.
     pub async fn get_blog_by_id(
@@ -22,8 +38,14 @@ impl BlogService {
     /// Fetches all blogs.
     pub async fn list_blogs(
         &self,
+        language: BlogLanguageServiceInput,
     ) -> Result<Vec<crate::entity::blog::BlogEntity>, crate::error::Error> {
-        let blog_records = self.blog_repository.list_blogs().await?;
+        let blog_records = self
+            .blog_repository
+            .list_blogs(crate::repository::blog::BlogLanguageRepositoryInput::from(
+                language,
+            ))
+            .await?;
 
         let blog_entities = blog_records
             .into_iter()
@@ -84,8 +106,14 @@ impl BlogService {
     pub async fn get_tag_by_id(
         &self,
         tag_id: &str,
+        language: BlogLanguageServiceInput,
     ) -> Result<Option<crate::entity::blog::BlogTagEntity>, crate::error::Error> {
-        let tag_records = self.blog_repository.list_tags().await?;
+        let tag_records = self
+            .blog_repository
+            .list_tags(crate::repository::blog::BlogLanguageRepositoryInput::from(
+                language,
+            ))
+            .await?;
 
         for tag_record in tag_records {
             if tag_record.id == tag_id {
@@ -99,8 +127,14 @@ impl BlogService {
     /// Fetches all tags.
     pub async fn list_tags(
         &self,
+        language: BlogLanguageServiceInput,
     ) -> Result<Vec<crate::entity::blog::BlogTagEntity>, crate::error::Error> {
-        let tag_records = self.blog_repository.list_tags().await?;
+        let tag_records = self
+            .blog_repository
+            .list_tags(crate::repository::blog::BlogLanguageRepositoryInput::from(
+                language,
+            ))
+            .await?;
 
         let tag_entities = tag_records
             .into_iter()

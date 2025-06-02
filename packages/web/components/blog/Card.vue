@@ -1,6 +1,6 @@
 <template>
-  <div class="container">
-    <NuxtLink class="top" :to="`/blog/article/${id}`" :prefetch="false">
+  <div :key="id" class="container">
+    <NuxtLinkLocale class="top" :to="`/blog/article/${id}`" :prefetch="false">
       <div class="image">
         <ElmImage :src="`/_notion/blog/image/${id}/ogp.webp`" />
       </div>
@@ -16,18 +16,18 @@
           <BlogDate :created-at="createdAt" :updated-at="updatedAt" />
         </div>
       </div>
-    </NuxtLink>
+    </NuxtLinkLocale>
 
     <div class="bottom">
-      <NuxtLink
+      <NuxtLinkLocale
         v-for="tag in tags"
         :key="tag.id"
-        :to="`/blog/search?tags=${tag.id}`"
+        :to="`/blog/search`"
         :style="{ all: 'unset' }"
         :prefetch="false"
       >
-        <BlogTag :color="tag.color" :label="tag.name" />
-      </NuxtLink>
+        <BlogTag :id="tag.id" :color="tag.color" :label="tag.name" />
+      </NuxtLinkLocale>
     </div>
   </div>
 </template>
@@ -46,6 +46,7 @@ interface BlogSearchResultProps {
   }>;
   createdAt: string;
   updatedAt: string;
+  locale: "en" | "ja";
 }
 
 defineProps<BlogSearchResultProps>();

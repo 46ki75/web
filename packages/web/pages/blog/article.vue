@@ -8,7 +8,7 @@
 .v-enter-to,
 .v-leave-from {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateX(0);
 }
 
 .v-enter-active,
@@ -19,6 +19,6 @@
 .v-enter-from,
 .v-leave-to {
   opacity: 0;
-  transform: translateY(-8px);
+  transform: translateX(-4px);
 }
 </style>

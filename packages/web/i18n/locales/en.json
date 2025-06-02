@@ -1,0 +1,11 @@
+{
+    "blog": {
+        "side": {
+            "searchButton": "Search Articles"
+        }
+    },
+    "privacy": {
+        "title": "Privacy Policy",
+        "basicPolicy": "This website recognizes the importance of personal information and ensures proper collection, use, and management. We strive to protect user privacy and comply with relevant laws and regulations regarding the handling of personal data."
+    }
+}

@@ -16,15 +16,15 @@
     <BlogDate :created-at="createdAt" :updated-at="updatedAt" />
 
     <div v-if="tags" class="tag">
-      <NuxtLink
+      <NuxtLinkLocale
         v-for="tag in tags"
         :key="tag.id"
-        :to="`/blog/search?tags=${tag.id}`"
+        :to="`/blog/search`"
         :style="{ all: 'unset' }"
         :prefetch="false"
       >
-        <BlogTag :label="tag.label" :color="tag.color" />
-      </NuxtLink>
+        <BlogTag :id="tag.id" :label="tag.label" :color="tag.color" />
+      </NuxtLinkLocale>
     </div>
 
     <div class="image">

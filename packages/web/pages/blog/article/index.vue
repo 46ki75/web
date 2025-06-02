@@ -3,5 +3,6 @@
 </template>
 
 <script lang="ts" setup>
-await navigateTo("/blog");
+const { locale } = useI18n();
+await navigateTo(locale.value === "en" ? "/blog" : `${locale}/blog`);
 </script>

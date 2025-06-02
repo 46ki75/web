@@ -32,6 +32,9 @@ pub struct BlogEntity {
 
     /// RFC 3339-formatted last update timestamp.
     pub updated_at: String,
+
+    /// Notion Page URL
+    pub url: String,
 }
 
 /// Blog tag record returned by the BlogService.
@@ -150,6 +153,7 @@ impl From<crate::record::blog::BlogRecord> for BlogEntity {
                 .collect::<Vec<String>>(),
             created_at: record.created_at.clone(),
             updated_at: record.updated_at.clone(),
+            url: record.url,
         }
     }
 }

@@ -1,4 +1,5 @@
 import Fuse from "fuse.js";
+import type { ShallowRef } from "vue";
 
 interface BlogTag {
   id: string;
@@ -14,150 +15,235 @@ interface Blog {
   keywords: string[];
   createdAt: string;
   updatedAt: string;
+  url: string;
 }
 
 export const useBlogStore = defineStore("BlogSearchStore", {
   state: () => {
     const config = useAppConfig();
+    const { locale } = useI18n();
 
-    const { data: tags } = useAsyncData("SearchListTags", async () => {
-      const response = await $fetch<{
-        data: { tagList: Array<BlogTag> };
-      }>(`${config.ENDPOINT}/api/graphql`, {
-        method: "POST",
-        body: {
-          query: /* GraphQL */ `
-            query ListTags {
-              tagList {
-                id
-                name
-                color
-              }
-            }
-          `,
-        },
-      });
-
-      return response.data.tagList;
-    });
-
-    const { data: blogs } = useAsyncData("SearchListBlogs", async () => {
-      const response = await $fetch<{
-        data: { blogList: Blog[] };
-      }>(`${config.ENDPOINT}/api/graphql`, {
-        method: "POST",
-        body: {
-          query: /* GraphQL */ `
-            query ListBlogs {
-              blogList {
-                id
-                title
-                description
-                status
-                tags {
+    const { data: englishTags } = useAsyncData(
+      "EnglishSearchListTags",
+      async () => {
+        const response = await $fetch<{
+          data: { tagList: Array<BlogTag> };
+        }>(`${config.ENDPOINT}/api/graphql`, {
+          method: "POST",
+          body: {
+            query: /* GraphQL */ `
+              query ListTags {
+                tagList(language: EN) {
                   id
                   name
                   color
                 }
-                keywords
-                createdAt
-                updatedAt
               }
-            }
-          `,
-        },
-      });
+            `,
+          },
+        });
 
-      return response.data.blogList;
-    });
+        return response.data.tagList;
+      }
+    );
 
-    const fuse = shallowRef<Fuse<Blog> | undefined>();
+    const { data: englishBlogs } = useAsyncData(
+      "EnglishSearchListBlogs",
+      async () => {
+        const response = await $fetch<{
+          data: { blogList: Blog[] };
+        }>(`${config.ENDPOINT}/api/graphql`, {
+          method: "POST",
+          body: {
+            query: /* GraphQL */ `
+              query ListBlogs {
+                blogList(language: EN) {
+                  id
+                  title
+                  description
+                  status
+                  tags {
+                    id
+                    name
+                    color
+                  }
+                  keywords
+                  createdAt
+                  updatedAt
+                  url
+                }
+              }
+            `,
+          },
+        });
+
+        return response.data.blogList;
+      }
+    );
+
+    const englishFuse = shallowRef<Fuse<Blog> | undefined>();
+
+    const { data: japaneseTags } = useAsyncData(
+      "JapaneseSearchListTags",
+      async () => {
+        const response = await $fetch<{
+          data: { tagList: Array<BlogTag> };
+        }>(`${config.ENDPOINT}/api/graphql`, {
+          method: "POST",
+          body: {
+            query: /* GraphQL */ `
+              query ListTags {
+                tagList(language: JA) {
+                  id
+                  name
+                  color
+                }
+              }
+            `,
+          },
+        });
+
+        return response.data.tagList;
+      }
+    );
+
+    const { data: japaneseBlogs } = useAsyncData(
+      "JapaneseSearchListBlogs",
+      async () => {
+        const response = await $fetch<{
+          data: { blogList: Blog[] };
+        }>(`${config.ENDPOINT}/api/graphql`, {
+          method: "POST",
+          body: {
+            query: /* GraphQL */ `
+              query ListBlogs {
+                blogList(language: JA) {
+                  id
+                  title
+                  description
+                  status
+                  tags {
+                    id
+                    name
+                    color
+                  }
+                  keywords
+                  createdAt
+                  updatedAt
+                  url
+                }
+              }
+            `,
+          },
+        });
+
+        return response.data.blogList;
+      }
+    );
+
+    const japaneseFuse = shallowRef<Fuse<Blog> | undefined>();
 
     return {
-      tags,
-      selectedTags: [] as BlogTag[],
-      keyword: undefined as string | undefined,
-      blogs,
-      searchedBlogs: [] as Blog[],
-      fuse,
+      locale,
+
+      en: {
+        tags: englishTags,
+        selectedTags: [] as BlogTag[],
+        keyword: undefined as string | undefined,
+        blogs: englishBlogs ?? [],
+        searchedBlogs: [] as Blog[],
+        fuse: englishFuse as ShallowRef<Fuse<Blog>>,
+      },
+
+      ja: {
+        tags: japaneseTags,
+        selectedTags: [] as BlogTag[],
+        keyword: undefined as string | undefined,
+        blogs: japaneseBlogs ?? [],
+        searchedBlogs: [] as Blog[],
+        fuse: japaneseFuse as ShallowRef<Fuse<Blog>>,
+      },
     };
   },
   actions: {
     tagSelect(tagId: string) {
-      if (this.tags == null) return;
+      if (this[this.locale].tags == null) return;
 
-      const tags = this.tags.filter((tag) => tag.id === tagId);
+      const tags = this[this.locale].tags?.filter((tag) => tag.id === tagId);
+
       if (
+        tags != null &&
         tags.length === 1 &&
-        !this.selectedTags.map((tag) => tag.id).includes(tags[0].id)
+        !this[this.locale].selectedTags
+          .map((tag) => tag.id)
+          .includes(tags[0].id)
       ) {
-        this.selectedTags.push(tags[0]);
+        this[this.locale].selectedTags.push(tags[0]);
         this.searchBlog();
       }
     },
     tagDeselect(tagId: string) {
-      this.selectedTags = this.selectedTags.filter((tag) => tag.id !== tagId);
+      this[this.locale].selectedTags = this[this.locale].selectedTags.filter(
+        (tag) => tag.id !== tagId
+      );
       this.searchBlog();
     },
     tagReset() {
-      this.selectedTags = [];
+      this[this.locale].selectedTags = [];
       this.searchBlog();
     },
     searchBlog() {
-      if (this.blogs == null) return;
-      if (this.tags == null) return;
+      if (this[this.locale].blogs == null) return;
+      if (this[this.locale].tags == null) return;
 
       // Tag only searching
-      if (this.keyword == null || this.keyword.trim() === "") {
-        this.searchedBlogs = this.blogs.filter((blog) => {
-          const tagIds = blog.tags.map((tag) => tag.id);
-          const selectedTagIds = this.selectedTags.map((tag) => tag.id);
-          const flag = selectedTagIds.every((tagId) => tagIds.includes(tagId));
-          return flag;
-        });
+      if (
+        this[this.locale].keyword == null ||
+        this[this.locale].keyword?.trim() === ""
+      ) {
+        this[this.locale].searchedBlogs =
+          this[this.locale].blogs?.filter((blog) => {
+            const tagIds = blog.tags.map((tag) => tag.id);
+            const selectedTagIds = this[this.locale].selectedTags.map(
+              (tag) => tag.id
+            );
+            const flag = selectedTagIds.every((tagId) =>
+              tagIds.includes(tagId)
+            );
+            return flag;
+          }) ?? [];
       }
       // Tag and Keyword searching
       else {
-        if (this.fuse == null) {
-          this.fuse = new Fuse(this.blogs, {
+        if (this[this.locale].fuse == null) {
+          this[this.locale].fuse = new Fuse(this[this.locale].blogs ?? [], {
             keys: ["title", "description", "keywords"],
             threshold: 0.5,
           });
         }
 
-        if (this.keyword && this.fuse) {
-          const fuzzyResults = this.fuse
-            .search(this.keyword)
+        if (this[this.locale].keyword && this[this.locale].fuse) {
+          const fuzzyResults = this[this.locale].fuse
+            .search(this[this.locale].keyword!)
             .map((r) => r.item);
-          if (this.selectedTags.length > 0) {
-            this.searchedBlogs = fuzzyResults.filter((blog) => {
-              const tagIds = blog.tags.map((tag) => tag.id);
-              const selectedTagIds = this.selectedTags.map((tag) => tag.id);
-              const flag = selectedTagIds.every((tagId) =>
-                tagIds.includes(tagId)
-              );
-              return flag;
-            });
+          if (this[this.locale].selectedTags.length > 0) {
+            this[this.locale].searchedBlogs = fuzzyResults.filter(
+              (blog: Blog) => {
+                const tagIds = blog.tags.map((tag: BlogTag) => tag.id);
+                const selectedTagIds = this[this.locale].selectedTags.map(
+                  (tag: BlogTag) => tag.id
+                );
+                const flag = selectedTagIds.every((tagId: string) =>
+                  tagIds.includes(tagId)
+                );
+                return flag;
+              }
+            );
           } else {
-            this.searchedBlogs = fuzzyResults;
+            this[this.locale].searchedBlogs = fuzzyResults;
           }
         }
       }
-    },
-  },
-  getters: {
-    getSideBlogs(): Blog[] {
-      if (this.blogs == null) return [];
-
-      const results = this.blogs
-        .sort(
-          (pre, next) =>
-            new Date(next.createdAt).getTime() -
-            new Date(pre.createdAt).getTime()
-        )
-        .slice(0, 10);
-
-      return results;
     },
   },
 });
