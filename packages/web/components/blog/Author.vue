@@ -18,10 +18,10 @@
         </div>
 
         <div class="link-icons">
-          <NuxtLink to="/about" class="to-about">
+          <NuxtLinkLocale to="/about" class="to-about">
             <Icon icon="stash:chevron-double-right" height="1.25rem" />
             <span>詳細</span>
-          </NuxtLink>
+          </NuxtLinkLocale>
           <a
             ref="noopener noreferrer"
             href="https://github.com/46ki75"
