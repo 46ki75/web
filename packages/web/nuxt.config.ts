@@ -45,7 +45,7 @@ export default defineNuxtConfig({
     prerender: {
       routes: await fetchPrerenderRoutes(ENDPOINT),
       crawlLinks: false,
-      concurrency: 10,
+      concurrency: 20,
     },
   },
   app: {

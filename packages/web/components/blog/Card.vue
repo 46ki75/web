@@ -27,15 +27,16 @@
     </NuxtLink>
 
     <div class="bottom">
-      <NuxtLink
+      <NuxtLinkLocale
         v-for="tag in tags"
         :key="tag.id"
-        :to="`/blog/search?tags=${tag.id}`"
+        :to="`/blog/search`"
         :style="{ all: 'unset' }"
         :prefetch="false"
+        @click="tagSelect(tag.id)"
       >
         <BlogTag :color="tag.color" :label="tag.name" />
-      </NuxtLink>
+      </NuxtLinkLocale>
     </div>
   </div>
 </template>
@@ -55,6 +56,7 @@ interface BlogSearchResultProps {
   createdAt: string;
   updatedAt: string;
   locale: "en" | "ja";
+  tagSelect: (tagId: string) => void;
 }
 
 defineProps<BlogSearchResultProps>();

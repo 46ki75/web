@@ -13,7 +13,11 @@
       </NuxtLinkLocale>
     </div>
 
-    <div v-for="blog in blogStore[locale].blogs" :key="blog.id" class="card">
+    <div
+      v-for="blog in getSideBlogs(blogStore[locale].blogs)"
+      :key="blog.id"
+      class="card"
+    >
       <BlogCard
         :id="blog.id"
         :title="blog.title"
@@ -22,6 +26,12 @@
         :created-at="blog.createdAt"
         :updated-at="blog.updatedAt"
         :locale="locale"
+        :tag-select="
+          (tagId) => {
+            blogStore.tagReset();
+            blogStore.tagSelect(tagId);
+          }
+        "
       />
     </div>
   </div>
@@ -35,17 +45,17 @@ const { locale } = useI18n();
 
 const blogStore = useBlogStore();
 
-// const getSideBlogs = (
-//   blogs?: typeof blogStore.en.blogs
-// ): typeof blogStore.en.blogs => {
-//   if (!blogs) return [];
-//   return blogs
-//     .sort(
-//       (pre, next) =>
-//         new Date(next.createdAt).getTime() - new Date(pre.createdAt).getTime()
-//     )
-//     .slice(0, 10);
-// };
+const getSideBlogs = (
+  blogs?: typeof blogStore.en.blogs
+): typeof blogStore.en.blogs => {
+  if (!blogs) return [];
+  return blogs
+    .sort(
+      (pre, next) =>
+        new Date(next.createdAt).getTime() - new Date(pre.createdAt).getTime()
+    )
+    .slice(0, 10);
+};
 </script>
 
 <style lang="scss" scoped>

@@ -72,6 +72,12 @@
             :created-at="blog.createdAt"
             :updated-at="blog.updatedAt"
             :locale="locale"
+            :tag-select="
+              (tagId) => {
+                blogStore.tagReset();
+                blogStore.tagSelect(tagId);
+              }
+            "
           />
         </div>
       </TransitionGroup>
@@ -86,20 +92,7 @@ import { watchDebounced } from "@vueuse/core";
 
 const { locale } = useI18n();
 
-const route = useRoute();
-const router = useRouter();
-
 const blogStore = useBlogStore();
-
-const updateQueryParams = async () => {
-  await nextTick();
-  router.replace({
-    query: {
-      keyword: blogStore[locale.value].keyword,
-      tags: blogStore[locale.value].selectedTags.map((tag) => tag.id),
-    },
-  });
-};
 
 const debouncedKeyword = shallowRef<string>("");
 
@@ -107,7 +100,6 @@ watchDebounced(
   debouncedKeyword,
   () => {
     blogStore[locale.value].keyword = debouncedKeyword.value;
-    updateQueryParams();
     blogStore.searchBlog();
   },
   { debounce: 300, maxWait: 3000 }
@@ -117,7 +109,6 @@ watch(
   [() => blogStore[locale.value].selectedTags],
   async () => {
     await nextTick();
-    updateQueryParams();
     blogStore.searchBlog();
   },
   { deep: true }
@@ -125,37 +116,6 @@ watch(
 
 onMounted(async () => {
   await nextTick();
-
-  if (blogStore[locale.value].blogs == null) return;
-  if (blogStore[locale.value].tags == null) return;
-
-  if (typeof route.query?.keyword === "string") {
-    debouncedKeyword.value = route.query.keyword;
-  }
-
-  if (typeof route.query?.tags === "string") {
-    const queryTagId = route.query.tags;
-
-    const queryTags =
-      blogStore[locale.value].tags?.filter((tag) => queryTagId === tag.id) ??
-      [];
-
-    blogStore[locale.value].selectedTags = queryTags;
-  } else if (
-    typeof route.query?.tags === "object" &&
-    route.query.tags != null
-  ) {
-    const queryTagIds = route.query.tags
-      .filter((tagId) => tagId != null)
-      .map((tagId) => tagId.toString());
-
-    const queryTags =
-      blogStore[locale.value].tags?.filter((tag) =>
-        queryTagIds.includes(tag.id)
-      ) ?? [];
-
-    blogStore[locale.value].selectedTags = queryTags;
-  }
   blogStore.searchBlog();
 });
 </script>
