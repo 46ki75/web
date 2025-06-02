@@ -1,8 +1,27 @@
 <template>
   <footer class="footer">
     <div class="container">
-      <p><ElmInlineText text="FOOTER" /></p>
-      <NuxtLinkLocale to="/privacy">privacy</NuxtLinkLocale>
+      <div class="sitelinks">
+        <div style="margin-bottom: 0.5em">
+          <ElmInlineText text="SITE" size="1em" bold />
+        </div>
+
+        <NuxtLinkLocale class="sitelink" to="/about">
+          <Icon icon="mdi:link-variant" size="16" />
+          <div>About</div>
+        </NuxtLinkLocale>
+
+        <NuxtLinkLocale class="sitelink" to="/privacy">
+          <Icon icon="mdi:link-variant" size="16" />
+          <div>Privacy Policy</div>
+        </NuxtLinkLocale>
+
+        <NuxtLinkLocale class="sitelink" to="/blog">
+          <Icon icon="mdi:link-variant" size="16" />
+          <div>Blogs</div>
+        </NuxtLinkLocale>
+      </div>
+
       <hr class="hr" />
       <div class="bottom">
         <div class="left">
@@ -57,6 +76,43 @@ const { data: build } = useAsyncData("BuildDate", async () => {
 
 .container {
   width: 80%;
+}
+
+.sitelinks {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.sitelink {
+  all: unset;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  font-size: 0.9em;
+  cursor: pointer;
+  transition: opacity 150ms;
+  color: #3e434b;
+
+  &::selection {
+    color: #cccfd5;
+    background-color: #3e434b;
+  }
+
+  [data-theme="dark"] & {
+    color: #cccfd5;
+
+    &::selection {
+      color: #3e434b;
+      background-color: #cccfd5;
+    }
+  }
+
+  &:hover {
+    opacity: 0.5;
+  }
 }
 
 .hr {
