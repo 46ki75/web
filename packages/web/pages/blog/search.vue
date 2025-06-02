@@ -1,5 +1,5 @@
 <template>
-  <div key="/blog/search">
+  <div>
     <BlogMeta
       title="Search"
       created-at="2022-10-01"
@@ -13,8 +13,7 @@
         },
       ]"
     />
-
-    <div key="/blog/search">
+    <div>
       <ElmTextField
         v-model="debouncedKeyword"
         label="検索キーワード"

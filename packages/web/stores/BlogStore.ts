@@ -20,6 +20,7 @@ interface Blog {
 export const useBlogStore = defineStore("BlogSearchStore", {
   state: () => {
     const config = useAppConfig();
+    const { locale } = useI18n();
 
     const { data: englishTags } = useAsyncData(
       "EnglishSearchListTags",
@@ -140,6 +141,8 @@ export const useBlogStore = defineStore("BlogSearchStore", {
     const japaneseFuse = shallowRef<Fuse<Blog> | undefined>();
 
     return {
+      locale,
+
       en: {
         tags: englishTags,
         selectedTags: [] as BlogTag[],
@@ -161,52 +164,44 @@ export const useBlogStore = defineStore("BlogSearchStore", {
   },
   actions: {
     tagSelect(tagId: string) {
-      const { locale } = useI18n();
+      if (this[this.locale].tags == null) return;
 
-      if (this[locale.value].tags == null) return;
-
-      const tags = this[locale.value].tags?.filter((tag) => tag.id === tagId);
+      const tags = this[this.locale].tags?.filter((tag) => tag.id === tagId);
 
       if (
         tags != null &&
         tags.length === 1 &&
-        !this[locale.value].selectedTags
+        !this[this.locale].selectedTags
           .map((tag) => tag.id)
           .includes(tags[0].id)
       ) {
-        this[locale.value].selectedTags.push(tags[0]);
+        this[this.locale].selectedTags.push(tags[0]);
         this.searchBlog();
       }
     },
     tagDeselect(tagId: string) {
-      const { locale } = useI18n();
-
-      this[locale.value].selectedTags = this[locale.value].selectedTags.filter(
+      this[this.locale].selectedTags = this[this.locale].selectedTags.filter(
         (tag) => tag.id !== tagId
       );
       this.searchBlog();
     },
     tagReset() {
-      const { locale } = useI18n();
-
-      this[locale.value].selectedTags = [];
+      this[this.locale].selectedTags = [];
       this.searchBlog();
     },
     searchBlog() {
-      const { locale } = useI18n();
-
-      if (this[locale.value].blogs == null) return;
-      if (this[locale.value].tags == null) return;
+      if (this[this.locale].blogs == null) return;
+      if (this[this.locale].tags == null) return;
 
       // Tag only searching
       if (
-        this[locale.value].keyword == null ||
-        this[locale.value].keyword?.trim() === ""
+        this[this.locale].keyword == null ||
+        this[this.locale].keyword?.trim() === ""
       ) {
-        this[locale.value].searchedBlogs =
-          this[locale.value].blogs?.filter((blog) => {
+        this[this.locale].searchedBlogs =
+          this[this.locale].blogs?.filter((blog) => {
             const tagIds = blog.tags.map((tag) => tag.id);
-            const selectedTagIds = this[locale.value].selectedTags.map(
+            const selectedTagIds = this[this.locale].selectedTags.map(
               (tag) => tag.id
             );
             const flag = selectedTagIds.every((tagId) =>
@@ -217,22 +212,22 @@ export const useBlogStore = defineStore("BlogSearchStore", {
       }
       // Tag and Keyword searching
       else {
-        if (this[locale.value].fuse == null) {
-          this[locale.value].fuse = new Fuse(this[locale.value].blogs ?? [], {
+        if (this[this.locale].fuse == null) {
+          this[this.locale].fuse = new Fuse(this[this.locale].blogs ?? [], {
             keys: ["title", "description", "keywords"],
             threshold: 0.5,
           });
         }
 
-        if (this[locale.value].keyword && this[locale.value].fuse) {
-          const fuzzyResults = this[locale.value].fuse
-            .search(this[locale.value].keyword!)
+        if (this[this.locale].keyword && this[this.locale].fuse) {
+          const fuzzyResults = this[this.locale].fuse
+            .search(this[this.locale].keyword!)
             .map((r) => r.item);
-          if (this[locale.value].selectedTags.length > 0) {
-            this[locale.value].searchedBlogs = fuzzyResults.filter(
+          if (this[this.locale].selectedTags.length > 0) {
+            this[this.locale].searchedBlogs = fuzzyResults.filter(
               (blog: Blog) => {
                 const tagIds = blog.tags.map((tag: BlogTag) => tag.id);
-                const selectedTagIds = this[locale.value].selectedTags.map(
+                const selectedTagIds = this[this.locale].selectedTags.map(
                   (tag: BlogTag) => tag.id
                 );
                 const flag = selectedTagIds.every((tagId: string) =>
@@ -242,7 +237,7 @@ export const useBlogStore = defineStore("BlogSearchStore", {
               }
             );
           } else {
-            this[locale.value].searchedBlogs = fuzzyResults;
+            this[this.locale].searchedBlogs = fuzzyResults;
           }
         }
       }
