@@ -30,10 +30,10 @@ defineProps<BaseDateProps>();
 }
 
 .icon {
-  color: rgba(black, 0.9);
+  color: #7f6830;
 
   [data-theme="dark"] & {
-    color: rgba(white, 0.9);
+    color: #b69545;
   }
 }
 </style>
