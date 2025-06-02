@@ -19,7 +19,7 @@
       <NuxtLinkLocale
         v-for="tag in tags"
         :key="tag.id"
-        :to="`/blog/search?tags=${tag.id}`"
+        :to="`/blog/search`"
         :style="{ all: 'unset' }"
         :prefetch="false"
       >
