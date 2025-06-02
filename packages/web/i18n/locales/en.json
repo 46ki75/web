@@ -1,1 +1,7 @@
-{}
+{
+    "blog": {
+        "side": {
+            "searchButton": "Search Articles"
+        }
+    }
+}

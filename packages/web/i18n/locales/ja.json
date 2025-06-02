@@ -1,1 +1,7 @@
-{}
+{
+    "blog": {
+        "side": {
+            "searchButton": "記事を検索"
+        }
+    }
+}

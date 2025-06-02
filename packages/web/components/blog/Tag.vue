@@ -1,5 +1,5 @@
 <template>
-  <div class="tag">
+  <div class="tag" @click="tagSelect(id)">
     <Icon icon="fa-solid:tags" :color="color" class="icon" />
     <ElmInlineText :text="label" :color="color" size="0.85rem" />
   </div>
@@ -10,11 +10,19 @@ import { ElmInlineText } from "@elmethis/core";
 import { Icon } from "@iconify/vue";
 
 interface BlogtagProps {
+  id: string;
   label: string;
   color: string;
 }
 
 defineProps<BlogtagProps>();
+
+const blogStore = useBlogStore();
+
+const tagSelect = (tagId: string) => {
+  blogStore.tagReset();
+  blogStore.tagSelect(tagId);
+};
 </script>
 
 <style lang="scss" scoped>

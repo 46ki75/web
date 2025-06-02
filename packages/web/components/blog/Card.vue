@@ -1,14 +1,6 @@
 <template>
   <div :key="id" class="container">
-    <NuxtLink
-      class="top"
-      :to="
-        locale === 'en'
-          ? `/blog/article/${id}`
-          : `/${locale}/blog/article/${id}`
-      "
-      :prefetch="false"
-    >
+    <NuxtLinkLocale class="top" :to="`/blog/article/${id}`" :prefetch="false">
       <div class="image">
         <ElmImage :src="`/_notion/blog/image/${id}/ogp.webp`" />
       </div>
@@ -24,7 +16,7 @@
           <BlogDate :created-at="createdAt" :updated-at="updatedAt" />
         </div>
       </div>
-    </NuxtLink>
+    </NuxtLinkLocale>
 
     <div class="bottom">
       <NuxtLinkLocale
@@ -33,9 +25,8 @@
         :to="`/blog/search`"
         :style="{ all: 'unset' }"
         :prefetch="false"
-        @click="tagSelect(tag.id)"
       >
-        <BlogTag :color="tag.color" :label="tag.name" />
+        <BlogTag :id="tag.id" :color="tag.color" :label="tag.name" />
       </NuxtLinkLocale>
     </div>
   </div>
@@ -56,7 +47,6 @@ interface BlogSearchResultProps {
   createdAt: string;
   updatedAt: string;
   locale: "en" | "ja";
-  tagSelect: (tagId: string) => void;
 }
 
 defineProps<BlogSearchResultProps>();

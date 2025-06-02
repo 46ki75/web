@@ -8,7 +8,7 @@
       >
         <ElmButton block @click="() => {}">
           <Icon icon="mdi:folder-search-outline" height="24px" />
-          <ElmInlineText text="記事を検索" />
+          <ElmInlineText :text="t('blog.side.searchButton')" />
         </ElmButton>
       </NuxtLinkLocale>
     </div>
@@ -26,12 +26,6 @@
         :created-at="blog.createdAt"
         :updated-at="blog.updatedAt"
         :locale="locale"
-        :tag-select="
-          (tagId) => {
-            blogStore.tagReset();
-            blogStore.tagSelect(tagId);
-          }
-        "
       />
     </div>
   </div>
@@ -41,7 +35,7 @@
 import { ElmButton, ElmInlineText } from "@elmethis/core";
 import { Icon } from "@iconify/vue";
 
-const { locale } = useI18n();
+const { locale, t } = useI18n();
 
 const blogStore = useBlogStore();
 

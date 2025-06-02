@@ -72,12 +72,6 @@
             :created-at="blog.createdAt"
             :updated-at="blog.updatedAt"
             :locale="locale"
-            :tag-select="
-              (tagId) => {
-                blogStore.tagReset();
-                blogStore.tagSelect(tagId);
-              }
-            "
           />
         </div>
       </TransitionGroup>
