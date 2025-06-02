@@ -1,12 +1,16 @@
 <template>
   <div class="side-container">
     <div class="sticky">
-      <NuxtLink to="/blog/search" :prefetch="false" :style="{ all: 'unset' }">
+      <NuxtLinkLocale
+        to="/blog/search"
+        :prefetch="false"
+        :style="{ all: 'unset' }"
+      >
         <ElmButton block @click="() => {}">
           <Icon icon="mdi:folder-search-outline" height="24px" />
           <ElmInlineText text="記事を検索" />
         </ElmButton>
-      </NuxtLink>
+      </NuxtLinkLocale>
     </div>
 
     <div v-for="blog in blogStore[locale].blogs" :key="blog.id" class="card">

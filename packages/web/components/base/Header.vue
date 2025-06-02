@@ -1,17 +1,17 @@
 <template>
   <header class="header">
-    <NuxtLink to="/" class="icon">
+    <NuxtLinkLocale to="/" class="icon">
       <Icon icon="mdi:home" width="28px" />
-    </NuxtLink>
+    </NuxtLinkLocale>
 
     <div class="right">
       <BaseLanguage />
-      <NuxtLink to="/blog" class="icon">
+      <NuxtLinkLocale to="/blog" class="icon">
         <Icon icon="mdi:book-open-page-variant-outline" width="28px" />
-      </NuxtLink>
-      <NuxtLink to="/about" class="icon">
+      </NuxtLinkLocale>
+      <NuxtLinkLocale to="/about" class="icon">
         <Icon icon="mdi:account-box-multiple-outline" width="28px" />
-      </NuxtLink>
+      </NuxtLinkLocale>
       <ElmToggleTheme />
     </div>
   </header>

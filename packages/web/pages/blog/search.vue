@@ -5,9 +5,12 @@
       created-at="2022-10-01"
       updated-at="2025-03-26"
       :links="[
-        { text: 'Home', href: '/' },
-        { text: 'Blog', href: '/blog' },
-        { text: 'Search', href: '/blog/search' },
+        { text: 'Home', href: locale === 'en' ? '/' : `/${locale}` },
+        { text: 'Blog', href: locale === 'en' ? '/blog' : `/${locale}/blog` },
+        {
+          text: 'Search',
+          href: locale === 'en' ? '/blog/search' : `/${locale}/blog/search`,
+        },
       ]"
     />
 
@@ -15,14 +18,14 @@
       <ElmTextField
         v-model="debouncedKeyword"
         label="検索キーワード"
-        :icon="SearchIcon"
+        icon="pen"
       />
 
       <div class="tag-container">
         <ElmHeading :level="3" text="タグ一覧" disable-fragment-identifier />
-        <div v-if="blogStore.tags" class="tag-pool">
+        <div v-if="blogStore[locale].tags" class="tag-pool">
           <BlogTag
-            v-for="tag in blogStore.tags"
+            v-for="tag in blogStore[locale].tags"
             :id="tag.id"
             :key="tag.id"
             :label="tag.name"
@@ -40,7 +43,7 @@
         />
         <TransitionGroup name="tag" class="tag-pool" tag="dev">
           <BlogTag
-            v-for="tag in blogStore.selectedTags"
+            v-for="tag in blogStore[locale].selectedTags"
             :id="tag.id"
             :key="tag.id"
             :label="tag.name"
@@ -58,7 +61,7 @@
 
       <TransitionGroup name="search" class="search-results" tag="div">
         <div
-          v-for="blog in blogStore.searchedBlogs"
+          v-for="blog in blogStore[locale].searchedBlogs"
           :key="blog.id"
           class="search-results-item"
         >
@@ -69,6 +72,7 @@
             :tags="blog.tags"
             :created-at="blog.createdAt"
             :updated-at="blog.updatedAt"
+            :locale="locale"
           />
         </div>
       </TransitionGroup>
@@ -81,7 +85,7 @@ import { ElmButton, ElmHeading, ElmTextField } from "@elmethis/core";
 import { Icon } from "@iconify/vue";
 import { watchDebounced } from "@vueuse/core";
 
-const SearchIcon = h(Icon, { icon: "material-symbols:search" });
+const { locale } = useI18n();
 
 const route = useRoute();
 const router = useRouter();
@@ -91,8 +95,8 @@ const blogStore = useBlogStore();
 const updateQueryParams = () => {
   router.replace({
     query: {
-      keyword: blogStore.keyword,
-      tags: blogStore.selectedTags.map((tag) => tag.id),
+      keyword: blogStore[locale.value].keyword,
+      tags: blogStore[locale.value].selectedTags.map((tag) => tag.id),
     },
   });
 };
@@ -102,7 +106,7 @@ const debouncedKeyword = shallowRef<string>("");
 watchDebounced(
   debouncedKeyword,
   () => {
-    blogStore.keyword = debouncedKeyword.value;
+    blogStore[locale.value].keyword = debouncedKeyword.value;
     updateQueryParams();
     blogStore.searchBlog();
   },
@@ -110,7 +114,7 @@ watchDebounced(
 );
 
 watch(
-  () => blogStore.selectedTags,
+  () => blogStore[locale.value].selectedTags,
   () => {
     updateQueryParams();
     blogStore.searchBlog();
@@ -121,8 +125,8 @@ watch(
 onMounted(async () => {
   await nextTick();
 
-  if (blogStore.blogs == null) return;
-  if (blogStore.tags == null) return;
+  if (blogStore[locale.value].blogs == null) return;
+  if (blogStore[locale.value].tags == null) return;
 
   if (typeof route.query?.keyword === "string") {
     debouncedKeyword.value = route.query.keyword;
@@ -131,9 +135,11 @@ onMounted(async () => {
   if (typeof route.query?.tags === "string") {
     const queryTagId = route.query.tags;
 
-    const queryTags = blogStore.tags.filter((tag) => queryTagId === tag.id);
+    const queryTags =
+      blogStore[locale.value].tags?.filter((tag) => queryTagId === tag.id) ??
+      [];
 
-    blogStore.selectedTags = queryTags;
+    blogStore[locale.value].selectedTags = queryTags;
   } else if (
     typeof route.query?.tags === "object" &&
     route.query.tags != null
@@ -142,11 +148,12 @@ onMounted(async () => {
       .filter((tagId) => tagId != null)
       .map((tagId) => tagId.toString());
 
-    const queryTags = blogStore.tags.filter((tag) =>
-      queryTagIds.includes(tag.id)
-    );
+    const queryTags =
+      blogStore[locale.value].tags?.filter((tag) =>
+        queryTagIds.includes(tag.id)
+      ) ?? [];
 
-    blogStore.selectedTags = queryTags;
+    blogStore[locale.value].selectedTags = queryTags;
   }
   blogStore.searchBlog();
 });

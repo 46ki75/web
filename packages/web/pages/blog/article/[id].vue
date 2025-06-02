@@ -6,9 +6,15 @@
         :created-at="blog.createdAt"
         :updated-at="blog.updatedAt"
         :links="[
-          { text: 'Home', href: '/' },
-          { text: 'Blog', href: '/blog' },
-          { text: 'Article', href: `/blog/article/${blog.id}` },
+          { text: 'Home', href: locale === 'en' ? '/' : `/${locale}` },
+          { text: 'Blog', href: locale === 'en' ? '/blog' : `/${locale}/blog` },
+          {
+            text: 'Article',
+            href:
+              locale === 'en'
+                ? `/blog/article/${blog.id}`
+                : `/${locale}/blog/article/${blog.id}`,
+          },
         ]"
         :image="`/_notion/blog/image/${blog.id}/ogp.webp`"
         :tags="
