@@ -6,19 +6,12 @@
       <div class="bottom">
         <div class="left">
           <ElmInlineText
-            :text="`© Chomolungma Shirayuki 2022-${new Date().getFullYear()} ・ Build: ${data}`"
+            :text="`© Ikuma Yamashita 2022-${new Date().getFullYear()} ・ Build: ${build}`"
             size="0.8rem"
           />
         </div>
 
         <div class="right">
-          <a
-            ref="noopener noreferrer"
-            href="https://x.com/46ki75"
-            target="_blank"
-          >
-            <Icon class="icon" icon="mdi:twitter" height="32px" />
-          </a>
           <a
             ref="noopener noreferrer"
             href="https://github.com/46ki75/web"
@@ -35,10 +28,12 @@
 <script setup lang="ts">
 import { ElmInlineText } from "@elmethis/core";
 import { Icon } from "@iconify/vue";
+import { version } from "../../package.json";
 
-const { data } = useAsyncData("BuildDate", async () =>
-  new Date().toISOString().substring(0, 10)
-);
+const { data: build } = useAsyncData("BuildDate", async () => {
+  const dateBuildMeta = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+  return `v${version}+${dateBuildMeta}`;
+});
 </script>
 
 <style lang="scss" scoped>
