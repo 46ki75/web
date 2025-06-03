@@ -5,13 +5,6 @@
     </NuxtLinkLocale>
 
     <div class="right">
-      <NuxtLinkLocale to="/blog" class="icon">
-        <Icon icon="mdi:book-open-page-variant-outline" width="28px" />
-      </NuxtLinkLocale>
-      <NuxtLinkLocale to="/about" class="icon">
-        <Icon icon="mdi:account-box-multiple-outline" width="28px" />
-      </NuxtLinkLocale>
-
       <BaseLanguage />
 
       <ElmToggleTheme />

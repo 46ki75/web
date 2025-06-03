@@ -1,6 +1,6 @@
 <template>
   <div class="language" @click="toggle">
-    <ElmMdiIcon :d="mdiTranslate" />
+    <Icon icon="mdi:translate" color="#a4863e" />
     <div class="language-name">
       <ElmInlineText
         v-if="localeProperties.name"
@@ -17,8 +17,8 @@
 </template>
 
 <script setup lang="ts">
-import { ElmInlineText, ElmMdiIcon } from "@elmethis/core";
-import { mdiTranslate } from "@mdi/js";
+import { ElmInlineText } from "@elmethis/core";
+import { Icon } from "@iconify/vue/dist/iconify.js";
 
 const showCover = ref(false);
 
