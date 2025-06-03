@@ -134,10 +134,6 @@ onMounted(() => {
 if (blog.value) {
   useSeoMeta({
     ogType: "article",
-    ogUrl:
-      locale.value === defaultLocale
-        ? `${appConfig.ENDPOINT}/blog/article/${blog.value.id}`
-        : `${appConfig.ENDPOINT}/${locale}/blog/article/${blog.value.id}`,
     title: blog.value.title,
     ogTitle: blog.value.title,
     description: blog.value.description,
@@ -161,14 +157,11 @@ if (blog.value) {
           headline: blog.value.title,
           abstract: blog.value.description,
           image: `${appConfig.ENDPOINT}/_notion/blog/image/${blog.value.id}/ogp.webp`,
-          url:
-            locale.value === defaultLocale
-              ? `${appConfig.ENDPOINT}/blog/article/${blog.value.id}`
-              : `${appConfig.ENDPOINT}/${locale}/blog/article/${blog.value.id}`,
+          url: `${appConfig.ENDPOINT}${route.fullPath}`,
           author: {
             "@type": "Person",
-            givenName: "Shirayuki",
-            familyName: "Chomolungma",
+            givenName: "Ikuma",
+            familyName: "Yamashita",
           },
           datePublished: blog.value.createdAt,
           dateModified: blog.value.updatedAt,

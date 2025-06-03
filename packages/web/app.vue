@@ -13,6 +13,8 @@
 
 <script lang="ts" setup>
 const { locale } = useI18n();
+const appConfig = useAppConfig();
+const { fullPath } = useRoute();
 
 useSeoMeta({
   title: "DEAFULT",
@@ -20,6 +22,7 @@ useSeoMeta({
   author: "Ikuma Yamashita",
   articleAuthor: ["Ikuma Yamashita"],
   twitterSite: "@46ki75",
+  ogUrl: `${appConfig.ENDPOINT}${fullPath}`,
 });
 
 useHead({
