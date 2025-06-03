@@ -151,7 +151,7 @@ const { locale, defaultLocale } = useI18n();
 .links {
   display: flex;
   flex-flow: row wrap;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
   gap: 1rem;
   user-select: none;
