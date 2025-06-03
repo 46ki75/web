@@ -1,9 +1,14 @@
 <template>
   <div class="date">
-    <Icon icon="mdi:calendar-month" class="icon" />
-    <ElmInlineText :text="createdAt.substring(0, 10)" size="0.8rem" />
-    <Icon icon="mdi:calendar-refresh" class="icon" />
-    <ElmInlineText :text="updatedAt.substring(0, 10)" size="0.8rem" />
+    <div class="inner">
+      <Icon icon="mdi:calendar-month" class="icon" />
+      <ElmInlineText :text="createdAt.substring(0, 10)" size="0.8rem" />
+    </div>
+
+    <div class="inner">
+      <Icon icon="mdi:calendar-refresh" class="icon" />
+      <ElmInlineText :text="updatedAt.substring(0, 10)" size="0.8rem" />
+    </div>
   </div>
 </template>
 
@@ -26,6 +31,12 @@ defineProps<BaseDateProps>();
   flex-direction: row;
   justify-content: flex-end;
   align-items: center;
+  gap: 0.5rem;
+}
+
+.inner {
+  display: flex;
+  flex-direction: row;
   gap: 0.25rem;
 }
 
