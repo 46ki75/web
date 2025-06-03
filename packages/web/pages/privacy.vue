@@ -72,7 +72,7 @@ const MAP: Record<
     {
       heading: "About Access Analysis Tools",
       contents: [
-        "This site uses Google Analytics and AWS Resource Access Manager. The data collected is anonymous and does not identify individuals.",
+        "This site uses Google Analytics and Amazon CloudWatch RUM. The data collected is anonymous and does not identify individuals.",
       ],
     },
     {
@@ -99,7 +99,7 @@ const MAP: Record<
     {
       heading: "アクセス解析ツールについて",
       contents: [
-        "当サイトでは、Google Analytics 及び AWS Resource Access Manager を使用しています。これにより収集されるデータは匿名であり、個人を特定するものではありません。",
+        "当サイトでは、Google Analytics 及び Amazon CloudWatch RUM を使用しています。これにより収集されるデータは匿名であり、個人を特定するものではありません。",
       ],
     },
     {
