@@ -17,8 +17,8 @@ const appConfig = useAppConfig();
 const { fullPath } = useRoute();
 
 useSeoMeta({
-  title: "DEAFULT",
-  ogTitle: "DEAFULT",
+  title: appConfig.SITE_NAME,
+  ogTitle: appConfig.SITE_NAME,
   author: "Ikuma Yamashita",
   articleAuthor: ["Ikuma Yamashita"],
   twitterSite: "@46ki75",

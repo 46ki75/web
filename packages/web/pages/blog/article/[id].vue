@@ -134,7 +134,7 @@ onMounted(() => {
 if (blog.value) {
   useSeoMeta({
     ogType: "article",
-    title: blog.value.title,
+    title: `${blog.value.title} | ${appConfig.SITE_NAME}`,
     ogTitle: blog.value.title,
     description: blog.value.description,
     ogDescription: blog.value.description,
