@@ -11,8 +11,8 @@ importers:
   packages/web:
     dependencies:
       '@elmethis/core':
-        specifier: 0.2.6
-        version: 0.2.6(vue@3.5.13(typescript@5.8.2))
+        specifier: 0.2.10
+        version: 0.2.10(vue@3.5.13(typescript@5.8.2))
       '@iconify/vue':
         specifier: ^4.3.0
         version: 4.3.0(vue@3.5.13(typescript@5.8.2))
@@ -330,8 +330,8 @@ packages:
     peerDependencies:
       vue: ^3.4.0
 
-  '@elmethis/core@0.2.6':
-    resolution: {integrity: sha512-3tRGqy9dPQ3HzUisz44Y7qCeuTrDK/pynqafO1ww3mQo0OIVtVeQnrkJR4zSDs4mgGHYPeFB/o6Ngfgizz55IA==}
+  '@elmethis/core@0.2.10':
+    resolution: {integrity: sha512-BJcVbkmBa5hqvHCoe8pmMOmYyGI9Ya0tb4Dy5c9v2jI2ACbNuvahSl4iZH+o6ny3g5+5chzLnfEG3qrPVXjb7w==}
     peerDependencies:
       vue: ^3.4.0
 
@@ -5044,7 +5044,7 @@ snapshots:
       shiki: 3.4.0
       vue: 3.5.13(typescript@5.8.2)
 
-  '@elmethis/core@0.2.6(vue@3.5.13(typescript@5.8.2))':
+  '@elmethis/core@0.2.10(vue@3.5.13(typescript@5.8.2))':
     dependencies:
       '@mdi/js': 7.4.47
       '@vueuse/core': 13.3.0(vue@3.5.13(typescript@5.8.2))
