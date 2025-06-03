@@ -12,12 +12,18 @@
 </template>
 
 <script lang="ts" setup>
+const { locale } = useI18n();
+
 useSeoMeta({
   title: "DEAFULT",
   ogTitle: "DEAFULT",
   author: "Ikuma Yamashita",
   articleAuthor: ["Ikuma Yamashita"],
   twitterSite: "@46ki75",
+});
+
+useHead({
+  htmlAttrs: { lang: locale },
 });
 </script>
 
