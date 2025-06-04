@@ -67,15 +67,9 @@ resource "aws_lambda_function" "http_api" {
     system_log_level      = "INFO"
   }
 
-  tracing_config {
-    mode = "Active"
-  }
-
   environment {
     variables = {
-      STAGE_NAME      = terraform.workspace
-      RUST_LOG        = "http_api=debug"
-      RUST_LOG_FORMAT = "JSON"
+      STAGE_NAME = terraform.workspace
     }
   }
 }
