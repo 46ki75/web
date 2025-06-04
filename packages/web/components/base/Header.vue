@@ -1,10 +1,32 @@
 <template>
   <header class="header">
-    <NuxtLinkLocale to="/" class="icon">
-      <Icon icon="mdi:home" width="28px" />
-    </NuxtLinkLocale>
+    <div class="header-left flex-center">
+      <NuxtLinkLocale to="/" class="icon">
+        <Icon icon="mdi:home" width="28px" />
+      </NuxtLinkLocale>
+    </div>
 
-    <div class="right">
+    <div v-if="isMobile" class="header-center flex-center">
+      <NuxtLinkLocale to="/about" class="header-center-link flex-center">
+        <Icon
+          class="header-center-link-icon"
+          icon="ix:user-profile"
+          width="16px"
+        />
+        <ElmInlineText text="About" />
+      </NuxtLinkLocale>
+
+      <NuxtLinkLocale to="/blog" class="header-center-link flex-center">
+        <Icon
+          class="header-center-link-icon"
+          icon="grommet-icons:article"
+          width="16px"
+        />
+        <ElmInlineText text="Blog" />
+      </NuxtLinkLocale>
+    </div>
+
+    <div class="header-right flex-center">
       <BaseLanguage />
 
       <ElmToggleTheme />
@@ -13,8 +35,11 @@
 </template>
 
 <script setup lang="ts">
-import { ElmToggleTheme } from "@elmethis/core";
+import { ElmInlineText, ElmToggleTheme } from "@elmethis/core";
 import { Icon } from "@iconify/vue";
+import { useMediaQuery } from "@vueuse/core";
+
+const isMobile = useMediaQuery("(min-width: 1024px)");
 </script>
 
 <style lang="scss" scoped>
@@ -40,12 +65,45 @@ import { Icon } from "@iconify/vue";
   }
 }
 
-.right {
+.flex-center {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem;
+}
+
+.header-left {
+  margin-left: 0.5rem;
+}
+
+.header-center {
+  user-select: none;
+  gap: 1rem;
+}
+
+.header-center-link {
+  text-decoration: none;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  opacity: 0.6;
+  transition: opacity 150ms;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.header-center-link-icon {
+  color: rgba(black, 0.8);
+
+  [data-theme="dark"] & {
+    color: rgba(white, 0.8);
+  }
+}
+
+.header-right {
   margin-right: 0.5rem;
 }
 
@@ -54,12 +112,7 @@ import { Icon } from "@iconify/vue";
   border-radius: 0.25rem;
   width: 28px;
   height: 28px;
-  color: rgba(black, 0.7);
-
-  [data-theme="dark"] & {
-    color: rgba(white, 0.7);
-  }
-
+  color: #b69545;
   transition: background-color 100ms;
 
   &:hover {
