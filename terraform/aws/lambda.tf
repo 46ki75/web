@@ -63,8 +63,8 @@ resource "aws_lambda_function" "http_api" {
   logging_config {
     log_group             = aws_cloudwatch_log_group.lambda_http.name
     log_format            = "JSON"
-    application_log_level = "DEBUG"
-    system_log_level      = "INFO"
+    application_log_level = "INFO"
+    system_log_level      = "WARN"
   }
 
   environment {
