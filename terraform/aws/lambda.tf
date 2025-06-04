@@ -60,6 +60,10 @@ resource "aws_lambda_function" "http_api" {
   publish       = true # Publish a new version
   timeout       = 30
 
+  tracing_config {
+    mode = "Active"
+  }
+
   logging_config {
     log_group             = aws_cloudwatch_log_group.lambda_http.name
     log_format            = "JSON"
