@@ -11,6 +11,7 @@ pub fn init_subscriber() {
         .unwrap_or(tracing::Level::INFO);
 
     let fmt = tracing_subscriber::fmt()
+        .with_span_events(tracing_subscriber::fmt::format::FmtSpan::CLOSE)
         .with_level(true)
         .with_file(true)
         .with_line_number(true)
