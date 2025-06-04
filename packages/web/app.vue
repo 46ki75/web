@@ -1,6 +1,6 @@
 <template>
   <NuxtLoadingIndicator
-    color="#59b57c"
+    color="#cdb57b"
     :height="4"
     :duration="2000"
     :throttle="50"
@@ -12,12 +12,21 @@
 </template>
 
 <script lang="ts" setup>
+const { locale } = useI18n();
+const appConfig = useAppConfig();
+const { fullPath } = useRoute();
+
 useSeoMeta({
-  title: "DEAFULT",
-  ogTitle: "DEAFULT",
-  author: "Chomolungma Shirayuki",
-  articleAuthor: ["Chomolungma Shirayuki"],
+  title: appConfig.SITE_NAME,
+  ogTitle: appConfig.SITE_NAME,
+  author: "Ikuma Yamashita",
+  articleAuthor: ["Ikuma Yamashita"],
   twitterSite: "@46ki75",
+  ogUrl: `${appConfig.ENDPOINT}${fullPath}`,
+});
+
+useHead({
+  htmlAttrs: { lang: locale },
 });
 </script>
 

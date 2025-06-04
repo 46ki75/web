@@ -60,22 +60,20 @@ resource "aws_lambda_function" "http_api" {
   publish       = true # Publish a new version
   timeout       = 30
 
-  logging_config {
-    log_group             = aws_cloudwatch_log_group.lambda_http.name
-    log_format            = "JSON"
-    application_log_level = "DEBUG"
-    system_log_level      = "INFO"
-  }
-
   tracing_config {
     mode = "Active"
   }
 
+  logging_config {
+    log_group             = aws_cloudwatch_log_group.lambda_http.name
+    log_format            = "JSON"
+    application_log_level = "INFO"
+    system_log_level      = "WARN"
+  }
+
   environment {
     variables = {
-      STAGE_NAME      = terraform.workspace
-      RUST_LOG        = "http_api=debug"
-      RUST_LOG_FORMAT = "JSON"
+      STAGE_NAME = terraform.workspace
     }
   }
 }

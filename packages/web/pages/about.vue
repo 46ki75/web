@@ -1,5 +1,24 @@
 <template>
   <BaseContainer>
+    <ElmBreadcrumb
+      :links="[
+        {
+          text: 'Home',
+          onClick: () =>
+            $router.push(locale === defaultLocale ? `/` : `/${locale}`),
+        },
+        {
+          text: 'About',
+          onClick: () =>
+            $router.push(
+              locale === defaultLocale ? `/about` : `/${locale}/about`
+            ),
+        },
+      ]"
+    />
+
+    <BaseDate created-at="2025-06-02" updated-at="2025-06-03" />
+
     <header>
       <h1 :class="$style.greet">
         {{ locale === "en" ? "Hello." : "皆様、こんにちは。" }}
@@ -103,14 +122,15 @@ import {
   ElmInlineText,
   ElmHeading,
   ElmBookmarkIcon,
+  ElmBreadcrumb,
 } from "@elmethis/core";
 
-const { locale } = useI18n();
+const { locale, defaultLocale } = useI18n();
 </script>
 
 <style module lang="scss">
 .greet {
-  margin-block-start: 0;
+  margin-block: 2rem;
   color: #3e434b;
 
   &::selection {
@@ -131,7 +151,7 @@ const { locale } = useI18n();
 .links {
   display: flex;
   flex-flow: row wrap;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
   gap: 1rem;
   user-select: none;

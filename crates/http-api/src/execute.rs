@@ -5,6 +5,7 @@
 use tower::ServiceExt;
 
 /// Execute an Axum app with a Lambda event.
+#[tracing::instrument(level = "info")]
 pub async fn execute_axum(
     app: axum::Router,
     event: lambda_http::Request,

@@ -8,6 +8,7 @@ pub mod entity;
 pub mod error;
 pub mod execute;
 pub mod graphql_handler;
+pub mod lambda_tracing_subscriber;
 pub mod query;
 pub mod record;
 pub mod repository;

@@ -1,9 +1,28 @@
 <template>
   <BaseContainer>
+    <ElmBreadcrumb
+      :links="[
+        {
+          text: 'Home',
+          onClick: () =>
+            $router.push(locale === defaultLocale ? `/` : `/${locale}`),
+        },
+        {
+          text: 'Privacy Policy',
+          onClick: () =>
+            $router.push(
+              locale === defaultLocale ? `/privacy` : `/${locale}/privacy`
+            ),
+        },
+      ]"
+    />
+
     <section :class="$style.section">
       <ElmHeading :level="1" disable-fragment-identifier>
         {{ t("privacy.title") }}
       </ElmHeading>
+
+      <BaseDate created-at="2025-06-02" updated-at="2025-06-02" />
 
       <ElmParagraph>
         <ElmInlineText :text="t('privacy.basicPolicy')" />
@@ -30,9 +49,14 @@
 </template>
 
 <script setup lang="ts">
-import { ElmHeading, ElmInlineText, ElmParagraph } from "@elmethis/core";
+import {
+  ElmHeading,
+  ElmInlineText,
+  ElmParagraph,
+  ElmBreadcrumb,
+} from "@elmethis/core";
 
-const { t, locale } = useI18n();
+const { t, locale, defaultLocale } = useI18n();
 
 const MAP: Record<
   "en" | "ja",
@@ -48,7 +72,7 @@ const MAP: Record<
     {
       heading: "About Access Analysis Tools",
       contents: [
-        "This site uses Google Analytics and AWS Resource Access Manager. The data collected is anonymous and does not identify individuals.",
+        "This site uses Google Analytics and Amazon CloudWatch RUM. The data collected is anonymous and does not identify individuals.",
       ],
     },
     {
@@ -75,7 +99,7 @@ const MAP: Record<
     {
       heading: "アクセス解析ツールについて",
       contents: [
-        "当サイトでは、Google Analytics 及び AWS Resource Access Manager を使用しています。これにより収集されるデータは匿名であり、個人を特定するものではありません。",
+        "当サイトでは、Google Analytics 及び Amazon CloudWatch RUM を使用しています。これにより収集されるデータは匿名であり、個人を特定するものではありません。",
       ],
     },
     {

@@ -7,17 +7,17 @@
         </div>
 
         <NuxtLinkLocale class="sitelink" to="/about">
-          <Icon icon="mdi:link-variant" size="16" />
+          <Icon icon="mdi:link-variant" size="16" color="#6987b8" />
           <div>About</div>
         </NuxtLinkLocale>
 
         <NuxtLinkLocale class="sitelink" to="/privacy">
-          <Icon icon="mdi:link-variant" size="16" />
+          <Icon icon="mdi:link-variant" size="16" color="#6987b8" />
           <div>Privacy Policy</div>
         </NuxtLinkLocale>
 
         <NuxtLinkLocale class="sitelink" to="/blog">
-          <Icon icon="mdi:link-variant" size="16" />
+          <Icon icon="mdi:link-variant" size="16" color="#6987b8" />
           <div>Blogs</div>
         </NuxtLinkLocale>
       </div>
@@ -25,10 +25,17 @@
       <hr class="hr" />
       <div class="bottom">
         <div class="left">
-          <ElmInlineText
-            :text="`© Ikuma Yamashita 2022-${new Date().getFullYear()} ・ Build: ${build}`"
-            size="0.8rem"
-          />
+          <div class="left-inner">
+            <Icon icon="mdi:copyright" class="icon-bottom" height="12" />
+            <ElmInlineText
+              :text="`Ikuma Yamashita 2022 - ${new Date().getFullYear()}`"
+              size="0.8rem"
+            />
+          </div>
+          <div class="left-inner">
+            <Icon icon="mdi:cube-scan" class="icon-bottom" height="12" />
+            <ElmInlineText :text="`${build}`" size="0.8rem" />
+          </div>
         </div>
 
         <div class="right">
@@ -94,19 +101,19 @@ const { data: build } = useAsyncData("BuildDate", async () => {
   font-size: 0.9em;
   cursor: pointer;
   transition: opacity 150ms;
-  color: #3e434b;
+  color: #494f59;
 
   &::selection {
-    color: #cccfd5;
-    background-color: #3e434b;
+    color: #bec2ca;
+    background-color: #494f59;
   }
 
   [data-theme="dark"] & {
-    color: #cccfd5;
+    color: #bec2ca;
 
     &::selection {
-      color: #3e434b;
-      background-color: #cccfd5;
+      color: #494f59;
+      background-color: #bec2ca;
     }
   }
 
@@ -135,11 +142,24 @@ const { data: build } = useAsyncData("BuildDate", async () => {
   display: flex;
   justify-content: flex-start;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.left-inner {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.25rem;
 }
 
 .right {
   display: flex;
   gap: 1rem;
+}
+
+.icon-bottom {
+  color: #a4863e;
 }
 
 .icon {
