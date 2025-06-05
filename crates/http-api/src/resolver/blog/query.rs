@@ -3,6 +3,7 @@
 //! Contains methods that resolve blogs and blog tags.
 
 /// Contains methods that resolve blogs and blog tags.
+#[derive(Default)]
 pub struct BlogQueryResolver {}
 
 #[allow(missing_docs)]
@@ -239,6 +240,7 @@ impl Blog {
     }
 }
 
+#[async_graphql::Object]
 impl BlogQueryResolver {
     /// Returns a blog by its page ID.
     pub async fn blog(
