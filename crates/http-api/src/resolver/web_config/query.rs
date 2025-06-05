@@ -6,9 +6,10 @@
 #[derive(Debug, Default)]
 pub struct WebConfigQueryResolver;
 
+#[async_graphql::Object]
 impl WebConfigQueryResolver {
     #[allow(missing_docs)]
-    pub fn web_config(&self) -> WebConfig {
+    pub async fn web_config(&self) -> WebConfig {
         WebConfig
     }
 }

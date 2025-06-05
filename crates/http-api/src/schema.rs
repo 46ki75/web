@@ -31,26 +31,17 @@ pub async fn init_schema() -> Result<
                 web_config_repository,
             };
 
-            let web_config_query_resolver =
-                std::sync::Arc::new(crate::resolver::web_config::query::WebConfigQueryResolver {});
-
             let blog_repository =
                 std::sync::Arc::new(crate::repository::blog::BlogRepositoryImpl {});
 
             let blog_service = crate::service::blog::BlogService { blog_repository };
-
-            let blog_query_resolver =
-                std::sync::Arc::new(crate::resolver::blog::query::BlogQueryResolver {});
 
             let schema: async_graphql::Schema<
                 crate::query::QueryRoot,
                 async_graphql::EmptyMutation,
                 async_graphql::EmptySubscription,
             > = async_graphql::Schema::build(
-                crate::query::QueryRoot {
-                    blog_query_resolver,
-                    web_config_query_resolver,
-                },
+                crate::query::QueryRoot::default(),
                 async_graphql::EmptyMutation,
                 async_graphql::EmptySubscription,
             )

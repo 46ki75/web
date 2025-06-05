@@ -3,21 +3,44 @@
 //! Contains methods that resolve blogs and blog tags.
 
 /// Contains methods that resolve blogs and blog tags.
+#[derive(Default)]
 pub struct BlogQueryResolver {}
 
 #[allow(missing_docs)]
-
+#[derive(async_graphql::SimpleObject)]
+#[graphql(complex)]
 pub struct Blog {
+    /// Unique identifier of the blog.
     pub id: String,
+
+    /// Slug of the blog. Currently unused.
     pub slug: String,
+
+    /// Title of the blog.
     pub title: String,
+
+    /// Description of the blog.
     pub description: String,
+
+    /// Signed S3 URL of the OGP image. Expires in 1 hour.
     pub ogp_image_s3_url: Option<String>,
+
+    /// Tags associated with the blog.
     pub tags: Vec<BlogTag>,
+
+    /// Publish status of the blog.
     pub status: Status,
+
+    /// Keywords of the blog. Used to improve article searchability.
     pub keywords: Vec<String>,
+
+    /// RFC 3339-formatted creation timestamp.
     pub created_at: String,
+
+    /// RFC 3339-formatted last update timestamp.
     pub updated_at: String,
+
+    /// Notion Page URL.
     pub url: String,
 }
 
@@ -64,15 +87,16 @@ impl From<crate::entity::blog::BlogEntity> for Blog {
 }
 
 /// Tag associated with blog.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(async_graphql::SimpleObject, Debug, Clone, PartialEq, Eq)]
+#[graphql(complex)]
 pub struct BlogTag {
     /// Unique identifier of the blog tag.
     pub id: String,
 
-    /// Name of the blog.
+    /// Name of the blog tag.
     pub name: String,
 
-    /// Color code (HEX) of the blog.
+    /// Color of the blog tag.
     pub color: String,
 }
 
@@ -116,23 +140,8 @@ impl From<BlogLanguage> for crate::service::blog::BlogLanguageServiceInput {
     }
 }
 
-#[async_graphql::Object]
+#[async_graphql::ComplexObject]
 impl BlogTag {
-    /// Unique identifier of the blog tag.
-    pub async fn id(&self) -> Result<String, async_graphql::Error> {
-        Ok(self.id.clone())
-    }
-
-    /// Name of the blog tag.
-    pub async fn name(&self) -> Result<String, async_graphql::Error> {
-        Ok(self.name.clone())
-    }
-
-    /// Color of the blog tag.
-    pub async fn color(&self) -> Result<String, async_graphql::Error> {
-        Ok(self.color.clone())
-    }
-
     /// Blogs associated with this tag.
     pub async fn blog_list(
         &self,
@@ -164,63 +173,8 @@ pub enum Status {
     Archived,
 }
 
-#[async_graphql::Object]
+#[async_graphql::ComplexObject]
 impl Blog {
-    /// Unique identifier of the blog.
-    pub async fn id(&self) -> Result<String, async_graphql::Error> {
-        Ok(self.id.clone())
-    }
-
-    /// Slug of the blog. Currently unused.
-    pub async fn slug(&self) -> Result<String, async_graphql::Error> {
-        Ok(self.slug.clone())
-    }
-
-    /// Title of the blog.
-    pub async fn title(&self) -> Result<String, async_graphql::Error> {
-        Ok(self.title.clone())
-    }
-
-    /// Description of the blog.
-    pub async fn description(&self) -> Result<String, async_graphql::Error> {
-        Ok(self.description.clone())
-    }
-
-    /// Signed S3 URL of the OGP image. Expires in 1 hour.
-    pub async fn ogp_image_s3_url(&self) -> Result<Option<String>, async_graphql::Error> {
-        Ok(self.ogp_image_s3_url.clone())
-    }
-
-    /// Tags associated with the blog.
-    pub async fn tags(&self) -> Result<Vec<BlogTag>, async_graphql::Error> {
-        Ok(self.tags.clone())
-    }
-
-    /// Publish status of the blog.
-    pub async fn status(&self) -> Result<Status, async_graphql::Error> {
-        Ok(self.status)
-    }
-
-    /// Keywords of the blog. Used to improve article searchability.
-    pub async fn keywords(&self) -> Result<Vec<String>, async_graphql::Error> {
-        Ok(self.keywords.clone())
-    }
-
-    /// RFC 3339-formatted creation timestamp.
-    pub async fn created_at(&self) -> Result<String, async_graphql::Error> {
-        Ok(self.created_at.clone())
-    }
-
-    /// RFC 3339-formatted last update timestamp.
-    pub async fn updated_at(&self) -> Result<String, async_graphql::Error> {
-        Ok(self.updated_at.clone())
-    }
-
-    /// Notion Page URL.
-    pub async fn url(&self) -> Result<String, async_graphql::Error> {
-        Ok(self.url.clone())
-    }
-
     /// Children blocks of the blog.
     pub async fn block_list(
         &self,
@@ -239,6 +193,7 @@ impl Blog {
     }
 }
 
+#[async_graphql::Object]
 impl BlogQueryResolver {
     /// Returns a blog by its page ID.
     pub async fn blog(
