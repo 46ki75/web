@@ -1,3 +1,5 @@
 {
-  "ignores": [".github/pull_request_template.md"]
+  "ignores": [
+    ".github/pull_request_template.md"
+  ]
 }

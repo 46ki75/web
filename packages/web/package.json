@@ -20,6 +20,7 @@
     "@elmethis/core": "0.2.10",
     "@iconify/vue": "^4.3.0",
     "@nuxtjs/i18n": "9.5.5",
+    "@nuxtjs/mdc": "0.17.0",
     "@pinia/nuxt": "0.10.1",
     "@types/node": "22.14.0",
     "@vueuse/core": "^13.0.0",
