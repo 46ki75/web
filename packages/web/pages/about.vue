@@ -19,77 +19,13 @@
 
     <BaseDate created-at="2025-06-02" updated-at="2025-06-03" />
 
-    <MDC :value="md" tag="article" />
+    <MDC v-if="md" :value="md" />
 
     <header>
       <h1 :class="$style.greet">
         {{ locale === "en" ? "Hello." : "皆様、こんにちは。" }}
       </h1>
     </header>
-
-    <ElmParagraph v-if="locale === 'en'">
-      <ElmInlineText text="My name is " />
-      <ElmInlineText bold text="Ikuma Yamashita" />
-      <ElmInlineText text="." />
-    </ElmParagraph>
-    <ElmParagraph v-else>
-      <ElmInlineText bold text="山下 生真" />
-      <ElmInlineText text=" (" />
-      <ElmInlineText bold text="Ikuma Yamashita" />
-      <ElmInlineText text=") " />
-      <ElmInlineText text="です。" />
-    </ElmParagraph>
-
-    <ElmParagraph v-if="locale === 'en'">
-      <ElmInlineText
-        text="I work as a public cloud infrastructure engineer, with a focus on AWS."
-      />
-    </ElmParagraph>
-    <ElmParagraph v-else>
-      <ElmInlineText
-        text="AWS を中心に、パブリッククラウドのインフラエンジニアとして働いています。"
-      />
-    </ElmParagraph>
-
-    <ElmParagraph v-if="locale === 'en'">
-      <ElmInlineText
-        text="Outside of work, I continue to enjoy programming—a passion since before my career began. I actively contribute to open source, and Rust is my favorite language."
-      />
-    </ElmParagraph>
-    <ElmParagraph v-else>
-      <ElmInlineText
-        text="仕事の外でも、昔から好きなプログラミングを続けていて、オープンソースにも貢献しています。Rust が特に好きです。"
-      />
-    </ElmParagraph>
-
-    <ElmParagraph v-if="locale === 'en'">
-      <ElmInlineText
-        text="In addition to system programming, I also enjoy web development. I've explored various SPA frameworks, but I particularly like Vue.js for its strong support for universal rendering."
-      />
-    </ElmParagraph>
-    <ElmParagraph v-else>
-      <ElmInlineText
-        text="システム系だけでなく、Web 開発も好きで、様々な SPA フレームワークを触ってきましたが、ユニバーサル対応に強いという理由で Vue.js がお気に入りです。"
-      />
-    </ElmParagraph>
-
-    <ElmParagraph v-if="locale === 'en'">
-      <ElmInlineText
-        text="In my free time, I enjoy creating digital illustrations."
-      />
-    </ElmParagraph>
-    <ElmParagraph v-else>
-      <ElmInlineText text="趣味はデジタルイラストを描くことです。" />
-    </ElmParagraph>
-
-    <ElmParagraph v-if="locale === 'en'">
-      <ElmInlineText text="I am currently based in " />
-      <ElmInlineText text="Tokyo" ruby="東京" />
-      <ElmInlineText text=", Japan." />
-    </ElmParagraph>
-    <ElmParagraph v-else>
-      <ElmInlineText text="現在、東京を拠点に活動しています。" />
-    </ElmParagraph>
 
     <ElmHeading :level="2" disable-fragment-identifier> Find me on </ElmHeading>
 
@@ -119,21 +55,15 @@
 </template>
 
 <script setup lang="ts">
-import {
-  ElmParagraph,
-  ElmInlineText,
-  ElmHeading,
-  ElmBookmarkIcon,
-  ElmBreadcrumb,
-} from "@elmethis/core";
+import { ElmHeading, ElmBookmarkIcon, ElmBreadcrumb } from "@elmethis/core";
 
 const { locale, defaultLocale } = useI18n();
 
-const md = `
-# 皆様、こんにちは。
-
-Hello!
-`;
+const { data: md } = useAsyncData(`AboutMarkdown${locale.value}`, async () => {
+  const { readFile } = await import("node:fs/promises");
+  const md = await readFile(`pages/about.${locale.value}.md`, "utf-8");
+  return md;
+});
 </script>
 
 <style module lang="scss">
