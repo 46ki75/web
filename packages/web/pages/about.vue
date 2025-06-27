@@ -19,13 +19,7 @@
 
     <BaseDate created-at="2025-06-02" updated-at="2025-06-03" />
 
-    <MDC v-if="md" :value="md" />
-
-    <header>
-      <h1 :class="$style.greet">
-        {{ locale === "en" ? "Hello." : "皆様、こんにちは。" }}
-      </h1>
-    </header>
+    <MDC v-if="md" :value="md" tag="article" />
 
     <ElmHeading :level="2" disable-fragment-identifier> Find me on </ElmHeading>
 

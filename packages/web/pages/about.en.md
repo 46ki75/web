@@ -1,6 +1,8 @@
-# Hello
+<!-- markdownlint-disable MD026 -->
 
-My name is Ikuma Yamashita.
+# Hello.
+
+My name is **Ikuma Yamashita**.
 
 I work as a public cloud infrastructure engineer, with a focus on AWS.
 

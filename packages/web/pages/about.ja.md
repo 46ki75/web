@@ -1,6 +1,8 @@
-# 皆様、こんにちは
+<!-- markdownlint-disable MD026 -->
 
-山下 生真 (Ikuma Yamashita) です。
+# 皆様、こんにちは。
+
+**山下 生真** (**Ikuma Yamashita**) です。
 
 AWS を中心に、パブリッククラウドのインフラエンジニアとして働いています。
 
