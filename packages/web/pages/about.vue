@@ -19,6 +19,8 @@
 
     <BaseDate created-at="2025-06-02" updated-at="2025-06-03" />
 
+    <MDC :value="md" tag="article" />
+
     <header>
       <h1 :class="$style.greet">
         {{ locale === "en" ? "Hello." : "皆様、こんにちは。" }}
@@ -126,6 +128,12 @@ import {
 } from "@elmethis/core";
 
 const { locale, defaultLocale } = useI18n();
+
+const md = `
+# 皆様、こんにちは。
+
+Hello!
+`;
 </script>
 
 <style module lang="scss">
