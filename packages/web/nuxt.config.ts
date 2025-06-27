@@ -56,6 +56,7 @@ export default defineNuxtConfig({
         h1: "prose-custom-h1",
         h2: "prose-custom-h2",
         p: "prose-custom-p",
+        ul: "prose-custom-ul",
       },
     },
   },
