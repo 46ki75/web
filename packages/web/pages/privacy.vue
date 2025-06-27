@@ -37,12 +37,8 @@
       <ElmHeading :level="2" disable-fragment-identifier>
         {{ `${index + 1}. ${body.heading}` }}
       </ElmHeading>
-      <ElmParagraph>
-        <ElmInlineText
-          v-for="content in body.contents"
-          :key="content"
-          :text="content"
-        />
+      <ElmParagraph v-for="content in body.contents" :key="content">
+        <ElmInlineText :text="content" />
       </ElmParagraph>
     </section>
   </BaseContainer>
@@ -87,6 +83,15 @@ const MAP: Record<
         "This policy may be changed without notice in accordance with changes in laws or service content.",
       ],
     },
+    {
+      heading: "Recommended Environment",
+      contents: [
+        "Even with the recommended environment, some parts may not be available due to customer settings, OS and browser combination, device characteristics, etc.",
+        "Supported browsers: Chromium-based browsers (latest stable), Firefox (latest), Safari 17 (macOS only).",
+        "WebKit-based browsers (e.g., on iOS) are not verified.",
+        "The recommended environment is subject to change at any time.",
+      ],
+    },
   ],
 
   ja: [
@@ -112,6 +117,15 @@ const MAP: Record<
       heading: "プライバシーポリシーの変更",
       contents: [
         "法令変更やサービス内容に応じて、予告なく変更する場合があります。",
+      ],
+    },
+    {
+      heading: "推奨環境",
+      contents: [
+        "推奨環境でも、お客様の設定やOSとブラウザの組み合わせ、端末の特性などにより一部の機能が利用できない場合があります。",
+        "対応ブラウザ: Chromium系ブラウザ(最新安定版)、Firefox(最新)、Safari 17(macOS限定)。",
+        "WebKit系ブラウザ(例: iOS上)は未検証です。",
+        "推奨環境は予告なく変更される場合があります。",
       ],
     },
   ],
