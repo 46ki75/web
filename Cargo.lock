@@ -2197,9 +2197,9 @@ dependencies = [
 
 [[package]]
 name = "notionrs_types"
-version = "1.0.0-rc.5"
+version = "1.0.0-rc.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "06c187f2e5420d2cee0a9ace4f9d443e72d97cc4018f831d53db272d0b1e97d1"
+checksum = "1bede15520c238180a6df93a3ab777c0472adc4038f8ac5f0aebe628c65dec14"
 dependencies = [
  "notionrs_macro",
  "serde",
