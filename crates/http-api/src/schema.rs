@@ -36,6 +36,11 @@ pub async fn init_schema() -> Result<
 
             let blog_service = crate::service::blog::BlogService { blog_repository };
 
+            let talk_repository =
+                std::sync::Arc::new(crate::repository::talk::TalkRepositoryImpl {});
+
+            let talk_service = crate::service::talk::TalkService { talk_repository };
+
             let schema: async_graphql::Schema<
                 crate::query::QueryRoot,
                 async_graphql::EmptyMutation,
@@ -47,6 +52,7 @@ pub async fn init_schema() -> Result<
             )
             .data(blog_service)
             .data(web_config_service)
+            .data(talk_service)
             .finish();
             Ok(schema)
         })
