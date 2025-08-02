@@ -6,5 +6,9 @@
     },
     "privacy": {
         "title": "Privacy Policy"
+    },
+    "talks": {
+        "title": "Talks",
+        "description": "A list of my past presentations and Lightning Talks."
     }
 }

@@ -32,6 +32,10 @@ pub enum Error {
     #[error("Failed to serialize response: {0}")]
     Serialization(String),
 
+    /// Occurs when deserializing JSON fails.
+    #[error("Failed to deserialize response: {0}")]
+    Deserialization(String),
+
     /// Occurs when fetching an image from an HTTP endpoint fails.
     #[error("Failed to fetch image: {0}")]
     FetchImage(String),
@@ -47,4 +51,12 @@ pub enum Error {
     /// Occurs when encoding an image fails.
     #[error("Failed to encode image: {0}")]
     ImageEncode(String),
+
+    /// Occurs when sending an HTTP request.
+    #[error("Failed to send HTTP request: {0}")]
+    ReqwestHttp(String),
+
+    /// Occurs when reading the HTTP response body stream.
+    #[error("Failed to read HTTP response body: {0}")]
+    ReqwestHttpResponseBodyStream(String),
 }

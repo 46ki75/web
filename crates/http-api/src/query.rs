@@ -5,4 +5,5 @@
 pub struct QueryRoot(
     crate::resolver::blog::query::BlogQueryResolver,
     crate::resolver::web_config::query::WebConfigQueryResolver,
+    crate::resolver::talk::query::TalkQueryResolver,
 );

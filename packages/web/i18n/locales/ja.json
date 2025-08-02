@@ -6,5 +6,9 @@
     },
     "privacy": {
         "title": "プライバシーポリシー"
+    },
+    "talks": {
+        "title": "Talks",
+        "description": "私が過去に登壇・発表した講演や Lightning Talk の一覧です。"
     }
 }
