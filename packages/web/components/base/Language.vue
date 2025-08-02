@@ -30,7 +30,7 @@ const { locale, localeProperties, setLocale } = useI18n();
 const toggle = async () => {
   showCover.value = true;
 
-  await sleep(200);
+  await sleep(150);
 
   if (locale.value === "en") {
     setLocale("ja");
@@ -38,7 +38,7 @@ const toggle = async () => {
     setLocale("en");
   }
 
-  await sleep(200);
+  await sleep(150);
 
   showCover.value = false;
 };
@@ -90,7 +90,7 @@ const toggle = async () => {
 
 .v-enter-active,
 .v-leave-active {
-  transition: opacity 200ms;
+  transition: opacity 150ms;
 }
 
 .v-enter-from,
