@@ -51,11 +51,11 @@
 <script setup lang="ts">
 import { ElmHeading, ElmBookmarkIcon, ElmBreadcrumb } from "@elmethis/core";
 
-const { locale, defaultLocale, setLocaleMessage, t } = useI18n();
+const { locale, defaultLocale, mergeLocaleMessage, t } = useI18n();
 
-onMounted(() => {
-  setLocaleMessage("en", { about: en });
-  setLocaleMessage("ja", { about: ja });
+onBeforeMount(() => {
+  mergeLocaleMessage("en", { about: en });
+  mergeLocaleMessage("ja", { about: ja });
 });
 
 const en = `

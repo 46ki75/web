@@ -32,11 +32,11 @@
 <script setup lang="ts">
 import { ElmHeading, ElmBreadcrumb, ElmInlineText } from "@elmethis/core";
 
-const { t, locale, defaultLocale, setLocaleMessage } = useI18n();
+const { t, locale, defaultLocale, mergeLocaleMessage } = useI18n();
 
-onMounted(() => {
-  setLocaleMessage("en", { privacy: { markdown: en } });
-  setLocaleMessage("ja", { privacy: { markdown: ja } });
+onBeforeMount(() => {
+  mergeLocaleMessage("en", { privacy: { markdown: en } });
+  mergeLocaleMessage("ja", { privacy: { markdown: ja } });
 });
 
 const en = `
