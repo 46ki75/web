@@ -72,6 +72,11 @@ import { Icon } from "@iconify/vue";
   [data-theme="dark"] & {
     background-color: rgba(black, 0.1);
   }
+
+  // desktop
+  @media (min-width: variables.$breakpoint-tablet) {
+    padding: 1.5rem;
+  }
 }
 
 .icon-container {
