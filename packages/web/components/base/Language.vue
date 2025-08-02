@@ -28,6 +28,7 @@ const sleep = (duration: number) =>
 const { locale, localeProperties, setLocale } = useI18n();
 
 const toggle = async () => {
+  if (showCover.value) return;
   showCover.value = true;
 
   await sleep(150);
