@@ -13,6 +13,7 @@ export const fetchPrerenderRoutes = async (
     "/blog",
     "/blog/article",
     "/blog/search",
+    "/talks",
   ]
     .map((route) => [route, `/ja${route}`])
     .flat();
