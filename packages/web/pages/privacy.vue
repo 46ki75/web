@@ -19,20 +19,25 @@
 
     <section :class="$style.section">
       <ElmHeading :level="1" disable-fragment-identifier>
-        {{ t("privacy.title") }}
+        <ElmInlineText :text="t('privacy.title')" />
       </ElmHeading>
 
       <BaseDate created-at="2025-06-02" updated-at="2025-06-02" />
     </section>
 
-    <MDC :value="md[locale]" />
+    <MDC :value="t('privacy.markdown')" />
   </BaseContainer>
 </template>
 
 <script setup lang="ts">
-import { ElmHeading, ElmBreadcrumb } from "@elmethis/core";
+import { ElmHeading, ElmBreadcrumb, ElmInlineText } from "@elmethis/core";
 
-const { t, locale, defaultLocale } = useI18n();
+const { t, locale, defaultLocale, mergeLocaleMessage } = useI18n();
+
+onBeforeMount(() => {
+  mergeLocaleMessage("en", { privacy: { markdown: en } });
+  mergeLocaleMessage("ja", { privacy: { markdown: ja } });
+});
 
 const en = `
 This website recognizes the importance of personal information and handles its collection, use, and management appropriately. We are committed to protecting user privacy and comply with relevant laws and regulations regarding the handling of personal information.
@@ -99,8 +104,6 @@ const ja = `
 - WebKit系ブラウザ (例: Safari) は未検証です。
 - 推奨環境は予告なく変更される場合があります。
 `;
-
-const md = { ja, en };
 </script>
 
 <style module lang="scss">

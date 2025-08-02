@@ -19,7 +19,7 @@
 
     <BaseDate created-at="2025-06-02" updated-at="2025-06-03" />
 
-    <MDC v-if="md[locale]" :value="md[locale]" tag="article" />
+    <MDC :value="t('about')" tag="article" />
 
     <ElmHeading :level="2" disable-fragment-identifier> Find me on </ElmHeading>
 
@@ -51,7 +51,12 @@
 <script setup lang="ts">
 import { ElmHeading, ElmBookmarkIcon, ElmBreadcrumb } from "@elmethis/core";
 
-const { locale, defaultLocale } = useI18n();
+const { locale, defaultLocale, mergeLocaleMessage, t } = useI18n();
+
+onBeforeMount(() => {
+  mergeLocaleMessage("en", { about: en });
+  mergeLocaleMessage("ja", { about: ja });
+});
 
 const en = `
 # Hello.
@@ -84,8 +89,6 @@ AWS を中心に、パブリッククラウドのインフラエンジニアと�
 
 現在、東京を拠点に活動しています。
 `;
-
-const md: Record<typeof locale.value, string> = { en, ja };
 </script>
 
 <style module lang="scss">

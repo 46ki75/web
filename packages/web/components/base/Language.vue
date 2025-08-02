@@ -1,11 +1,16 @@
 <template>
   <div class="language" @click="toggle">
     <Icon icon="mdi:translate" color="#a4863e" />
-    <div class="language-name">
-      <ElmInlineText
-        v-if="localeProperties.name"
-        :text="localeProperties.name"
-      />
+    <div class="language-container">
+      <span class="language-label">
+        <ElmInlineText text="Language" />
+      </span>
+      <span class="language-name">
+        <ElmInlineText
+          v-if="localeProperties.name"
+          :text="localeProperties.name"
+        />
+      </span>
     </div>
   </div>
 
@@ -28,9 +33,10 @@ const sleep = (duration: number) =>
 const { locale, localeProperties, setLocale } = useI18n();
 
 const toggle = async () => {
+  if (showCover.value) return;
   showCover.value = true;
 
-  await sleep(200);
+  await sleep(150);
 
   if (locale.value === "en") {
     setLocale("ja");
@@ -38,7 +44,7 @@ const toggle = async () => {
     setLocale("en");
   }
 
-  await sleep(200);
+  await sleep(150);
 
   showCover.value = false;
 };
@@ -50,7 +56,7 @@ const toggle = async () => {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 0.5rem;
+  padding: 0.25rem 0.5rem;
   gap: 0.5rem;
   border-radius: 0.25rem;
   transition: background-color 150ms;
@@ -62,11 +68,20 @@ const toggle = async () => {
   }
 }
 
-.language-name {
+.language-container {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 3.5rem;
+}
+
+.language-name {
+  font-size: 0.75rem;
+}
+
+.language-label {
+  font-size: 0.5rem;
+  opacity: 0.5;
 }
 
 .cover {
@@ -90,7 +105,7 @@ const toggle = async () => {
 
 .v-enter-active,
 .v-leave-active {
-  transition: opacity 200ms;
+  transition: opacity 150ms;
 }
 
 .v-enter-from,
