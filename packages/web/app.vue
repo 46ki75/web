@@ -16,13 +16,21 @@ const { locale } = useI18n();
 const appConfig = useAppConfig();
 const { fullPath } = useRoute();
 
+const DESCRIPTION = {
+  ja: `${appConfig.SITE_NAME} は、ポートフォリオ、ブログ、オープンソース活動などを通じて技術や知見を発信する個人運営のサイトです。`,
+  en: `${appConfig.SITE_NAME} is a personal website that shares technology and knowledge through portfolios, blogs, and open-source activities.`,
+};
+
 useSeoMeta({
   title: appConfig.SITE_NAME,
   ogTitle: appConfig.SITE_NAME,
+  description: DESCRIPTION[locale.value],
+  ogDescription: DESCRIPTION[locale.value],
   author: "Ikuma Yamashita",
   articleAuthor: ["Ikuma Yamashita"],
   twitterSite: "@46ki75",
   ogUrl: `${appConfig.ENDPOINT}${fullPath}`,
+  ogImage: "/image/ogp.png",
 });
 
 useHead({
