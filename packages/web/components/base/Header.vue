@@ -108,13 +108,13 @@ const isMobile = useMediaQuery("(min-width: 1024px)");
 }
 
 .logo {
-  padding: 0.5rem;
+  padding: 0.5rem 0.25rem;
   border-radius: 0.25rem;
-  height: 2rem;
-  transition: background-color 100ms;
+  height: 1.5rem;
+  transition: opacity 200ms;
 
   &:hover {
-    background-color: rgba(gray, 0.05);
+    opacity: 0.6;
   }
 }
 
