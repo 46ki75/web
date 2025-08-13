@@ -1,8 +1,8 @@
 <template>
   <header class="header">
     <div class="header-left flex-center">
-      <NuxtLinkLocale to="/" class="icon">
-        <Icon icon="mdi:home" width="28px" />
+      <NuxtLinkLocale to="/" class="logo">
+        <img alt="Logo" src="/brand/logo.svg" class="logo-image" />
       </NuxtLinkLocale>
     </div>
 
@@ -50,7 +50,7 @@ const isMobile = useMediaQuery("(min-width: 1024px)");
   top: 0;
   z-index: 10;
   box-sizing: border-box;
-  padding: 0.5rem;
+  padding: 0.5rem 0;
   height: #{variables.$header-height};
   display: flex;
   flex-direction: row;
@@ -107,16 +107,18 @@ const isMobile = useMediaQuery("(min-width: 1024px)");
   margin-right: 0.5rem;
 }
 
-.icon {
-  padding: 0.25rem;
+.logo {
+  padding: 0.5rem;
   border-radius: 0.25rem;
-  width: 28px;
-  height: 28px;
-  color: #b69545;
+  height: 2rem;
   transition: background-color 100ms;
 
   &:hover {
-    background-color: rgba(gray, 0.15);
+    background-color: rgba(gray, 0.05);
   }
+}
+
+.logo-image {
+  height: 100%;
 }
 </style>

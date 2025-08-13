@@ -30,6 +30,10 @@
       <hr class="hr" />
       <div class="bottom">
         <div class="left">
+          <NuxtLinkLocale to="/">
+            <img class="favicon" src="/brand/favicon.svg" alt="Favicon" />
+          </NuxtLinkLocale>
+
           <div class="left-inner">
             <Icon icon="mdi:copyright" class="icon-bottom" height="12" />
             <ElmInlineText
@@ -165,6 +169,21 @@ const { data: build } = useAsyncData("BuildDate", async () => {
 
 .icon-bottom {
   color: #a4863e;
+}
+
+.favicon {
+  height: 1.5rem;
+  width: 1.5rem;
+  transition: opacity 100ms;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  &:active {
+    opacity: 0.5;
+  }
 }
 
 .icon {
