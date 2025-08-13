@@ -17,7 +17,7 @@
       ]"
     />
 
-    <BaseDate created-at="2025-06-02" updated-at="2025-06-03" />
+    <BaseDate :created-at="CREATED_AT" :updated-at="UPDATED_AT" />
 
     <MDC :value="t('about')" tag="article" />
 
@@ -56,6 +56,25 @@ const { locale, defaultLocale, mergeLocaleMessage, t } = useI18n();
 onBeforeMount(() => {
   mergeLocaleMessage("en", { about: en });
   mergeLocaleMessage("ja", { about: ja });
+});
+
+const CREATED_AT = "2025-06-02";
+const UPDATED_AT = "2025-06-03";
+const DESCRIPTION = {
+  ja: "山下生真のポートフォリオサイトです。パブリッククラウドエンジニアとして、インフラとアプリケーションの両面で活動しています。",
+  en: "This is the portfolio of Ikuma Yamashita, a public cloud engineer working across both infrastructure and application development.",
+};
+
+const appConfig = useAppConfig();
+
+useSeoMeta({
+  ogType: "article",
+  title: `About | ${appConfig.SITE_NAME}`,
+  ogTitle: "About",
+  description: DESCRIPTION[locale.value],
+  ogDescription: DESCRIPTION[locale.value],
+  articlePublishedTime: CREATED_AT,
+  articleModifiedTime: UPDATED_AT,
 });
 
 const en = `
