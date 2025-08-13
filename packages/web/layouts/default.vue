@@ -4,8 +4,8 @@
   <div class="bg">
     <slot />
     <ElmParallax
-      image-url1="/image/blog/bg-crimson.webp"
-      image-url2="/image/blog/bg-amber.webp"
+      image-url1="/image/bg-crimson.webp"
+      image-url2="/image/bg-amber.webp"
     />
   </div>
 
