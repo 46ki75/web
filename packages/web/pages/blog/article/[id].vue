@@ -24,6 +24,7 @@
             color: tag.color,
           }))
         "
+        @tag-click="handleTagClick"
       />
 
       <div :key="`/blog/article/${blog.id}`">
@@ -47,6 +48,12 @@ const blogStore = useBlogStore();
 
 const route = useRoute();
 const appConfig = useAppConfig();
+
+const handleTagClick = (tagId: string) => {
+  blogStore.tagReset();
+  blogStore.tagSelect(tagId);
+  router.push(`${locale.value === "en" ? "" : locale.value}/blog/search`);
+};
 
 const blog = computed(() => {
   const blogs = blogStore[locale.value].blogs;

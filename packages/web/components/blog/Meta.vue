@@ -23,7 +23,12 @@
         :style="{ all: 'unset' }"
         :prefetch="false"
       >
-        <BlogTag :id="tag.id" :label="tag.label" :color="tag.color" />
+        <BlogTag
+          :id="tag.id"
+          :label="tag.label"
+          :color="tag.color"
+          @click="onTagClick ? onTagClick(tag.id) : undefined"
+        />
       </NuxtLinkLocale>
     </div>
 
@@ -55,6 +60,8 @@ interface BlogMetaProps {
     label: string;
     color: string;
   }>;
+
+  onTagClick?: (tagId: string) => void;
 }
 
 defineProps<BlogMetaProps>();
