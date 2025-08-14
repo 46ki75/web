@@ -167,18 +167,17 @@ export const useBlogStore = defineStore("BlogSearchStore", {
   },
   actions: {
     tagSelect(tagId: string) {
-      if (this[this.locale].tags == null) return;
+      const tags = this[this.locale].tags;
+      if (tags == null) return;
 
-      const tags = this[this.locale].tags?.filter((tag) => tag.id === tagId);
+      const [tag] = tags.filter((tag) => tag.id === tagId);
+      const selectedTags = this[this.locale].selectedTags;
 
       if (
-        tags != null &&
-        tags.length === 1 &&
-        !this[this.locale].selectedTags
-          .map((tag) => tag.id)
-          .includes(tags[0].id)
+        tag != null &&
+        !selectedTags.some((selectedTag) => selectedTag.id === tag.id)
       ) {
-        this[this.locale].selectedTags.push(tags[0]);
+        selectedTags.push(tag);
         this.searchBlog();
       }
     },

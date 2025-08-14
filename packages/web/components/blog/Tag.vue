@@ -1,5 +1,5 @@
 <template>
-  <div class="tag" @click="tagSelect(id)">
+  <div class="tag">
     <Icon icon="fa-solid:tags" :color="color" class="icon" />
     <ElmInlineText :text="label" :color="color" size="0.85rem" />
   </div>
@@ -16,13 +16,6 @@ interface BlogtagProps {
 }
 
 defineProps<BlogtagProps>();
-
-const blogStore = useBlogStore();
-
-const tagSelect = (tagId: string) => {
-  blogStore.tagReset();
-  blogStore.tagSelect(tagId);
-};
 </script>
 
 <style lang="scss" scoped>

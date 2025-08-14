@@ -26,7 +26,12 @@
         :style="{ all: 'unset' }"
         :prefetch="false"
       >
-        <BlogTag :id="tag.id" :color="tag.color" :label="tag.name" />
+        <BlogTag
+          :id="tag.id"
+          :color="tag.color"
+          :label="tag.name"
+          @click="handleTagClick(tag.id)"
+        />
       </NuxtLinkLocale>
     </div>
   </div>
@@ -50,6 +55,13 @@ interface BlogSearchResultProps {
 }
 
 defineProps<BlogSearchResultProps>();
+
+const blogStore = useBlogStore();
+
+const handleTagClick = (tagId: string) => {
+  blogStore.tagReset();
+  blogStore.tagSelect(tagId);
+};
 </script>
 
 <style lang="scss" scoped>
