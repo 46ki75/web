@@ -88,7 +88,6 @@ impl From<crate::entity::blog::BlogEntity> for Blog {
 
 /// Tag associated with blog.
 #[derive(async_graphql::SimpleObject, Debug, Clone, PartialEq, Eq)]
-#[graphql(complex)]
 pub struct BlogTag {
     /// Unique identifier of the blog tag.
     pub id: String,
@@ -137,28 +136,6 @@ impl From<BlogLanguage> for crate::service::blog::BlogLanguageServiceInput {
             BlogLanguage::En => Self::En,
             BlogLanguage::Ja => Self::Ja,
         }
-    }
-}
-
-#[async_graphql::ComplexObject]
-impl BlogTag {
-    /// Blogs associated with this tag.
-    pub async fn blog_list(
-        &self,
-        ctx: &async_graphql::Context<'_>,
-    ) -> Result<Vec<Blog>, async_graphql::Error> {
-        let blog_service = ctx.data::<crate::service::blog::BlogService>()?;
-
-        let blog_entities = blog_service
-            .list_blogs_by_tags(vec![self.name.clone()])
-            .await?;
-
-        let blogs = blog_entities
-            .into_iter()
-            .map(Blog::from)
-            .collect::<Vec<Blog>>();
-
-        Ok(blogs)
     }
 }
 

@@ -38,6 +38,7 @@ pub struct BlogRecord {
 }
 
 /// Blog tag record returned by `BlogRepository`.
+#[derive(Debug, Default, PartialEq, Eq, Hash)]
 pub struct BlogTagRecord {
     /// Unique identifier of the blog tag.
     pub id: String,
@@ -51,7 +52,7 @@ pub struct BlogTagRecord {
 
 /// Color opstions for a blog tag.
 #[allow(missing_docs)]
-#[derive(Debug, Default)]
+#[derive(Debug, Default, PartialEq, Eq, Hash)]
 pub enum BlogTagColorRecord {
     #[default]
     Default,

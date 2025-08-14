@@ -102,18 +102,41 @@ impl BlogService {
         Ok(Some(image_bytes))
     }
 
+    /// Fetches all tags.
+    pub async fn list_tags(
+        &self,
+        language: BlogLanguageServiceInput,
+    ) -> Result<Vec<crate::entity::blog::BlogTagEntity>, crate::error::Error> {
+        let blog_records = self
+            .blog_repository
+            .list_blogs(crate::repository::blog::BlogLanguageRepositoryInput::from(
+                language,
+            ))
+            .await?;
+
+        let mut tag_set = std::collections::HashSet::new();
+
+        for blog in blog_records {
+            for tag in blog.tags {
+                tag_set.insert(tag);
+            }
+        }
+
+        let tag_entities = tag_set
+            .into_iter()
+            .map(crate::entity::blog::BlogTagEntity::from)
+            .collect();
+
+        Ok(tag_entities)
+    }
+
     /// Fetches the tag by its tag ID.
     pub async fn get_tag_by_id(
         &self,
         tag_id: &str,
         language: BlogLanguageServiceInput,
     ) -> Result<Option<crate::entity::blog::BlogTagEntity>, crate::error::Error> {
-        let tag_records = self
-            .blog_repository
-            .list_tags(crate::repository::blog::BlogLanguageRepositoryInput::from(
-                language,
-            ))
-            .await?;
+        let tag_records = self.list_tags(language).await?;
 
         for tag_record in tag_records {
             if tag_record.id == tag_id {
@@ -122,40 +145,5 @@ impl BlogService {
         }
 
         Ok(None)
-    }
-
-    /// Fetches all tags.
-    pub async fn list_tags(
-        &self,
-        language: BlogLanguageServiceInput,
-    ) -> Result<Vec<crate::entity::blog::BlogTagEntity>, crate::error::Error> {
-        let tag_records = self
-            .blog_repository
-            .list_tags(crate::repository::blog::BlogLanguageRepositoryInput::from(
-                language,
-            ))
-            .await?;
-
-        let tag_entities = tag_records
-            .into_iter()
-            .map(crate::entity::blog::BlogTagEntity::from)
-            .collect::<Vec<crate::entity::blog::BlogTagEntity>>();
-
-        Ok(tag_entities)
-    }
-
-    /// Fetches all blogs associated with the tags.
-    pub async fn list_blogs_by_tags(
-        &self,
-        tags: Vec<String>,
-    ) -> Result<Vec<crate::entity::blog::BlogEntity>, crate::error::Error> {
-        let blog_records = self.blog_repository.list_blogs_by_tags(tags).await?;
-
-        let blog_entities = blog_records
-            .into_iter()
-            .map(crate::entity::blog::BlogEntity::from)
-            .collect::<Vec<crate::entity::blog::BlogEntity>>();
-
-        Ok(blog_entities)
     }
 }
