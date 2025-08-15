@@ -30,7 +30,7 @@
       <hr class="hr" />
       <div class="bottom">
         <div class="left">
-          <NuxtLinkLocale to="/">
+          <NuxtLinkLocale to="/" class="hidden-mobile">
             <img class="favicon" src="/brand/favicon.svg" alt="Favicon" />
           </NuxtLinkLocale>
 
@@ -77,6 +77,8 @@ const { data: build } = useAsyncData("BuildDate", async () => {
 </script>
 
 <style lang="scss" scoped>
+@use "../../styles/variables";
+
 .footer {
   margin-block-start: 4rem;
   width: 100%;
@@ -201,6 +203,14 @@ const { data: build } = useAsyncData("BuildDate", async () => {
 
   &:hover {
     opacity: 0.6;
+  }
+}
+
+.hidden-mobile {
+  display: none;
+
+  @media (min-width: variables.$breakpoint-mobile) {
+    display: inline;
   }
 }
 </style>
