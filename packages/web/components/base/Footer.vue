@@ -48,6 +48,10 @@
         </div>
 
         <div class="right">
+          <a ref="noopener noreferrer" href="/sitemap.xml" target="_blank">
+            <Icon class="icon" icon="mdi:sitemap" height="32px" />
+          </a>
+
           <a
             ref="noopener noreferrer"
             href="https://github.com/46ki75/web"
