@@ -1,13 +1,13 @@
 <template>
   <div class="icon-box">
     <a :href="`/feed/blog/rss-${language}.xml`" target="_blank">
-      <Icon class="icon" icon="mdi:rss" color="gray" />
+      <Icon class="icon" icon="mdi:rss" />
     </a>
     <a :href="`/feed/blog/atom-${language}.xml`" target="_blank">
-      <Icon class="icon" icon="mdi:atom" color="gray" />
+      <Icon class="icon" icon="mdi:atom" />
     </a>
     <a :href="`/feed/blog/feed-${language}.json`" target="_blank">
-      <Icon class="icon" icon="mdi:code-json" color="gray" />
+      <Icon class="icon" icon="mdi:code-json" />
     </a>
   </div>
 </template>
@@ -23,20 +23,22 @@ withDefaults(defineProps<FeedProps>(), {});
 
 <style scoped lang="scss">
 .icon-box {
-  width: 100%;
   display: flex;
   gap: 1rem;
-  justify-content: flex-end;
+  justify-content: flex-start;
   align-items: center;
 }
 
 .icon {
   width: 1.5rem;
   height: 1.5rem;
-  transition: opacity 200ms;
+  color: rgb(125 104 97);
+  opacity: 0.5;
+  transition: color 200ms, opacity 200ms;
 
   &:hover {
-    opacity: 0.5;
+    color: #be5d39;
+    opacity: 1;
   }
 }
 </style>

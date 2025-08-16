@@ -1,7 +1,7 @@
 <template>
   <div :key="`/${locale}/blog/search`">
     <BlogMeta
-      title="Search"
+      :title="t('blog.search.title')"
       created-at="2022-10-01"
       updated-at="2025-03-26"
       :links="[
@@ -17,12 +17,16 @@
     <div>
       <ElmTextField
         v-model="debouncedKeyword"
-        label="検索キーワード"
-        icon="pen"
+        :label="t('blog.search.label')"
+        icon="search"
       />
 
       <div class="tag-container">
-        <ElmHeading :level="3" text="タグ一覧" disable-fragment-identifier />
+        <ElmHeading
+          :level="3"
+          :text="t('blog.search.allTags')"
+          disable-fragment-identifier
+        />
         <div v-if="blogStore[locale].tags" class="tag-pool">
           <BlogTag
             v-for="tag in blogStore[locale].tags"
@@ -38,7 +42,7 @@
       <div class="tag-container">
         <ElmHeading
           :level="3"
-          text="選択されたタグ"
+          :text="t('blog.search.selectedTags')"
           disable-fragment-identifier
         />
         <TransitionGroup name="tag" class="tag-pool" tag="dev">
@@ -53,11 +57,15 @@
         </TransitionGroup>
         <ElmButton block @click="blogStore.tagReset">
           <Icon icon="fluent:tag-reset-20-filled" height="20px" />
-          選択されたタグのリセット</ElmButton
-        >
+          {{ t("blog.search.clearSelection") }}
+        </ElmButton>
       </div>
 
-      <ElmHeading :level="3" text="検索結果" disable-fragment-identifier />
+      <ElmHeading
+        :level="3"
+        :text="t('blog.search.searchResults')"
+        disable-fragment-identifier
+      />
 
       <TransitionGroup name="search" class="search-results" tag="div">
         <div
@@ -85,7 +93,7 @@ import { ElmButton, ElmHeading, ElmTextField } from "@elmethis/core";
 import { Icon } from "@iconify/vue";
 import { watchDebounced } from "@vueuse/core";
 
-const { locale } = useI18n();
+const { locale, t } = useI18n();
 
 const blogStore = useBlogStore();
 

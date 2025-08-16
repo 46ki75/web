@@ -2,6 +2,14 @@
     "blog": {
         "side": {
             "searchButton": "記事を検索"
+        },
+        "search": {
+            "title": "ブログ検索",
+            "label": "検索キーワード",
+            "allTags": "タグ",
+            "selectedTags": "選択中のタグ",
+            "searchResults": "検索結果",
+            "clearSelection": "タグ選択解除"
         }
     },
     "privacy": {
