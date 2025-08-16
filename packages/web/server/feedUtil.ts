@@ -7,12 +7,12 @@ export const generateBlogFeed = async (
 ): Promise<Feed> => {
   const feed = new Feed({
     title: `SrcJar Blog`,
-    description: "Blog by Ikuma Yamashita.",
-    id: "https://example.com/",
-    link: "https://example.com/",
+    description: "Updates and articles from SrcJar Blog.",
+    id: `${ENDPOINT}${language === "en" ? "" : "/ja"}/blog`,
+    link: `${ENDPOINT}${language === "en" ? "" : "/ja"}/blog`,
     language: language,
     favicon: `${ENDPOINT}/brand/favicon.svg`,
-    copyright: `All rights reserved ${new Date().getFullYear()}, Shirayuki`,
+    copyright: `All rights reserved ${new Date().getFullYear()}, Ikuma Yamashita`,
     updated: new Date(),
     author: {
       name: "Ikuma Yamashita",
