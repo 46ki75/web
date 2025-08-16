@@ -44,7 +44,7 @@ export default defineNuxtConfig({
   nitro: {
     prerender: {
       routes: await fetchPrerenderRoutes(ENDPOINT),
-      crawlLinks: false,
+      crawlLinks: true,
       concurrency: 20,
     },
   },
