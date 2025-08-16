@@ -6,8 +6,11 @@
       created-at="2022-10-01"
       updated-at="2025-03-26"
       :links="[
-        { text: 'Home', href: '/' },
-        { text: 'Blog', href: '/blog' },
+        { text: 'Home', href: locale === 'en' ? '/' : `/${locale}` },
+        {
+          text: 'Blog',
+          href: `${locale === 'en' ? '/blog' : `/${locale}`}/blog`,
+        },
       ]"
       :language="locale"
     />
