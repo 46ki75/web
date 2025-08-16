@@ -2,6 +2,14 @@
     "blog": {
         "side": {
             "searchButton": "Search Articles"
+        },
+        "search": {
+            "title": "Blog Search",
+            "label": "Search Keyword",
+            "allTags": "All Tags",
+            "selectedTags": "Selected Tags",
+            "searchResults": "Search Results",
+            "clearSelection": "Clear Selection"
         }
     },
     "privacy": {
