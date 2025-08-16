@@ -1,5 +1,9 @@
 {
     "blog": {
+        "index": {
+            "featured-posts": "Featured Posts",
+            "newest-posts": "Newest Posts"
+        },
         "side": {
             "searchButton": "Search Articles"
         },

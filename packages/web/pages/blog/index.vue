@@ -12,12 +12,17 @@
       :language="locale"
     />
 
-    <div key="/blog">
-      <div>BLOG HOME PLACEHOLDER</div>
+    <div>
+      <ElmHeading :level="2" :text="t('blog.index.featured-posts')" />
+      <ElmParagraph>BLOG HOME PLACEHOLDER</ElmParagraph>
+      <ElmHeading :level="2" :text="t('blog.index.newest-posts')" />
+      <ElmParagraph>BLOG HOME PLACEHOLDER</ElmParagraph>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-const { locale } = useI18n();
+import { ElmHeading, ElmParagraph } from "@elmethis/core";
+
+const { locale, t } = useI18n();
 </script>
