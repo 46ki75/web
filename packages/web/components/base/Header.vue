@@ -10,19 +10,42 @@
       <NuxtLinkLocale to="/about" class="header-center-link flex-center">
         <Icon
           class="header-center-link-icon"
-          icon="ix:user-profile"
+          icon="ix:user-profile-filled"
           width="16px"
         />
         <ElmInlineText text="About" />
       </NuxtLinkLocale>
 
+      <Icon
+        class="header-center-link-icon"
+        icon="ci:line-l"
+        width="16px"
+        color="gray"
+      />
+
       <NuxtLinkLocale to="/blog" class="header-center-link flex-center">
         <Icon
           class="header-center-link-icon"
-          icon="grommet-icons:article"
+          icon="material-symbols:article"
           width="16px"
         />
         <ElmInlineText text="Blog" />
+      </NuxtLinkLocale>
+
+      <Icon
+        class="header-center-link-icon"
+        icon="ci:line-l"
+        width="16px"
+        color="gray"
+      />
+
+      <NuxtLinkLocale to="/talks" class="header-center-link flex-center">
+        <Icon
+          class="header-center-link-icon"
+          icon="mdi:account-voice"
+          width="16px"
+        />
+        <ElmInlineText text="Talks" />
       </NuxtLinkLocale>
     </div>
 
@@ -79,7 +102,7 @@ const isMobile = useMediaQuery("(min-width: 1024px)");
 
 .header-center {
   user-select: none;
-  gap: 1rem;
+  gap: 0.25rem;
 }
 
 .header-center-link {
