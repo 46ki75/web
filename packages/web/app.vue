@@ -57,17 +57,15 @@ useHead({
 </style>
 
 <style lang="scss">
-* {
-  -webkit-tap-highlight-color: transparent;
-  outline: none;
-  box-shadow: none;
-}
-
 html {
   font-family: "Noto Sans JP", sans-serif;
   font-optical-sizing: auto;
   font-weight: normal;
   font-style: normal;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+  box-shadow: none;
+  scroll-behavior: smooth;
 }
 
 body {
