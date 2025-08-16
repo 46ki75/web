@@ -1,10 +1,9 @@
 import { Feed } from "feed";
 import { ENDPOINT } from "~/scripts/fetchConfig";
 import { fetchBlogListEn, fetchBlogListJa } from "~/scripts/fetchBlogList";
+import { rm, mkdir, writeFile } from "node:fs/promises";
 
-export const generateBlogFeed = async (
-  language: "en" | "ja"
-): Promise<Feed> => {
+const generateBlogFeedBase = async (language: "en" | "ja"): Promise<Feed> => {
   const feed = new Feed({
     title: `SrcJar Blog`,
     description: "Updates and articles from SrcJar Blog.",
@@ -46,4 +45,24 @@ export const generateBlogFeed = async (
   }
 
   return feed;
+};
+
+export const generateBlogFeed = async (): Promise<void> => {
+  await rm("./public/feed/blog/", { recursive: true, force: true });
+  await mkdir(`./public/feed/blog/`, { recursive: true });
+
+  const languages: Array<"en" | "ja"> = ["en", "ja"];
+
+  for (const language of languages) {
+    const feed = await generateBlogFeedBase(language);
+
+    const rss = feed.rss2();
+    await writeFile(`./public/feed/blog/rss-${language}.xml`, rss, "utf-8");
+
+    const atom = feed.atom1();
+    await writeFile(`./public/feed/blog/atom-${language}.xml`, atom, "utf-8");
+
+    const json1 = feed.json1();
+    await writeFile(`./public/feed/blog/feed-${language}.json`, json1, "utf-8");
+  }
 };

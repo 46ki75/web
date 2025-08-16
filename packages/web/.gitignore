@@ -24,6 +24,7 @@ logs
 !.env.example
 
 # SSG Artifacts
-_notion
+public/_notion/
+public/feed/
 robots.txt
 sitemap.xml
