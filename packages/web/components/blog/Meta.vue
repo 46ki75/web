@@ -32,6 +32,8 @@
       </NuxtLinkLocale>
     </div>
 
+    <BlogFeed :language="language" />
+
     <div class="image">
       <ElmImage
         v-if="image"
@@ -60,6 +62,8 @@ interface BlogMetaProps {
     label: string;
     color: string;
   }>;
+
+  language: "en" | "ja";
 
   onTagClick?: (tagId: string) => void;
 }

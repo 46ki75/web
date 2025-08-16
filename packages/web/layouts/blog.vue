@@ -6,6 +6,7 @@
           <slot />
         </div>
         <BlogAuthor />
+        <BlogFeed :language="locale" />
       </div>
       <div class="icon-container">
         <Icon icon="mdi:star-four-points-small" width="32px" />
@@ -21,6 +22,8 @@
 <script setup lang="ts">
 import { ElmPagetop } from "@elmethis/core";
 import { Icon } from "@iconify/vue";
+
+const { locale } = useI18n();
 </script>
 
 <style lang="scss" scoped>

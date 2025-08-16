@@ -12,6 +12,7 @@
           href: locale === 'en' ? '/blog/search' : `/${locale}/blog/search`,
         },
       ]"
+      :language="locale"
     />
     <div>
       <ElmTextField

@@ -9,6 +9,7 @@
         { text: 'Home', href: '/' },
         { text: 'Blog', href: '/blog' },
       ]"
+      :language="locale"
     />
 
     <div key="/blog">
@@ -16,3 +17,7 @@
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+const { locale } = useI18n();
+</script>
