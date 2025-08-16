@@ -13,7 +13,10 @@
 
     <ElmHeading :level="1" :text="title" disable-fragment-identifier />
 
-    <BaseDate :created-at="createdAt" :updated-at="updatedAt" />
+    <div class="feed-date">
+      <BlogFeed :language="language" />
+      <BaseDate :created-at="createdAt" :updated-at="updatedAt" />
+    </div>
 
     <div v-if="tags" class="tag">
       <NuxtLinkLocale
@@ -31,8 +34,6 @@
         />
       </NuxtLinkLocale>
     </div>
-
-    <BlogFeed :language="language" />
 
     <div class="image">
       <ElmImage
@@ -84,5 +85,11 @@ defineProps<BlogMetaProps>();
   border-radius: 0.25rem;
   overflow: hidden;
   box-shadow: 0 0 0.125rem rgba(black, 0.3);
+}
+
+.feed-date {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 </style>
