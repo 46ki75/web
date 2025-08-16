@@ -42,7 +42,7 @@ import { Icon } from "@iconify/vue";
 
 <style lang="scss" scoped>
 .author {
-  margin-block-start: 1rem;
+  margin-block: 1.5rem;
   display: flex;
   flex-direction: row;
   gap: 0.5rem;

@@ -24,6 +24,7 @@
             color: tag.color,
           }))
         "
+        :language="locale"
         @tag-click="handleTagClick"
       />
 
