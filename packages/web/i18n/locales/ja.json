@@ -1,5 +1,9 @@
 {
     "blog": {
+        "index": {
+            "featured-posts": "おすすめ記事",
+            "newest-posts": "最新記事"
+        },
         "side": {
             "searchButton": "記事を検索"
         },
