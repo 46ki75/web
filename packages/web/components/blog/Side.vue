@@ -14,9 +14,10 @@
     </div>
 
     <div
-      v-for="blog in getSideBlogs(blogStore[locale].blogs)"
+      v-for="(blog, index) in getSideBlogs(blogStore[locale].blogs)"
       :key="blog.id"
       class="card"
+      :style="{ '--delay': `${100 * index}ms` }"
     >
       <BlogCard
         :id="blog.id"
@@ -75,7 +76,21 @@ const getSideBlogs = (
   }
 }
 
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
 .card {
   margin-block-start: 0.5rem;
+  animation-name: fade-in;
+  animation-duration: 400ms;
+  animation-delay: var(--delay);
+  animation-fill-mode: both;
 }
 </style>
