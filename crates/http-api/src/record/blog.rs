@@ -1,6 +1,8 @@
 #![deny(missing_docs)]
 //! Blog record returned by the `BlogRepository`.
 
+use notionrs_types::prelude::{PageCheckboxProperty, PageProperty};
+
 /// Blog record returned by the `BlogRepository`.
 pub struct BlogRecord {
     /// Unique identifier of the blog.
@@ -35,6 +37,10 @@ pub struct BlogRecord {
 
     /// Notion Page URL
     pub url: String,
+
+    /// Indicates whether the blog post is featured content
+    /// (e.g., highlighted or promoted on the site).
+    pub featured: bool,
 }
 
 /// Blog tag record returned by `BlogRepository`.
@@ -239,6 +245,18 @@ impl TryFrom<notionrs_types::object::page::PageResponse> for BlogRecord {
             })?
             .to_string();
 
+        let featured = if let PageProperty::Checkbox(PageCheckboxProperty { checkbox, .. }) =
+            properties.get("Featured").ok_or_else(|| {
+                tracing::error!("Notion database property not found: Featured");
+                crate::error::Error::NotionDatabasePropertyNotFound("Featured".to_string())
+            })? {
+            Ok(checkbox.to_owned())
+        } else {
+            Err(crate::error::Error::NotionDatabaseInvalidSchema(
+                "Featured".to_string(),
+            ))
+        }?;
+
         Ok(BlogRecord {
             id,
             slug,
@@ -251,6 +269,7 @@ impl TryFrom<notionrs_types::object::page::PageResponse> for BlogRecord {
             created_at,
             updated_at,
             url: page.url,
+            featured,
         })
     }
 }

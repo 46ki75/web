@@ -35,6 +35,10 @@ pub struct BlogEntity {
 
     /// Notion Page URL
     pub url: String,
+
+    /// Indicates whether the blog post is featured content
+    /// (e.g., highlighted or promoted on the site).
+    pub featured: bool,
 }
 
 /// Blog tag record returned by the BlogService.
@@ -154,6 +158,7 @@ impl From<crate::record::blog::BlogRecord> for BlogEntity {
             created_at: record.created_at.clone(),
             updated_at: record.updated_at.clone(),
             url: record.url,
+            featured: record.featured,
         }
     }
 }
