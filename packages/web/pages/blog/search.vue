@@ -54,7 +54,16 @@
             :color="tag.color"
             @click="blogStore.tagDeselect(tag.id)"
           />
+          <div
+            v-if="blogStore[locale].selectedTags.length === 0"
+            class="empty-container"
+            :style="{ position: 'absolute', top: '-2rem', left: 0 }"
+          >
+            <Icon icon="fa-solid:tags" color="#788191" height="0.85rem" />
+            <span>{{ t("blog.search.noTagsSelected") }}</span>
+          </div>
         </TransitionGroup>
+
         <ElmButton block @click="blogStore.tagReset">
           <Icon icon="fluent:tag-reset-20-filled" height="20px" />
           {{ t("blog.search.clearSelection") }}
@@ -68,6 +77,18 @@
       />
 
       <TransitionGroup name="search" class="search-results" tag="div">
+        <div
+          v-if="blogStore[locale].searchedBlogs.length === 0"
+          class="empty-container"
+          :style="{ '--height': '16rem' }"
+        >
+          <Icon
+            icon="material-symbols:document-search"
+            color="#788191"
+            height="1rem"
+          />
+          <span>{{ t("blog.search.noResultsFound") }}</span>
+        </div>
         <div
           v-for="blog in blogStore[locale].searchedBlogs"
           :key="blog.id"
@@ -130,6 +151,8 @@ onMounted(async () => {
 }
 
 .tag-pool {
+  position: relative;
+  height: 2rem;
   margin-block: 2rem;
   display: flex;
   flex-wrap: wrap;
@@ -143,6 +166,21 @@ onMounted(async () => {
 
 .search-results-item {
   transition: flex 0.3s;
+}
+
+.empty-container {
+  width: 100%;
+  height: var(--height);
+  box-sizing: border-box;
+  padding: 1rem;
+  margin-block: 1rem;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  align-items: center;
+  border: 1px dashed #788191;
+  color: #788191;
+  user-select: none;
 }
 
 // Transition

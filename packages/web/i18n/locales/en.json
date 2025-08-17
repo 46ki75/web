@@ -13,7 +13,9 @@
             "allTags": "All Tags",
             "selectedTags": "Selected Tags",
             "searchResults": "Search Results",
-            "clearSelection": "Clear Selection"
+            "clearSelection": "Clear Selection",
+            "noTagsSelected": "No tags selected",
+            "noResultsFound": "No results found"
         }
     },
     "privacy": {
