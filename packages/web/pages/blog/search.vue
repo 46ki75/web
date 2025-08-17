@@ -80,6 +80,7 @@
             :tags="blog.tags"
             :created-at="blog.createdAt"
             :updated-at="blog.updatedAt"
+            :featured="blog.featured"
             :locale="locale"
           />
         </div>

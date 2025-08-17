@@ -16,6 +16,7 @@ interface Blog {
   createdAt: string;
   updatedAt: string;
   url: string;
+  featured: boolean;
 }
 
 export const useBlogStore = defineStore("BlogSearchStore", {
@@ -71,6 +72,7 @@ export const useBlogStore = defineStore("BlogSearchStore", {
                   createdAt
                   updatedAt
                   url
+                  featured
                 }
               }
             `,
@@ -131,6 +133,7 @@ export const useBlogStore = defineStore("BlogSearchStore", {
                   createdAt
                   updatedAt
                   url
+                  featured
                 }
               }
             `,

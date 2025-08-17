@@ -42,6 +42,10 @@ pub struct Blog {
 
     /// Notion Page URL.
     pub url: String,
+
+    /// Indicates whether the blog post is featured content
+    /// (e.g., highlighted or promoted on the site).
+    pub featured: bool,
 }
 
 impl From<crate::entity::blog::BlogEntity> for Blog {
@@ -82,6 +86,7 @@ impl From<crate::entity::blog::BlogEntity> for Blog {
             created_at: value.created_at,
             updated_at: value.updated_at,
             url: value.url,
+            featured: value.featured,
         }
     }
 }
