@@ -13,7 +13,9 @@
             "allTags": "タグ",
             "selectedTags": "選択中のタグ",
             "searchResults": "検索結果",
-            "clearSelection": "タグ選択解除"
+            "clearSelection": "タグ選択解除",
+            "noTagsSelected": "タグが選択されていません",
+            "noResultsFound": "該当する結果はありません"
         }
     },
     "privacy": {
