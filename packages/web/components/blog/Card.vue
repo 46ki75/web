@@ -13,6 +13,12 @@
           <ElmInlineText :text="description" size="0.8rem" />
         </div>
         <div class="date">
+          <Icon
+            icon="mdi:star"
+            color="#cdb57b"
+            height="1.25rem"
+            :style="{ opacity: featured ? 1 : 0 }"
+          />
           <BaseDate :created-at="createdAt" :updated-at="updatedAt" />
         </div>
       </div>
@@ -39,6 +45,7 @@
 
 <script lang="ts" setup>
 import { ElmImage, ElmInlineText } from "@elmethis/core";
+import { Icon } from "@iconify/vue/dist/iconify.js";
 
 interface BlogSearchResultProps {
   id: string;
@@ -51,6 +58,7 @@ interface BlogSearchResultProps {
   }>;
   createdAt: string;
   updatedAt: string;
+  featured: boolean;
   locale: "en" | "ja";
 }
 
@@ -141,6 +149,8 @@ const handleTagClick = (tagId: string) => {
 }
 
 .date {
+  display: flex;
+  justify-content: space-between;
   margin-block-start: 0.25rem;
 }
 
