@@ -19,7 +19,9 @@
 
     <BaseDate :created-at="CREATED_AT" :updated-at="UPDATED_AT" />
 
-    <MDC :value="t('about')" tag="article" />
+    <article>
+      <ElmMarkdown :markdown="t('about')" />
+    </article>
 
     <ElmHeading :level="2" disable-fragment-identifier> Find me on </ElmHeading>
 
@@ -49,14 +51,14 @@
 </template>
 
 <script setup lang="ts">
-import { ElmHeading, ElmBookmarkIcon, ElmBreadcrumb } from "@elmethis/core";
+import {
+  ElmHeading,
+  ElmBookmarkIcon,
+  ElmBreadcrumb,
+  ElmMarkdown,
+} from "@elmethis/core";
 
 const { locale, defaultLocale, mergeLocaleMessage, t } = useI18n();
-
-onBeforeMount(() => {
-  mergeLocaleMessage("en", { about: en });
-  mergeLocaleMessage("ja", { about: ja });
-});
 
 const CREATED_AT = "2025-06-02";
 const UPDATED_AT = "2025-06-03";
@@ -108,6 +110,9 @@ AWS を中心に、パブリッククラウドのインフラエンジニアと�
 
 現在、東京を拠点に活動しています。
 `;
+
+mergeLocaleMessage("en", { about: en });
+mergeLocaleMessage("ja", { about: ja });
 </script>
 
 <style module lang="scss">

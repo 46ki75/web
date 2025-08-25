@@ -25,19 +25,21 @@
       <BaseDate created-at="2025-06-02" updated-at="2025-06-02" />
     </section>
 
-    <MDC :value="t('privacy.markdown')" />
+    <article>
+      <ElmMarkdown :markdown="t('privacy.markdown')" />
+    </article>
   </BaseContainer>
 </template>
 
 <script setup lang="ts">
-import { ElmHeading, ElmBreadcrumb, ElmInlineText } from "@elmethis/core";
+import {
+  ElmHeading,
+  ElmBreadcrumb,
+  ElmInlineText,
+  ElmMarkdown,
+} from "@elmethis/core";
 
 const { t, locale, defaultLocale, mergeLocaleMessage } = useI18n();
-
-onBeforeMount(() => {
-  mergeLocaleMessage("en", { privacy: { markdown: en } });
-  mergeLocaleMessage("ja", { privacy: { markdown: ja } });
-});
 
 const en = `
 This website recognizes the importance of personal information and handles its collection, use, and management appropriately. We are committed to protecting user privacy and comply with relevant laws and regulations regarding the handling of personal information.
@@ -104,6 +106,9 @@ const ja = `
 - WebKit系ブラウザ (例: Safari) は未検証です。
 - 推奨環境は予告なく変更される場合があります。
 `;
+
+mergeLocaleMessage("en", { privacy: { markdown: en } });
+mergeLocaleMessage("ja", { privacy: { markdown: ja } });
 </script>
 
 <style module lang="scss">

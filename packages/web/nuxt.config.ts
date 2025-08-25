@@ -10,7 +10,7 @@ export default defineNuxtConfig({
   compatibilityDate: "2024-11-01",
   devtools: { enabled: true },
   devServer: { host: "127.0.0.1" },
-  modules: ["@pinia/nuxt", "@nuxtjs/i18n", "@nuxtjs/mdc"],
+  modules: ["@pinia/nuxt", "@nuxtjs/i18n"],
 
   i18n: {
     strategy: "prefix_except_default",
@@ -46,18 +46,6 @@ export default defineNuxtConfig({
       routes: await fetchPrerenderRoutes(ENDPOINT),
       crawlLinks: false,
       concurrency: 20,
-    },
-  },
-
-  mdc: {
-    components: {
-      prose: true,
-      map: {
-        h1: "prose-custom-h1",
-        h2: "prose-custom-h2",
-        p: "prose-custom-p",
-        ul: "prose-custom-ul",
-      },
     },
   },
 
