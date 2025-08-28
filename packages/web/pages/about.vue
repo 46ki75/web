@@ -20,7 +20,7 @@
     <BaseDate :created-at="CREATED_AT" :updated-at="UPDATED_AT" />
 
     <article>
-      <ElmMarkdown :markdown="t('about')" />
+      <ElmMarkdown :markdown="t('about.greet')" />
     </article>
 
     <ElmHeading :level="2" disable-fragment-identifier> Find me on </ElmHeading>
@@ -47,6 +47,25 @@
         href="https://www.linkedin.com/in/ikuma-yamashita-b3080a344"
       />
     </div>
+
+    <ElmHeading :level="2" disable-fragment-identifier>
+      Credly Badge Wallet
+    </ElmHeading>
+
+    <ElmMarkdown :markdown="t('about.credly')" />
+
+    <div :class="$style['badge-container']">
+      <AboutCredlyBadge
+        v-for="badge in data"
+        :key="badge.id"
+        :src="badge.badge_template.image_url"
+        :alt="badge.badge_template.description"
+        :href="badge.badge_template.url"
+        :name="badge.badge_template.name"
+        :issued_at_date="badge.issued_at_date"
+        :expires_at_date="badge.expires_at_date"
+      ></AboutCredlyBadge>
+    </div>
   </BaseContainer>
 </template>
 
@@ -57,6 +76,9 @@ import {
   ElmBreadcrumb,
   ElmMarkdown,
 } from "@elmethis/core";
+
+const CREDLY_BADGES_ENDPOINT =
+  "https://www.credly.com/users/ikuma-yamashita/badges.json";
 
 const { locale, defaultLocale, mergeLocaleMessage, t } = useI18n();
 
@@ -79,7 +101,7 @@ useSeoMeta({
   articleModifiedTime: UPDATED_AT,
 });
 
-const en = `
+const aboutEn = `
 # Hello.
 
 My name is **Ikuma Yamashita**.
@@ -95,7 +117,7 @@ In my free time, I enjoy creating digital illustrations.
 I am currently based in Tokyo, Japan.
 `;
 
-const ja = `
+const aboutJa = `
 # 皆様、こんにちは。
 
 **山下 生真** (**Ikuma Yamashita**) です。
@@ -111,8 +133,46 @@ AWS を中心に、パブリッククラウドのインフラエンジニアと�
 現在、東京を拠点に活動しています。
 `;
 
-mergeLocaleMessage("en", { about: en });
-mergeLocaleMessage("ja", { about: ja });
+const credlyEn = `
+Credly badges are displayed in accordance with [Credly's Terms of Service](https://info.credly.com/legal). [Source](${CREDLY_BADGES_ENDPOINT})
+`;
+
+const credlyJa = `
+Credly のバッジは[規約](https://www.credly.com/users/ikuma-yamashita/badges.json)に基づいて表示しています。[Source](${CREDLY_BADGES_ENDPOINT})
+`;
+
+mergeLocaleMessage("en", { about: { greet: aboutEn, credly: credlyEn } });
+mergeLocaleMessage("ja", { about: { greet: aboutJa, credly: credlyJa } });
+
+const { data } = useAsyncData("CredlyBadges", async () => {
+  const res = await $fetch<{
+    data: Array<{
+      id: string;
+      issued_at_date: string;
+      expires_at_date: string | null;
+      badge_template: {
+        name: string;
+        description: string;
+        image_url: string;
+        url: string;
+      };
+    }>;
+  }>(CREDLY_BADGES_ENDPOINT);
+
+  return res.data.map(
+    ({
+      id,
+      issued_at_date,
+      expires_at_date,
+      badge_template: { name, description, image_url, url },
+    }) => ({
+      id,
+      issued_at_date,
+      expires_at_date,
+      badge_template: { name, description, image_url, url },
+    })
+  );
+});
 </script>
 
 <style module lang="scss">
@@ -149,5 +209,12 @@ mergeLocaleMessage("ja", { about: ja });
       filter: invert(1);
     }
   }
+}
+
+.badge-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(6rem, 1fr));
+  gap: 2rem 0.25rem;
+  user-select: none;
 }
 </style>
