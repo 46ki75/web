@@ -166,3 +166,83 @@ impl BlogRepository for BlogRepositoryImpl {
         Ok(bytes)
     }
 }
+
+/// Stub implementation of `BlogRepository` for testing and development.
+/// Each method returns sample data.
+#[derive(Debug, Clone)]
+pub struct BlogRepositoryStab {}
+
+#[async_trait::async_trait]
+impl BlogRepository for BlogRepositoryStab {
+    /// Returns a sample blog record for the given page ID.
+    async fn get_blog_by_id(
+        &self,
+        page_id: &str,
+    ) -> Result<crate::record::blog::BlogRecord, crate::error::Error> {
+        Ok(crate::record::blog::BlogRecord {
+            id: page_id.to_string(),
+            slug: "sample-slug".to_string(),
+            title: "サンプルブログタイトル".to_string(),
+            description: "これはサンプルのブログ記事です。".to_string(),
+            ogp_image_s3_url: Some("https://example.com/sample-ogp.png".to_string()),
+            tags: vec![crate::record::blog::BlogTagRecord {
+                id: "tag1".to_string(),
+                name: "サンプルタグ".to_string(),
+                color: crate::record::blog::BlogTagColorRecord::Blue,
+            }],
+            status: crate::record::blog::BlogStatusRecord::Published,
+            keywords: "サンプル,ブログ".to_string(),
+            created_at: "2025-08-29T00:00:00Z".to_string(),
+            updated_at: "2025-08-29T00:00:00Z".to_string(),
+            url: format!("https://example.com/blog/{}", page_id),
+            featured: true,
+        })
+    }
+
+    /// Returns a sample list of blog records.
+    async fn list_blogs(
+        &self,
+        _language: BlogLanguageRepositoryInput,
+    ) -> Result<Vec<crate::record::blog::BlogRecord>, crate::error::Error> {
+        Ok(vec![crate::record::blog::BlogRecord {
+            id: "sample-id".to_string(),
+            slug: "sample-slug".to_string(),
+            title: "サンプルブログタイトル".to_string(),
+            description: "これはサンプルのブログ記事です。".to_string(),
+            ogp_image_s3_url: Some("https://example.com/sample-ogp.png".to_string()),
+            tags: vec![crate::record::blog::BlogTagRecord {
+                id: "tag1".to_string(),
+                name: "サンプルタグ".to_string(),
+                color: crate::record::blog::BlogTagColorRecord::Blue,
+            }],
+            status: crate::record::blog::BlogStatusRecord::Published,
+            keywords: "サンプル,ブログ".to_string(),
+            created_at: "2025-08-29T00:00:00Z".to_string(),
+            updated_at: "2025-08-29T00:00:00Z".to_string(),
+            url: "https://example.com/blog/sample-id".to_string(),
+            featured: true,
+        }])
+    }
+
+    /// Returns sample block data as a JSON string.
+    async fn get_block_children(&self, page_id: &str) -> Result<String, crate::error::Error> {
+        Ok(format!(
+            "{{'block_id':'{}','content':'サンプルブロック'}}",
+            page_id
+        ))
+    }
+
+    /// Returns sample image bytes.
+    async fn fetch_image_by_url(&self, _url: &str) -> Result<bytes::Bytes, crate::error::Error> {
+        Ok(bytes::Bytes::from_static(b"sample image data"))
+    }
+
+    /// Returns sample image bytes.
+    async fn fetch_image_by_block_id(
+        &self,
+        _block_id: &str,
+    ) -> Result<bytes::Bytes, crate::error::Error> {
+        Ok(bytes::Bytes::from_static(b"sample image data"))
+    }
+}
+// ...existing code...
