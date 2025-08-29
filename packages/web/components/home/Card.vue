@@ -7,6 +7,10 @@
     </header>
     <div :class="$style['body']">
       <ElmInlineText :text="description" />
+      <div :class="$style['detail']">
+        <Icon icon="mynaui:chevron-right-solid" color="#b69545" />
+        <ElmInlineText text="View Details" color="#b69545" />
+      </div>
     </div>
   </NuxtLinkLocale>
 </template>
@@ -88,7 +92,21 @@ withDefaults(defineProps<CardProps>(), {
 }
 
 .body {
+  height: 100%;
   opacity: 0.6;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.detail {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.5rem;
+  opacity: 0.75;
 }
 
 .icon {

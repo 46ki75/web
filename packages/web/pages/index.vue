@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ElmTypingAnimation } from "@elmethis/core";
+import { ElmHeading, ElmTypingAnimation } from "@elmethis/core";
 
 const texts: string[] = [
   "Hi, there.",
@@ -24,6 +24,11 @@ const texts: string[] = [
     </div>
 
     <div :class="$style.container">
+      <ElmHeading
+        text="Explore"
+        disable-fragment-identifier
+        style="text-align: center; width: 16rem"
+      />
       <nav :class="$style['card-container']">
         <home-card
           title="About me"
@@ -61,10 +66,13 @@ const texts: string[] = [
 @use "../styles/variables";
 
 .container {
+  width: 100%;
   min-height: calc(50vh - #{variables.$header-height});
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  gap: 0.75rem;
 }
 
 .card-container {
