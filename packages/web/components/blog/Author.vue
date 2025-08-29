@@ -2,12 +2,12 @@
   <div>
     <div class="author">
       <div class="image">
-        <ElmImage src="/blog/author.webp" alt="Portrait of the Author" />
+        <ElmImage src="/image/profile.webp" alt="Portrait of the Author" />
       </div>
 
       <div class="text-container">
         <div class="author-name">
-          <ElmInlineText text="チョモランマ白雪 - Chomolungma Shirayuki" bold />
+          <ElmInlineText text="山下 生真" bold />
         </div>
 
         <div class="author-description">
