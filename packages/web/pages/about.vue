@@ -153,11 +153,15 @@ AWS を中心に、パブリッククラウドのインフラエンジニア及�
 `;
 
 const credlyEn = `
-Credly badges are displayed in accordance with [Credly's Terms of Service](https://info.credly.com/legal). [Source](${CREDLY_BADGES_ENDPOINT})
+Credly badges are displayed in accordance with [Credly's Terms of Service](https://info.credly.com/legal) and its [robots.txt](https://www.credly.com/robots.txt).
+
+[Data Source (JSON)](${CREDLY_BADGES_ENDPOINT})
 `;
 
 const credlyJa = `
-Credly のバッジは[規約](https://www.credly.com/users/ikuma-yamashita/badges.json)に基づいて表示しています。[Source](${CREDLY_BADGES_ENDPOINT})
+Credly のバッジは[規約](https://info.credly.com/legal)および同ドメインの [robots.txt](https://www.credly.com/robots.txt) に基づいて表示しています。
+
+[データソース (JSON)](${CREDLY_BADGES_ENDPOINT})
 `;
 
 mergeLocaleMessage("en", { about: { greet: aboutEn, credly: credlyEn } });
