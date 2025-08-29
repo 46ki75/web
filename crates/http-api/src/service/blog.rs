@@ -147,3 +147,169 @@ impl BlogService {
         Ok(None)
     }
 }
+
+#[cfg(test)]
+mod test {
+
+    #[tokio::test]
+    async fn test_get_blog_by_id() -> Result<(), crate::error::Error> {
+        let blog_repository = std::sync::Arc::new(crate::repository::blog::BlogRepositoryStab {});
+
+        let blog_service = crate::service::blog::BlogService { blog_repository };
+
+        let _blog = blog_service
+            .get_blog_by_id("25effec5-b9f2-4f3a-b8f4-5fae81f4dc49")
+            .await?;
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_list_blogs_en() -> Result<(), crate::error::Error> {
+        let blog_repository = std::sync::Arc::new(crate::repository::blog::BlogRepositoryStab {});
+        let blog_service = crate::service::blog::BlogService { blog_repository };
+
+        let blogs = blog_service
+            .list_blogs(crate::service::blog::BlogLanguageServiceInput::En)
+            .await?;
+
+        assert_eq!(blogs.len(), 1);
+        assert_eq!(blogs[0].id, "sample-id");
+        assert_eq!(blogs[0].title, "サンプルブログタイトル");
+        assert_eq!(blogs[0].keywords, vec!["サンプル", "ブログ"]);
+        assert!(matches!(
+            blogs[0].status,
+            crate::entity::blog::BlogStatusEntity::Published
+        ));
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_list_blogs_ja() -> Result<(), crate::error::Error> {
+        let blog_repository = std::sync::Arc::new(crate::repository::blog::BlogRepositoryStab {});
+        let blog_service = crate::service::blog::BlogService { blog_repository };
+
+        let blogs = blog_service
+            .list_blogs(crate::service::blog::BlogLanguageServiceInput::Ja)
+            .await?;
+
+        assert_eq!(blogs.len(), 1);
+        assert_eq!(blogs[0].tags.len(), 1);
+        assert_eq!(blogs[0].tags[0].id, "tag1");
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_get_block_children() -> Result<(), crate::error::Error> {
+        let blog_repository = std::sync::Arc::new(crate::repository::blog::BlogRepositoryStab {});
+        let blog_service = crate::service::blog::BlogService { blog_repository };
+
+        let page_id = "abc123";
+        let blocks = blog_service.get_block_children(page_id).await?;
+
+        assert!(blocks.contains(page_id));
+        assert!(blocks.contains("サンプルブロック"));
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_infer_mime_type_unknown_defaults() {
+        let blog_repository = std::sync::Arc::new(crate::repository::blog::BlogRepositoryStab {});
+        let blog_service = crate::service::blog::BlogService { blog_repository };
+
+        let bytes = bytes::Bytes::from_static(b"not an image");
+        let mime = blog_service.infer_mime_type(&bytes);
+        assert_eq!(mime, "application/octet-stream");
+    }
+
+    #[test]
+    fn test_infer_mime_type_png() {
+        let blog_repository = std::sync::Arc::new(crate::repository::blog::BlogRepositoryStab {});
+        let blog_service = crate::service::blog::BlogService { blog_repository };
+
+        // PNG magic number
+        let png_header: [u8; 8] = [137, 80, 78, 71, 13, 10, 26, 10];
+        let bytes = bytes::Bytes::copy_from_slice(&png_header);
+        let mime = blog_service.infer_mime_type(&bytes);
+        assert_eq!(mime, "image/png");
+    }
+
+    #[tokio::test]
+    async fn test_fetch_ogp_image_by_id() -> Result<(), crate::error::Error> {
+        let blog_repository = std::sync::Arc::new(crate::repository::blog::BlogRepositoryStab {});
+        let blog_service = crate::service::blog::BlogService { blog_repository };
+
+        let data = blog_service
+            .fetch_ogp_image_by_id("any-id-with-ogp")
+            .await?
+            .expect("OGP image should exist in stub");
+
+        assert_eq!(&data[..], b"sample image data");
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_fetch_block_image_by_id() -> Result<(), crate::error::Error> {
+        let blog_repository = std::sync::Arc::new(crate::repository::blog::BlogRepositoryStab {});
+        let blog_service = crate::service::blog::BlogService { blog_repository };
+
+        let data = blog_service
+            .fetch_block_image_by_id("block-123")
+            .await?
+            .expect("Image should exist in stub");
+
+        assert_eq!(&data[..], b"sample image data");
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_list_tags() -> Result<(), crate::error::Error> {
+        let blog_repository = std::sync::Arc::new(crate::repository::blog::BlogRepositoryStab {});
+        let blog_service = crate::service::blog::BlogService { blog_repository };
+
+        let tags = blog_service
+            .list_tags(crate::service::blog::BlogLanguageServiceInput::Ja)
+            .await?;
+
+        assert_eq!(tags.len(), 1);
+        assert_eq!(tags[0].id, "tag1");
+        assert_eq!(tags[0].name, "サンプルタグ");
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_get_tag_by_id_found() -> Result<(), crate::error::Error> {
+        let blog_repository = std::sync::Arc::new(crate::repository::blog::BlogRepositoryStab {});
+        let blog_service = crate::service::blog::BlogService { blog_repository };
+
+        let tag = blog_service
+            .get_tag_by_id("tag1", crate::service::blog::BlogLanguageServiceInput::En)
+            .await?;
+
+        assert!(tag.is_some());
+        let tag = tag.unwrap();
+        assert_eq!(tag.id, "tag1");
+        assert_eq!(tag.name, "サンプルタグ");
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_get_tag_by_id_not_found() -> Result<(), crate::error::Error> {
+        let blog_repository = std::sync::Arc::new(crate::repository::blog::BlogRepositoryStab {});
+        let blog_service = crate::service::blog::BlogService { blog_repository };
+
+        let tag = blog_service
+            .get_tag_by_id(
+                "unknown",
+                crate::service::blog::BlogLanguageServiceInput::Ja,
+            )
+            .await?;
+
+        assert!(tag.is_none());
+        Ok(())
+    }
+}
