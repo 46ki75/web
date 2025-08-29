@@ -25,6 +25,11 @@
           <Icon icon="mdi:link-variant" size="16" color="#6987b8" />
           <div>Talks</div>
         </NuxtLinkLocale>
+
+        <NuxtLinkLocale class="sitelink" to="/image-converter">
+          <Icon icon="mdi:link-variant" size="16" color="#6987b8" />
+          <div>WASM Image Converter (Beta)</div>
+        </NuxtLinkLocale>
       </div>
 
       <hr class="hr" />
