@@ -2,25 +2,22 @@
   <div>
     <div class="author">
       <div class="image">
-        <ElmImage src="/blog/author.webp" alt="Portrait of the Author" />
+        <ElmImage src="/image/profile.webp" alt="Portrait of the Author" />
       </div>
 
       <div class="text-container">
         <div class="author-name">
-          <ElmInlineText text="チョモランマ白雪 - Chomolungma Shirayuki" bold />
+          <ElmInlineText :text="`${t('profile.name')}`" bold />
         </div>
 
         <div class="author-description">
-          <ElmInlineText
-            size="0.9rem"
-            text="パブリッククラウドアーキテクト・コンサルタント。Web・組み込み開発の経験を活かし、アプリとインフラの橋渡しを担う。Rustを最も信頼する言語とする。趣味でイラストを描くなど活動は多岐に渡る。"
-          />
+          <ElmInlineText size="0.9rem" :text="`${t('profile.bio')}`" />
         </div>
 
         <div class="link-icons">
           <NuxtLinkLocale to="/about" class="to-about">
             <Icon icon="stash:chevron-double-right" height="1.25rem" />
-            <span>詳細</span>
+            <span>{{ t("profile.detail") }}</span>
           </NuxtLinkLocale>
           <a
             ref="noopener noreferrer"
@@ -38,6 +35,8 @@
 <script lang="ts" setup>
 import { ElmImage, ElmInlineText } from "@elmethis/core";
 import { Icon } from "@iconify/vue";
+
+const { t } = useI18n();
 </script>
 
 <style lang="scss" scoped>
@@ -45,11 +44,11 @@ import { Icon } from "@iconify/vue";
   margin-block: 1.5rem;
   display: flex;
   flex-direction: row;
-  gap: 0.5rem;
+  gap: 1rem;
   justify-content: flex-start;
   align-items: center;
   border-radius: 0.25rem;
-  padding: 0.25rem 0.5rem 0.25rem 0.25rem;
+  padding: 0.5rem;
   box-shadow: 0 0 0.125rem rgba(black, 0.25);
   background-color: rgba(white, 0.3);
 
