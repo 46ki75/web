@@ -68,11 +68,25 @@ html {
   scroll-behavior: smooth;
 }
 
+@keyframes body-fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
 body {
   margin: 0;
   padding: 0;
   transition: background-color 200ms;
   background-color: #f2f2f2;
+  animation-name: body-fade;
+  animation-duration: 1000ms;
+  animation-fill-mode: both;
+  animation-iteration-count: 1;
 
   [data-theme="dark"] & {
     background-color: #25282e;
