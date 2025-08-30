@@ -34,6 +34,6 @@ tower-http = { version = "0.6.4", features = [
     "compression-full",
     "normalize-path",
 ] }
-tracing-subscriber = { version = "0.3.19", features = ["ansi"] }
+tracing-subscriber = { version = "0.3.20", features = ["ansi"] }
 http = "1.3.1"
 html-meta-scraper = "0.2.0"
