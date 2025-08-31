@@ -2,7 +2,7 @@
   <div key="/blog">
     <BlogMeta
       key="/blog"
-      title="Blog Top"
+      title="Blog"
       created-at="2022-10-01"
       updated-at="2025-03-26"
       :links="[
@@ -16,6 +16,8 @@
     />
 
     <div>
+      <ElmMarkdown :markdown="t('blog.index.introduction')" />
+
       <ElmHeading :level="2" :text="t('blog.index.featured-posts')" />
 
       <div class="blog-container">
@@ -60,7 +62,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElmHeading } from "@elmethis/core";
+import { ElmHeading, ElmMarkdown } from "@elmethis/core";
 
 const { locale, t } = useI18n();
 const blogStore = useBlogStore();

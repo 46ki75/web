@@ -2,12 +2,19 @@
     "profile": {
         "name": "Ikuma Yamashita",
         "bio": "Cloud engineer. Works on infrastructure-related tasks professionally, but has been spotted dedicating private time exclusively to systems programming. Shows a preference for using Rust. Enjoys illustration as a hobby.",
-        "detail": "More Info"
+        "detail": "More Info",
+        "navigation": {
+            "about": "Software developer based in Japan. Learn more about me.",
+            "blog": "Insights, tutorials, and stories from real-world software projects.",
+            "image-converter": "Convert images locally in your browser using WebAssembly—no server upload required, fast and private.",
+            "talks": "Browse my lightning talks and presentations from developer events."
+        }
     },
     "blog": {
         "index": {
             "featured-posts": "Featured Posts",
-            "newest-posts": "Newest Posts"
+            "newest-posts": "Newest Posts",
+            "introduction": "This blog mainly publishes articles related to information and communication technology.\n\nThe types of articles provided may vary depending on the language."
         },
         "side": {
             "searchButton": "Search Articles"
