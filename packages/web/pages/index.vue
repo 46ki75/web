@@ -13,6 +13,8 @@ const texts: string[] = [
   "Talks, demos, and practical examples.",
   "Welcome to my portfolio and blog.",
 ];
+
+const { t } = useI18n();
 </script>
 
 <template>
@@ -32,28 +34,28 @@ const texts: string[] = [
       <nav :class="$style['card-container']">
         <home-card
           title="About me"
-          description="Software developer based in Japan. Learn more about me."
+          :description="t('profile.navigation.about')"
           to="/about"
           iconify-icon="fluent-color:patient-32"
         />
 
         <home-card
           title="Blog"
-          description="Insights, tutorials, and stories from real-world software projects."
+          :description="t('profile.navigation.blog')"
           to="/blog"
           iconify-icon="fluent-color:notebook-32"
         />
 
         <home-card
           title="WASM Image Converter"
-          description="Convert images locally in your browser using WebAssembly—no server upload required, fast and private."
+          :description="t('profile.navigation.image-converter')"
           to="/image-converter"
           src="/image/image-converter.png"
         />
 
         <home-card
           title="Talks"
-          description="Browse my lightning talks and presentations from developer events."
+          :description="t('profile.navigation.talks')"
           to="/talks"
           iconify-icon="fluent-color:person-feedback-32"
         />
