@@ -8,7 +8,7 @@ if [ -z "$STAGE_NAME" ]; then
 fi
 
 if [ "$STAGE_NAME" = "prod" ]; then
-    DISTRIBUTION_ALIAS_DOMAIN="internal.ikuma.cloud"
+    DISTRIBUTION_ALIAS_DOMAIN="www.ikuma.cloud"
 else
     DISTRIBUTION_ALIAS_DOMAIN="${STAGE_NAME}-www.ikuma.cloud"
 fi
