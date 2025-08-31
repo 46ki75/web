@@ -7,7 +7,8 @@
     "blog": {
         "index": {
             "featured-posts": "Featured Posts",
-            "newest-posts": "Newest Posts"
+            "newest-posts": "Newest Posts",
+            "introduction": "This blog mainly publishes articles related to information and communication technology.\n\nThe types of articles provided may vary depending on the language."
         },
         "side": {
             "searchButton": "Search Articles"

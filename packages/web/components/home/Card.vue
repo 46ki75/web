@@ -8,8 +8,8 @@
     <div :class="$style['body']">
       <ElmInlineText :text="description" />
       <div :class="$style['detail']">
-        <Icon icon="mynaui:chevron-right-solid" color="#b69545" />
-        <ElmInlineText text="View Details" color="#b69545" />
+        <Icon icon="mynaui:chevron-right-solid" color="#8e3636" />
+        <ElmInlineText text="View Details" color="#8e3636" />
       </div>
     </div>
   </NuxtLinkLocale>
@@ -46,7 +46,7 @@ withDefaults(defineProps<CardProps>(), {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  max-width: 300px;
+  max-width: 380px;
   background: linear-gradient(
     to bottom right,
     rgba(#c9699e, 0.06),

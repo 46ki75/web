@@ -7,7 +7,8 @@
     "blog": {
         "index": {
             "featured-posts": "おすすめ記事",
-            "newest-posts": "最新記事"
+            "newest-posts": "最新記事",
+            "introduction": "主に情報通信技術に関するブログを公開しています。\n\nブログの内容は言語によって提供している記事の種類が異なる場合があります。"
         },
         "side": {
             "searchButton": "記事を検索"
