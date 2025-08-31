@@ -53,7 +53,12 @@
         </div>
 
         <div class="right">
-          <a ref="noopener noreferrer" href="/sitemap.xml" target="_blank">
+          <a
+            ref="noopener noreferrer"
+            href="/sitemap.xml"
+            target="_blank"
+            aria-label="Sitemap"
+          >
             <Icon class="icon" icon="mdi:sitemap" height="32px" />
           </a>
 
@@ -61,6 +66,7 @@
             ref="noopener noreferrer"
             href="https://github.com/46ki75/web"
             target="_blank"
+            aria-label="Source code on GitHub"
           >
             <Icon class="icon" icon="mdi:github" height="32px" />
           </a>
