@@ -82,7 +82,7 @@ const CREDLY_ROBOTS_ENDPOINT = "https://www.credly.com/robots.txt";
 const { locale, defaultLocale, mergeLocaleMessage, t } = useI18n();
 
 const CREATED_AT = "2025-06-02";
-const UPDATED_AT = "2025-06-03";
+const UPDATED_AT = "2025-09-09";
 const DESCRIPTION = {
   ja: "山下生真のポートフォリオサイトです。パブリッククラウドエンジニアとして、インフラとアプリケーションの両面で活動しています。",
   en: "This is the portfolio of Ikuma Yamashita, a public cloud engineer working across both infrastructure and application development.",
@@ -103,17 +103,17 @@ useSeoMeta({
 const aboutEn = `
 # Hello.
 
-I'm **Ikuma Yamashita**.
+I'm **Ikuma Yamashita** (Native name: **山下 生真**).
 
-I work as a cloud infrastructure engineer and consultant, mainly focusing on AWS.
+I work as an infrastructure engineer at a Japanese IT company.
 
-Since my student days, I have continued my passion for systems programming and contribute to open-source projects. I especially enjoy working with [Rust](https://www.rust-lang.org/).
+During my studies, I majored in mechanical engineering with a focus on embedded systems. From there, I expanded my interests and started creating system programs and web applications as a hobby. You can get a sense of my skill level from the projects featured on this website.
 
-Beyond system-level development, I also enjoy web development. I have tried various SPA frameworks, but my favorite is [Vue.js](https://vuejs.org/) because of its strong support for universal (isomorphic) applications.
+I’m passionate about the [Rust](https://www.rust-lang.org/) programming language and actively contribute to various open-source projects.
 
-One of my hobbies is creating digital illustrations.
+Another hobby of mine is digital illustration, which I’ve been practicing since middle school. I’m also considering creating a page on this website to showcase some of my artwork.
 
-I am currently based in Tokyo, Japan.
+Thank you very much for visiting!
 
 ## About Japan AWS Jr. Champions
 
@@ -129,19 +129,19 @@ I was selected as one of the [2025 Japan AWS Jr. Champions](https://aws.amazon.c
 `;
 
 const aboutJa = `
-# 皆様、こんにちは。
+# はじめまして。
 
 **山下 生真** (**Ikuma Yamashita**) です。
 
-AWS を中心に、パブリッククラウドのインフラエンジニア及びコンサルタントとして働いています。
+日本のIT企業でインフラエンジニアとして働いています。
 
-学生時代から好きなシステムプログラミングを続けていて、オープンソースにも貢献しています。[Rust](https://www.rust-lang.org/) が特に好きです。
+学生時代に機械工学を専攻しており、組み込みを中心に学んでいました。そこから派生して、システムプログラミング、Webアプリケーションまで趣味で作成するようになりました。レベル感としてはこのWebサイトが参考になると思います。
 
-システム系だけでなく、Web 開発も好きで様々な SPA フレームワークを触ってきましたが、ユニバーサル対応に強いという理由で [Vue.js](https://vuejs.org/) がお気に入りです。
+[Rust](https://www.rust-lang.org/) というプログラミング言語が大好きで、様々なOSSにコントリビュートしています。
 
-趣味はデジタルイラストを描くことです。
+趣味としてデジタルイラストを中学生の頃から描いていました。また、このWebサイトにお披露目するページを用意しようかとも考えています。
 
-現在、東京を拠点に活動しています。
+皆様、どうぞよろしくお願いします！
 
 ## Japan AWS Jr. Champions について
 
