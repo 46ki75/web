@@ -14,13 +14,13 @@ const texts: string[] = [
   "Welcome to my portfolio and blog.",
 ];
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 
-const router = useRouter()
+const router = useRouter();
 
 onMounted(() => {
-  router.push("/about")
-})
+  router.push(locale.value === "en" ? `/about` : `/${locale.value}/about`);
+});
 </script>
 
 <template>
