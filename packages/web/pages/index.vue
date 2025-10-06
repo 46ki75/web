@@ -15,6 +15,12 @@ const texts: string[] = [
 ];
 
 const { t } = useI18n();
+
+const router = useRouter()
+
+onMounted(() => {
+  router.push("/about")
+})
 </script>
 
 <template>
