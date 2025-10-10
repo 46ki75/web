@@ -27,7 +27,9 @@
       ]
     }
   },
-  "forwardPorts": [10000],
+  "forwardPorts": [
+    10000
+  ],
   "features": {
     "ghcr.io/devcontainers-extra/features/starship": {},
     "ghcr.io/devcontainers/features/github-cli": {},
@@ -38,5 +40,11 @@
     "./features/cargo-binstall": {},
     "ghcr.io/devcontainers/features/terraform": {}
   },
-  "postCreateCommand": "echo 'eval \"$(starship init bash)\"' >> ~/.bashrc"
+  "postCreateCommand": "echo 'eval \"$(starship init bash)\"' >> ~/.bashrc",
+  "mounts": [
+    "type=bind,source=${localEnv:HOME}/.aws/,target=/home/vscode/.aws/"
+  ],
+  "containerEnv": {
+    "AWS_PROFILE": "web"
+  }
 }
