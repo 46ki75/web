@@ -1,0 +1,21 @@
+[package]
+name = "blog-sdk"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+bytes = "1.10.1"
+futures = "0.3.31"
+jarkup-rs = "0.5.1"
+notion-to-jarkup = "0.8.0"
+notionrs = "0.3.0"
+notionrs_types = "0.3.0"
+reqwest = { version = "0.12.23", default-features = false, features = [
+    "rustls-tls",
+    "http2",
+] }
+thiserror = "2.0.17"
+
+[dev-dependencies]
+dotenvy = "0.15.7"
+tokio = { version = "1.47.1", features = ["full"] }
