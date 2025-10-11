@@ -38,7 +38,7 @@ pub async fn get_jarkup_by_slug(
                         )))?;
                     article_page_id
                 } else {
-                    return Err(crate::error::Error::NotionPagePropertySchema(
+                    return Err(crate::error::Error::NotionInvalidSchema(
                         property_name.to_owned(),
                     ));
                 };

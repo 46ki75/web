@@ -753,6 +753,7 @@ dependencies = [
 name = "blog-sdk"
 version = "0.1.0"
 dependencies = [
+ "bytes",
  "dotenvy",
  "futures",
  "jarkup-rs 0.5.1",

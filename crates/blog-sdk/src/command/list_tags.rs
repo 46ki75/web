@@ -26,7 +26,7 @@ pub async fn list_tags(
                 .map(|r| r.to_string())
                 .collect::<String>()
         } else {
-            return Err(crate::error::Error::NotionPagePropertySchema(
+            return Err(crate::error::Error::NotionInvalidSchema(
                 "name_en".to_owned(),
             ));
         };
@@ -41,7 +41,7 @@ pub async fn list_tags(
                 .map(|r| r.to_string())
                 .collect::<String>()
         } else {
-            return Err(crate::error::Error::NotionPagePropertySchema(
+            return Err(crate::error::Error::NotionInvalidSchema(
                 "name_ja".to_owned(),
             ));
         };

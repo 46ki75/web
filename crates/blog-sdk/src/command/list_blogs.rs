@@ -35,9 +35,7 @@ pub async fn list_blogs(
                 .map(|r| r.to_string())
                 .collect::<String>()
         } else {
-            return Err(crate::error::Error::NotionPagePropertySchema(
-                "slug".to_owned(),
-            ));
+            return Err(crate::error::Error::NotionInvalidSchema("slug".to_owned()));
         };
 
         // featured # ---------- #
@@ -46,7 +44,7 @@ pub async fn list_blogs(
         let featured = if let PageProperty::Checkbox(featured) = maybe_featured {
             featured.checkbox
         } else {
-            return Err(crate::error::Error::NotionPagePropertySchema(
+            return Err(crate::error::Error::NotionInvalidSchema(
                 "featured".to_owned(),
             ));
         };
@@ -61,7 +59,7 @@ pub async fn list_blogs(
                 .map(|r| r.id.clone())
                 .collect::<Vec<String>>()
         } else {
-            return Err(crate::error::Error::NotionPagePropertySchema(
+            return Err(crate::error::Error::NotionInvalidSchema(
                 "tag_ids".to_owned(),
             ));
         };
@@ -78,7 +76,7 @@ pub async fn list_blogs(
                 _ => crate::types::Status::Draft,
             }
         } else {
-            return Err(crate::error::Error::NotionPagePropertySchema(
+            return Err(crate::error::Error::NotionInvalidSchema(
                 "status".to_owned(),
             ));
         };
@@ -106,7 +104,7 @@ pub async fn list_blogs(
                     )))?;
                 article_page_id
             } else {
-                return Err(crate::error::Error::NotionPagePropertySchema(
+                return Err(crate::error::Error::NotionInvalidSchema(
                     blog_article_relation_property_name.to_owned(),
                 ));
             };
@@ -127,9 +125,7 @@ pub async fn list_blogs(
                 .map(|r| r.to_string())
                 .collect::<String>()
         } else {
-            return Err(crate::error::Error::NotionPagePropertySchema(
-                "title".to_owned(),
-            ));
+            return Err(crate::error::Error::NotionInvalidSchema("title".to_owned()));
         };
 
         // // description # ---------- #
@@ -142,7 +138,7 @@ pub async fn list_blogs(
                 .map(|r| r.to_string())
                 .collect::<String>()
         } else {
-            return Err(crate::error::Error::NotionPagePropertySchema(
+            return Err(crate::error::Error::NotionInvalidSchema(
                 "description".to_owned(),
             ));
         };
@@ -160,7 +156,7 @@ pub async fn list_blogs(
                 .map(|k| k.trim().to_owned())
                 .collect::<Vec<String>>()
         } else {
-            return Err(crate::error::Error::NotionPagePropertySchema(
+            return Err(crate::error::Error::NotionInvalidSchema(
                 "keywords".to_owned(),
             ));
         };
@@ -179,7 +175,7 @@ pub async fn list_blogs(
                     article_page.id
                 )))?
         } else {
-            return Err(crate::error::Error::NotionPagePropertySchema(
+            return Err(crate::error::Error::NotionInvalidSchema(
                 "created_at".to_owned(),
             ));
         };
@@ -198,7 +194,7 @@ pub async fn list_blogs(
                     article_page.id
                 )))?
         } else {
-            return Err(crate::error::Error::NotionPagePropertySchema(
+            return Err(crate::error::Error::NotionInvalidSchema(
                 "updated_at".to_owned(),
             ));
         };

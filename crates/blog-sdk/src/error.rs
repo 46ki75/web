@@ -1,5 +1,8 @@
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
+    #[error("reqwest HTTP error: {0}")]
+    Reqwest(#[from] reqwest::Error),
+
     #[error("Notion API request failed: {0}")]
     NotionApi(#[from] notionrs::Error),
 
@@ -10,7 +13,7 @@ pub enum Error {
     NotionPagePropertyNotFound(String),
 
     #[error("property '{0}' has unexpected schema type")]
-    NotionPagePropertySchema(String),
+    NotionInvalidSchema(String),
 
     #[error("{0}")]
     NotionRecord(String),
