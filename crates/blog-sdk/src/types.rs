@@ -6,6 +6,9 @@ pub struct Blog {
     /// The URL of the Notion page
     pub notion_url: String,
 
+    /// The URL of the OGP image hosted on S3 by notion
+    pub ogp_image_s3_signed_url: Option<String>,
+
     /// The slug of the blog, which appears as part of the URL
     pub slug: String,
 

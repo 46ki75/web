@@ -24,6 +24,8 @@ pub async fn list_blogs(
 
         let notion_url = result.url;
 
+        let ogp_image_s3_signed_url = result.cover.map(|cover| cover.get_url());
+
         // slug # ---------- #
         let maybe_slug = crate::util::get_property(&result.properties, "slug")?;
 
@@ -204,6 +206,7 @@ pub async fn list_blogs(
         let blog = crate::types::Blog {
             page_id,
             notion_url,
+            ogp_image_s3_signed_url,
             slug,
             featured,
             tag_ids,
