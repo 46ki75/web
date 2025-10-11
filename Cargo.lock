@@ -197,9 +197,9 @@ dependencies = [
 
 [[package]]
 name = "async-trait"
-version = "0.1.88"
+version = "0.1.89"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e539d3fca749fcee5236ab05e93a52867dd549cc157c8cb7f99595f3cedffdb5"
+checksum = "9035ad2d096bed7955a320ee7e2230574d28fd3c3a0f186cbea1ff3c7eed5dbb"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -750,6 +750,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "blog-sdk"
+version = "0.1.0"
+dependencies = [
+ "dotenvy",
+ "futures",
+ "jarkup-rs 0.5.1",
+ "notion-to-jarkup 0.8.0",
+ "notionrs 0.3.0",
+ "notionrs_types 0.3.0",
+ "reqwest",
+ "thiserror 2.0.17",
+ "tokio",
+]
+
+[[package]]
 name = "brotli"
 version = "7.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1032,6 +1047,12 @@ dependencies = [
  "quote",
  "syn",
 ]
+
+[[package]]
+name = "dotenvy"
+version = "0.15.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1aaf95b3e5c8f23aa320147307562d361db0ae0d51242340f558153b4eb2439b"
 
 [[package]]
 name = "dtoa"
@@ -1469,15 +1490,15 @@ dependencies = [
  "html-meta-scraper 0.2.0",
  "http 1.3.1",
  "infer",
- "jarkup-rs",
+ "jarkup-rs 0.4.0",
  "lambda_http",
- "notion-to-jarkup",
- "notionrs",
- "notionrs_types",
+ "notion-to-jarkup 0.5.0",
+ "notionrs 1.0.0-beta.5",
+ "notionrs_types 1.0.0-rc.10",
  "reqwest",
  "serde",
  "serde_json",
- "thiserror 2.0.12",
+ "thiserror 2.0.17",
  "tokio",
  "tower 0.5.2",
  "tower-http",
@@ -1559,7 +1580,7 @@ dependencies = [
  "httpdate",
  "itoa",
  "pin-project-lite",
- "socket2",
+ "socket2 0.5.10",
  "tokio",
  "tower-service",
  "tracing",
@@ -1640,7 +1661,7 @@ dependencies = [
  "libc",
  "percent-encoding",
  "pin-project-lite",
- "socket2",
+ "socket2 0.5.10",
  "tokio",
  "tower-service",
  "tracing",
@@ -1835,6 +1856,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "io-uring"
+version = "0.7.10"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "046fa2d4d00aea763528b4950358d0ead425372445dc8ff86312b3c69ff7727b"
+dependencies = [
+ "bitflags",
+ "cfg-if",
+ "libc",
+]
+
+[[package]]
 name = "ipnet"
 version = "2.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1870,6 +1902,15 @@ name = "jarkup-rs"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "24806c7db32c7caf8398a40aea54cc944695f488110a2ab0f7b678c84b6254b0"
+dependencies = [
+ "serde",
+]
+
+[[package]]
+name = "jarkup-rs"
+version = "0.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "de6a8d5803d56186a87ee10c3cc1fce01fc8b95bcaf8f46ae56bfd1c98eb5042"
 dependencies = [
  "serde",
 ]
@@ -1983,9 +2024,9 @@ checksum = "830d08ce1d1d941e6b30645f1a0eb5643013d835ce3779a5fc208261dbe10f55"
 
 [[package]]
 name = "libc"
-version = "0.2.171"
+version = "0.2.177"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c19937216e9d3aa9956d9bb8dfc0b0c8beb6058fc4f7a4dc4d850edf86a237d6"
+checksum = "2874a2af47a2325c2001a6e6fad9b16a53b802102b528163885171cf92b15976"
 
 [[package]]
 name = "libloading"
@@ -2167,12 +2208,48 @@ checksum = "d2999ff1add8479cc1a40e9ba255418e7f80d61f1c765bc6e8475f2f86621720"
 dependencies = [
  "async-recursion",
  "html-meta-scraper 0.1.0",
- "jarkup-rs",
- "notionrs",
- "notionrs_types",
+ "jarkup-rs 0.4.0",
+ "notionrs 1.0.0-beta.5",
+ "notionrs_types 1.0.0-rc.10",
  "reqwest",
- "thiserror 2.0.12",
+ "thiserror 2.0.17",
  "url",
+]
+
+[[package]]
+name = "notion-to-jarkup"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6171e9c38f267273a5670da8c761c30da61d9669f247d65c413d918935d37f77"
+dependencies = [
+ "async-recursion",
+ "futures",
+ "html-meta-scraper 0.2.0",
+ "jarkup-rs 0.5.1",
+ "notionrs 0.3.0",
+ "notionrs_types 0.3.0",
+ "reqwest",
+ "thiserror 2.0.17",
+ "url",
+]
+
+[[package]]
+name = "notionrs"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3dc608ff0e5be1ba3c87506bf1deef90963fa522289ccd3e730e6d2dca48289b"
+dependencies = [
+ "async-trait",
+ "bytes",
+ "futures",
+ "notionrs_macro 0.2.0",
+ "notionrs_types 0.3.0",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "serde_plain",
+ "thiserror 2.0.17",
+ "time",
 ]
 
 [[package]]
@@ -2184,14 +2261,25 @@ dependencies = [
  "async-trait",
  "bytes",
  "futures",
- "notionrs_macro",
- "notionrs_types",
+ "notionrs_macro 1.0.0-alpha.1",
+ "notionrs_types 1.0.0-rc.10",
  "reqwest",
  "serde",
  "serde_json",
  "serde_plain",
- "thiserror 2.0.12",
+ "thiserror 2.0.17",
  "time",
+]
+
+[[package]]
+name = "notionrs_macro"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b72a1968989b4e925e7e56e462301e73daa2e22cb5099a2cb9dc3bbbf670dc8e"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]
@@ -2207,11 +2295,23 @@ dependencies = [
 
 [[package]]
 name = "notionrs_types"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a821fb5a12c755cc835ccf165be9d20156afa23a8767043a391d65b4dfaf066b"
+dependencies = [
+ "notionrs_macro 0.2.0",
+ "serde",
+ "serde_plain",
+ "time",
+]
+
+[[package]]
+name = "notionrs_types"
 version = "1.0.0-rc.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1bede15520c238180a6df93a3ab777c0472adc4038f8ac5f0aebe628c65dec14"
 dependencies = [
- "notionrs_macro",
+ "notionrs_macro 1.0.0-alpha.1",
  "serde",
  "serde_plain",
  "time",
@@ -2313,7 +2413,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8b7cafe60d6cf8e62e1b9b2ea516a089c008945bb5a275416789e7db0bc199dc"
 dependencies = [
  "memchr",
- "thiserror 2.0.12",
+ "thiserror 2.0.17",
  "ucd-trie",
 ]
 
@@ -2483,9 +2583,9 @@ dependencies = [
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.94"
+version = "1.0.101"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a31971752e70b8b2686d7e46ec17fb38dad4051d94024c88df49b667caea9c84"
+checksum = "89ae43fd86e4158d6db51ad8e2b80f313af9cc74f5c0e03ccb87de09998732de"
 dependencies = [
  "unicode-ident",
 ]
@@ -2514,8 +2614,8 @@ dependencies = [
  "quinn-udp",
  "rustc-hash 2.1.1",
  "rustls 0.23.25",
- "socket2",
- "thiserror 2.0.12",
+ "socket2 0.5.10",
+ "thiserror 2.0.17",
  "tokio",
  "tracing",
  "web-time",
@@ -2535,7 +2635,7 @@ dependencies = [
  "rustls 0.23.25",
  "rustls-pki-types",
  "slab",
- "thiserror 2.0.12",
+ "thiserror 2.0.17",
  "tinyvec",
  "tracing",
  "web-time",
@@ -2550,7 +2650,7 @@ dependencies = [
  "cfg_aliases",
  "libc",
  "once_cell",
- "socket2",
+ "socket2 0.5.10",
  "tracing",
  "windows-sys 0.59.0",
 ]
@@ -2655,9 +2755,9 @@ checksum = "2b15c43186be67a4fd63bee50d0303afffcef381492ebe2c5d87f324e1b8815c"
 
 [[package]]
 name = "reqwest"
-version = "0.12.18"
+version = "0.12.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e98ff6b0dbbe4d5a37318f433d4fc82babd21631f194d370409ceb2e40b2f0b5"
+checksum = "d429f34c8092b2d42c7c93cec323bb4adeb7c67698f70839adec842ec10c7ceb"
 dependencies = [
  "async-compression",
  "base64 0.22.1",
@@ -2671,12 +2771,9 @@ dependencies = [
  "hyper 1.6.0",
  "hyper-rustls 0.27.5",
  "hyper-util",
- "ipnet",
  "js-sys",
  "log",
- "mime",
  "mime_guess",
- "once_cell",
  "percent-encoding",
  "pin-project-lite",
  "quinn",
@@ -3109,6 +3206,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "socket2"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "233504af464074f9d066d7b5416c5f9b894a5862a6506e306f7b816cdd6f1807"
+dependencies = [
+ "libc",
+ "windows-sys 0.59.0",
+]
+
+[[package]]
 name = "spin"
 version = "0.9.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3187,9 +3294,9 @@ checksum = "13c2bddecc57b384dee18652358fb23172facb8a2c51ccc10d74c157bdea3292"
 
 [[package]]
 name = "syn"
-version = "2.0.100"
+version = "2.0.106"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b09a44accad81e1ba1cd74a32461ba89dee89095ba17b32f5d03683b1b1fc2a0"
+checksum = "ede7c438028d4436d71104916910f5bb611972c5cfd7f89b8300a8186e6fada6"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -3251,11 +3358,11 @@ dependencies = [
 
 [[package]]
 name = "thiserror"
-version = "2.0.12"
+version = "2.0.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "567b8a2dae586314f7be2a752ec7474332959c6460e02bde30d702a66d488708"
+checksum = "f63587ca0f12b72a0600bcba1d40081f830876000bb46dd2337a3051618f4fc8"
 dependencies = [
- "thiserror-impl 2.0.12",
+ "thiserror-impl 2.0.17",
 ]
 
 [[package]]
@@ -3271,9 +3378,9 @@ dependencies = [
 
 [[package]]
 name = "thiserror-impl"
-version = "2.0.12"
+version = "2.0.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7f7cf42b4507d8ea322120659672cf1b9dbb93f8f2d4ecfd6e51350ff5b17a1d"
+checksum = "3ff15c8ecd7de3849db632e14d18d2571fa09dfc5ed93479bc4485c7a517c913"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -3348,20 +3455,22 @@ checksum = "1f3ccbac311fea05f86f61904b462b55fb3df8837a366dfc601a0161d0532f20"
 
 [[package]]
 name = "tokio"
-version = "1.44.2"
+version = "1.47.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e6b88822cbe49de4185e3a4cbf8321dd487cf5fe0c5c65695fef6346371e9c48"
+checksum = "89e49afdadebb872d3145a5638b59eb0691ea23e46ca484037cfab3b76b95038"
 dependencies = [
  "backtrace",
  "bytes",
+ "io-uring",
  "libc",
  "mio",
  "parking_lot",
  "pin-project-lite",
  "signal-hook-registry",
- "socket2",
+ "slab",
+ "socket2 0.6.0",
  "tokio-macros",
- "windows-sys 0.52.0",
+ "windows-sys 0.59.0",
 ]
 
 [[package]]
@@ -3469,9 +3578,9 @@ dependencies = [
 
 [[package]]
 name = "tower-http"
-version = "0.6.4"
+version = "0.6.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0fdb0c213ca27a9f57ab69ddb290fd80d970922355b83ae380b395d3986b8a2e"
+checksum = "adc82fd73de2a9722ac5da747f12383d2bfdb93591ee6c58486e0097890f05f2"
 dependencies = [
  "async-compression",
  "bitflags",
