@@ -1,5 +1,5 @@
 #[tokio::test]
-async fn get_jarkup() {
+async fn get_jarkup_by_slug() {
     dotenvy::dotenv().unwrap();
 
     let notion_api_key = std::env::var("NOTION_API_KEY").unwrap();
@@ -9,7 +9,7 @@ async fn get_jarkup() {
     let notionrs_client = notionrs::Client::new(notion_api_key);
     let reqwest_client = reqwest::Client::new();
 
-    let jarkup = blog_sdk::command::get_jarkup::get_jarkup(
+    let jarkup = blog_sdk::command::get_jarkup_by_slug::get_jarkup_by_slug(
         notionrs_client,
         reqwest_client,
         &data_source_id,

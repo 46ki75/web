@@ -1,6 +1,6 @@
 use notionrs_types::prelude::*;
 
-pub async fn get_jarkup(
+pub async fn get_jarkup_by_slug(
     notionrs_client: notionrs::Client,
     reqwest_client: reqwest::Client,
     blog_master_data_source_id: &str,
