@@ -1,4 +1,4 @@
-# GraphQL
+# Blog SDK
 
 ## Environmental Variables
 
