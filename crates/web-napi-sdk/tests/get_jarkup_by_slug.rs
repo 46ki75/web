@@ -7,9 +7,9 @@ async fn get_jarkup_by_slug() {
     let blog_page_slug = std::env::var("BLOG_PAGE_SLUG").unwrap();
 
     let jarkup = web_napi_sdk::command::get_jarkup_by_slug::get_jarkup_by_slug(
-        &notion_api_key,
-        &data_source_id,
-        &blog_page_slug,
+        notion_api_key,
+        data_source_id,
+        blog_page_slug,
         web_napi_sdk::types::Language::En,
     )
     .await

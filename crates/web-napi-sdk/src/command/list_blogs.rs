@@ -3,8 +3,8 @@ use notionrs::PaginateExt;
 use notionrs_types::prelude::*;
 
 pub async fn list_blogs(
-    notion_api_key: &str,
-    blog_master_data_source_id: &str,
+    notion_api_key: String,
+    blog_master_data_source_id: String,
     language: crate::types::Language,
 ) -> Result<Vec<crate::types::Blog>, crate::error::Error> {
     let notionrs_client = notionrs::Client::new(notion_api_key);

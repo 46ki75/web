@@ -6,8 +6,8 @@ async fn get_block_image() {
     let blog_image_block_id = std::env::var("BLOG_IMAGE_BLOCK_ID").unwrap();
 
     let _bytes = web_napi_sdk::command::get_block_image::get_block_image(
-        &notion_api_key,
-        &blog_image_block_id,
+        notion_api_key,
+        blog_image_block_id,
     )
     .await
     .unwrap();

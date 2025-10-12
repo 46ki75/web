@@ -5,7 +5,7 @@ async fn list_tags_en() {
     let notion_api_key = std::env::var("NOTION_API_KEY").unwrap();
     let data_source_id = std::env::var("BLOG_TAGS_DATA_SOURCE_ID").unwrap();
 
-    let tags = web_napi_sdk::command::list_tags::list_tags(&notion_api_key, &data_source_id)
+    let tags = web_napi_sdk::command::list_tags::list_tags(notion_api_key, data_source_id)
         .await
         .unwrap();
 

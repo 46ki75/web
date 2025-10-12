@@ -1,6 +1,6 @@
 pub async fn get_block_image(
-    notion_api_key: &str,
-    block_id: &str,
+    notion_api_key: String,
+    block_id: String,
 ) -> Result<bytes::Bytes, crate::error::Error> {
     let notionrs_client = notionrs::Client::new(notion_api_key);
 

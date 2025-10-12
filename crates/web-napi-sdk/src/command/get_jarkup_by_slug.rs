@@ -1,9 +1,9 @@
 use notionrs_types::prelude::*;
 
 pub async fn get_jarkup_by_slug(
-    notion_api_key: &str,
-    blog_master_data_source_id: &str,
-    slug: &str,
+    notion_api_key: String,
+    blog_master_data_source_id: String,
+    slug: String,
     language: crate::types::Language,
 ) -> Result<Vec<jarkup_rs::Component>, crate::error::Error> {
     let notionrs_client = notionrs::Client::new(notion_api_key);
