@@ -5,3 +5,37 @@ members = [
     "crates/web-lambda-http-api",
     "crates/blog-sdk",
 ]
+
+[workspace.dependencies]
+# WEB
+axum = "0.8.6"
+http = "1.3.1"
+
+# HTTP Client
+reqwest = { version = "0.12.23", default-features = false, features = [
+    "rustls-tls",
+    "http2",
+] }
+
+# AWS Lambda
+lambda_http = "0.17.0"
+
+# Logging
+tracing = "0.1.41"
+tracing-subscriber = "0.3.20"
+
+# Asynchronous runtime
+tokio = { version = "1", features = ["macros"] }
+
+# General Utils
+tower = "0.5.2"
+bytes = "1.10.1"
+futures = "0.3.31"
+dotenvy = "0.15.7"
+thiserror = "2.0.17"
+
+# Notion
+jarkup-rs = "0.5.1"
+notion-to-jarkup = "0.8.0"
+notionrs = "0.3.0"
+notionrs_types = "0.3.0"
