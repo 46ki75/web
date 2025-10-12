@@ -20,7 +20,7 @@ struct ApiDoc;
 static ROUTER: tokio::sync::OnceCell<axum::Router> = tokio::sync::OnceCell::const_new();
 
 /// Initializes and returns axum router.
-pub async fn init_router() -> anyhow::Result<&'static axum::Router> {
+pub async fn init_router() -> Result<&'static axum::Router, crate::error::Error> {
     ROUTER
         .get_or_try_init(|| async {
             let (router, auto_generated_api) = OpenApiRouter::new()
@@ -29,7 +29,7 @@ pub async fn init_router() -> anyhow::Result<&'static axum::Router> {
 
             let customized_api = ApiDoc::openapi().merge_from(auto_generated_api);
 
-            let blog_router = crate::blog::router::init_blog_router()?;
+            let blog_router = crate::blog::router::init_blog_router();
 
             let app = router
                 .route(

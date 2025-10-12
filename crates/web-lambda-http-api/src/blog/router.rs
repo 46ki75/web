@@ -1,5 +1,4 @@
-pub fn init_blog_router() -> anyhow::Result<axum::Router> {
+pub fn init_blog_router() -> axum::Router {
     let router = axum::Router::new();
-
-    Ok(router)
+    router
 }
