@@ -1,4 +1,5 @@
 pub mod axum_router;
+pub mod blog;
 pub mod execute_axum;
 
 pub async fn function_handler(

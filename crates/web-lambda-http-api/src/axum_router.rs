@@ -29,7 +29,7 @@ pub async fn init_router() -> anyhow::Result<&'static axum::Router> {
 
             let customized_api = ApiDoc::openapi().merge_from(auto_generated_api);
 
-            let blog_router = web_axum_rest_blog_v2::router::init_blog_router().await?;
+            let blog_router = crate::blog::router::init_blog_router()?;
 
             let app = router
                 .route(

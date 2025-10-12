@@ -5,7 +5,7 @@ edition = "2021"
 
 [dependencies]
 # WORKSPACE
-web-axum-rest-blog-v2 = { path = "../web-axum-rest-blog-v2" }
+blog-sdk = { path = "../blog-sdk" }
 
 # WEB
 axum = { workspace = true }
