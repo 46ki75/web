@@ -91,6 +91,6 @@
     "arrowParens": "always"
   },
   "optionalDependencies": {
-    "@cloud.ikuma/web-napi-sdk-linux-x64-gnu": "0.1.0"
+    "@cloud.ikuma/web-napi-sdk-linux-x64-gnu": "0.2.0"
   }
 }
