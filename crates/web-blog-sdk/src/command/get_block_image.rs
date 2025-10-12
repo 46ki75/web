@@ -1,7 +1,7 @@
 pub async fn get_block_image(
     notionrs_client: notionrs::Client,
     block_id: &str,
-) -> Result<bytes::Bytes, crate::error::Error> {
+) -> Result<String, crate::error::Error> {
     let request = notionrs_client.get_block().block_id(block_id);
 
     let response = request.send().await?;
@@ -15,9 +15,5 @@ pub async fn get_block_image(
         }
     };
 
-    let response = reqwest::get(url).await?;
-
-    let bytes = response.bytes().await?;
-
-    Ok(bytes)
+    Ok(url)
 }
