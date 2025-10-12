@@ -7,10 +7,10 @@ async fn list_blogs_en() {
 
     let notionrs_client = notionrs::Client::new(notion_api_key);
 
-    let blog = blog_sdk::command::list_blogs::list_blogs(
+    let blog = web_blog_sdk::command::list_blogs::list_blogs(
         notionrs_client,
         &data_source_id,
-        blog_sdk::types::Language::En,
+        web_blog_sdk::types::Language::En,
     )
     .await
     .unwrap();
@@ -27,10 +27,10 @@ async fn list_blogs_ja() {
 
     let notionrs_client = notionrs::Client::new(notion_api_key);
 
-    let blog = blog_sdk::command::list_blogs::list_blogs(
+    let blog = web_blog_sdk::command::list_blogs::list_blogs(
         notionrs_client,
         &data_source_id,
-        blog_sdk::types::Language::Ja,
+        web_blog_sdk::types::Language::Ja,
     )
     .await
     .unwrap();
