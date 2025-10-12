@@ -21,7 +21,7 @@ reqwest = { version = "0.12.23", default-features = false, features = [
 lambda_http = "0.17.0"
 
 # Logging
-tracing = "0.1.41"
+tracing = { version = "0.1.41", features = ["attributes"] }
 tracing-subscriber = "0.3.20"
 
 # Asynchronous runtime

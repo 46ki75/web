@@ -10,5 +10,5 @@ lambda_http = { workspace = true }
 
 tokio = { workspace = true }
 tower = { workspace = true }
-tracing = { workspace = true }
+tracing = { workspace = true, features = ["attributes"] }
 tracing-subscriber = { workspace = true }
