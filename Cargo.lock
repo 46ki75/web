@@ -1495,6 +1495,14 @@ dependencies = [
 
 [[package]]
 name = "http-api"
+version = "0.1.0"
+dependencies = [
+ "lambda_http 0.17.0",
+ "tokio",
+]
+
+[[package]]
+name = "http-api-old"
 version = "0.1.2"
 dependencies = [
  "async-graphql",
@@ -1522,14 +1530,6 @@ dependencies = [
  "tracing",
  "tracing-subscriber",
  "url",
-]
-
-[[package]]
-name = "http-api-v2"
-version = "0.1.0"
-dependencies = [
- "lambda_http 0.17.0",
- "tokio",
 ]
 
 [[package]]
