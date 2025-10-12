@@ -16,7 +16,9 @@ async fn init_ssm_client() -> &'static aws_sdk_ssm::Client {
         .await
 }
 
-pub async fn try_get_ssm_parameter_async(parameter_name: &str) -> anyhow::Result<String> {
+pub async fn try_get_ssm_parameter_async(
+    parameter_name: &str,
+) -> Result<String, crate::error::Error> {
     let ssm_client = init_ssm_client().await;
 
     let parameter = ssm_client
@@ -26,18 +28,28 @@ pub async fn try_get_ssm_parameter_async(parameter_name: &str) -> anyhow::Result
         .send()
         .await
         .map_err(|e| {
-            tracing::error!("Failed to get parameter: {}", e);
-            e
+            let error = crate::error::Error::SsmParameterApiFailed {
+                parameter_name: parameter_name.to_owned(),
+                trace: e.to_string(),
+            };
+            tracing::error!("Failed to get parameter: {}", error);
+            error
         })?
         .parameter
         .ok_or_else(|| {
-            tracing::error!("Parameter not found: {}", parameter_name);
-            anyhow::anyhow!("Parameter not found: {}", parameter_name)
+            let error = crate::error::Error::SsmParameterNotFound {
+                parameter_name: parameter_name.to_owned(),
+            };
+            tracing::error!("{}", error);
+            error
         })?
         .value
         .ok_or_else(|| {
-            tracing::error!("Parameter value not found: {}", parameter_name);
-            anyhow::anyhow!("Parameter not found: {}", parameter_name)
+            let error = crate::error::Error::SsmParameterNotFound {
+                parameter_name: parameter_name.to_owned(),
+            };
+            tracing::error!("{}", error);
+            error
         })?;
 
     tracing::debug!("Fetching SSM Parameter: {}", parameter_name);
