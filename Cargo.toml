@@ -1,3 +1,7 @@
 [workspace]
 resolver = "3"
-members = ["crates/http-api-old", "crates/http-api", "crates/blog-sdk"]
+members = [
+    "crates/http-api-old",
+    "crates/web-lambda-http-api",
+    "crates/blog-sdk",
+]

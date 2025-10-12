@@ -1494,16 +1494,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "http-api"
-version = "0.1.0"
-dependencies = [
- "lambda_http 0.17.0",
- "tokio",
- "tracing",
- "tracing-subscriber",
-]
-
-[[package]]
 name = "http-api-old"
 version = "0.1.2"
 dependencies = [
@@ -3977,6 +3967,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1a05d73b933a847d6cccdda8f838a22ff101ad9bf93e33684f39c1f5f0eece3d"
 dependencies = [
  "unicode-ident",
+]
+
+[[package]]
+name = "web-lambda-http-api"
+version = "0.1.0"
+dependencies = [
+ "lambda_http 0.17.0",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
 ]
 
 [[package]]
