@@ -4135,6 +4135,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "web-axum-rest-blog-v2"
+version = "0.1.0"
+
+[[package]]
 name = "web-lambda-http-api"
 version = "0.1.0"
 dependencies = [
