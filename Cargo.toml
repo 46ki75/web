@@ -49,3 +49,8 @@ jarkup-rs = "0.5.1"
 notion-to-jarkup = "0.8.0"
 notionrs = "0.3.0"
 notionrs_types = "0.3.0"
+
+# OpenAPI
+utoipa = "5.4.0"
+utoipa-axum = "0.2.0"
+utoipa-swagger-ui = { version = "9.0.2", features = ["axum"] }
