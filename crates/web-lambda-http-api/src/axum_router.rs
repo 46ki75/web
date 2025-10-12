@@ -2,7 +2,6 @@
 
 use utoipa::OpenApi;
 use utoipa_axum::{router::OpenApiRouter, routes};
-use utoipa_swagger_ui::SwaggerUi;
 
 #[derive(OpenApi)]
 #[openapi(
@@ -31,8 +30,17 @@ pub async fn init_router() -> anyhow::Result<&'static axum::Router> {
             let customized_api = ApiDoc::openapi().merge_from(auto_generated_api);
 
             let app = router
-                .merge(SwaggerUi::new("/swagger-ui").url("/api-docs/openapi.json", customized_api))
-                .layer(tower_http::normalize_path::NormalizePathLayer::trim_trailing_slash())
+                .route(
+                    "/api/v2/openapi.json",
+                    axum::routing::get(move || async move { axum::Json(customized_api) }),
+                )
+                .layer(
+                    tower_http::compression::CompressionLayer::new()
+                        .deflate(true)
+                        .gzip(true)
+                        .br(true)
+                        .zstd(true),
+                )
                 .layer(tower_http::catch_panic::CatchPanicLayer::new());
 
             Ok(app)
