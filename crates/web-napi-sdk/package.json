@@ -90,5 +90,8 @@
     "singleQuote": true,
     "arrowParens": "always"
   },
-  "packageManager": "yarn@4.10.3"
+  "packageManager": "yarn@4.10.3",
+  "optionalDependencies": {
+    "@cloud.ikuma/web-napi-sdk-linux-x64-gnu": "0.1.0"
+  }
 }
