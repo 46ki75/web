@@ -36,7 +36,7 @@ pub async fn init_router() -> anyhow::Result<&'static axum::Router> {
                     "/api/v2/openapi.json",
                     axum::routing::get(move || async move { axum::Json(customized_api) }),
                 )
-                .nest("/api/v2/blog", blog_router.clone())
+                .nest("/api/v2/blog", blog_router)
                 .layer(
                     tower_http::compression::CompressionLayer::new()
                         .deflate(true)
