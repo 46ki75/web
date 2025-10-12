@@ -7,8 +7,12 @@ async fn get_block_image() {
 
     let notionrs_client = notionrs::Client::new(notion_api_key);
 
-    let _bytes =
-        web_blog_sdk::command::get_block_image::get_block_image(notionrs_client, &blog_image_block_id)
-            .await
-            .unwrap();
+    let url = web_blog_sdk::command::get_block_image::get_block_image(
+        notionrs_client,
+        &blog_image_block_id,
+    )
+    .await
+    .unwrap();
+
+    println!("{:#?}", url);
 }
