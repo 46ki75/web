@@ -4246,9 +4246,19 @@ dependencies = [
 name = "web_napi_sdk"
 version = "0.1.0"
 dependencies = [
+ "bytes",
+ "dotenvy",
+ "futures",
+ "jarkup-rs 0.5.1",
  "napi",
  "napi-build",
  "napi-derive",
+ "notion-to-jarkup 0.8.0",
+ "notionrs 0.3.0",
+ "notionrs_types 0.3.0",
+ "reqwest",
+ "thiserror 2.0.17",
+ "tokio",
 ]
 
 [[package]]

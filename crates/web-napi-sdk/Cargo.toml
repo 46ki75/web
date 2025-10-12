@@ -1,19 +1,37 @@
 
 [package]
-authors = ["LongYinan <lynweklm@gmail.com>"]
-edition = "2021"
+authors = ["Ikuma Yamashita"]
+edition = "2024"
 name = "web_napi_sdk"
 version = "0.1.0"
 
 [lib]
-crate-type = ["cdylib"]
+crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-napi = "3.0.0"
-napi-derive = "3.0.0"
+napi = { workspace = true }
+napi-derive = { workspace = true }
+
+# HTTP Client
+reqwest = { workspace = true }
+
+# General Utils
+bytes = { workspace = true }
+futures = { workspace = true }
+thiserror = { workspace = true }
+
+# Notion
+jarkup-rs = { workspace = true }
+notion-to-jarkup = { workspace = true }
+notionrs = { workspace = true }
+notionrs_types = { workspace = true }
+
+[dev-dependencies]
+tokio = { workspace = true }
+dotenvy = { workspace = true }
 
 [build-dependencies]
-napi-build = "2"
+napi-build = { workspace = true }
 
 [profile.release]
 lto = true

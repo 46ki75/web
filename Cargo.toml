@@ -50,3 +50,8 @@ notionrs_types = "0.3.0"
 utoipa = "5.4.0"
 utoipa-axum = "0.2.0"
 utoipa-swagger-ui = { version = "9.0.2", features = ["axum"] }
+
+# N-API
+napi = "3.3.0"
+napi-derive = "3.2.5"
+napi-build = "2.2.3"
