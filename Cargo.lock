@@ -1499,6 +1499,8 @@ version = "0.1.0"
 dependencies = [
  "lambda_http 0.17.0",
  "tokio",
+ "tracing",
+ "tracing-subscriber",
 ]
 
 [[package]]
