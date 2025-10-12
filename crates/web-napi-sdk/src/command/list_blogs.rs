@@ -3,10 +3,12 @@ use notionrs::PaginateExt;
 use notionrs_types::prelude::*;
 
 pub async fn list_blogs(
-    notionrs_client: notionrs::Client,
+    notion_api_key: &str,
     blog_master_data_source_id: &str,
     language: crate::types::Language,
 ) -> Result<Vec<crate::types::Blog>, crate::error::Error> {
+    let notionrs_client = notionrs::Client::new(notion_api_key);
+
     let filter = Filter::status_equals("status", "Published");
 
     let results: Vec<PageResponse> = notionrs_client

@@ -6,12 +6,8 @@ async fn get_jarkup_by_slug() {
     let data_source_id = std::env::var("BLOG_MASTER_DATA_SOURCE_ID").unwrap();
     let blog_page_slug = std::env::var("BLOG_PAGE_SLUG").unwrap();
 
-    let notionrs_client = notionrs::Client::new(notion_api_key);
-    let reqwest_client = reqwest::Client::new();
-
     let jarkup = web_napi_sdk::command::get_jarkup_by_slug::get_jarkup_by_slug(
-        notionrs_client,
-        reqwest_client,
+        &notion_api_key,
         &data_source_id,
         &blog_page_slug,
         web_napi_sdk::types::Language::En,

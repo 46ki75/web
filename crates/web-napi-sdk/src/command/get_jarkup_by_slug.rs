@@ -1,12 +1,14 @@
 use notionrs_types::prelude::*;
 
 pub async fn get_jarkup_by_slug(
-    notionrs_client: notionrs::Client,
-    reqwest_client: reqwest::Client,
+    notion_api_key: &str,
     blog_master_data_source_id: &str,
     slug: &str,
     language: crate::types::Language,
 ) -> Result<Vec<jarkup_rs::Component>, crate::error::Error> {
+    let notionrs_client = notionrs::Client::new(notion_api_key);
+    let reqwest_client = reqwest::Client::new();
+
     let filter = Filter::rich_text_equals("slug", slug);
 
     let pages: Vec<PageResponse<std::collections::HashMap<String, PageProperty>>> = notionrs_client

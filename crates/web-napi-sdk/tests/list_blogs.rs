@@ -5,10 +5,8 @@ async fn list_blogs_en() {
     let notion_api_key = std::env::var("NOTION_API_KEY").unwrap();
     let data_source_id = std::env::var("BLOG_MASTER_DATA_SOURCE_ID").unwrap();
 
-    let notionrs_client = notionrs::Client::new(notion_api_key);
-
     let blog = web_napi_sdk::command::list_blogs::list_blogs(
-        notionrs_client,
+        &notion_api_key,
         &data_source_id,
         web_napi_sdk::types::Language::En,
     )
@@ -25,10 +23,8 @@ async fn list_blogs_ja() {
     let notion_api_key = std::env::var("NOTION_API_KEY").unwrap();
     let data_source_id = std::env::var("BLOG_MASTER_DATA_SOURCE_ID").unwrap();
 
-    let notionrs_client = notionrs::Client::new(notion_api_key);
-
     let blog = web_napi_sdk::command::list_blogs::list_blogs(
-        notionrs_client,
+        &notion_api_key,
         &data_source_id,
         web_napi_sdk::types::Language::Ja,
     )

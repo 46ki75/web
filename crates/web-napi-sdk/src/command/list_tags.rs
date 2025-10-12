@@ -3,9 +3,11 @@ use notionrs::PaginateExt;
 use notionrs_types::prelude::*;
 
 pub async fn list_tags(
-    notionrs_client: notionrs::Client,
+    notion_api_key: &str,
     blog_tag_data_source_id: &str,
 ) -> Result<Vec<crate::types::Tag>, crate::error::Error> {
+    let notionrs_client = notionrs::Client::new(notion_api_key);
+
     let pages: Vec<PageResponse> = notionrs_client
         .query_data_source()
         .data_source_id(blog_tag_data_source_id)
