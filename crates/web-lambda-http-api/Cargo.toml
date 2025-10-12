@@ -4,6 +4,9 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+# WORKSPACE
+web-axum-rest-blog-v2 = { path = "../web-axum-rest-blog-v2" }
+
 # WEB
 axum = { workspace = true }
 http = { workspace = true }

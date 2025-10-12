@@ -29,11 +29,14 @@ pub async fn init_router() -> anyhow::Result<&'static axum::Router> {
 
             let customized_api = ApiDoc::openapi().merge_from(auto_generated_api);
 
+            let blog_router = web_axum_rest_blog_v2::router::init_blog_router().await?;
+
             let app = router
                 .route(
                     "/api/v2/openapi.json",
                     axum::routing::get(move || async move { axum::Json(customized_api) }),
                 )
+                .nest("/api/v2/blog", blog_router.clone())
                 .layer(
                     tower_http::compression::CompressionLayer::new()
                         .deflate(true)
