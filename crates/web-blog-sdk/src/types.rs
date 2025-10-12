@@ -58,3 +58,11 @@ pub struct Tag {
     pub name_ja: String,
     pub icon_url: Option<String>,
 }
+
+#[derive(Debug, Clone)]
+pub struct JarkupResult {
+    pub components: Vec<jarkup_rs::Component>,
+    pub icons: Vec<String>,
+    pub images: Vec<String>,
+    pub files: Vec<String>,
+}
