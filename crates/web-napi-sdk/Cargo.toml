@@ -1,4 +1,3 @@
-
 [package]
 authors = ["Ikuma Yamashita"]
 edition = "2024"
@@ -25,6 +24,8 @@ jarkup-rs = { workspace = true }
 notion-to-jarkup = { workspace = true }
 notionrs = { workspace = true }
 notionrs_types = { workspace = true }
+
+serde_json = { workspace = true }
 
 [dev-dependencies]
 tokio = { workspace = true }

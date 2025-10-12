@@ -2312,6 +2312,7 @@ dependencies = [
  "napi-sys",
  "nohash-hasher",
  "rustc-hash",
+ "tokio",
 ]
 
 [[package]]
@@ -4257,6 +4258,7 @@ dependencies = [
  "notionrs 0.3.0",
  "notionrs_types 0.3.0",
  "reqwest",
+ "serde_json",
  "thiserror 2.0.17",
  "tokio",
 ]

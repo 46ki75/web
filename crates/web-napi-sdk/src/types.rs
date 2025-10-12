@@ -1,4 +1,5 @@
 #[derive(Debug, Clone)]
+#[napi_derive::napi]
 pub struct Blog {
     /// Notion page ID
     pub page_id: String,
@@ -38,6 +39,7 @@ pub struct Blog {
 }
 
 #[derive(Debug, Clone)]
+#[napi_derive::napi]
 pub enum Status {
     Draft,
     Archived,
@@ -46,12 +48,14 @@ pub enum Status {
 }
 
 #[derive(Debug, Clone)]
+#[napi_derive::napi]
 pub enum Language {
     En,
     Ja,
 }
 
 #[derive(Debug, Clone)]
+#[napi_derive::napi]
 pub struct Tag {
     pub id: String,
     pub name_en: String,

@@ -17,4 +17,13 @@ pub enum Error {
 
     #[error("{0}")]
     NotionRecord(String),
+
+    #[error("serde error: {0}")]
+    SerDe(#[from] serde_json::Error),
+}
+
+impl From<Error> for napi::Error {
+    fn from(err: Error) -> Self {
+        napi::Error::from_reason(err.to_string())
+    }
 }

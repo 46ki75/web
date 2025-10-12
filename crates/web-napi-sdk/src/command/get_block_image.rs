@@ -1,7 +1,8 @@
+#[napi_derive::napi]
 pub async fn get_block_image(
     notion_api_key: String,
     block_id: String,
-) -> Result<bytes::Bytes, crate::error::Error> {
+) -> Result<Vec<u8>, crate::error::Error> {
     let notionrs_client = notionrs::Client::new(notion_api_key);
 
     let request = notionrs_client.get_block().block_id(block_id);
@@ -21,5 +22,5 @@ pub async fn get_block_image(
 
     let bytes = response.bytes().await?;
 
-    Ok(bytes)
+    Ok(bytes.to_vec())
 }

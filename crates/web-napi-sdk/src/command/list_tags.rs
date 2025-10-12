@@ -2,6 +2,7 @@ use futures::TryStreamExt;
 use notionrs::PaginateExt;
 use notionrs_types::prelude::*;
 
+#[napi_derive::napi]
 pub async fn list_tags(
     notion_api_key: String,
     blog_tag_data_source_id: String,

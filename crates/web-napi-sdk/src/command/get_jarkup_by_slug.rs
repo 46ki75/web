@@ -1,11 +1,13 @@
 use notionrs_types::prelude::*;
+use serde_json;
 
+#[napi_derive::napi]
 pub async fn get_jarkup_by_slug(
     notion_api_key: String,
     blog_master_data_source_id: String,
     slug: String,
     language: crate::types::Language,
-) -> Result<Vec<jarkup_rs::Component>, crate::error::Error> {
+) -> Result<String, crate::error::Error> {
     let notionrs_client = notionrs::Client::new(notion_api_key);
     let reqwest_client = reqwest::Client::new();
 
@@ -58,5 +60,5 @@ pub async fn get_jarkup_by_slug(
 
     let page = client.convert_block(&page_id).await?;
 
-    Ok(page)
+    Ok(serde_json::to_string(&page)?)
 }
