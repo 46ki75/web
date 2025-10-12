@@ -1,7 +1,7 @@
 {
   "name": "@cloud.ikuma/web-napi-sdk",
   "private": false,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Template project for writing node package with napi-rs",
   "main": "index.js",
   "repository": {
