@@ -2,7 +2,6 @@
 
 use utoipa::OpenApi;
 use utoipa_axum::{router::OpenApiRouter, routes};
-use utoipa_swagger_ui::SwaggerUi;
 
 #[derive(OpenApi)]
 #[openapi(
@@ -21,7 +20,7 @@ struct ApiDoc;
 static ROUTER: tokio::sync::OnceCell<axum::Router> = tokio::sync::OnceCell::const_new();
 
 /// Initializes and returns axum router.
-pub async fn init_router() -> anyhow::Result<&'static axum::Router> {
+pub async fn init_router() -> Result<&'static axum::Router, crate::error::Error> {
     ROUTER
         .get_or_try_init(|| async {
             let (router, auto_generated_api) = OpenApiRouter::new()
@@ -30,9 +29,21 @@ pub async fn init_router() -> anyhow::Result<&'static axum::Router> {
 
             let customized_api = ApiDoc::openapi().merge_from(auto_generated_api);
 
+            let blog_router = crate::blog::router::init_blog_router();
+
             let app = router
-                .merge(SwaggerUi::new("/swagger-ui").url("/api-docs/openapi.json", customized_api))
-                .layer(tower_http::normalize_path::NormalizePathLayer::trim_trailing_slash())
+                .route(
+                    "/api/v2/openapi.json",
+                    axum::routing::get(move || async move { axum::Json(customized_api) }),
+                )
+                .nest("/api/v2/blog", blog_router)
+                .layer(
+                    tower_http::compression::CompressionLayer::new()
+                        .deflate(true)
+                        .gzip(true)
+                        .br(true)
+                        .zstd(true),
+                )
                 .layer(tower_http::catch_panic::CatchPanicLayer::new());
 
             Ok(app)

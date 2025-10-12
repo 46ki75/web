@@ -9,12 +9,12 @@ async fn get_jarkup_by_slug() {
     let notionrs_client = notionrs::Client::new(notion_api_key);
     let reqwest_client = reqwest::Client::new();
 
-    let jarkup = blog_sdk::command::get_jarkup_by_slug::get_jarkup_by_slug(
+    let jarkup = web_blog_sdk::command::get_jarkup_by_slug::get_jarkup_by_slug(
         notionrs_client,
         reqwest_client,
         &data_source_id,
         &blog_page_slug,
-        blog_sdk::types::Language::En,
+        web_blog_sdk::types::Language::En,
     )
     .await
     .unwrap();

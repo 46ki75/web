@@ -4,6 +4,9 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+# WORKSPACE
+web-blog-sdk = { path = "../web-blog-sdk" }
+
 # WEB
 axum = { workspace = true }
 http = { workspace = true }
@@ -13,7 +16,7 @@ tower-http = { workspace = true }
 lambda_http = { workspace = true }
 
 # Logging
-tracing = { workspace = true, features = ["attributes"] }
+tracing = { workspace = true }
 tracing-subscriber = { workspace = true }
 
 # Ser/De
@@ -25,9 +28,17 @@ tokio = { workspace = true }
 
 # General Utils
 tower = { workspace = true }
-anyhow = { workspace = true }
+thiserror = { workspace = true }
+
+# Notion
+jarkup-rs = { workspace = true }
+notion-to-jarkup = { workspace = true }
+notionrs = { workspace = true }
+notionrs_types = { workspace = true }
 
 # OpenAPI
 utoipa = { workspace = true }
 utoipa-axum = { workspace = true }
 utoipa-swagger-ui = { workspace = true }
+aws-sdk-ssm = "1.96.0"
+aws-config = "1.8.8"

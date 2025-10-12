@@ -7,7 +7,7 @@ async fn list_tags_en() {
 
     let notionrs_client = notionrs::Client::new(notion_api_key);
 
-    let tags = blog_sdk::command::list_tags::list_tags(notionrs_client, &data_source_id)
+    let tags = web_blog_sdk::command::list_tags::list_tags(notionrs_client, &data_source_id)
         .await
         .unwrap();
 
