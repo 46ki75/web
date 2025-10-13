@@ -23,20 +23,24 @@ static ROUTER: tokio::sync::OnceCell<axum::Router> = tokio::sync::OnceCell::cons
 pub async fn init_router() -> Result<&'static axum::Router, crate::error::Error> {
     ROUTER
         .get_or_try_init(|| async {
+            let blog_repository = crate::blog::repository::BlogRepositoryImpl {};
+            let blog_use_case = crate::blog::use_case::BlogUseCase {
+                blog_repository: std::sync::Arc::new(blog_repository),
+            };
+
             let (router, auto_generated_api) = OpenApiRouter::new()
                 .routes(routes!(handle_health_check))
+                .routes(routes!(crate::blog::controller::list_blogs))
+                .with_state(std::sync::Arc::new(blog_use_case))
                 .split_for_parts();
 
             let customized_api = ApiDoc::openapi().merge_from(auto_generated_api);
-
-            let blog_router = crate::blog::router::init_blog_router();
 
             let app = router
                 .route(
                     "/api/v2/openapi.json",
                     axum::routing::get(move || async move { axum::Json(customized_api) }),
                 )
-                .nest("/api/v2/blog", blog_router)
                 .layer(
                     tower_http::compression::CompressionLayer::new()
                         .deflate(true)
