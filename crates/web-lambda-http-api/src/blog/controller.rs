@@ -74,7 +74,7 @@ pub struct GetBlogContentsQuery {
     path = "/api/v2/blog/{slug}",
     params(GetBlogContentsQuery),
     responses(
-        (status = 200, description = "Blog Contents", body = Vec<super::response::BlogResponse>),
+        (status = 200, description = "Blog Contents", body = Vec<super::response::BlogContentsResponse>),
         (status = 400, description = "Bad request", body = String)
     )
 )]
