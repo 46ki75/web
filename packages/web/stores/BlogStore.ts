@@ -121,7 +121,13 @@ export const useBlogStore = defineStore("BlogSearchStore", {
       }
       const searchResults =
         this[this.locale].fuse?.search(this[this.locale].searchKeyword) ?? [];
-      this[this.locale].searchResults = searchResults?.map(({ item }) => item);
+      this[this.locale].searchResults = searchResults
+        ?.map(({ item }) => item)
+        .filter((blog) =>
+          this[this.locale].searchSelectedTagIds.every((tagId) =>
+            blog.tag_ids.some((blogTagId) => blogTagId === tagId)
+          )
+        );
     },
   },
 });
