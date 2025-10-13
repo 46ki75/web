@@ -103,23 +103,25 @@ export const useBlogStore = defineStore("BlogSearchStore", {
     },
 
     searchBlog() {
-      // if (
-      //   this[this.locale].blogs == null ||
-      //   this[this.locale].searchKeyword != null
-      // )
-      //   return;
-      // if (this[this.locale].fuse === null) {
-      //   this[this.locale].fuse = new Fuse(this[this.locale].blogs ?? [], {
-      //     keys: [
-      //       { name: "title", weight: 0.7 },
-      //       { name: "description", weight: 0.3 },
-      //       { name: "keywords", weight: 1 },
-      //     ],
-      //   });
-      // }
-      // const searchResults =
-      //   this[this.locale].fuse?.search(this[this.locale].searchKeyword) ?? [];
-      // this[this.locale].searchResults = searchResults?.map(({ item }) => item);
+      if (
+        this[this.locale].blogs == null ||
+        this[this.locale].searchKeyword == null
+      ) {
+        return;
+      }
+
+      if (this[this.locale].fuse === null) {
+        this[this.locale].fuse = new Fuse(this[this.locale].blogs ?? [], {
+          keys: [
+            { name: "title", weight: 0.7 },
+            { name: "description", weight: 0.3 },
+            { name: "keywords", weight: 1 },
+          ],
+        });
+      }
+      const searchResults =
+        this[this.locale].fuse?.search(this[this.locale].searchKeyword) ?? [];
+      this[this.locale].searchResults = searchResults?.map(({ item }) => item);
     },
   },
 });
