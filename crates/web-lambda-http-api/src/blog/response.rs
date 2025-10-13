@@ -97,3 +97,22 @@ impl From<super::entity::BlogContentsEntity> for BlogContentsResponse {
         }
     }
 }
+
+#[derive(Debug, Clone, serde::Serialize, utoipa::ToSchema)]
+pub struct BlogTagResponse {
+    pub id: String,
+    pub name_en: String,
+    pub name_ja: String,
+    pub icon_url: Option<String>,
+}
+
+impl From<super::entity::BlogTagEntity> for BlogTagResponse {
+    fn from(value: super::entity::BlogTagEntity) -> Self {
+        BlogTagResponse {
+            id: value.id,
+            name_en: value.name_en,
+            name_ja: value.name_ja,
+            icon_url: value.icon_url,
+        }
+    }
+}

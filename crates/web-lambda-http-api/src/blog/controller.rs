@@ -127,3 +127,50 @@ pub async fn get_blog_contents(
 
     contents
 }
+
+#[utoipa::path(
+    get,
+    path = "/api/v2/blog/tag",
+    responses(
+        (status = 200, description = "Blog tags", body = Vec<super::response::BlogTagResponse>),
+        (status = 400, description = "Bad request", body = String)
+    ),
+)]
+pub async fn list_tags(
+    axum::extract::State(blog_service): axum::extract::State<
+        std::sync::Arc<super::use_case::BlogUseCase>,
+    >,
+) -> Result<axum::response::Response<axum::body::Body>, (axum::http::StatusCode, String)> {
+    let tags = match blog_service.list_tags().await {
+        Ok(tag_entities) => {
+            let response = tag_entities
+                .into_iter()
+                .map(|t| super::response::BlogTagResponse::from(t))
+                .collect::<Vec<super::response::BlogTagResponse>>();
+
+            let json = match serde_json::to_string(&response) {
+                Ok(j) => j,
+                Err(e) => {
+                    return Err((
+                        axum::http::StatusCode::INTERNAL_SERVER_ERROR,
+                        format!("Failed to serialize response: {}", e),
+                    ));
+                }
+            };
+            let response = axum::response::Response::builder()
+                .header(http::header::CONTENT_TYPE, "application/json")
+                .body(axum::body::Body::from(json))
+                .map_err(|e| {
+                    (
+                        axum::http::StatusCode::INTERNAL_SERVER_ERROR,
+                        format!("Failed to build response: {}", e),
+                    )
+                })?;
+
+            Ok(response)
+        }
+        Err(e) => Err(e.as_client_response()),
+    };
+
+    tags
+}

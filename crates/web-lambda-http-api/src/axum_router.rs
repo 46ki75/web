@@ -32,6 +32,7 @@ pub async fn init_router() -> Result<&'static axum::Router, crate::error::Error>
                 .routes(routes!(handle_health_check))
                 .routes(routes!(crate::blog::controller::list_blogs))
                 .routes(routes!(crate::blog::controller::get_blog_contents))
+                .routes(routes!(crate::blog::controller::list_tags))
                 .with_state(std::sync::Arc::new(blog_use_case))
                 .split_for_parts();
 
