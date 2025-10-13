@@ -11,7 +11,7 @@ pub enum Error {
         trace: String,
     },
 
-    #[error("SsmParameterNotFound: farameter not found: `{parameter_name}`")]
+    #[error("SsmParameterNotFound: parameter not found: `{parameter_name}`")]
     SsmParameterNotFound { parameter_name: String },
 
     #[error("reqwest HTTP error: {0}")]
