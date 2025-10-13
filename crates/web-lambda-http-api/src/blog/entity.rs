@@ -90,7 +90,7 @@ impl From<super::dto::BlogLanguageDto> for BlogLanguageEntity {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Serialize)]
 pub struct BlogContentsEntity {
     pub components: Vec<jarkup_rs::Component>,
     pub icons: Vec<String>,
