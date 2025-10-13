@@ -33,7 +33,7 @@
             :id="tag.id"
             :key="tag.id"
             :label="tag.name"
-            :color="tag.color"
+            :color="'red'"
             @click="blogStore.tagSelect(tag.id)"
           />
         </div>
@@ -47,7 +47,9 @@
         />
         <TransitionGroup name="tag" class="tag-pool" tag="dev">
           <BlogTag
-            v-for="tag in blogStore[locale].selectedTags"
+            v-for="tag in blogStore.getTags(
+              blogStore[locale].searchSelectedTagIds
+            )"
             :id="tag.id"
             :key="tag.id"
             :label="tag.name"
@@ -55,7 +57,7 @@
             @click="blogStore.tagDeselect(tag.id)"
           />
           <div
-            v-if="blogStore[locale].selectedTags.length === 0"
+            v-if="blogStore[locale].searchSelectedTagIds.length === 0"
             class="empty-container"
             :style="{ position: 'absolute', top: '-2rem', left: 0 }"
           >
@@ -91,16 +93,16 @@
         </div>
         <div
           v-for="blog in blogStore[locale].searchedBlogs"
-          :key="blog.id"
+          :key="blog.slug"
           class="search-results-item"
         >
           <BlogCard
-            :id="blog.id"
+            :id="blog.slug"
             :title="blog.title"
             :description="blog.description"
-            :tags="blog.tags"
-            :created-at="blog.createdAt"
-            :updated-at="blog.updatedAt"
+            :tags="blogStore.getTags(blog.tag_ids)"
+            :created-at="blog.created_at"
+            :updated-at="blog.updated_at"
             :featured="blog.featured"
             :locale="locale"
           />
@@ -124,14 +126,14 @@ const debouncedKeyword = shallowRef<string>("");
 watchDebounced(
   debouncedKeyword,
   () => {
-    blogStore[locale.value].keyword = debouncedKeyword.value;
+    blogStore[locale.value].searchKeyword = debouncedKeyword.value;
     blogStore.searchBlog();
   },
   { debounce: 300, maxWait: 3000 }
 );
 
 watch(
-  [() => blogStore[locale.value].selectedTags],
+  [() => blogStore[locale.value].searchSelectedTagIds],
   async () => {
     await nextTick();
     blogStore.searchBlog();

@@ -39,14 +39,14 @@
         color="gray"
       />
 
-      <NuxtLinkLocale to="/talks" class="header-center-link flex-center">
+      <!-- <NuxtLinkLocale to="/talks" class="header-center-link flex-center">
         <Icon
           class="header-center-link-icon"
           icon="mdi:account-voice"
           width="16px"
         />
         <ElmInlineText text="Talks" />
-      </NuxtLinkLocale>
+      </NuxtLinkLocale> -->
     </div>
 
     <div class="header-right flex-center">

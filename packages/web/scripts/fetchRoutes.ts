@@ -1,9 +1,9 @@
-export const fetchPrerenderRoutes = async (
-  endpoint: string
-): Promise<string[]> => {
+import { fetchBlogListEn, fetchBlogListJa } from "./fetchBlogList";
+
+export const fetchPrerenderRoutes = async (): Promise<string[]> => {
   console.info("Execute fetchPrerenderRoutes()...");
 
-  const articleRoutes = await fetchArticleRoutes(endpoint);
+  const articleRoutes = await fetchArticleRoutes();
 
   const staticRoutes = [
     "/",
@@ -14,7 +14,6 @@ export const fetchPrerenderRoutes = async (
     "/blog/article",
     "/blog/search",
     "/redirect",
-    "/talks",
   ]
     .map((route) => [route, `/ja${route}`])
     .flat();
@@ -27,48 +26,14 @@ export const fetchPrerenderRoutes = async (
   return routes;
 };
 
-const fetchArticleRoutes = async (endpoint: string) => {
+const fetchArticleRoutes = async () => {
   console.info("Execute fetchArticleRoutes()...");
 
-  const englishResponse = await fetch(`${endpoint}/api/graphql`, {
-    method: "POST",
-    body: JSON.stringify({
-      query: /* GraphQL */ `
-        query Routes {
-          blogList(language: EN) {
-            id
-          }
-        }
-      `,
-    }),
-  });
+  const en = await fetchBlogListEn();
+  const ja = await fetchBlogListJa();
 
-  const englishJson: { data: { blogList: Array<{ id: string }> } } =
-    await englishResponse.json();
-
-  const englishRoutes = englishJson.data.blogList.map(
-    (blog) => `/blog/article/${blog.id}`
-  );
-
-  const japaneseResponse = await fetch(`${endpoint}/api/graphql`, {
-    method: "POST",
-    body: JSON.stringify({
-      query: /* GraphQL */ `
-        query Routes {
-          blogList(language: JA) {
-            id
-          }
-        }
-      `,
-    }),
-  });
-
-  const japaneseJson: { data: { blogList: Array<{ id: string }> } } =
-    await japaneseResponse.json();
-
-  const japaneseRoutes = japaneseJson.data.blogList.map(
-    (blog) => `/ja/blog/article/${blog.id}`
-  );
+  const englishRoutes = en.map((blog) => `/blog/article/${blog.slug}`);
+  const japaneseRoutes = ja.map((blog) => `/ja/blog/article/${blog.slug}`);
 
   return englishRoutes.concat(japaneseRoutes);
 };

@@ -1,10 +1,10 @@
 <template>
   <article>
-    <div v-if="blog != null">
+    <div v-if="blogMeta != null">
       <BlogMeta
-        :title="blog.title"
-        :created-at="blog.createdAt"
-        :updated-at="blog.updatedAt"
+        :title="blogMeta.title"
+        :created-at="blogMeta.created_at"
+        :updated-at="blogMeta.updated_at"
         :links="[
           { text: 'Home', href: locale === 'en' ? '/' : `/${locale}` },
           { text: 'Blog', href: locale === 'en' ? '/blog' : `/${locale}/blog` },
@@ -12,27 +12,21 @@
             text: 'Article',
             href:
               locale === 'en'
-                ? `/blog/article/${blog.id}`
-                : `/${locale}/blog/article/${blog.id}`,
+                ? `/blog/article/${blogMeta.slug}`
+                : `/${locale}/blog/article/${blogMeta.slug}`,
           },
         ]"
-        :image="`/_notion/blog/image/${blog.id}/ogp.webp`"
-        :tags="
-          blog.tags.map((tag) => ({
-            id: tag.id,
-            label: tag.name,
-            color: tag.color,
-          }))
-        "
+        :image="`/_notion/blog/image/${blogMeta.slug}/${locale}/ogp.webp`"
+        :tags="blogStore.getTags(blogMeta.tag_ids)"
         :language="locale"
         @tag-click="handleTagClick"
       />
 
-      <div :key="`/blog/article/${blog.id}`">
-        <ElmJsonComponentRenderer :json-components="data?.blockList ?? []" />
+      <div :key="`/blog/article/${blogMeta.slug}`">
+        <ElmJsonComponentRenderer :json-components="jarkup ?? []" />
       </div>
 
-      <BlogEditOnNotion :url="blog.url" />
+      <BlogEditOnNotion :url="blogMeta.notion_url" />
     </div>
   </article>
 </template>
@@ -40,8 +34,9 @@
 <script setup lang="ts">
 import { ElmJsonComponentRenderer } from "@elmethis/core";
 import type { Component } from "jarkup-ts";
+import { client } from "~/openapi/client";
 
-const { locale, defaultLocale } = useI18n();
+const { locale } = useI18n();
 
 const router = useRouter();
 
@@ -56,17 +51,7 @@ const handleTagClick = (tagId: string) => {
   router.push(`${locale.value === "en" ? "" : locale.value}/blog/search`);
 };
 
-const blog = computed(() => {
-  const blogs = blogStore[locale.value].blogs;
-
-  if (blogs != null) {
-    const [result] = blogs.filter((blog) => blog.id === route.params.id);
-
-    return result;
-  }
-});
-
-const convert = (
+const convert = async (
   blocks: Component[],
   results: Array<{ from: string; to: string }>,
   id: string
@@ -75,17 +60,17 @@ const convert = (
     if (block.type === "Image" && block.props?.src && block.id) {
       results.push({
         from: block.props.src,
-        to: `/_notion/blog/image/${id}/${block.id}.webp`,
+        to: `/_notion/blog/image/${id}/${locale.value}/${block.id}.webp`,
       });
     } else if (block.type === "Icon" && block.props?.src && block.id) {
       results.push({
         from: block.props.src,
-        to: `/_notion/blog/image/${id}/${block.id}.webp`,
+        to: `/_notion/blog/image/${id}/${locale.value}/${block.id}.webp`,
       });
     }
 
     if (block.slots && "default" in block.slots) {
-      convert(block.slots.default, results, id);
+      await convert(block.slots.default, results, id);
     }
   }
 
@@ -99,58 +84,46 @@ const convert = (
   return deserialized as Component[];
 };
 
-const { data } = await useAsyncData(
+const { data: jarkup } = await useAsyncData(
   `/blog/article/${route.params.id}`,
   async () => {
-    const blog = await $fetch<{
-      data: { blog: { id: string; blockList: Component[] } };
-    }>(`${appConfig.ENDPOINT}/api/graphql`, {
-      method: "POST",
-      body: {
-        query: /* GraphQL */ `
-          query GetBlog($pageId: String!) {
-            blog(pageId: $pageId) {
-              id
-              blockList
-            }
-          }
-        `,
-        variables: { pageId: route.params.id },
+    if (typeof route.params.id !== "string") {
+      throw new Error("Invalid path params");
+    }
+
+    const { data: blogContents } = await client.GET("/api/v2/blog/{slug}", {
+      params: {
+        path: { slug: route.params.id as string },
+        query: { language: locale.value },
       },
     });
 
-    const blockList = convert(blog.data.blog.blockList, [], blog.data.blog.id);
-    blog.data.blog.blockList = blockList;
-
-    return blog.data.blog;
+    return await convert(
+      blogContents?.components as Component[],
+      [],
+      route.params.id
+    );
   }
 );
 
-const isExistBlog = () => {
-  const id = route.params.id;
-  const flag = blogStore[locale.value].blogs?.some((blog) => blog.id === id);
-  return flag;
-};
-
-onMounted(() => {
-  if (!isExistBlog())
-    router.push(
-      locale.value === defaultLocale ? "/blog" : `/${locale.value}/blog`
-    );
+const blogMeta = computed(() => {
+  const blogMeta = blogStore[locale.value].blogs?.find(
+    (blog) => blog.slug === route.params.id
+  );
+  return blogMeta;
 });
 
-if (blog.value) {
+if (blogMeta.value) {
   useSeoMeta({
     ogType: "article",
-    title: `${blog.value.title} | ${appConfig.SITE_NAME}`,
-    ogTitle: blog.value.title,
-    description: blog.value.description,
-    ogDescription: blog.value.description,
-    ogImage: `${appConfig.ENDPOINT}/_notion/blog/image/${blog.value.id}/ogp.webp`,
+    title: `${blogMeta.value.title} | ${appConfig.SITE_NAME}`,
+    ogTitle: blogMeta.value.title,
+    description: blogMeta.value.description,
+    ogDescription: blogMeta.value.description,
+    ogImage: `${appConfig.ENDPOINT}/_notion/blog/image/${blogMeta.value.slug}/ogp.webp`,
     twitterCard: "summary_large_image",
-    articlePublishedTime: blog.value.createdAt,
-    articleModifiedTime: blog.value.updatedAt,
-    articleTag: blog.value.tags.map((tag) => tag.name),
+    articlePublishedTime: blogMeta.value.created_at,
+    articleModifiedTime: blogMeta.value.updated_at,
   });
 
   // @see https://json-ld.org/playground/
@@ -161,18 +134,18 @@ if (blog.value) {
         innerHTML: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "Article",
-          name: blog.value.title,
-          headline: blog.value.title,
-          abstract: blog.value.description,
-          image: `${appConfig.ENDPOINT}/_notion/blog/image/${blog.value.id}/ogp.webp`,
+          name: blogMeta.value.title,
+          headline: blogMeta.value.title,
+          abstract: blogMeta.value.description,
+          image: `${appConfig.ENDPOINT}/_notion/blog/image/${blogMeta.value.slug}/ogp.webp`,
           url: `${appConfig.ENDPOINT}${route.fullPath}`,
           author: {
             "@type": "Person",
             givenName: "Ikuma",
             familyName: "Yamashita",
           },
-          datePublished: blog.value.createdAt,
-          dateModified: blog.value.updatedAt,
+          datePublished: blogMeta.value.created_at,
+          dateModified: blogMeta.value.updated_at,
         }),
       },
     ],

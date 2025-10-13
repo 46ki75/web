@@ -2,7 +2,7 @@
   <div :key="id" class="container">
     <NuxtLinkLocale class="top" :to="`/blog/article/${id}`" :prefetch="false">
       <div class="image">
-        <ElmImage :src="`/_notion/blog/image/${id}/ogp.webp`" />
+        <ElmImage :src="`/_notion/blog/image/${id}/${locale}/ogp.webp`" />
       </div>
 
       <div class="text-container">

@@ -15,17 +15,17 @@
 
     <div
       v-for="(blog, index) in getSideBlogs(blogStore[locale].blogs)"
-      :key="blog.id"
+      :key="blog.slug"
       class="card"
       :style="{ '--delay': `${100 * index}ms` }"
     >
       <BlogCard
-        :id="blog.id"
+        :id="blog.slug"
         :title="blog.title"
         :description="blog.description"
-        :tags="blog.tags"
-        :created-at="blog.createdAt"
-        :updated-at="blog.updatedAt"
+        :tags="blogStore.getTags(blog.tag_ids)"
+        :created-at="blog.created_at"
+        :updated-at="blog.updated_at"
         :featured="blog.featured"
         :locale="locale"
       />
@@ -48,7 +48,7 @@ const getSideBlogs = (
   return blogs
     .sort(
       (pre, next) =>
-        new Date(next.createdAt).getTime() - new Date(pre.createdAt).getTime()
+        new Date(next.created_at).getTime() - new Date(pre.created_at).getTime()
     )
     .slice(0, 10);
 };

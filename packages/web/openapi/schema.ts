@@ -244,7 +244,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["BlogContentsResponse"][];
+                    "application/json": components["schemas"]["BlogContentsResponse"];
                 };
             };
             /** @description Bad request */
@@ -273,7 +273,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["WebConfigResponse"][];
+                    "application/json": components["schemas"]["WebConfigResponse"];
                 };
             };
             /** @description Bad request */

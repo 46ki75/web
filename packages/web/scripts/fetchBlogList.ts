@@ -1,13 +1,18 @@
-import type { Component } from "jarkup-ts";
-import { ENDPOINT } from "./fetchConfig";
+import { client } from "../openapi/client";
 
 export interface PrerenderBlog {
-  id: string;
-  title: string;
+  created_at: string;
   description: string;
-  ogpImageS3Url: string;
-  blockList: Component[];
-  updatedAt: string;
+  featured: boolean;
+  keywords: string[];
+  notion_url: string;
+  ogp_image_s3_signed_url?: string | null | undefined;
+  page_id: string;
+  slug: string;
+  status: "Draft" | "Archived" | "Private" | "Published";
+  tag_ids: string[];
+  title: string;
+  updated_at: string;
 }
 
 let BLOG_LIST_CACHE: PrerenderBlog[] | null = null;
@@ -17,31 +22,15 @@ let BLOG_LIST_CACHE_JA: PrerenderBlog[] | null = null;
 export const fetchBlogListEn = async (): Promise<PrerenderBlog[]> => {
   if (BLOG_LIST_CACHE_EN != null) return BLOG_LIST_CACHE_EN;
 
-  const englishResponse = await fetch(`${ENDPOINT}/api/graphql`, {
-    method: "POST",
-    body: JSON.stringify({
-      query: /* GraphQL */ `
-        query ListBlog {
-          blogList(language: EN) {
-            id
-            title
-            description
-            ogpImageS3Url
-            blockList
-            updatedAt
-          }
-        }
-      `,
-    }),
+  const { data } = await client.GET("/api/v2/blog", {
+    params: { query: { language: "en" } },
   });
 
-  const englishBlog: {
-    data: {
-      blogList: PrerenderBlog[];
-    };
-  } = await englishResponse.json();
+  if (data == null) {
+    throw new Error("Failed to fetch blogs");
+  }
 
-  BLOG_LIST_CACHE_EN = englishBlog.data.blogList;
+  BLOG_LIST_CACHE_EN = data;
 
   return BLOG_LIST_CACHE_EN;
 };
@@ -49,31 +38,15 @@ export const fetchBlogListEn = async (): Promise<PrerenderBlog[]> => {
 export const fetchBlogListJa = async (): Promise<PrerenderBlog[]> => {
   if (BLOG_LIST_CACHE_JA != null) return BLOG_LIST_CACHE_JA;
 
-  const japaneseResponse = await fetch(`${ENDPOINT}/api/graphql`, {
-    method: "POST",
-    body: JSON.stringify({
-      query: /* GraphQL */ `
-        query ListBlog {
-          blogList(language: JA) {
-            id
-            title
-            description
-            ogpImageS3Url
-            blockList
-            updatedAt
-          }
-        }
-      `,
-    }),
+  const { data } = await client.GET("/api/v2/blog", {
+    params: { query: { language: "ja" } },
   });
 
-  const japaneseBlog: {
-    data: {
-      blogList: PrerenderBlog[];
-    };
-  } = await japaneseResponse.json();
+  if (data == null) {
+    throw new Error("Failed to fetch blogs");
+  }
 
-  BLOG_LIST_CACHE_JA = japaneseBlog.data.blogList;
+  BLOG_LIST_CACHE_JA = data;
 
   return BLOG_LIST_CACHE_JA;
 };

@@ -15,10 +15,10 @@
     "postdeploy": "./scripts/invalidate.sh",
     "lint": "eslint",
     "stylelint": "stylelint '**/*.vue'",
-    "generate:openapi": "openapi-typescript http://dev-www.ikuma.cloud/api/v2/openapi.json -o types/openapi.ts"
+    "generate:openapi": "openapi-typescript http://dev-www.ikuma.cloud/api/v2/openapi.json -o openapi/schema.ts"
   },
   "dependencies": {
-    "@elmethis/core": "0.6.0",
+    "@elmethis/core": "0.6.3",
     "@iconify/vue": "^4.3.0",
     "@nuxtjs/i18n": "9.5.5",
     "@pinia/nuxt": "0.10.1",
@@ -30,6 +30,7 @@
     "feed": "^5.1.0",
     "fuse.js": "^7.1.0",
     "nuxt": "^3.19.0",
+    "openapi-fetch": "^0.14.1",
     "pinia": "^3.0.1",
     "polished": "^4.3.1",
     "sharp": "^0.33.5",
