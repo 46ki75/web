@@ -22,8 +22,8 @@ pub enum BlogLanguageQueryParam {
     )
 )]
 pub async fn list_blogs(
-    axum::extract::State(blog_service): axum::extract::State<
-        std::sync::Arc<super::use_case::BlogUseCase>,
+    axum::extract::State(state): axum::extract::State<
+        std::sync::Arc<crate::axum_router::AxumAppState>,
     >,
     query: axum::extract::Query<ListBlogsQuery>,
 ) -> Result<axum::response::Response<axum::body::Body>, (axum::http::StatusCode, String)> {
@@ -32,7 +32,7 @@ pub async fn list_blogs(
         BlogLanguageQueryParam::Ja => super::entity::BlogLanguageEntity::Ja,
     };
 
-    let blogs = match blog_service.list_blogs(language).await {
+    let blogs = match state.blog_use_case.list_blogs(language).await {
         Ok(blog_entities) => {
             let response = blog_entities
                 .into_iter()
@@ -86,8 +86,8 @@ pub struct GetBlogContentsQuery {
     ),
 )]
 pub async fn get_blog_contents(
-    axum::extract::State(blog_service): axum::extract::State<
-        std::sync::Arc<super::use_case::BlogUseCase>,
+    axum::extract::State(state): axum::extract::State<
+        std::sync::Arc<crate::axum_router::AxumAppState>,
     >,
     axum::extract::Path(slug): axum::extract::Path<String>,
     query: axum::extract::Query<GetBlogContentsQuery>,
@@ -97,7 +97,7 @@ pub async fn get_blog_contents(
         BlogLanguageQueryParam::Ja => super::entity::BlogLanguageEntity::Ja,
     };
 
-    let contents = match blog_service.get_blog_contents(&slug, language).await {
+    let contents = match state.blog_use_case.get_blog_contents(&slug, language).await {
         Ok(entity) => {
             let blog_content_response = super::response::BlogContentsResponse::from(entity);
 
@@ -137,11 +137,11 @@ pub async fn get_blog_contents(
     ),
 )]
 pub async fn list_tags(
-    axum::extract::State(blog_service): axum::extract::State<
-        std::sync::Arc<super::use_case::BlogUseCase>,
+    axum::extract::State(state): axum::extract::State<
+        std::sync::Arc<crate::axum_router::AxumAppState>,
     >,
 ) -> Result<axum::response::Response<axum::body::Body>, (axum::http::StatusCode, String)> {
-    let tags = match blog_service.list_tags().await {
+    let tags = match state.blog_use_case.list_tags().await {
         Ok(tag_entities) => {
             let response = tag_entities
                 .into_iter()

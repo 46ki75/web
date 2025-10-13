@@ -3,6 +3,12 @@
 use utoipa::OpenApi;
 use utoipa_axum::{router::OpenApiRouter, routes};
 
+#[derive(Clone)]
+pub struct AxumAppState {
+    pub blog_use_case: std::sync::Arc<crate::blog::use_case::BlogUseCase>,
+    pub web_config_use_case: std::sync::Arc<crate::web_config::use_case::WebConfigUseCase>,
+}
+
 #[derive(OpenApi)]
 #[openapi(
     info(
@@ -28,12 +34,23 @@ pub async fn init_router() -> Result<&'static axum::Router, crate::error::Error>
                 blog_repository: std::sync::Arc::new(blog_repository),
             };
 
+            let web_config_repository = crate::web_config::repository::WebConfigRepositoryImpl {};
+            let web_config_use_case = crate::web_config::use_case::WebConfigUseCase {
+                web_config_repository: std::sync::Arc::new(web_config_repository),
+            };
+
+            let app_state = std::sync::Arc::new(AxumAppState {
+                blog_use_case: std::sync::Arc::new(blog_use_case),
+                web_config_use_case: std::sync::Arc::new(web_config_use_case),
+            });
+
             let (router, auto_generated_api) = OpenApiRouter::new()
                 .routes(routes!(handle_health_check))
                 .routes(routes!(crate::blog::controller::list_blogs))
                 .routes(routes!(crate::blog::controller::get_blog_contents))
                 .routes(routes!(crate::blog::controller::list_tags))
-                .with_state(std::sync::Arc::new(blog_use_case))
+                .routes(routes!(crate::web_config::controller::fetch_web_config))
+                .with_state(app_state)
                 .split_for_parts();
 
             let customized_api = ApiDoc::openapi().merge_from(auto_generated_api);
