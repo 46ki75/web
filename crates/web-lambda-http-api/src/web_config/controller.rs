@@ -2,7 +2,7 @@
     get,
     path = "/api/v2/web-config",
     responses(
-        (status = 200, description = "WebConfig", body = Vec<super::response::WebConfigResponse>),
+        (status = 200, description = "WebConfig", body = super::response::WebConfigResponse),
         (status = 400, description = "Bad request", body = String)
     )
 )]
