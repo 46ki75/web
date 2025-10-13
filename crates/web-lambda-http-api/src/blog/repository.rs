@@ -26,6 +26,17 @@ pub trait BlogRepository: Send + Sync {
                 + Send,
         >,
     >;
+
+    fn get_blog_contents(
+        &self,
+        slug: &str,
+        language: super::dto::BlogLanguageDto,
+    ) -> std::pin::Pin<
+        Box<
+            dyn std::future::Future<Output = Result<Vec<jarkup_rs::Component>, crate::error::Error>>
+                + Send,
+        >,
+    >;
 }
 
 #[derive(Debug)]
@@ -259,6 +270,79 @@ impl BlogRepository for BlogRepositoryImpl {
             }
 
             Ok(blogs)
+        })
+    }
+
+    fn get_blog_contents(
+        &self,
+        slug: &str,
+        language: super::dto::BlogLanguageDto,
+    ) -> std::pin::Pin<
+        Box<
+            dyn std::future::Future<Output = Result<Vec<jarkup_rs::Component>, crate::error::Error>>
+                + Send,
+        >,
+    > {
+        let slug = slug.to_owned();
+        let language = language;
+
+        Box::pin(async move {
+            let notionrs_client =
+                crate::once_cell_cache::notionrs_client::init_notionrs_client().await?;
+
+            let blog_master_data_source_id = crate::once_cell_cache::ssm_parameter::blog_master_data_source_id::init_blog_master_data_source_id().await?;
+
+            let filter = Filter::rich_text_equals("slug", &slug);
+
+            let pages: Vec<PageResponse<std::collections::HashMap<String, PageProperty>>> =
+                notionrs_client
+                    .query_data_source()
+                    .data_source_id(blog_master_data_source_id)
+                    .filter(filter)
+                    .send()
+                    .await?
+                    .results;
+
+            let page_id = match pages.first() {
+                Some(page) => {
+                    let property_name = match language {
+                        super::dto::BlogLanguageDto::En => "article_en",
+                        super::dto::BlogLanguageDto::Ja => "article_ja",
+                    };
+
+                    let maybe_relation = get_property(&page.properties, property_name)?;
+
+                    let article_page_id =
+                        if let PageProperty::Relation(blog_article_relation) = maybe_relation {
+                            let article_page_id = blog_article_relation
+                                .relation
+                                .first()
+                                .map(|relation| relation.id.clone())
+                                .ok_or(crate::error::Error::NotionRecord(format!(
+                                    "relation is not set in property '{0}' (page_id: {1})",
+                                    property_name, page.id
+                                )))?;
+                            article_page_id
+                        } else {
+                            return Err(crate::error::Error::NotionInvalidSchema(
+                                property_name.to_owned(),
+                            ));
+                        };
+
+                    Ok(article_page_id)
+                }
+                None => Err(crate::error::Error::NotionRecord("Not Found".to_owned())),
+            }?;
+
+            let notion_to_jarkup_client =
+                crate::once_cell_cache::notion_to_jarkup_client::init_notion_to_jarkup_client()
+                    .await?;
+
+            let components = notion_to_jarkup_client
+                .convert_block(&page_id.clone())
+                .await?;
+
+            Ok(components)
         })
     }
 }
