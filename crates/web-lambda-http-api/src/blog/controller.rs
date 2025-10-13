@@ -82,8 +82,10 @@ pub async fn get_blog_contents(
     };
 
     let contents = match blog_service.get_blog_contents(&query.slug, language).await {
-        Ok(b) => {
-            let json = match serde_json::to_string(&b) {
+        Ok(entity) => {
+            let blog_content_response = super::response::BlogContentsResponse::from(entity);
+
+            let json = match serde_json::to_string(&blog_content_response) {
                 Ok(j) => j,
                 Err(e) => {
                     return Err((

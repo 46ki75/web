@@ -1,4 +1,4 @@
-#[derive(Debug, Clone, serde::Serialize)]
+#[derive(Debug, Clone)]
 pub struct BlogEntity {
     /// Notion page ID
     pub page_id: String,
@@ -56,7 +56,7 @@ impl From<super::dto::BlogDto> for BlogEntity {
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
+#[derive(Debug, Clone)]
 pub enum BlogStatusEntity {
     Draft,
     Archived,
@@ -90,7 +90,7 @@ impl From<super::dto::BlogLanguageDto> for BlogLanguageEntity {
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
+#[derive(Debug, Clone)]
 pub struct BlogContentsEntity {
     pub components: Vec<jarkup_rs::Component>,
     pub icons: Vec<String>,
