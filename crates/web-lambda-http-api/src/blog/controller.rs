@@ -66,14 +66,23 @@ pub async fn list_blogs(
 
 #[derive(Debug, serde::Deserialize, utoipa::ToSchema, utoipa::IntoParams)]
 pub struct GetBlogContentsQuery {
-    slug: String,
     language: Language,
 }
 
+#[utoipa::path(
+    get,
+    path = "/api/v2/blog/{slug}",
+    params(GetBlogContentsQuery),
+    responses(
+        (status = 200, description = "Blog Contents", body = Vec<super::response::BlogResponse>),
+        (status = 400, description = "Bad request", body = String)
+    )
+)]
 pub async fn get_blog_contents(
     axum::extract::State(blog_service): axum::extract::State<
         std::sync::Arc<super::use_case::BlogUseCase>,
     >,
+    axum::extract::Path(slug): axum::extract::Path<String>,
     query: axum::extract::Query<GetBlogContentsQuery>,
 ) -> Result<axum::response::Response<axum::body::Body>, (axum::http::StatusCode, String)> {
     let language = match query.language {
@@ -81,7 +90,7 @@ pub async fn get_blog_contents(
         Language::Ja => super::entity::BlogLanguageEntity::Ja,
     };
 
-    let contents = match blog_service.get_blog_contents(&query.slug, language).await {
+    let contents = match blog_service.get_blog_contents(&slug, language).await {
         Ok(entity) => {
             let blog_content_response = super::response::BlogContentsResponse::from(entity);
 
