@@ -22,7 +22,7 @@
         @tag-click="handleTagClick"
       />
 
-      <div :key="`/blog/article/${blogMeta.slug}`">
+      <div>
         <ElmJsonComponentRenderer :json-components="jarkup ?? []" />
       </div>
 
@@ -84,27 +84,28 @@ const convert = async (
   return deserialized as Component[];
 };
 
-const { data: jarkup } = await useAsyncData(
-  `/blog/article/${route.params.id}`,
-  async () => {
-    if (typeof route.params.id !== "string") {
-      throw new Error("Invalid path params");
-    }
-
-    const { data: blogContents } = await client.GET("/api/v2/blog/{slug}", {
-      params: {
-        path: { slug: route.params.id as string },
-        query: { language: locale.value },
-      },
-    });
-
-    return await convert(
-      blogContents?.components as Component[],
-      [],
-      route.params.id
-    );
-  }
+const cacheKey = computed(
+  () => `/${locale.value}/blog/article/${route.params.id}`
 );
+
+const { data: jarkup } = await useAsyncData(cacheKey, async () => {
+  if (typeof route.params.id !== "string") {
+    throw new Error("Invalid path params");
+  }
+
+  const { data: blogContents } = await client.GET("/api/v2/blog/{slug}", {
+    params: {
+      path: { slug: route.params.id as string },
+      query: { language: locale.value },
+    },
+  });
+
+  return await convert(
+    blogContents?.components as Component[],
+    [],
+    route.params.id
+  );
+});
 
 const blogMeta = computed(() => {
   const blogMeta = blogStore[locale.value].blogs?.find(
