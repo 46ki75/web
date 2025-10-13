@@ -23,7 +23,7 @@ defineProps<BlogtagProps>();
 .tag {
   padding: 0.5rem;
   display: inline-flex;
-  gap: 0.25rem;
+  gap: 0.5rem;
   justify-content: flex-start;
   align-items: center;
   border-radius: 0.125rem;
@@ -36,10 +36,14 @@ defineProps<BlogtagProps>();
 }
 
 .icon {
-  height: 1rem;
+  box-sizing: border-box;
+  padding: 0.125rem;
+  height: 1.25rem;
+  width: 1.25rem;
 }
 
 .icon-image {
-  height: 0.85rem;
+  height: 1.25rem;
+  width: 1.25rem;
 }
 </style>

@@ -33,7 +33,7 @@
             :id="tag.id"
             :key="tag.id"
             :name="tag.name"
-            :icon-url="tag.icon_url"
+            :icon-url="tag.iconUrl"
             @click="blogStore.tagSelect(tag.id)"
           />
         </div>
@@ -53,7 +53,7 @@
             :id="tag.id"
             :key="tag.id"
             :name="tag.name"
-            :icon-url="tag.icon_url"
+            :icon-url="tag.iconUrl"
             @click="blogStore.tagDeselect(tag.id)"
           />
           <div

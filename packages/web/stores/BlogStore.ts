@@ -4,7 +4,7 @@ import type { components } from "../openapi/schema";
 interface Tag {
   id: string;
   name: string;
-  icon_url?: string | null;
+  iconUrl?: string | null;
 }
 
 type BlogMeta = components["schemas"]["BlogResponse"];
@@ -20,7 +20,7 @@ export const useBlogStore = defineStore("BlogSearchStore", {
       return data.map((tag) => ({
         id: tag.id,
         name: tag.name_en,
-        icon_url: tag.icon_url,
+        iconUrl: tag.icon_url,
       }));
     });
 
@@ -31,7 +31,7 @@ export const useBlogStore = defineStore("BlogSearchStore", {
       return data.map((tag) => ({
         id: tag.id,
         name: tag.name_ja,
-        icon_url: tag.icon_url,
+        iconUrl: tag.icon_url,
       }));
     });
 
@@ -80,7 +80,7 @@ export const useBlogStore = defineStore("BlogSearchStore", {
         .map((tag) => ({
           id: tag.id,
           name: tag.name,
-          icon_url: tag.icon_url,
+          iconUrl: tag.iconUrl,
         }));
       return tags ?? [];
     },
