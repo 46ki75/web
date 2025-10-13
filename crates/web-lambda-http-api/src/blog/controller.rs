@@ -32,9 +32,18 @@ pub async fn list_blogs(
 
     let blogs = match blog_service.list_blogs(language).await {
         Ok(b) => {
+            let json = match serde_json::to_string(&b) {
+                Ok(j) => j,
+                Err(e) => {
+                    return Err((
+                        axum::http::StatusCode::INTERNAL_SERVER_ERROR,
+                        format!("Failed to serialize response: {}", e),
+                    ));
+                }
+            };
             let response = axum::response::Response::builder()
                 .header(http::header::CONTENT_TYPE, "application/json")
-                .body(axum::body::Body::from(serde_json::to_string(&b).unwrap()))
+                .body(axum::body::Body::from(json))
                 .unwrap();
 
             Ok(response)
