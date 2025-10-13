@@ -1,6 +1,6 @@
 <template>
   <div class="tag">
-    <img v-if="iconUrl" class="icon-image" src="" alt="" />
+    <img v-if="iconUrl" class="icon-image" :src="iconUrl" alt="" />
     <Icon v-else icon="fa-solid:tags" class="icon" />
     <ElmInlineText :text="name" size="0.85rem" />
   </div>
@@ -36,7 +36,7 @@ defineProps<BlogtagProps>();
 }
 
 .icon {
-  height: 0.85rem;
+  height: 1rem;
 }
 
 .icon-image {

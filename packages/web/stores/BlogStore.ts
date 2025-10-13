@@ -5,10 +5,6 @@ interface Tag {
   id: string;
   name: string;
   icon_url?: string | null;
-  // TODO: REMOVE THIS
-  label: string;
-  // TODO: REMOVE THIS
-  color: string;
 }
 
 type BlogMeta = components["schemas"]["BlogResponse"];
@@ -17,27 +13,26 @@ export const useBlogStore = defineStore("BlogSearchStore", {
   state: () => {
     const { locale } = useI18n();
 
-    const { data: tags } = useAsyncData("/blog/tags", async () => {
+    const { data: enTags } = useAsyncData("/blog/tags/en", async () => {
       const { data } = await client.GET("/api/v2/blog/tag");
       if (data == null) throw new Error("Failed to fetch blog tags.");
 
-      const en = [];
-      const ja = [];
+      return data.map((tag) => ({
+        id: tag.id,
+        name: tag.name_en,
+        icon_url: tag.icon_url,
+      }));
+    });
 
-      for (const tag of data) {
-        en.push({
-          id: tag.id,
-          name: tag.name_en,
-          icon_url: tag.icon_url,
-        });
-        ja.push({
-          id: tag.id,
-          name: tag.name_ja,
-          icon_url: tag.icon_url,
-        });
-      }
+    const { data: jaTags } = useAsyncData("/blog/tags/ja", async () => {
+      const { data } = await client.GET("/api/v2/blog/tag");
+      if (data == null) throw new Error("Failed to fetch blog tags.");
 
-      return { en, ja };
+      return data.map((tag) => ({
+        id: tag.id,
+        name: tag.name_ja,
+        icon_url: tag.icon_url,
+      }));
     });
 
     const { data: enBlogs } = useAsyncData("/blog/en", async () => {
@@ -60,7 +55,7 @@ export const useBlogStore = defineStore("BlogSearchStore", {
       locale,
 
       en: {
-        tags: tags.value?.en,
+        tags: enTags,
         blogs: enBlogs,
 
         searchKeyword: ref(""),
@@ -69,7 +64,7 @@ export const useBlogStore = defineStore("BlogSearchStore", {
       },
 
       ja: {
-        tags: tags.value?.ja,
+        tags: jaTags,
         blogs: jaBlogs,
 
         searchKeyword: ref(""),
@@ -86,8 +81,6 @@ export const useBlogStore = defineStore("BlogSearchStore", {
           id: tag.id,
           name: tag.name,
           icon_url: tag.icon_url,
-          label: tag.name,
-          color: "red",
         }));
       return tags ?? [];
     },
