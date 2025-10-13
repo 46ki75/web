@@ -48,7 +48,7 @@ export const useBlogStore = defineStore("BlogSearchStore", {
       return data;
     });
 
-    const { data: jaBlogs } = useAsyncData("/blog/en", async () => {
+    const { data: jaBlogs } = useAsyncData("/blog/ja", async () => {
       const { data } = await client.GET("/api/v2/blog", {
         params: { query: { language: "ja" } },
       });
