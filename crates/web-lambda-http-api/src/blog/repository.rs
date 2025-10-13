@@ -18,6 +18,7 @@ fn get_property<'a>(
 
 pub trait BlogRepository: Send + Sync {
     fn list_blogs(
+        &self,
         language: super::dto::BlogLanguageDto,
     ) -> std::pin::Pin<
         Box<
@@ -28,10 +29,11 @@ pub trait BlogRepository: Send + Sync {
 }
 
 #[derive(Debug)]
-struct BlogRepositoryImpl {}
+pub struct BlogRepositoryImpl {}
 
 impl BlogRepository for BlogRepositoryImpl {
     fn list_blogs(
+        &self,
         language: super::dto::BlogLanguageDto,
     ) -> std::pin::Pin<
         Box<
