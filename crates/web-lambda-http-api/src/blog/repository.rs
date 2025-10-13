@@ -85,8 +85,6 @@ impl BlogRepository for BlogRepositoryImpl {
 
                 let notion_url = result.url;
 
-                let ogp_image_s3_signed_url = result.cover.map(|cover| cover.get_url());
-
                 // slug # ---------- #
                 let maybe_slug = get_property(&result.properties, "slug")?;
 
@@ -260,6 +258,8 @@ impl BlogRepository for BlogRepositoryImpl {
                         "updated_at".to_owned(),
                     ));
                 };
+
+                let ogp_image_s3_signed_url = article_page.cover.map(|cover| cover.get_url());
 
                 let blog = super::dto::BlogDto {
                     page_id,
