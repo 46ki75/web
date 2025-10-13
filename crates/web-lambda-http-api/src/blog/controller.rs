@@ -15,7 +15,7 @@ pub enum Language {
     path = "/api/v2/blog",
     params(Query),
     responses(
-        (status = 200, description = "ブログ一覧", body = Vec<super::response::BlogResponse>),
+        (status = 200, description = "Blogs", body = Vec<super::response::BlogResponse>),
         (status = 400, description = "Bad request", body = String)
     )
 )]
