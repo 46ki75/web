@@ -44,7 +44,12 @@ pub async fn list_blogs(
             let response = axum::response::Response::builder()
                 .header(http::header::CONTENT_TYPE, "application/json")
                 .body(axum::body::Body::from(json))
-                .unwrap();
+                .map_err(|e| {
+                    (
+                        axum::http::StatusCode::INTERNAL_SERVER_ERROR,
+                        format!("Failed to build response: {}", e),
+                    )
+                })?;
 
             Ok(response)
         }
