@@ -1,5 +1,5 @@
 <template>
-  <div :key="`/${locale}/blog/search`">
+  <div>
     <BlogMeta
       :title="t('blog.search.title')"
       created-at="2022-10-01"

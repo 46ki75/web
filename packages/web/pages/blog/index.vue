@@ -1,7 +1,6 @@
 <template>
-  <div key="/blog">
+  <div>
     <BlogMeta
-      key="/blog"
       title="Blog"
       created-at="2022-10-01"
       updated-at="2025-03-26"
