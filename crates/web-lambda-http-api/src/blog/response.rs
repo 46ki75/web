@@ -37,10 +37,82 @@ pub struct BlogResponse {
     pub updated_at: String,
 }
 
+impl From<super::entity::BlogEntity> for BlogResponse {
+    fn from(value: super::entity::BlogEntity) -> Self {
+        BlogResponse {
+            page_id: value.page_id,
+            notion_url: value.notion_url,
+            ogp_image_s3_signed_url: value.ogp_image_s3_signed_url,
+            slug: value.slug,
+            featured: value.featured,
+            tag_ids: value.tag_ids,
+            status: BlogStatusresponse::from(value.status),
+            title: value.title,
+            description: value.description,
+            keywords: value.keywords,
+            created_at: value.created_at,
+            updated_at: value.updated_at,
+        }
+    }
+}
+
 #[derive(Debug, Clone, serde::Serialize, utoipa::ToSchema)]
 pub enum BlogStatusresponse {
     Draft,
     Archived,
     Private,
     Published,
+}
+
+impl From<super::entity::BlogStatusEntity> for BlogStatusresponse {
+    fn from(value: super::entity::BlogStatusEntity) -> Self {
+        match value {
+            super::entity::BlogStatusEntity::Draft => BlogStatusresponse::Draft,
+            super::entity::BlogStatusEntity::Archived => BlogStatusresponse::Archived,
+            super::entity::BlogStatusEntity::Private => BlogStatusresponse::Private,
+            super::entity::BlogStatusEntity::Published => BlogStatusresponse::Published,
+        }
+    }
+}
+
+#[derive(Debug, Clone, serde::Serialize, utoipa::ToSchema)]
+pub struct BlogContentsResponse {
+    pub components: Vec<serde_json::Value>,
+    pub icons: Vec<String>,
+    pub images: Vec<String>,
+    pub files: Vec<String>,
+}
+
+impl From<super::entity::BlogContentsEntity> for BlogContentsResponse {
+    fn from(value: super::entity::BlogContentsEntity) -> Self {
+        BlogContentsResponse {
+            components: value
+                .components
+                .into_iter()
+                .map(|e| serde_json::to_value(&e).unwrap())
+                .collect::<Vec<serde_json::Value>>(),
+            icons: value.icons,
+            images: value.images,
+            files: value.files,
+        }
+    }
+}
+
+#[derive(Debug, Clone, serde::Serialize, utoipa::ToSchema)]
+pub struct BlogTagResponse {
+    pub id: String,
+    pub name_en: String,
+    pub name_ja: String,
+    pub icon_url: Option<String>,
+}
+
+impl From<super::entity::BlogTagEntity> for BlogTagResponse {
+    fn from(value: super::entity::BlogTagEntity) -> Self {
+        BlogTagResponse {
+            id: value.id,
+            name_en: value.name_en,
+            name_ja: value.name_ja,
+            icon_url: value.icon_url,
+        }
+    }
 }

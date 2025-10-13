@@ -50,3 +50,11 @@ pub enum BlogLanguageDto {
     En,
     Ja,
 }
+
+#[derive(Debug, Clone)]
+pub struct BlogTagDto {
+    pub id: String,
+    pub name_en: String,
+    pub name_ja: String,
+    pub icon_url: Option<String>,
+}

@@ -1,4 +1,4 @@
-#[derive(Debug, Clone, serde::Serialize)]
+#[derive(Debug, Clone)]
 pub struct BlogEntity {
     /// Notion page ID
     pub page_id: String,
@@ -56,7 +56,7 @@ impl From<super::dto::BlogDto> for BlogEntity {
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
+#[derive(Debug, Clone)]
 pub enum BlogStatusEntity {
     Draft,
     Archived,
@@ -86,6 +86,33 @@ impl From<super::dto::BlogLanguageDto> for BlogLanguageEntity {
         match value {
             super::dto::BlogLanguageDto::En => BlogLanguageEntity::En,
             super::dto::BlogLanguageDto::Ja => BlogLanguageEntity::Ja,
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct BlogContentsEntity {
+    pub components: Vec<jarkup_rs::Component>,
+    pub icons: Vec<String>,
+    pub images: Vec<String>,
+    pub files: Vec<String>,
+}
+
+#[derive(Debug, Clone)]
+pub struct BlogTagEntity {
+    pub id: String,
+    pub name_en: String,
+    pub name_ja: String,
+    pub icon_url: Option<String>,
+}
+
+impl From<super::dto::BlogTagDto> for BlogTagEntity {
+    fn from(value: super::dto::BlogTagDto) -> Self {
+        BlogTagEntity {
+            id: value.id,
+            name_en: value.name_en,
+            name_ja: value.name_ja,
+            icon_url: value.icon_url,
         }
     }
 }
