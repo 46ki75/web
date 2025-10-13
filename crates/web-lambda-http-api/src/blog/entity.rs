@@ -1,4 +1,4 @@
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Serialize)]
 pub struct BlogEntity {
     /// Notion page ID
     pub page_id: String,

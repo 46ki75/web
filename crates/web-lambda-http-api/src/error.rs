@@ -32,3 +32,47 @@ pub enum Error {
     #[error("{0}")]
     NotionRecord(String),
 }
+
+impl Error {
+    pub fn as_client_response(&self) -> (axum::http::StatusCode, String) {
+        use axum::http::StatusCode;
+        match self {
+            Error::EnvironmentVariableNotFound { variable_name } => (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                format!("Environment variable not found: `{}`", variable_name),
+            ),
+            Error::SsmParameterApiFailed {
+                parameter_name,
+                trace,
+            } => (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                format!(
+                    "Failed to fetch SSM parameter: `{}`. Trace: {}",
+                    parameter_name, trace
+                ),
+            ),
+            Error::SsmParameterNotFound { parameter_name } => (
+                StatusCode::NOT_FOUND,
+                format!("SSM parameter not found: `{}`", parameter_name),
+            ),
+            Error::Reqwest(e) => (
+                StatusCode::BAD_GATEWAY,
+                format!("Upstream HTTP error: {}", e),
+            ),
+            Error::NotionApi(e) => (StatusCode::BAD_GATEWAY, format!("Notion API error: {}", e)),
+            Error::NotionToJarkup(e) => (
+                StatusCode::BAD_REQUEST,
+                format!("Notion to Jarkup error: {}", e),
+            ),
+            Error::NotionPagePropertyNotFound(prop) => (
+                StatusCode::BAD_REQUEST,
+                format!("Property '{}' not found in Notion page", prop),
+            ),
+            Error::NotionInvalidSchema(prop) => (
+                StatusCode::BAD_REQUEST,
+                format!("Property '{}' has unexpected schema type", prop),
+            ),
+            Error::NotionRecord(msg) => (StatusCode::BAD_REQUEST, msg.clone()),
+        }
+    }
+}

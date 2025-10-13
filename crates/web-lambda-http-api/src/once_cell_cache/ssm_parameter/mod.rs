@@ -2,6 +2,7 @@ use tokio::sync::OnceCell;
 
 pub mod blog_master_data_source_id;
 pub mod blog_tag_data_source_id;
+pub mod notion_api_key;
 
 static SSM_CLIENT: OnceCell<aws_sdk_ssm::Client> = OnceCell::const_new();
 

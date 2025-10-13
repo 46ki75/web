@@ -1,15 +1,9 @@
-#[derive(Debug)]
-pub struct BlogUseCase<T>
-where
-    T: Send + Sync + super::repository::BlogRepository,
-{
-    pub blog_repository: T,
+#[derive(Clone)]
+pub struct BlogUseCase {
+    pub blog_repository: std::sync::Arc<dyn super::repository::BlogRepository + Send + Sync>,
 }
 
-impl<T> BlogUseCase<T>
-where
-    T: Send + Sync + super::repository::BlogRepository,
-{
+impl BlogUseCase {
     pub async fn list_blogs(
         &self,
         language: super::entity::BlogLanguageEntity,
