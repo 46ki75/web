@@ -1,4 +1,4 @@
-#[derive(Debug, Clone, serde::Serialize)]
+#[derive(Debug, Clone, serde::Serialize, utoipa::ToSchema)]
 pub struct BlogResponse {
     /// Notion page ID
     pub page_id: String,
@@ -37,17 +37,10 @@ pub struct BlogResponse {
     pub updated_at: String,
 }
 
-#[derive(Debug, Clone, serde::Serialize)]
+#[derive(Debug, Clone, serde::Serialize, utoipa::ToSchema)]
 pub enum BlogStatusresponse {
     Draft,
     Archived,
     Private,
     Published,
-}
-
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub enum BlogLanguageResponse {
-    En,
-    Ja,
 }

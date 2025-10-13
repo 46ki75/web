@@ -1,15 +1,24 @@
-#[derive(Debug, serde::Deserialize)]
+#[derive(Debug, serde::Deserialize, utoipa::ToSchema, utoipa::IntoParams)]
 pub struct Query {
     language: Language,
 }
 
-#[derive(Debug, serde::Deserialize)]
+#[derive(Debug, serde::Deserialize, utoipa::ToSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum Language {
     En,
     Ja,
 }
 
+#[utoipa::path(
+    get,
+    path = "/api/v2/blog",
+    params(Query),
+    responses(
+        (status = 200, description = "ブログ一覧", body = [super::response::BlogResponse]),
+        (status = 400, description = "Bad request", body = String)
+    )
+)]
 pub async fn list_blogs(
     axum::extract::State(blog_service): axum::extract::State<
         std::sync::Arc<super::use_case::BlogUseCase>,
