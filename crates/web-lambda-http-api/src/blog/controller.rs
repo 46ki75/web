@@ -1,11 +1,13 @@
 #[derive(Debug, serde::Deserialize, utoipa::ToSchema, utoipa::IntoParams)]
+#[into_params(parameter_in = Query)]
 pub struct ListBlogsQuery {
-    language: Language,
+    #[param(inline)]
+    language: BlogLanguageQueryParam,
 }
 
 #[derive(Debug, serde::Deserialize, utoipa::ToSchema)]
 #[serde(rename_all = "snake_case")]
-pub enum Language {
+pub enum BlogLanguageQueryParam {
     En,
     Ja,
 }
@@ -26,8 +28,8 @@ pub async fn list_blogs(
     query: axum::extract::Query<ListBlogsQuery>,
 ) -> Result<axum::response::Response<axum::body::Body>, (axum::http::StatusCode, String)> {
     let language = match query.language {
-        Language::En => super::entity::BlogLanguageEntity::En,
-        Language::Ja => super::entity::BlogLanguageEntity::Ja,
+        BlogLanguageQueryParam::En => super::entity::BlogLanguageEntity::En,
+        BlogLanguageQueryParam::Ja => super::entity::BlogLanguageEntity::Ja,
     };
 
     let blogs = match blog_service.list_blogs(language).await {
@@ -65,18 +67,23 @@ pub async fn list_blogs(
 }
 
 #[derive(Debug, serde::Deserialize, utoipa::ToSchema, utoipa::IntoParams)]
+#[into_params(parameter_in = Query)]
 pub struct GetBlogContentsQuery {
-    language: Language,
+    #[param(inline)]
+    language: BlogLanguageQueryParam,
 }
 
 #[utoipa::path(
     get,
     path = "/api/v2/blog/{slug}",
-    params(GetBlogContentsQuery),
+    params(
+        ("slug" = String, Path, description = "Blog slug"),
+        GetBlogContentsQuery
+    ),
     responses(
         (status = 200, description = "Blog Contents", body = Vec<super::response::BlogContentsResponse>),
         (status = 400, description = "Bad request", body = String)
-    )
+    ),
 )]
 pub async fn get_blog_contents(
     axum::extract::State(blog_service): axum::extract::State<
@@ -86,8 +93,8 @@ pub async fn get_blog_contents(
     query: axum::extract::Query<GetBlogContentsQuery>,
 ) -> Result<axum::response::Response<axum::body::Body>, (axum::http::StatusCode, String)> {
     let language = match query.language {
-        Language::En => super::entity::BlogLanguageEntity::En,
-        Language::Ja => super::entity::BlogLanguageEntity::Ja,
+        BlogLanguageQueryParam::En => super::entity::BlogLanguageEntity::En,
+        BlogLanguageQueryParam::Ja => super::entity::BlogLanguageEntity::Ja,
     };
 
     let contents = match blog_service.get_blog_contents(&slug, language).await {
