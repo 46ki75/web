@@ -42,7 +42,7 @@
           <div class="left-inner">
             <Icon icon="mdi:copyright" class="icon-bottom" height="12" />
             <ElmInlineText
-              :text="`Ikuma Yamashita 2022 - ${new Date().getFullYear()}`"
+              :text="`Ikuma Yamashita 2022 - ${currentYear}`"
               size="0.8rem"
             />
           </div>
@@ -92,6 +92,8 @@ const { data: build } = useAsyncData(
   },
   { server: true, lazy: false }
 );
+
+const currentYear = new Date().getFullYear();
 </script>
 
 <style lang="scss" scoped>
