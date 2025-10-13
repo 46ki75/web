@@ -28,8 +28,9 @@
       >
         <BlogTag
           :id="tag.id"
-          :label="tag.label"
-          :color="tag.color"
+          :key="tag.id"
+          :name="tag.name"
+          :icon-url="tag.iconUrl"
           @click="onTagClick ? onTagClick(tag.id) : undefined"
         />
       </NuxtLinkLocale>
@@ -60,8 +61,8 @@ interface BlogMetaProps {
   image?: string;
   tags?: Array<{
     id: string;
-    label: string;
-    color: string;
+    name: string;
+    iconUrl?: string | null;
   }>;
 
   language: "en" | "ja";

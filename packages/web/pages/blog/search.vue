@@ -32,8 +32,8 @@
             v-for="tag in blogStore[locale].tags"
             :id="tag.id"
             :key="tag.id"
-            :label="tag.name"
-            :color="'red'"
+            :name="tag.name"
+            :icon-url="tag.icon_url"
             @click="blogStore.tagSelect(tag.id)"
           />
         </div>
@@ -52,8 +52,8 @@
             )"
             :id="tag.id"
             :key="tag.id"
-            :label="tag.name"
-            :color="tag.color"
+            :name="tag.name"
+            :icon-url="tag.icon_url"
             @click="blogStore.tagDeselect(tag.id)"
           />
           <div

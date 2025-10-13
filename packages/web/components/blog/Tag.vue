@@ -1,7 +1,8 @@
 <template>
   <div class="tag">
-    <Icon icon="fa-solid:tags" :color="color" class="icon" />
-    <ElmInlineText :text="label" :color="color" size="0.85rem" />
+    <img v-if="iconUrl" class="icon-image" src="" alt="" />
+    <Icon v-else icon="fa-solid:tags" class="icon" />
+    <ElmInlineText :text="name" size="0.85rem" />
   </div>
 </template>
 
@@ -11,8 +12,8 @@ import { Icon } from "@iconify/vue";
 
 interface BlogtagProps {
   id: string;
-  label: string;
-  color: string;
+  name: string;
+  iconUrl?: string | null;
 }
 
 defineProps<BlogtagProps>();
@@ -35,6 +36,10 @@ defineProps<BlogtagProps>();
 }
 
 .icon {
+  height: 0.85rem;
+}
+
+.icon-image {
   height: 0.85rem;
 }
 </style>

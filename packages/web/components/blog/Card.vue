@@ -34,8 +34,9 @@
       >
         <BlogTag
           :id="tag.id"
-          :color="tag.color"
-          :label="tag.name"
+          :key="tag.id"
+          :name="tag.name"
+          :icon-url="tag.iconUrl"
           @click="handleTagClick(tag.id)"
         />
       </NuxtLinkLocale>
@@ -54,7 +55,7 @@ interface BlogSearchResultProps {
   tags: Array<{
     id: string;
     name: string;
-    color: string;
+    iconUrl?: string | null;
   }>;
   createdAt: string;
   updatedAt: string;
