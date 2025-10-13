@@ -37,6 +37,16 @@ pub trait BlogRepository: Send + Sync {
                 + Send,
         >,
     >;
+
+    fn list_tags(
+        &self,
+    ) -> std::pin::Pin<
+        Box<
+            dyn std::future::Future<
+                    Output = Result<Vec<super::dto::BlogTagDto>, crate::error::Error>,
+                > + Send,
+        >,
+    >;
 }
 
 #[derive(Debug)]
@@ -343,6 +353,81 @@ impl BlogRepository for BlogRepositoryImpl {
                 .await?;
 
             Ok(components)
+        })
+    }
+
+    fn list_tags(
+        &self,
+    ) -> std::pin::Pin<
+        Box<
+            dyn std::future::Future<
+                    Output = Result<Vec<super::dto::BlogTagDto>, crate::error::Error>,
+                > + Send,
+        >,
+    > {
+        Box::pin(async move {
+            let notionrs_client =
+                crate::once_cell_cache::notionrs_client::init_notionrs_client().await?;
+
+            let blog_tag_data_source_id = crate::once_cell_cache::ssm_parameter::blog_tag_data_source_id::init_blog_tag_data_source_id().await?;
+
+            let pages: Vec<PageResponse> = notionrs_client
+                .query_data_source()
+                .data_source_id(blog_tag_data_source_id)
+                .into_stream()
+                .try_collect()
+                .await?;
+
+            let mut tags: Vec<super::dto::BlogTagDto> = vec![];
+
+            for page in pages {
+                // name_en # ---------- #
+                let maybe_name_en = get_property(&page.properties, "name_en")?;
+
+                let name_en = if let PageProperty::RichText(name_en) = maybe_name_en {
+                    name_en
+                        .rich_text
+                        .iter()
+                        .map(|r| r.to_string())
+                        .collect::<String>()
+                } else {
+                    return Err(crate::error::Error::NotionInvalidSchema(
+                        "name_en".to_owned(),
+                    ));
+                };
+
+                // name_ja # ---------- #
+                let maybe_name_ja = get_property(&page.properties, "name_ja")?;
+
+                let name_ja = if let PageProperty::RichText(name_ja) = maybe_name_ja {
+                    name_ja
+                        .rich_text
+                        .iter()
+                        .map(|r| r.to_string())
+                        .collect::<String>()
+                } else {
+                    return Err(crate::error::Error::NotionInvalidSchema(
+                        "name_ja".to_owned(),
+                    ));
+                };
+
+                let icon_url = page.icon.and_then(|icon| match icon {
+                    Icon::File(file) => Some(file.get_url()),
+                    Icon::CustomEmoji(custom_emoji) => Some(custom_emoji.custom_emoji.url),
+                    _ => None,
+                });
+
+                let tag = super::dto::BlogTagDto {
+                    id: page.id,
+                    name_en,
+                    name_ja,
+                    icon_url,
+                };
+
+                tags.push(tag);
+            }
+
+            Ok(tags)
         })
     }
 }
