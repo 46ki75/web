@@ -31,8 +31,13 @@ pub async fn list_blogs(
     };
 
     let blogs = match blog_service.list_blogs(language).await {
-        Ok(b) => {
-            let json = match serde_json::to_string(&b) {
+        Ok(blog_entities) => {
+            let response = blog_entities
+                .into_iter()
+                .map(|b| super::response::BlogResponse::from(b))
+                .collect::<Vec<super::response::BlogResponse>>();
+
+            let json = match serde_json::to_string(&response) {
                 Ok(j) => j,
                 Err(e) => {
                     return Err((

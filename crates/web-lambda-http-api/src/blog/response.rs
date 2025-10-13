@@ -37,10 +37,40 @@ pub struct BlogResponse {
     pub updated_at: String,
 }
 
+impl From<super::entity::BlogEntity> for BlogResponse {
+    fn from(value: super::entity::BlogEntity) -> Self {
+        BlogResponse {
+            page_id: value.page_id,
+            notion_url: value.notion_url,
+            ogp_image_s3_signed_url: value.ogp_image_s3_signed_url,
+            slug: value.slug,
+            featured: value.featured,
+            tag_ids: value.tag_ids,
+            status: BlogStatusresponse::from(value.status),
+            title: value.title,
+            description: value.description,
+            keywords: value.keywords,
+            created_at: value.created_at,
+            updated_at: value.updated_at,
+        }
+    }
+}
+
 #[derive(Debug, Clone, serde::Serialize, utoipa::ToSchema)]
 pub enum BlogStatusresponse {
     Draft,
     Archived,
     Private,
     Published,
+}
+
+impl From<super::entity::BlogStatusEntity> for BlogStatusresponse {
+    fn from(value: super::entity::BlogStatusEntity) -> Self {
+        match value {
+            super::entity::BlogStatusEntity::Draft => BlogStatusresponse::Draft,
+            super::entity::BlogStatusEntity::Archived => BlogStatusresponse::Archived,
+            super::entity::BlogStatusEntity::Private => BlogStatusresponse::Private,
+            super::entity::BlogStatusEntity::Published => BlogStatusresponse::Published,
+        }
+    }
 }
