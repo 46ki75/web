@@ -66,6 +66,10 @@ import { ElmHeading, ElmMarkdown } from "@elmethis/core";
 
 const { locale, t } = useI18n();
 const blogStore = useBlogStore();
+
+await useAsyncData(async () => {
+  await blogStore.init();
+});
 </script>
 
 <style lang="scss" scoped>

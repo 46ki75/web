@@ -1,6 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 
-import { ENDPOINT, GTAG } from "./scripts/fetchConfig";
+import { GTAG } from "./scripts/fetchConfig";
 import { fetchPrerenderRoutes } from "./scripts/fetchRoutes";
 import { fetchCloudWatchRumConfig } from "./scripts/fetchCloudWatchRumConfig";
 
@@ -28,22 +28,14 @@ export default defineNuxtConfig({
     },
   },
   vite: {
-    server: {
-      proxy: {
-        "^/api/.*": {
-          target: `${ENDPOINT}/api`,
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api/, ""),
-        },
-      },
-    },
+    server: {},
     optimizeDeps: {
       exclude: ["web-image-converter"],
     },
   },
   nitro: {
     prerender: {
-      routes: await fetchPrerenderRoutes(ENDPOINT),
+      routes: await fetchPrerenderRoutes(),
       crawlLinks: false,
       concurrency: 20,
     },

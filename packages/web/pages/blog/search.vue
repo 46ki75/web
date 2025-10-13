@@ -80,7 +80,7 @@
 
       <TransitionGroup name="search" class="search-results" tag="div">
         <div
-          v-if="blogStore[locale].searchedBlogs.length === 0"
+          v-if="blogStore[locale].searchResults.length === 0"
           class="empty-container"
           :style="{ '--height': '16rem' }"
         >
@@ -92,7 +92,7 @@
           <span>{{ t("blog.search.noResultsFound") }}</span>
         </div>
         <div
-          v-for="blog in blogStore[locale].searchedBlogs"
+          v-for="blog in blogStore[locale].searchResults"
           :key="blog.slug"
           class="search-results-item"
         >
