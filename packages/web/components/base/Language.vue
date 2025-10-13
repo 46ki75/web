@@ -30,7 +30,8 @@ const showCover = ref(false);
 const sleep = (duration: number) =>
   new Promise((resolve) => window.setTimeout(resolve, duration));
 
-const { locale, localeProperties, setLocale } = useI18n();
+const { locale, localeProperties } = useI18n();
+const switchLocalePath = useSwitchLocalePath();
 
 const toggle = async () => {
   if (showCover.value) return;
@@ -39,9 +40,9 @@ const toggle = async () => {
   await sleep(150);
 
   if (locale.value === "en") {
-    setLocale("ja");
+    await navigateTo(switchLocalePath("ja"));
   } else {
-    setLocale("en");
+    await navigateTo(switchLocalePath("en"));
   }
 
   await sleep(150);
