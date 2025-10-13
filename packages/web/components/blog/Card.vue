@@ -46,7 +46,7 @@
 
 <script lang="ts" setup>
 import { ElmImage, ElmInlineText } from "@elmethis/core";
-import { Icon } from "@iconify/vue/dist/iconify.js";
+import { Icon } from "@iconify/vue";
 import { useI18n } from "vue-i18n";
 
 interface BlogSearchResultProps {
@@ -82,7 +82,7 @@ const handleTagClick = (tagId: string) => {
   container-type: inline-size;
   overflow: hidden;
   border-radius: 0.25rem;
-  box-shadow: 0 0 0.125rem rgba(black, 0.25);
+  box-shadow: 0 0 0.125rem rgb(black, 0.25);
 }
 
 .top {
@@ -90,11 +90,11 @@ const handleTagClick = (tagId: string) => {
   display: flex;
   cursor: pointer;
   transition: opacity 200ms, transform 200ms, background-color 200ms;
-  background-color: rgba(white, 0.3);
+  background-color: rgb(white, 0.3);
 
   [data-theme="dark"] & {
-    background-color: rgba(black, 0.3);
-    box-shadow: 0 0 0.125rem rgba(black, 0.5);
+    background-color: rgb(black, 0.3);
+    box-shadow: 0 0 0.125rem rgb(black, 0.5);
   }
 
   &:hover {
@@ -158,11 +158,11 @@ const handleTagClick = (tagId: string) => {
 }
 
 .bottom {
-  border-top: solid 1px rgba(gray, 0.3);
-  background-color: rgba(white, 0.5);
+  border-top: solid 1px rgb(gray, 0.3);
+  background-color: rgb(white, 0.5);
 
   [data-theme="dark"] & {
-    background-color: rgba(black, 0.5);
+    background-color: rgb(black, 0.5);
   }
 }
 </style>

@@ -23,7 +23,7 @@
 
 <script setup lang="ts">
 import { ElmInlineText } from "@elmethis/core";
-import { Icon } from "@iconify/vue/dist/iconify.js";
+import { Icon } from "@iconify/vue";
 
 const showCover = ref(false);
 
@@ -65,7 +65,7 @@ const toggle = async () => {
   cursor: pointer;
 
   &:hover {
-    background-color: rgba(gray, 0.1);
+    background-color: rgb(gray, 0.1);
   }
 }
 
