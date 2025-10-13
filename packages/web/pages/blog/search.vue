@@ -12,7 +12,6 @@
           href: locale === 'en' ? '/blog/search' : `/${locale}/blog/search`,
         },
       ]"
-      :language="locale"
     />
     <div>
       <ElmTextField
@@ -104,7 +103,6 @@
             :created-at="blog.created_at"
             :updated-at="blog.updated_at"
             :featured="blog.featured"
-            :locale="locale"
           />
         </div>
       </TransitionGroup>

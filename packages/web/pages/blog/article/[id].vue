@@ -18,7 +18,6 @@
         ]"
         :image="`/_notion/blog/image/${blogMeta.slug}/${locale}/ogp.webp`"
         :tags="blogStore.getTags(blogMeta.tag_ids)"
-        :language="locale"
         @tag-click="handleTagClick"
       />
 
@@ -88,24 +87,28 @@ const cacheKey = computed(
   () => `/${locale.value}/blog/article/${route.params.id}`
 );
 
-const { data: jarkup } = await useAsyncData(cacheKey, async () => {
-  if (typeof route.params.id !== "string") {
-    throw new Error("Invalid path params");
-  }
+const { data: jarkup } = await useAsyncData(
+  cacheKey,
+  async () => {
+    if (typeof route.params.id !== "string") {
+      throw new Error("Invalid path params");
+    }
 
-  const { data: blogContents } = await client.GET("/api/v2/blog/{slug}", {
-    params: {
-      path: { slug: route.params.id as string },
-      query: { language: locale.value },
-    },
-  });
+    const { data: blogContents } = await client.GET("/api/v2/blog/{slug}", {
+      params: {
+        path: { slug: route.params.id as string },
+        query: { language: locale.value },
+      },
+    });
 
-  return await convert(
-    blogContents?.components as Component[],
-    [],
-    route.params.id
-  );
-});
+    return await convert(
+      blogContents?.components as Component[],
+      [],
+      route.params.id
+    );
+  },
+  { server: true, lazy: false }
+);
 
 const blogMeta = computed(() => {
   const blogMeta = blogStore[locale.value].blogs?.find(

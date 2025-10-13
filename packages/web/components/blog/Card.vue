@@ -47,6 +47,7 @@
 <script lang="ts" setup>
 import { ElmImage, ElmInlineText } from "@elmethis/core";
 import { Icon } from "@iconify/vue/dist/iconify.js";
+import { useI18n } from "vue-i18n";
 
 interface BlogSearchResultProps {
   id: string;
@@ -60,10 +61,11 @@ interface BlogSearchResultProps {
   createdAt: string;
   updatedAt: string;
   featured: boolean;
-  locale: "en" | "ja";
 }
 
 defineProps<BlogSearchResultProps>();
+
+const { locale } = useI18n();
 
 const blogStore = useBlogStore();
 

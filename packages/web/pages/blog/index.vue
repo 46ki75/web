@@ -11,7 +11,6 @@
           href: `${locale === 'en' ? '/blog' : `/${locale}`}/blog`,
         },
       ]"
-      :language="locale"
     />
 
     <div>
@@ -32,7 +31,6 @@
           :created-at="blog.created_at"
           :updated-at="blog.updated_at"
           :featured="blog.featured"
-          :locale="locale"
           class="card"
           :style="{ '--delay': `${100 * index}ms` }"
         />
@@ -51,7 +49,6 @@
           :created-at="blog.created_at"
           :updated-at="blog.updated_at"
           :featured="blog.featured"
-          :locale="locale"
           class="card"
           :style="{ '--delay': `${100 * index}ms` }"
         />
@@ -66,7 +63,7 @@ import { ElmHeading, ElmMarkdown } from "@elmethis/core";
 const { locale, t } = useI18n();
 const blogStore = useBlogStore();
 
-await useAsyncData(async () => {
+onServerPrefetch(async () => {
   await blogStore.init();
 });
 </script>

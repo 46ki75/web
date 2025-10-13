@@ -14,7 +14,7 @@
     <ElmHeading :level="1" :text="title" disable-fragment-identifier />
 
     <div class="feed-date">
-      <BlogFeed :language="language" />
+      <BlogFeed :language="locale" />
       <BaseDate :created-at="createdAt" :updated-at="updatedAt" />
     </div>
 
@@ -49,6 +49,7 @@
 
 <script setup lang="ts">
 import { ElmBreadcrumb, ElmHeading, ElmImage } from "@elmethis/core";
+import { useI18n } from "vue-i18n";
 
 interface BlogMetaProps {
   title: string;
@@ -65,12 +66,12 @@ interface BlogMetaProps {
     iconUrl?: string | null;
   }>;
 
-  language: "en" | "ja";
-
   onTagClick?: (tagId: string) => void;
 }
 
 defineProps<BlogMetaProps>();
+
+const { locale } = useI18n();
 </script>
 
 <style lang="scss" scoped>

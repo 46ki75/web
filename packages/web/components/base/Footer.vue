@@ -81,10 +81,17 @@ import { ElmInlineText } from "@elmethis/core";
 import { Icon } from "@iconify/vue";
 import { version } from "../../package.json";
 
-const { data: build } = useAsyncData("BuildDate", async () => {
-  const dateBuildMeta = new Date().toISOString().slice(0, 10).replace(/-/g, "");
-  return `v${version}+${dateBuildMeta}`;
-});
+const { data: build } = useAsyncData(
+  "BuildDate",
+  async () => {
+    const dateBuildMeta = new Date()
+      .toISOString()
+      .slice(0, 10)
+      .replace(/-/g, "");
+    return `v${version}+${dateBuildMeta}`;
+  },
+  { server: true, lazy: false }
+);
 </script>
 
 <style lang="scss" scoped>
