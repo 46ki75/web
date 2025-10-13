@@ -52,6 +52,18 @@ impl BlogUseCase {
         })
     }
 
+    pub async fn list_tags(
+        &self,
+    ) -> Result<Vec<super::entity::BlogTagEntity>, crate::error::Error> {
+        let tag_dtos = self.blog_repository.list_tags().await?;
+        let tags = tag_dtos
+            .into_iter()
+            .map(|tag| super::entity::BlogTagEntity::from(tag))
+            .collect::<Vec<super::entity::BlogTagEntity>>();
+
+        Ok(tags)
+    }
+
     fn extract_files(
         components: &Vec<jarkup_rs::Component>,
         icons: &mut Vec<String>,
