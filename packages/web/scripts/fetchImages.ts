@@ -120,9 +120,9 @@ export const fetchImages = async (blogs: PrerenderBlog[]) => {
     }
 
     return Promise.all([
-      ...ogpImagePromises,
-      ...blockImagePromises,
-      ...iconImagePromises,
+      Promise.all(ogpImagePromises),
+      Promise.all(blockImagePromises),
+      Promise.all(iconImagePromises),
     ]);
   });
 

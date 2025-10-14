@@ -22,9 +22,7 @@
       />
 
       <div>
-        <ElmJsonComponentRenderer
-          :json-components="(locale === 'en' ? enJarkup : jaJarkup) ?? []"
-        />
+        <ElmJsonComponentRenderer :json-components="jarkup ?? []" />
       </div>
 
       <BlogEditOnNotion :url="blogMeta.notion_url" />
@@ -104,14 +102,9 @@ const fetchBlog = async (locale: "en" | "ja") => {
   );
 };
 
-const { data: enJarkup } = await useAsyncData(
-  `/en/blog/article/${route.params.id}`,
-  async () => fetchBlog("en")
-);
-
-const { data: jaJarkup } = await useAsyncData(
-  `/ja/blog/article/${route.params.id}`,
-  async () => fetchBlog("ja")
+const { data: jarkup } = await useAsyncData(
+  `/${locale.value}/blog/article/${route.params.id}`,
+  async () => fetchBlog(locale.value)
 );
 
 const blogMeta = computed(() => {
