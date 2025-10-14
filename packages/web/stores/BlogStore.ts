@@ -14,17 +14,48 @@ export const useBlogStore = defineStore("BlogSearchStore", {
   state: () => {
     const { locale } = useI18n();
 
+    const { data: enBlogs } = useAsyncData("/en/api/v2/blog", async () => {
+      const { data: enBlogs } = await client.GET("/api/v2/blog", {
+        params: { query: { language: "en" } },
+      });
+      if (enBlogs == null) throw new Error("Failed to fetch blogs.");
+      return enBlogs;
+    });
+
+    const { data: jaBlogs } = useAsyncData("/ja/api/v2/blog", async () => {
+      const { data: jaBlogs } = await client.GET("/api/v2/blog", {
+        params: { query: { language: "ja" } },
+      });
+      if (jaBlogs == null) throw new Error("Failed to fetch blogs.");
+      return jaBlogs;
+    });
+
+    const { data: tags } = useAsyncData("/api/v2/blog/tag", async () => {
+      const { data } = await client.GET("/api/v2/blog/tag");
+      if (data == null) throw new Error("Failed to fetch blog tags.");
+      return {
+        en: data.map((tag) => ({
+          id: tag.id,
+          name: tag.name_en,
+          iconUrl: tag.icon_url,
+        })),
+        ja: data.map((tag) => ({
+          id: tag.id,
+          name: tag.name_ja,
+          iconUrl: tag.icon_url,
+        })),
+      };
+    });
+
     const enFuse = shallowRef<null | Fuse<BlogMeta>>(null);
     const jaFuse = shallowRef<null | Fuse<BlogMeta>>(null);
 
     return {
-      initialized: false,
-
       locale,
 
       en: {
-        tags: [] as Tag[],
-        blogs: [] as BlogMeta[],
+        tags: tags.value?.en,
+        blogs: enBlogs,
         fuse: enFuse,
 
         searchKeyword: "",
@@ -33,8 +64,8 @@ export const useBlogStore = defineStore("BlogSearchStore", {
       },
 
       ja: {
-        tags: [] as Tag[],
-        blogs: [] as BlogMeta[],
+        tags: tags.value?.ja,
+        blogs: jaBlogs,
         fuse: jaFuse,
 
         searchKeyword: ref(""),
@@ -44,39 +75,6 @@ export const useBlogStore = defineStore("BlogSearchStore", {
     };
   },
   actions: {
-    async init() {
-      if (!this.initialized) {
-        // en blogs
-        const { data: enBlogs } = await client.GET("/api/v2/blog", {
-          params: { query: { language: "en" } },
-        });
-        if (enBlogs == null) throw new Error("Failed to fetch blogs.");
-        this.en.blogs = enBlogs;
-
-        // ja blogs
-        const { data: jaBlogs } = await client.GET("/api/v2/blog", {
-          params: { query: { language: "ja" } },
-        });
-        if (jaBlogs == null) throw new Error("Failed to fetch blogs.");
-        this.ja.blogs = jaBlogs;
-
-        // tags
-        const { data } = await client.GET("/api/v2/blog/tag");
-        if (data == null) throw new Error("Failed to fetch blog tags.");
-        this.en.tags = data.map((tag) => ({
-          id: tag.id,
-          name: tag.name_en,
-          iconUrl: tag.icon_url,
-        }));
-        this.ja.tags = data.map((tag) => ({
-          id: tag.id,
-          name: tag.name_ja,
-          iconUrl: tag.icon_url,
-        }));
-
-        this.initialized = true;
-      }
-    },
     getTags(tagIds: string[]): Array<Tag> {
       const tags = this[this.locale].tags
         ?.filter((tag) => tagIds.some((id) => id === tag.id))

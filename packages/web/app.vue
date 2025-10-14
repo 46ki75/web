@@ -36,10 +36,6 @@ useSeoMeta({
 useHead({
   htmlAttrs: { lang: locale },
 });
-
-const blogStore = useBlogStore();
-
-await callOnce("BlogStore/init", async () => await blogStore.init());
 </script>
 
 <style lang="scss" scoped>
