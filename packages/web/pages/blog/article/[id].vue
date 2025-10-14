@@ -22,7 +22,9 @@
       />
 
       <div>
-        <ElmJsonComponentRenderer :json-components="jarkup ?? []" />
+        <ElmJsonComponentRenderer
+          :json-components="(locale === 'en' ? enJarkup : jaJarkup) ?? []"
+        />
       </div>
 
       <BlogEditOnNotion :url="blogMeta.notion_url" />
@@ -50,7 +52,7 @@ const handleTagClick = (tagId: string) => {
   router.push(`${locale.value === "en" ? "" : locale.value}/blog/search`);
 };
 
-const convert = async (
+const convert = (
   blocks: Component[],
   results: Array<{ from: string; to: string }>,
   id: string
@@ -69,7 +71,7 @@ const convert = async (
     }
 
     if (block.slots && "default" in block.slots) {
-      await convert(block.slots.default, results, id);
+      convert(block.slots.default, results, id);
     }
   }
 
@@ -83,31 +85,33 @@ const convert = async (
   return deserialized as Component[];
 };
 
-const cacheKey = computed(
-  () => `/${locale.value}/blog/article/${route.params.id}`
+const fetchBlog = async (locale: "en" | "ja") => {
+  if (typeof route.params.id !== "string") {
+    throw new Error("Invalid path params");
+  }
+
+  const { data: enBlogContents } = await client.GET("/api/v2/blog/{slug}", {
+    params: {
+      path: { slug: route.params.id as string },
+      query: { language: locale },
+    },
+  });
+
+  return convert(
+    enBlogContents?.components as Component[],
+    [],
+    route.params.id
+  );
+};
+
+const { data: enJarkup } = await useAsyncData(
+  `/en/blog/article/${route.params.id}`,
+  async () => fetchBlog("en")
 );
 
-const { data: jarkup } = await useAsyncData(
-  cacheKey,
-  async () => {
-    if (typeof route.params.id !== "string") {
-      throw new Error("Invalid path params");
-    }
-
-    const { data: blogContents } = await client.GET("/api/v2/blog/{slug}", {
-      params: {
-        path: { slug: route.params.id as string },
-        query: { language: locale.value },
-      },
-    });
-
-    return await convert(
-      blogContents?.components as Component[],
-      [],
-      route.params.id
-    );
-  },
-  { server: true, lazy: false }
+const { data: jaJarkup } = await useAsyncData(
+  `/ja/blog/article/${route.params.id}`,
+  async () => fetchBlog("ja")
 );
 
 const blogMeta = computed(() => {
