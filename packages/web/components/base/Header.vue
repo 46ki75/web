@@ -6,48 +6,50 @@
       </NuxtLinkLocale>
     </div>
 
-    <div v-if="isMobile" class="header-center flex-center">
-      <NuxtLinkLocale to="/about" class="header-center-link flex-center">
+    <ClientOnly>
+      <div v-if="isMobile" class="header-center flex-center">
+        <NuxtLinkLocale to="/about" class="header-center-link flex-center">
+          <Icon
+            class="header-center-link-icon"
+            icon="ix:user-profile-filled"
+            width="16px"
+          />
+          <ElmInlineText text="About" />
+        </NuxtLinkLocale>
+
         <Icon
           class="header-center-link-icon"
-          icon="ix:user-profile-filled"
+          icon="ci:line-l"
           width="16px"
+          color="gray"
         />
-        <ElmInlineText text="About" />
-      </NuxtLinkLocale>
 
-      <Icon
-        class="header-center-link-icon"
-        icon="ci:line-l"
-        width="16px"
-        color="gray"
-      />
+        <NuxtLinkLocale to="/blog" class="header-center-link flex-center">
+          <Icon
+            class="header-center-link-icon"
+            icon="material-symbols:article"
+            width="16px"
+          />
+          <ElmInlineText text="Blog" />
+        </NuxtLinkLocale>
 
-      <NuxtLinkLocale to="/blog" class="header-center-link flex-center">
         <Icon
           class="header-center-link-icon"
-          icon="material-symbols:article"
+          icon="ci:line-l"
           width="16px"
+          color="gray"
         />
-        <ElmInlineText text="Blog" />
-      </NuxtLinkLocale>
 
-      <Icon
-        class="header-center-link-icon"
-        icon="ci:line-l"
-        width="16px"
-        color="gray"
-      />
-
-      <!-- <NuxtLinkLocale to="/talks" class="header-center-link flex-center">
-        <Icon
-          class="header-center-link-icon"
-          icon="mdi:account-voice"
-          width="16px"
-        />
-        <ElmInlineText text="Talks" />
-      </NuxtLinkLocale> -->
-    </div>
+        <!-- <NuxtLinkLocale to="/talks" class="header-center-link flex-center">
+          <Icon
+            class="header-center-link-icon"
+            icon="mdi:account-voice"
+            width="16px"
+          />
+          <ElmInlineText text="Talks" />
+        </NuxtLinkLocale> -->
+      </div>
+    </ClientOnly>
 
     <div class="header-right flex-center">
       <BaseLanguage />
@@ -80,11 +82,11 @@ const isMobile = useMediaQuery("(min-width: 1024px)");
   justify-content: space-between;
   align-items: center;
   backdrop-filter: blur(1px);
-  box-shadow: 0 0 0.125rem rgba(black, 0.2);
-  background-color: rgba(white, 0.3);
+  box-shadow: 0 0 0.125rem rgb(black, 0.2);
+  background-color: rgb(white, 0.3);
 
   [data-theme="dark"] & {
-    background-color: rgba(black, 0.3);
+    background-color: rgb(black, 0.3);
   }
 }
 
@@ -119,10 +121,10 @@ const isMobile = useMediaQuery("(min-width: 1024px)");
 }
 
 .header-center-link-icon {
-  color: rgba(black, 0.8);
+  color: rgb(black, 0.8);
 
   [data-theme="dark"] & {
-    color: rgba(white, 0.8);
+    color: rgb(white, 0.8);
   }
 }
 
