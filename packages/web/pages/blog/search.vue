@@ -152,7 +152,7 @@ onMounted(async () => {
 
 .tag-pool {
   position: relative;
-  height: 2rem;
+  min-height: 2rem;
   margin-block: 2rem;
   display: flex;
   flex-wrap: wrap;
