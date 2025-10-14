@@ -54,7 +54,7 @@ export const useBlogStore = defineStore("BlogSearchStore", {
       locale,
 
       en: {
-        tags: tags.value?.en,
+        tags: computed(() => tags.value?.en),
         blogs: enBlogs,
         fuse: enFuse,
 
@@ -64,7 +64,7 @@ export const useBlogStore = defineStore("BlogSearchStore", {
       },
 
       ja: {
-        tags: tags.value?.ja,
+        tags: computed(() => tags.value?.ja),
         blogs: jaBlogs,
         fuse: jaFuse,
 
