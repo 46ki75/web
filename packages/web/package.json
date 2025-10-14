@@ -18,7 +18,7 @@
     "generate:openapi": "openapi-typescript http://dev-www.ikuma.cloud/api/v2/openapi.json -o openapi/schema.ts"
   },
   "dependencies": {
-    "@elmethis/core": "0.7.0",
+    "@elmethis/core": "0.8.0",
     "@iconify/vue": "^5.0.0",
     "@nuxtjs/i18n": "10.1.0",
     "@pinia/nuxt": "0.11.2",
