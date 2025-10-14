@@ -103,7 +103,8 @@ export const useBlogStore = defineStore("BlogSearchStore", {
     searchBlog() {
       if (
         this[this.locale].blogs == null ||
-        this[this.locale].searchKeyword == null
+        (this[this.locale].searchKeyword == null &&
+          this[this.locale].searchSelectedTagIds.length === 0)
       ) {
         return;
       }
