@@ -49,11 +49,11 @@ const { t } = useI18n();
   align-items: center;
   border-radius: 0.25rem;
   padding: 0.5rem;
-  box-shadow: 0 0 0.125rem rgba(black, 0.25);
-  background-color: rgba(white, 0.3);
+  box-shadow: 0 0 0.125rem rgb(black, 0.25);
+  background-color: rgb(white, 0.3);
 
   [data-theme="dark"] & {
-    background-color: rgba(black, 0.3);
+    background-color: rgb(black, 0.3);
   }
 }
 
@@ -117,10 +117,10 @@ const { t } = useI18n();
 .icon {
   transition: opacity 200ms;
   cursor: pointer;
-  color: rgba(black, 0.7);
+  color: rgb(black, 0.7);
 
   [data-theme="dark"] & {
-    color: rgba(white, 0.7);
+    color: rgb(white, 0.7);
   }
 
   &:hover {

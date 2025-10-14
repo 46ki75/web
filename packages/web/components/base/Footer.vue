@@ -107,12 +107,12 @@ const currentYear = new Date().getFullYear();
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  box-shadow: 0 0 0.125rem rgba(black, 0.3);
+  box-shadow: 0 0 0.125rem rgb(black, 0.3);
   transition: background-color 200ms;
-  background-color: rgba(white, 0.4);
+  background-color: rgb(white, 0.4);
 
   [data-theme="dark"] & {
-    background-color: rgba(black, 0.2);
+    background-color: rgb(black, 0.2);
   }
 }
 
@@ -161,10 +161,10 @@ const currentYear = new Date().getFullYear();
   margin-block: 1.5rem;
   width: 100%;
   border-width: 1px;
-  border-color: rgba(black, 0.2);
+  border-color: rgb(black, 0.2);
 
   [data-theme="dark"] & {
-    border-color: rgba(white, 0.3);
+    border-color: rgb(white, 0.3);
   }
 }
 
@@ -215,10 +215,10 @@ const currentYear = new Date().getFullYear();
 .icon {
   transition: opacity 200ms;
   cursor: pointer;
-  color: rgba(black, 0.7);
+  color: rgb(black, 0.7);
 
   [data-theme="dark"] & {
-    color: rgba(white, 0.7);
+    color: rgb(white, 0.7);
   }
 
   &:hover {

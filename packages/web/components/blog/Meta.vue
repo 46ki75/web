@@ -86,7 +86,7 @@ const { locale } = useI18n();
   margin-block: 1rem;
   border-radius: 0.25rem;
   overflow: hidden;
-  box-shadow: 0 0 0.125rem rgba(black, 0.3);
+  box-shadow: 0 0 0.125rem rgb(black, 0.3);
 }
 
 .feed-date {

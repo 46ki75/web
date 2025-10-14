@@ -31,7 +31,7 @@ defineProps<BlogtagProps>();
   cursor: pointer;
 
   &:hover {
-    background-color: rgba(grey, 0.1);
+    background-color: rgb(grey, 0.1);
   }
 }
 
