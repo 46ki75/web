@@ -53,23 +53,23 @@ const handleTagClick = (tagId: string) => {
 const convert = (
   blocks: Component[],
   results: Array<{ from: string; to: string }>,
-  id: string
+  slug: string
 ) => {
   for (const block of blocks) {
     if (block.type === "Image" && block.props?.src && block.id) {
       results.push({
         from: block.props.src,
-        to: `/_notion/blog/image/${id}/${locale.value}/${block.id}.webp`,
+        to: `/_notion/blog/image/${slug}/${locale.value}/${block.id}.webp`,
       });
     } else if (block.type === "Icon" && block.props?.src && block.id) {
       results.push({
         from: block.props.src,
-        to: `/_notion/blog/image/${id}/${locale.value}/${block.id}.webp`,
+        to: `/_notion/blog/image/${slug}/${locale.value}/${block.id}.webp`,
       });
     }
 
     if (block.slots && "default" in block.slots) {
-      convert(block.slots.default, results, id);
+      convert(block.slots.default, results, slug);
     }
   }
 
@@ -84,13 +84,13 @@ const convert = (
 };
 
 const fetchBlog = async (locale: "en" | "ja") => {
-  if (typeof route.params.id !== "string") {
+  if (typeof route.params.slug !== "string") {
     throw new Error("Invalid path params");
   }
 
   const { data: enBlogContents } = await client.GET("/api/v2/blog/{slug}", {
     params: {
-      path: { slug: route.params.id as string },
+      path: { slug: route.params.slug as string },
       query: { language: locale },
     },
   });
@@ -98,18 +98,18 @@ const fetchBlog = async (locale: "en" | "ja") => {
   return convert(
     enBlogContents?.components as Component[],
     [],
-    route.params.id
+    route.params.slug
   );
 };
 
 const { data: jarkup } = await useAsyncData(
-  `/${locale.value}/blog/article/${route.params.id}`,
+  `/${locale.value}/blog/article/${route.params.slug}`,
   async () => fetchBlog(locale.value)
 );
 
 const blogMeta = computed(() => {
   const blogMeta = blogStore[locale.value].blogs?.find(
-    (blog) => blog.slug === route.params.id
+    (blog) => blog.slug === route.params.slug
   );
   return blogMeta;
 });
