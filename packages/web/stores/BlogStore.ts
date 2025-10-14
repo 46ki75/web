@@ -139,4 +139,15 @@ export const useBlogStore = defineStore("BlogSearchStore", {
       }
     },
   },
+  getters: {
+    sideBlogs(): BlogMeta[] | undefined {
+      return this[this.locale].blogs
+        ?.sort(
+          (pre, next) =>
+            new Date(next.created_at).getTime() -
+            new Date(pre.created_at).getTime()
+        )
+        .slice(0, 10);
+    },
+  },
 });
