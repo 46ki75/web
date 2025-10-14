@@ -6,8 +6,9 @@
           <slot />
         </div>
         <BlogAuthor />
-        <BlogFeed :language="locale" />
+        <BlogFeed :language="$i18n.locale" />
       </div>
+
       <div class="icon-container">
         <Icon icon="mdi:star-four-points-small" width="32px" />
         <Icon icon="ion:fish" width="32px" />
@@ -23,7 +24,7 @@
 import { ElmPagetop } from "@elmethis/core";
 import { Icon } from "@iconify/vue";
 
-const { locale } = useI18n();
+// const { locale } = useI18n();
 </script>
 
 <style lang="scss" scoped>
@@ -69,11 +70,11 @@ const { locale } = useI18n();
   overflow: hidden;
   border-radius: 0.25rem;
   box-sizing: border-box;
-  box-shadow: 0 0 0.125rem rgba(black, 0.25);
-  background-color: rgba(white, 0.3);
+  box-shadow: 0 0 0.125rem rgb(black, 0.25);
+  background-color: rgb(white, 0.3);
 
   [data-theme="dark"] & {
-    background-color: rgba(black, 0.1);
+    background-color: rgb(black, 0.1);
   }
 
   // desktop

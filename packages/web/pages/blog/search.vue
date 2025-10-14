@@ -1,5 +1,5 @@
 <template>
-  <div :key="`/${locale}/blog/search`">
+  <div>
     <BlogMeta
       :title="t('blog.search.title')"
       created-at="2022-10-01"
@@ -12,7 +12,6 @@
           href: locale === 'en' ? '/blog/search' : `/${locale}/blog/search`,
         },
       ]"
-      :language="locale"
     />
     <div>
       <ElmTextField
@@ -32,8 +31,8 @@
             v-for="tag in blogStore[locale].tags"
             :id="tag.id"
             :key="tag.id"
-            :label="tag.name"
-            :color="tag.color"
+            :name="tag.name"
+            :icon-url="tag.iconUrl"
             @click="blogStore.tagSelect(tag.id)"
           />
         </div>
@@ -47,15 +46,17 @@
         />
         <TransitionGroup name="tag" class="tag-pool" tag="dev">
           <BlogTag
-            v-for="tag in blogStore[locale].selectedTags"
+            v-for="tag in blogStore.getTags(
+              blogStore[locale].searchSelectedTagIds
+            )"
             :id="tag.id"
             :key="tag.id"
-            :label="tag.name"
-            :color="tag.color"
+            :name="tag.name"
+            :icon-url="tag.iconUrl"
             @click="blogStore.tagDeselect(tag.id)"
           />
           <div
-            v-if="blogStore[locale].selectedTags.length === 0"
+            v-if="blogStore[locale].searchSelectedTagIds.length === 0"
             class="empty-container"
             :style="{ position: 'absolute', top: '-2rem', left: 0 }"
           >
@@ -78,7 +79,7 @@
 
       <TransitionGroup name="search" class="search-results" tag="div">
         <div
-          v-if="blogStore[locale].searchedBlogs.length === 0"
+          v-if="blogStore[locale].searchResults.length === 0"
           class="empty-container"
           :style="{ '--height': '16rem' }"
         >
@@ -90,19 +91,18 @@
           <span>{{ t("blog.search.noResultsFound") }}</span>
         </div>
         <div
-          v-for="blog in blogStore[locale].searchedBlogs"
-          :key="blog.id"
+          v-for="blog in blogStore[locale].searchResults"
+          :key="blog.slug"
           class="search-results-item"
         >
           <BlogCard
-            :id="blog.id"
+            :id="blog.slug"
             :title="blog.title"
             :description="blog.description"
-            :tags="blog.tags"
-            :created-at="blog.createdAt"
-            :updated-at="blog.updatedAt"
+            :tags="blogStore.getTags(blog.tag_ids)"
+            :created-at="blog.created_at"
+            :updated-at="blog.updated_at"
             :featured="blog.featured"
-            :locale="locale"
           />
         </div>
       </TransitionGroup>
@@ -124,14 +124,14 @@ const debouncedKeyword = shallowRef<string>("");
 watchDebounced(
   debouncedKeyword,
   () => {
-    blogStore[locale.value].keyword = debouncedKeyword.value;
+    blogStore[locale.value].searchKeyword = debouncedKeyword.value;
     blogStore.searchBlog();
   },
   { debounce: 300, maxWait: 3000 }
 );
 
 watch(
-  [() => blogStore[locale.value].selectedTags],
+  [() => blogStore[locale.value].searchSelectedTagIds],
   async () => {
     await nextTick();
     blogStore.searchBlog();

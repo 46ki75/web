@@ -28,7 +28,7 @@
 
 <script setup lang="ts">
 import { ElmImage, ElmInlineText } from "@elmethis/core";
-import { Icon } from "@iconify/vue/dist/iconify.js";
+import { Icon } from "@iconify/vue";
 
 export interface CredlyBadgeProps {
   name: string;

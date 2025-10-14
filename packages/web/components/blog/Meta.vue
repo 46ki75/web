@@ -14,7 +14,7 @@
     <ElmHeading :level="1" :text="title" disable-fragment-identifier />
 
     <div class="feed-date">
-      <BlogFeed :language="language" />
+      <BlogFeed :language="locale" />
       <BaseDate :created-at="createdAt" :updated-at="updatedAt" />
     </div>
 
@@ -28,8 +28,9 @@
       >
         <BlogTag
           :id="tag.id"
-          :label="tag.label"
-          :color="tag.color"
+          :key="tag.id"
+          :name="tag.name"
+          :icon-url="tag.iconUrl"
           @click="onTagClick ? onTagClick(tag.id) : undefined"
         />
       </NuxtLinkLocale>
@@ -48,6 +49,7 @@
 
 <script setup lang="ts">
 import { ElmBreadcrumb, ElmHeading, ElmImage } from "@elmethis/core";
+import { useI18n } from "vue-i18n";
 
 interface BlogMetaProps {
   title: string;
@@ -60,16 +62,16 @@ interface BlogMetaProps {
   image?: string;
   tags?: Array<{
     id: string;
-    label: string;
-    color: string;
+    name: string;
+    iconUrl?: string | null;
   }>;
-
-  language: "en" | "ja";
 
   onTagClick?: (tagId: string) => void;
 }
 
 defineProps<BlogMetaProps>();
+
+const { locale } = useI18n();
 </script>
 
 <style lang="scss" scoped>
@@ -84,7 +86,7 @@ defineProps<BlogMetaProps>();
   margin-block: 1rem;
   border-radius: 0.25rem;
   overflow: hidden;
-  box-shadow: 0 0 0.125rem rgba(black, 0.3);
+  box-shadow: 0 0 0.125rem rgb(black, 0.3);
 }
 
 .feed-date {

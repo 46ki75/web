@@ -3,10 +3,12 @@
 
   <div class="bg">
     <slot />
-    <ElmParallax
-      image-url1="/image/bg-crimson.webp"
-      image-url2="/image/bg-amber.webp"
-    />
+    <ClientOnly>
+      <ElmParallax
+        image-url1="/image/bg-crimson.webp"
+        image-url2="/image/bg-amber.webp"
+      />
+    </ClientOnly>
   </div>
 
   <BaseFooter />

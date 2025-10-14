@@ -16,17 +16,13 @@ const texts: string[] = [
 
 const { t, locale, defaultLocale } = useI18n();
 
-const router = useRouter();
-
-onMounted(() => {
-  router.push(
-    locale.value === defaultLocale ? `/about` : `/${locale.value}/about`
-  );
-});
+await navigateTo(
+  locale.value === defaultLocale ? `/about` : `/${locale.value}/about`
+);
 </script>
 
 <template>
-  <div key="/">
+  <div>
     <div :class="$style.container">
       <div style="padding: 1rem; text-align: center">
         <ElmTypingAnimation :texts="texts" :interval="3000" font-size="2rem" />

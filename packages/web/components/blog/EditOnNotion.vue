@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
 import { ElmInlineText } from "@elmethis/core";
-import { Icon } from "@iconify/vue/dist/iconify.js";
+import { Icon } from "@iconify/vue";
 
 export interface BlogEditOnNotionProps {
   url: string;

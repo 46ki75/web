@@ -61,7 +61,7 @@ resource "aws_lambda_function" "http_api" {
   timeout       = 30
 
   tracing_config {
-    mode = "Active"
+    mode = "PassThrough"
   }
 
   logging_config {

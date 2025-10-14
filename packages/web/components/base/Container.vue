@@ -21,11 +21,11 @@
   border-radius: 0.25rem;
   max-width: 800px;
   width: 100%;
-  box-shadow: 0 0 0.125rem rgba(black, 0.25);
-  background-color: rgba(white, 0.3);
+  box-shadow: 0 0 0.125rem rgb(black, 0.25);
+  background-color: rgb(white, 0.3);
 
   [data-theme="dark"] & {
-    background-color: rgba(black, 0.1);
+    background-color: rgb(black, 0.1);
   }
 }
 </style>

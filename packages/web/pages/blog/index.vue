@@ -1,7 +1,6 @@
 <template>
-  <div key="/blog">
+  <div>
     <BlogMeta
-      key="/blog"
       title="Blog"
       created-at="2022-10-01"
       updated-at="2025-03-26"
@@ -12,7 +11,6 @@
           href: `${locale === 'en' ? '/blog' : `/${locale}`}/blog`,
         },
       ]"
-      :language="locale"
     />
 
     <div>
@@ -25,15 +23,14 @@
           v-for="(blog, index) in blogStore[locale].blogs?.filter(
             (blog) => blog.featured
           )"
-          :id="blog.id"
-          :key="blog.id"
+          :id="blog.slug"
+          :key="blog.slug"
           :title="blog.title"
           :description="blog.description"
-          :tags="blog.tags"
-          :created-at="blog.createdAt"
-          :updated-at="blog.updatedAt"
+          :tags="blogStore.getTags(blog.tag_ids)"
+          :created-at="blog.created_at"
+          :updated-at="blog.updated_at"
           :featured="blog.featured"
-          :locale="locale"
           class="card"
           :style="{ '--delay': `${100 * index}ms` }"
         />
@@ -44,15 +41,14 @@
       <div class="blog-container">
         <BlogCard
           v-for="(blog, index) in blogStore[locale].blogs?.slice(0, 4)"
-          :id="blog.id"
-          :key="blog.id"
+          :id="blog.slug"
+          :key="blog.slug"
           :title="blog.title"
           :description="blog.description"
-          :tags="blog.tags"
-          :created-at="blog.createdAt"
-          :updated-at="blog.updatedAt"
+          :tags="blogStore.getTags(blog.tag_ids)"
+          :created-at="blog.created_at"
+          :updated-at="blog.updated_at"
           :featured="blog.featured"
-          :locale="locale"
           class="card"
           :style="{ '--delay': `${100 * index}ms` }"
         />

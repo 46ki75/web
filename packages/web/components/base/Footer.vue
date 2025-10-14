@@ -21,10 +21,10 @@
           <div>Blogs</div>
         </NuxtLinkLocale>
 
-        <NuxtLinkLocale class="sitelink" to="/talks">
+        <!-- <NuxtLinkLocale class="sitelink" to="/talks">
           <Icon icon="mdi:link-variant" size="16" color="#6987b8" />
           <div>Talks</div>
-        </NuxtLinkLocale>
+        </NuxtLinkLocale> -->
 
         <NuxtLinkLocale class="sitelink" to="/image-converter">
           <Icon icon="mdi:link-variant" size="16" color="#6987b8" />
@@ -42,7 +42,7 @@
           <div class="left-inner">
             <Icon icon="mdi:copyright" class="icon-bottom" height="12" />
             <ElmInlineText
-              :text="`Ikuma Yamashita 2022 - ${new Date().getFullYear()}`"
+              :text="`Ikuma Yamashita 2022 - ${currentYear}`"
               size="0.8rem"
             />
           </div>
@@ -81,10 +81,19 @@ import { ElmInlineText } from "@elmethis/core";
 import { Icon } from "@iconify/vue";
 import { version } from "../../package.json";
 
-const { data: build } = useAsyncData("BuildDate", async () => {
-  const dateBuildMeta = new Date().toISOString().slice(0, 10).replace(/-/g, "");
-  return `v${version}+${dateBuildMeta}`;
-});
+const { data: build } = useAsyncData(
+  "BuildDate",
+  async () => {
+    const dateBuildMeta = new Date()
+      .toISOString()
+      .slice(0, 10)
+      .replace(/-/g, "");
+    return `v${version}+${dateBuildMeta}`;
+  },
+  { server: true, lazy: false }
+);
+
+const currentYear = new Date().getFullYear();
 </script>
 
 <style lang="scss" scoped>
@@ -98,12 +107,12 @@ const { data: build } = useAsyncData("BuildDate", async () => {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  box-shadow: 0 0 0.125rem rgba(black, 0.3);
+  box-shadow: 0 0 0.125rem rgb(black, 0.3);
   transition: background-color 200ms;
-  background-color: rgba(white, 0.4);
+  background-color: rgb(white, 0.4);
 
   [data-theme="dark"] & {
-    background-color: rgba(black, 0.2);
+    background-color: rgb(black, 0.2);
   }
 }
 
@@ -152,10 +161,10 @@ const { data: build } = useAsyncData("BuildDate", async () => {
   margin-block: 1.5rem;
   width: 100%;
   border-width: 1px;
-  border-color: rgba(black, 0.2);
+  border-color: rgb(black, 0.2);
 
   [data-theme="dark"] & {
-    border-color: rgba(white, 0.3);
+    border-color: rgb(white, 0.3);
   }
 }
 
@@ -206,10 +215,10 @@ const { data: build } = useAsyncData("BuildDate", async () => {
 .icon {
   transition: opacity 200ms;
   cursor: pointer;
-  color: rgba(black, 0.7);
+  color: rgb(black, 0.7);
 
   [data-theme="dark"] & {
-    color: rgba(white, 0.7);
+    color: rgb(white, 0.7);
   }
 
   &:hover {

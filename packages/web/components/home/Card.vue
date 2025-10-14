@@ -18,7 +18,7 @@
 <script setup lang="ts">
 import { NuxtLinkLocale } from "#components";
 import { ElmInlineText } from "@elmethis/core";
-import { Icon } from "@iconify/vue/dist/iconify.js";
+import { Icon } from "@iconify/vue";
 
 export interface CardProps {
   to: string;
@@ -55,11 +55,11 @@ withDefaults(defineProps<CardProps>(), {
     rgba(#cdb57b, 0.06)
   );
   backdrop-filter: blur(4px);
-  box-shadow: 0 0 0.125rem rgba(black, 0.3);
+  box-shadow: 0 0 0.125rem rgb(black, 0.3);
   transition: opacity 200ms, transform 200ms;
 
   [data-theme="dark"] & {
-    box-shadow: 0 0 0.125rem rgba(black, 0.5);
+    box-shadow: 0 0 0.125rem rgb(black, 0.5);
   }
 
   &:hover {
@@ -79,8 +79,8 @@ withDefaults(defineProps<CardProps>(), {
     width: calc(100% - 1rem);
     top: 0.75rem;
     left: 0.5rem;
-    border-left: 1px dashed rgba(gray, 0.4);
-    border-right: 1px dashed rgba(gray, 0.4);
+    border-left: 1px dashed rgb(gray, 0.4);
+    border-right: 1px dashed rgb(gray, 0.4);
   }
 
   header {

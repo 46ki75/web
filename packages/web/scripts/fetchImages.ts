@@ -2,6 +2,7 @@ import type { Component } from "jarkup-ts";
 import { rm, mkdir, writeFile } from "node:fs/promises";
 import sharp from "sharp";
 import type { PrerenderBlog } from "./fetchBlogList";
+import { client } from "../openapi/client";
 
 export const fetchImages = async (blogs: PrerenderBlog[]) => {
   console.info("Execute fetchImages()...");
@@ -48,61 +49,81 @@ export const fetchImages = async (blogs: PrerenderBlog[]) => {
   };
 
   const promises = blogs.map(async (blog) => {
-    await mkdir(`./public/_notion/blog/image/${blog.id}/`, { recursive: true });
+    const languages: ("en" | "ja")[] = ["en", "ja"];
+    const ogpImagePromises: Promise<void>[] = [];
+    const blockImagePromises: Promise<void>[] = [];
+    const iconImagePromises: Promise<void>[] = [];
 
-    // Fetch OGP Images
-    const ogpS3Url = blog.ogpImageS3Url;
-    const response = await fetch(ogpS3Url);
-    const image = await response.arrayBuffer();
-    const buffer = Buffer.from(image);
-    const webpBuffer = await sharp(buffer)
-      .resize({ width: 1920, withoutEnlargement: true })
-      .webp()
-      .toBuffer();
-    const path = `./public/_notion/blog/image/${blog.id}/ogp.webp`;
-    const ogpImagePromise: Promise<void> = writeFile(path, webpBuffer);
-    console.info(`💾 [🖼️  OGP] Saved image: ${path}`);
+    for (const language of languages) {
+      await mkdir(`./public/_notion/blog/image/${blog.slug}/${language}/`, {
+        recursive: true,
+      });
 
-    // Fetch Block Images
-    const blockImageUrls = filterBlockImageUrlsRecursive(blog.blockList, []);
-    const blockImagePromise = Promise.all(
-      blockImageUrls.map(async (blockImageUrl) => {
-        const response = await fetch(blockImageUrl.s3Url);
-        const image = await response.arrayBuffer();
-        const buffer = Buffer.from(image);
-        const webpBuffer = await sharp(buffer)
-          .resize({ width: 1920, withoutEnlargement: true })
-          .webp()
-          .toBuffer();
-        const path = `./public/_notion/blog/image/${blog.id}/${blockImageUrl.id}.webp`;
-        const blockImagePromise: Promise<void> = writeFile(path, webpBuffer);
-        console.info(`💾 [📷 Block] Saved image: ${path}`);
-        return blockImagePromise;
-      })
-    );
+      // Fetch OGP Images
+      const ogpS3Url = blog.ogp_image_s3_signed_url;
+      if (ogpS3Url == null) throw new Error("OGP image is not set");
+      const response = await fetch(ogpS3Url);
+      const image = await response.arrayBuffer();
+      const buffer = Buffer.from(image);
+      const webpBuffer = await sharp(buffer)
+        .resize({ width: 1920, withoutEnlargement: true })
+        .webp()
+        .toBuffer();
+      const path = `./public/_notion/blog/image/${blog.slug}/${language}/ogp.webp`;
+      ogpImagePromises.push(writeFile(path, webpBuffer));
+      console.info(`💾 [🖼️  OGP] Saved image: ${path}`);
 
-    // Fetch InlineIcon Images (RichText > Mention > CustomEmoji)
-    const iconImageUrls = filterInlineIconImageUrlsRecursive(
-      blog.blockList,
-      []
-    );
-    const iconImagePromise = Promise.all(
-      iconImageUrls.map(async (iconImageUrl) => {
-        const response = await fetch(iconImageUrl.s3Url);
-        const image = await response.arrayBuffer();
-        const buffer = Buffer.from(image);
-        const webpBuffer = await sharp(buffer)
-          .resize({ width: 256, withoutEnlargement: true })
-          .webp()
-          .toBuffer();
-        const path = `./public/_notion/blog/image/${blog.id}/${iconImageUrl.id}.webp`;
-        const iconImagePromise: Promise<void> = writeFile(path, webpBuffer);
-        console.info(`💾 [🤔 Icon] Saved image: ${path}`);
-        return iconImagePromise;
-      })
-    );
+      // blockList
+      const blockList = await client.GET("/api/v2/blog/{slug}", {
+        params: { path: { slug: blog.slug }, query: { language } },
+      });
 
-    return Promise.all([ogpImagePromise, blockImagePromise, iconImagePromise]);
+      // Fetch Block Images
+      const blockImageUrls = filterBlockImageUrlsRecursive(
+        (blockList.data?.components as Component[]) || [],
+        []
+      );
+      blockImagePromises.push(
+        ...blockImageUrls.map(async (blockImageUrl) => {
+          const response = await fetch(blockImageUrl.s3Url);
+          const image = await response.arrayBuffer();
+          const buffer = Buffer.from(image);
+          const webpBuffer = await sharp(buffer)
+            .resize({ width: 1920, withoutEnlargement: true })
+            .webp()
+            .toBuffer();
+          const path = `./public/_notion/blog/image/${blog.slug}/${language}/${blockImageUrl.id}.webp`;
+          await writeFile(path, webpBuffer);
+          console.info(`💾 [📷 Block] Saved image: ${path}`);
+        })
+      );
+
+      // Fetch InlineIcon Images (RichText > Mention > CustomEmoji)
+      const iconImageUrls = filterInlineIconImageUrlsRecursive(
+        (blockList.data?.components as Component[]) || [],
+        []
+      );
+      iconImagePromises.push(
+        ...iconImageUrls.map(async (iconImageUrl) => {
+          const response = await fetch(iconImageUrl.s3Url);
+          const image = await response.arrayBuffer();
+          const buffer = Buffer.from(image);
+          const webpBuffer = await sharp(buffer)
+            .resize({ width: 256, withoutEnlargement: true })
+            .webp()
+            .toBuffer();
+          const path = `./public/_notion/blog/image/${blog.slug}/${language}/${iconImageUrl.id}.webp`;
+          await writeFile(path, webpBuffer);
+          console.info(`💾 [🤔 Icon] Saved image: ${path}`);
+        })
+      );
+    }
+
+    return Promise.all([
+      Promise.all(ogpImagePromises),
+      Promise.all(blockImagePromises),
+      Promise.all(iconImagePromises),
+    ]);
   });
 
   await Promise.all(promises);

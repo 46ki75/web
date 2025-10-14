@@ -1,30 +1,14 @@
-import { ENDPOINT } from "./fetchConfig";
+import { client } from "../openapi/client";
 
 export const fetchCloudWatchRumConfig = async () => {
-  const response = await fetch(`${ENDPOINT}/api/graphql`, {
-    method: "POST",
-    body: JSON.stringify({
-      query: /* GraphQL */ `
-        query WebConfig {
-          webConfig {
-            rumIdentityPoolId
-            rumAppMonitorId
-          }
-        }
-      `,
-    }),
-  });
+  const { data } = await client.GET("/api/v2/web-config");
 
-  const {
-    data,
-  }: {
-    data: { webConfig: { rumIdentityPoolId: string; rumAppMonitorId: string } };
-  } = await response.json();
-
-  const { rumIdentityPoolId, rumAppMonitorId } = data.webConfig;
+  if (data == null) {
+    throw new Error("Faild to fetch web config.");
+  }
 
   return {
-    RUM_IDPOOL_ID: rumIdentityPoolId,
-    RUM_APP_MONITOR_ID: rumAppMonitorId,
+    RUM_IDPOOL_ID: data.rum_identity_pool_id,
+    RUM_APP_MONITOR_ID: data.rum_app_monitor_id,
   };
 };

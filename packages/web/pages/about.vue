@@ -165,35 +165,39 @@ Credly のバッジは[規約](${CREDLY_LEGAL_ENDPOINT})および同ドメイン
 mergeLocaleMessage("en", { about: { greet: aboutEn, credly: credlyEn } });
 mergeLocaleMessage("ja", { about: { greet: aboutJa, credly: credlyJa } });
 
-const { data } = useAsyncData("CredlyBadges", async () => {
-  const res = await $fetch<{
-    data: Array<{
-      id: string;
-      issued_at_date: string;
-      expires_at_date: string | null;
-      badge_template: {
-        name: string;
-        description: string;
-        image_url: string;
-        url: string;
-      };
-    }>;
-  }>(CREDLY_BADGES_ENDPOINT);
+const { data } = useAsyncData(
+  "CredlyBadges",
+  async () => {
+    const res = await $fetch<{
+      data: Array<{
+        id: string;
+        issued_at_date: string;
+        expires_at_date: string | null;
+        badge_template: {
+          name: string;
+          description: string;
+          image_url: string;
+          url: string;
+        };
+      }>;
+    }>(CREDLY_BADGES_ENDPOINT);
 
-  return res.data.map(
-    ({
-      id,
-      issued_at_date,
-      expires_at_date,
-      badge_template: { name, description, image_url, url },
-    }) => ({
-      id,
-      issued_at_date,
-      expires_at_date,
-      badge_template: { name, description, image_url, url },
-    })
-  );
-});
+    return res.data.map(
+      ({
+        id,
+        issued_at_date,
+        expires_at_date,
+        badge_template: { name, description, image_url, url },
+      }) => ({
+        id,
+        issued_at_date,
+        expires_at_date,
+        badge_template: { name, description, image_url, url },
+      })
+    );
+  },
+  { server: true, lazy: false }
+);
 </script>
 
 <style module lang="scss">

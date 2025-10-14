@@ -81,7 +81,7 @@ pub struct GetBlogContentsQuery {
         GetBlogContentsQuery
     ),
     responses(
-        (status = 200, description = "Blog Contents", body = Vec<super::response::BlogContentsResponse>),
+        (status = 200, description = "Blog Contents", body = super::response::BlogContentsResponse),
         (status = 400, description = "Bad request", body = String)
     ),
 )]

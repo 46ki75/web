@@ -5,4 +5,4 @@ build:
 	cargo lambda build --release --arm64
 
 deploy STAGE_NAME:	build
-	cargo lambda deploy --binary-name http-api "{{STAGE_NAME}}-46ki75-web-lambda-function-http_api"
+	cargo lambda deploy --binary-name web-lambda-http-api "{{STAGE_NAME}}-46ki75-web-lambda-function-http_api"

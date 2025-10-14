@@ -1,5 +1,5 @@
 <template>
-  <div class="side-container">
+  <div :key="locale" class="side-container">
     <div class="sticky">
       <NuxtLinkLocale
         to="/blog/search"
@@ -13,23 +13,25 @@
       </NuxtLinkLocale>
     </div>
 
-    <div
-      v-for="(blog, index) in getSideBlogs(blogStore[locale].blogs)"
-      :key="blog.id"
-      class="card"
-      :style="{ '--delay': `${100 * index}ms` }"
-    >
-      <BlogCard
-        :id="blog.id"
-        :title="blog.title"
-        :description="blog.description"
-        :tags="blog.tags"
-        :created-at="blog.createdAt"
-        :updated-at="blog.updatedAt"
-        :featured="blog.featured"
-        :locale="locale"
-      />
-    </div>
+    <ClientOnly>
+      <div
+        v-for="(blog, index) in blogStore.sideBlogs"
+        :key="`${blog.slug}:${locale}`"
+        class="card"
+        :style="{ '--delay': `${100 * index}ms` }"
+      >
+        <BlogCard
+          :id="blog.slug"
+          :title="blog.title"
+          :description="blog.description"
+          :tags="blogStore.getTags(blog.tag_ids)"
+          :created-at="blog.created_at"
+          :updated-at="blog.updated_at"
+          :featured="blog.featured"
+          :locale="locale"
+        />
+      </div>
+    </ClientOnly>
   </div>
 </template>
 
@@ -40,18 +42,6 @@ import { Icon } from "@iconify/vue";
 const { locale, t } = useI18n();
 
 const blogStore = useBlogStore();
-
-const getSideBlogs = (
-  blogs?: typeof blogStore.en.blogs
-): typeof blogStore.en.blogs => {
-  if (!blogs) return [];
-  return blogs
-    .sort(
-      (pre, next) =>
-        new Date(next.createdAt).getTime() - new Date(pre.createdAt).getTime()
-    )
-    .slice(0, 10);
-};
 </script>
 
 <style lang="scss" scoped>

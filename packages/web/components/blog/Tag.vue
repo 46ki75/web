@@ -1,7 +1,8 @@
 <template>
   <div class="tag">
-    <Icon icon="fa-solid:tags" :color="color" class="icon" />
-    <ElmInlineText :text="label" :color="color" size="0.85rem" />
+    <img v-if="iconUrl" class="icon-image" :src="iconUrl" alt="" />
+    <Icon v-else icon="fa-solid:tags" class="icon" />
+    <ElmInlineText :text="name" size="0.85rem" />
   </div>
 </template>
 
@@ -11,8 +12,8 @@ import { Icon } from "@iconify/vue";
 
 interface BlogtagProps {
   id: string;
-  label: string;
-  color: string;
+  name: string;
+  iconUrl?: string | null;
 }
 
 defineProps<BlogtagProps>();
@@ -22,7 +23,7 @@ defineProps<BlogtagProps>();
 .tag {
   padding: 0.5rem;
   display: inline-flex;
-  gap: 0.25rem;
+  gap: 0.5rem;
   justify-content: flex-start;
   align-items: center;
   border-radius: 0.125rem;
@@ -30,11 +31,19 @@ defineProps<BlogtagProps>();
   cursor: pointer;
 
   &:hover {
-    background-color: rgba(grey, 0.1);
+    background-color: rgb(grey, 0.1);
   }
 }
 
 .icon {
-  height: 0.85rem;
+  box-sizing: border-box;
+  padding: 0.125rem;
+  height: 1.25rem;
+  width: 1.25rem;
+}
+
+.icon-image {
+  height: 1.25rem;
+  width: 1.25rem;
 }
 </style>
