@@ -8,6 +8,7 @@
         <BlogAuthor />
         <BlogFeed :language="$i18n.locale" />
       </div>
+
       <div class="icon-container">
         <Icon icon="mdi:star-four-points-small" width="32px" />
         <Icon icon="ion:fish" width="32px" />

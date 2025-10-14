@@ -22,7 +22,7 @@ await navigateTo(
 </script>
 
 <template>
-  <div key="/">
+  <div>
     <div :class="$style.container">
       <div style="padding: 1rem; text-align: center">
         <ElmTypingAnimation :texts="texts" :interval="3000" font-size="2rem" />

@@ -1,7 +1,9 @@
 <template>
-  <NuxtLayout name="blog">
-    <NuxtPage :transition="{ mode: 'out-in' }" />
-  </NuxtLayout>
+  <div>
+    <NuxtLayout name="blog">
+      <NuxtPage :transition="{ mode: 'out-in' }" />
+    </NuxtLayout>
+  </div>
 </template>
 
 <style lang="scss" scoped>
