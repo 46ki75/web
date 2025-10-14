@@ -101,8 +101,9 @@ export const useBlogStore = defineStore("BlogSearchStore", {
     },
 
     searchBlog() {
+      const blogs = this[this.locale].blogs;
       if (
-        this[this.locale].blogs == null ||
+        blogs == null ||
         (this[this.locale].searchKeyword == null &&
           this[this.locale].searchSelectedTagIds.length === 0)
       ) {
@@ -118,15 +119,24 @@ export const useBlogStore = defineStore("BlogSearchStore", {
           ],
         });
       }
-      const searchResults =
-        this[this.locale].fuse?.search(this[this.locale].searchKeyword) ?? [];
-      this[this.locale].searchResults = searchResults
-        ?.map(({ item }) => item)
-        .filter((blog) =>
+
+      if (this[this.locale].searchKeyword.trim() !== "") {
+        const searchResults =
+          this[this.locale].fuse?.search(this[this.locale].searchKeyword) ?? [];
+        this[this.locale].searchResults = searchResults
+          ?.map(({ item }) => item)
+          .filter((blog) =>
+            this[this.locale].searchSelectedTagIds.every((tagId) =>
+              blog.tag_ids.some((blogTagId) => blogTagId === tagId)
+            )
+          );
+      } else {
+        this[this.locale].searchResults = blogs.filter((blog) =>
           this[this.locale].searchSelectedTagIds.every((tagId) =>
             blog.tag_ids.some((blogTagId) => blogTagId === tagId)
           )
         );
+      }
     },
   },
 });
