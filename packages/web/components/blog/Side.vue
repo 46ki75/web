@@ -1,6 +1,6 @@
 <template>
-  <div :key="locale" class="side-container">
-    <div class="sticky">
+  <div class="side-container">
+    <div key="search" class="sticky">
       <NuxtLinkLocale
         to="/blog/search"
         :prefetch="false"
@@ -15,8 +15,8 @@
 
     <ClientOnly>
       <div
-        v-for="(blog, index) in blogStore.sideBlogs"
-        :key="`${blog.slug}:${locale}`"
+        v-for="(blog, index) in blogStore.sideBlogs(locale)"
+        :key="blog.slug"
         class="card"
         :style="{ '--delay': `${100 * index}ms` }"
       >
