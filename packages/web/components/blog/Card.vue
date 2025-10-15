@@ -1,6 +1,6 @@
 <template>
   <div :key="id" class="container">
-    <NuxtLinkLocale class="top" :to="`/blog/article/${id}`" :prefetch="false">
+    <NuxtLinkLocale class="top" :to="`/blog/article/${id}`" :locale="locale">
       <div class="image">
         <ElmImage :src="`/_notion/blog/image/${id}/${locale}/ogp.webp`" />
       </div>
@@ -31,6 +31,7 @@
         :to="`/blog/search`"
         :style="{ all: 'unset' }"
         :prefetch="false"
+        :locale="locale"
       >
         <BlogTag
           :id="tag.id"
@@ -47,7 +48,6 @@
 <script lang="ts" setup>
 import { ElmImage, ElmInlineText } from "@elmethis/core";
 import { Icon } from "@iconify/vue";
-import { useI18n } from "vue-i18n";
 
 interface BlogSearchResultProps {
   id: string;
@@ -61,11 +61,10 @@ interface BlogSearchResultProps {
   createdAt: string;
   updatedAt: string;
   featured: boolean;
+  locale: "en" | "ja";
 }
 
 defineProps<BlogSearchResultProps>();
-
-const { locale } = useI18n();
 
 const blogStore = useBlogStore();
 

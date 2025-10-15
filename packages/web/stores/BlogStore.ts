@@ -75,17 +75,6 @@ export const useBlogStore = defineStore("BlogSearchStore", {
     };
   },
   actions: {
-    getTags(tagIds: string[]): Array<Tag> {
-      const tags = this[this.locale].tags
-        ?.filter((tag) => tagIds.some((id) => id === tag.id))
-        .map((tag) => ({
-          id: tag.id,
-          name: tag.name,
-          iconUrl: tag.iconUrl,
-        }));
-      return tags ?? [];
-    },
-
     tagSelect(tagId: string) {
       this[this.locale].searchSelectedTagIds.push(tagId);
     },
@@ -140,14 +129,28 @@ export const useBlogStore = defineStore("BlogSearchStore", {
     },
   },
   getters: {
-    sideBlogs(): BlogMeta[] | undefined {
-      return this[this.locale].blogs
-        ?.sort(
-          (pre, next) =>
-            new Date(next.created_at).getTime() -
-            new Date(pre.created_at).getTime()
-        )
-        .slice(0, 10);
+    sideBlogs(): (locale: "en" | "ja") => BlogMeta[] | undefined {
+      return (locale: "en" | "ja") =>
+        this[locale].blogs
+          ?.sort(
+            (pre, next) =>
+              new Date(next.created_at).getTime() -
+              new Date(pre.created_at).getTime()
+          )
+          .slice(0, 10);
+    },
+
+    tags(): (tagIds: string[]) => Tag[] {
+      return (tagIds: string[]) => {
+        const tags = this[this.locale].tags
+          ?.filter((tag) => tagIds.some((id) => id === tag.id))
+          .map((tag) => ({
+            id: tag.id,
+            name: tag.name,
+            iconUrl: tag.iconUrl,
+          }));
+        return tags ?? [];
+      };
     },
   },
 });

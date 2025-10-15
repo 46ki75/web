@@ -26,6 +26,9 @@ pub enum Error {
     #[error("property '{0}' not found in Notion page")]
     NotionPagePropertyNotFound(String),
 
+    #[error("property '{property}' is not set in page `{page_id}`")]
+    NotionPagePropertyNotSet { page_id: String, property: String },
+
     #[error("property '{0}' has unexpected schema type")]
     NotionInvalidSchema(String),
 
@@ -67,6 +70,10 @@ impl Error {
             Error::NotionPagePropertyNotFound(prop) => (
                 StatusCode::BAD_REQUEST,
                 format!("Property '{}' not found in Notion page", prop),
+            ),
+            Error::NotionPagePropertyNotSet { page_id, property } => (
+                StatusCode::BAD_REQUEST,
+                format!("Property '{}' is not set in page '{}'", property, page_id),
             ),
             Error::NotionInvalidSchema(prop) => (
                 StatusCode::BAD_REQUEST,

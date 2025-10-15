@@ -46,7 +46,7 @@
         />
         <TransitionGroup name="tag" class="tag-pool" tag="dev">
           <BlogTag
-            v-for="tag in blogStore.getTags(
+            v-for="tag in blogStore.tags(
               blogStore[locale].searchSelectedTagIds
             )"
             :id="tag.id"
@@ -99,10 +99,11 @@
             :id="blog.slug"
             :title="blog.title"
             :description="blog.description"
-            :tags="blogStore.getTags(blog.tag_ids)"
+            :tags="blogStore.tags(blog.tag_ids)"
             :created-at="blog.created_at"
             :updated-at="blog.updated_at"
             :featured="blog.featured"
+            :locale="locale"
           />
         </div>
       </TransitionGroup>

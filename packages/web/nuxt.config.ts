@@ -1,10 +1,20 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 
-import { GTAG } from "./scripts/fetchConfig";
+import { GTAG } from "./scripts/config";
 import { fetchPrerenderRoutes } from "./scripts/fetchRoutes";
-import { fetchCloudWatchRumConfig } from "./scripts/fetchCloudWatchRumConfig";
+import { fetchBlogList } from "./scripts/fetchBlogList";
+import { fetchImages } from "./scripts/fetchImages";
+import { generateBlogFeed } from "./scripts/generateBlogFeeds";
+import { client } from "./openapi/client";
 
-const { RUM_IDPOOL_ID, RUM_APP_MONITOR_ID } = await fetchCloudWatchRumConfig();
+const { RUM_IDPOOL_ID, RUM_APP_MONITOR_ID } = await (async () => {
+  const { data } = await client.GET("/api/v2/web-config");
+  if (data == null) throw new Error("Faild to fetch web config.");
+  return {
+    RUM_IDPOOL_ID: data.rum_identity_pool_id,
+    RUM_APP_MONITOR_ID: data.rum_app_monitor_id,
+  };
+})();
 
 export default defineNuxtConfig({
   compatibilityDate: "2024-11-01",
@@ -44,6 +54,15 @@ export default defineNuxtConfig({
   components: {
     global: true,
     dirs: ["./components"],
+  },
+
+  hooks: {
+    async ready() {
+      const blogs = await fetchBlogList();
+      fetchImages(blogs);
+      generateBlogFeed();
+    },
+    // "prerender:routes"({ routes }) {},
   },
 
   app: {
