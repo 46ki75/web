@@ -5,6 +5,7 @@ import { fetchPrerenderRoutes } from "./scripts/fetchRoutes";
 import { fetchCloudWatchRumConfig } from "./scripts/fetchCloudWatchRumConfig";
 import { fetchBlogList } from "./scripts/fetchBlogList";
 import { fetchImages } from "./scripts/fetchImages";
+import { generateBlogFeed } from "./scripts/generateBlogFeeds";
 
 const { RUM_IDPOOL_ID, RUM_APP_MONITOR_ID } = await fetchCloudWatchRumConfig();
 
@@ -49,9 +50,10 @@ export default defineNuxtConfig({
   },
 
   hooks: {
-    async "build:before"() {
+    async ready() {
       const blogs = await fetchBlogList();
       fetchImages(blogs);
+      generateBlogFeed();
     },
     // "prerender:routes"({ routes }) {},
   },

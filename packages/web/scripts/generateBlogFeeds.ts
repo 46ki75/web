@@ -1,6 +1,6 @@
 import { Feed } from "feed";
 import { ENDPOINT } from "../scripts/fetchConfig";
-import { fetchBlogListEn, fetchBlogListJa } from "~/scripts/fetchBlogList";
+import { fetchBlogListEn, fetchBlogListJa } from "./fetchBlogList";
 import { rm, mkdir, writeFile } from "node:fs/promises";
 
 const generateBlogFeedBase = async (language: "en" | "ja"): Promise<Feed> => {
