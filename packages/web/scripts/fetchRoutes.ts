@@ -11,6 +11,7 @@ const STATIC_ROUTES = [
   "/blog/article",
   "/blog/search",
   "/redirect",
+  "/talks",
 ]
   .map((route) => [route, `/ja${route}`])
   .flat();

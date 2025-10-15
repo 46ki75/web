@@ -68,6 +68,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v2/talks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["list_talks"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v2/web-config": {
         parameters: {
             query?: never;
@@ -130,6 +146,17 @@ export interface components {
         };
         HealthStatus: {
             status: string;
+        };
+        /** @enum {string} */
+        TalkLanguageResponse: "en" | "ja";
+        TalkResponse: {
+            date: string;
+            id: string;
+            image: string;
+            language: components["schemas"]["TalkLanguageResponse"];
+            location: string;
+            title: string;
+            url: string;
         };
         WebConfigResponse: {
             rum_app_monitor_id: string;
@@ -245,6 +272,35 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["BlogContentsResponse"];
+                };
+            };
+            /** @description Bad request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/plain": string;
+                };
+            };
+        };
+    };
+    list_talks: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Talks */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TalkResponse"][];
                 };
             };
             /** @description Bad request */
