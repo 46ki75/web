@@ -5,24 +5,26 @@
     target="_blank"
     rel="noreferrer noopener"
   >
-    <div :class="$style.image">
+    <div>
       <ElmImage :src="ogp" />
     </div>
 
-    <div>
-      <ElmInlineText :text="title" bold />
-    </div>
+    <div :class="$style.bottom">
+      <div :class="$style['text-container']">
+        <ElmInlineText :text="title" bold />
+      </div>
 
-    <div :class="$style['text-container']">
-      <Icon :class="$style.icon" icon="mdi:calendar-blank" color="#a4863e" />
-      <ElmInlineText :class="$style.text" :text="date" />
-      <Icon :class="$style.icon" icon="mdi:translate" color="#a4863e" />
-      <ElmInlineText :class="$style.text" :text="language" />
-    </div>
+      <div :class="$style['text-container']">
+        <Icon :class="$style.icon" icon="mdi:calendar-blank" color="#a4863e" />
+        <ElmInlineText :class="$style.text" :text="date" />
+        <Icon :class="$style.icon" icon="mdi:translate" color="#a4863e" />
+        <ElmInlineText :class="$style.text" :text="language" />
+      </div>
 
-    <div :class="$style['text-container']">
-      <Icon :class="$style.icon" icon="mdi:location" color="#a4863e" />
-      <ElmInlineText :class="$style.text" :text="location" />
+      <div :class="$style['text-container']">
+        <Icon :class="$style.icon" icon="mdi:location" color="#a4863e" />
+        <ElmInlineText :class="$style.text" :text="location" />
+      </div>
     </div>
   </a>
 </template>
@@ -64,25 +66,35 @@ withDefaults(defineProps<TalkCardProps>(), {});
 .container {
   all: unset;
   box-sizing: border-box;
-  padding: 0.25rem;
   width: clamp(320px, 100%, 480px);
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0;
   border-radius: 0.25rem;
   overflow: hidden;
   cursor: pointer;
   transition: opacity 150ms, background-color 150ms, transform 150ms;
+  box-shadow: 0 0 0.125rem rgb(#3e434b, 0.3);
 
   &:hover {
     opacity: 0.9;
     background-color: rgba(#6987b8, 0.1);
     transform: translateX(-1px) translateY(-1px);
   }
+
+  [data-theme="dark"] & {
+    box-shadow: 0 0 0.125rem rgb(black, 0.5);
+  }
+}
+
+.bottom {
+  padding: 0.25rem;
+  padding-bottom: 0.75rem;
+  background-color: rgb(white, 0.5);
 }
 
 .text-container {
-  padding: 0.25rem;
+  padding: 0.5rem;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -92,11 +104,6 @@ withDefaults(defineProps<TalkCardProps>(), {});
 
 .text {
   opacity: 0.7;
-}
-
-.image {
-  border-radius: 0.25rem;
-  overflow: hidden;
 }
 
 .icon {
