@@ -21,10 +21,10 @@
           <div>Blogs</div>
         </NuxtLinkLocale>
 
-        <!-- <NuxtLinkLocale class="sitelink" to="/talks">
+        <NuxtLinkLocale class="sitelink" to="/talks">
           <Icon icon="mdi:link-variant" size="16" color="#6987b8" />
           <div>Talks</div>
-        </NuxtLinkLocale> -->
+        </NuxtLinkLocale>
 
         <NuxtLinkLocale class="sitelink" to="/image-converter">
           <Icon icon="mdi:link-variant" size="16" color="#6987b8" />
