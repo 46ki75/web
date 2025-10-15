@@ -36,9 +36,9 @@
         v-for="talk in talks"
         :key="talk.id"
         :date="talk.date"
-        :language="talk.language"
-        :location="talk.language"
-        :ogp="talk.image"
+        :language="getLocaleName(talk.language)"
+        :location="talk.location"
+        :ogp="`/_notion/talks/image/${talk.id}.webp`"
         :url="talk.url"
         :title="talk.title"
       />
@@ -55,12 +55,22 @@ import {
   ElmBreadcrumb,
 } from "@elmethis/core";
 
-const { t } = useI18n();
+const { t, locales } = useI18n();
 
 const { data: talks } = useAsyncData("/api/v2/talks", async () => {
   const { data } = await client.GET("/api/v2/talks");
   return data;
 });
+
+const getLocaleName = (
+  code: Exclude<
+    Required<(typeof talks)["value"]>,
+    undefined
+  >[number]["language"]
+) => {
+  const foundLocale = locales.value.find((l) => l.code === code);
+  return foundLocale?.name || code;
+};
 </script>
 
 <style module lang="scss">

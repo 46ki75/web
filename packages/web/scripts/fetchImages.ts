@@ -9,6 +9,7 @@ export const fetchImages = async (blogs: PrerenderBlog[]) => {
 
   await rm("./public/_notion/blog/image/", { recursive: true, force: true });
   await mkdir("./public/_notion/blog/image/", { recursive: true });
+  await mkdir("./public/_notion/talks/image/", { recursive: true });
 
   const filterBlockImageUrlsRecursive = (
     components: Component[],
@@ -46,6 +47,28 @@ export const fetchImages = async (blogs: PrerenderBlog[]) => {
     }
 
     return results;
+  };
+
+  const fetchTalkImages = async () => {
+    const { data: talks } = await client.GET("/api/v2/talks");
+
+    const promises: Promise<void>[] = [];
+
+    const fetchAndSave = async ({ id, url }: { id: string; url: string }) => {
+      const response = await fetch(url);
+      const image = await response.arrayBuffer();
+      const buffer = Buffer.from(image);
+      const webpBuffer = await sharp(buffer)
+        .resize({ width: 1920, withoutEnlargement: true })
+        .webp()
+        .toBuffer();
+      const path = `./public/_notion/talks/image/${id}.webp`;
+      promises.push(writeFile(path, webpBuffer));
+    };
+
+    if (talks == null) throw new Error("talks is not set");
+
+    return talks.map((talk) => fetchAndSave({ id: talk.id, url: talk.image }));
   };
 
   const promises = blogs.map(async (blog) => {
@@ -123,6 +146,7 @@ export const fetchImages = async (blogs: PrerenderBlog[]) => {
       Promise.all(ogpImagePromises),
       Promise.all(blockImagePromises),
       Promise.all(iconImagePromises),
+      await fetchTalkImages(),
     ]);
   });
 
