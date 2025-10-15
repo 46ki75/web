@@ -63,7 +63,9 @@ withDefaults(defineProps<TalkCardProps>(), {});
 <style module lang="scss">
 .container {
   all: unset;
+  box-sizing: border-box;
   padding: 0.25rem;
+  width: clamp(320px, 100%, 480px);
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
