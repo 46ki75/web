@@ -3,6 +3,8 @@
 import { GTAG } from "./scripts/fetchConfig";
 import { fetchPrerenderRoutes } from "./scripts/fetchRoutes";
 import { fetchCloudWatchRumConfig } from "./scripts/fetchCloudWatchRumConfig";
+import { fetchBlogList } from "./scripts/fetchBlogList";
+import { fetchImages } from "./scripts/fetchImages";
 
 const { RUM_IDPOOL_ID, RUM_APP_MONITOR_ID } = await fetchCloudWatchRumConfig();
 
@@ -44,6 +46,14 @@ export default defineNuxtConfig({
   components: {
     global: true,
     dirs: ["./components"],
+  },
+
+  hooks: {
+    async "build:before"() {
+      const blogs = await fetchBlogList();
+      fetchImages(blogs);
+    },
+    // "prerender:routes"({ routes }) {},
   },
 
   app: {
