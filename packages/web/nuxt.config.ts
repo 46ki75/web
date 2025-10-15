@@ -2,7 +2,7 @@
 
 import { GTAG } from "./scripts/config";
 import { fetchPrerenderRoutes } from "./scripts/fetchRoutes";
-import { fetchCloudWatchRumConfig } from "./scripts/fetchCloudWatchRumConfig";
+import { fetchCloudWatchRumConfig } from "./scripts/config";
 import { fetchBlogList } from "./scripts/fetchBlogList";
 import { fetchImages } from "./scripts/fetchImages";
 import { generateBlogFeed } from "./scripts/generateBlogFeeds";
