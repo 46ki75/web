@@ -151,6 +151,7 @@ export interface components {
         TalkLanguageResponse: "en" | "ja";
         TalkResponse: {
             date: string;
+            id: string;
             image: string;
             language: components["schemas"]["TalkLanguageResponse"];
             location: string;
