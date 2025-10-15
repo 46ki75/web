@@ -137,6 +137,7 @@ impl TalkRepository for TalkRepositoryImpl {
                 };
 
                 talks.push(crate::talk::dto::TalkDto {
+                    id: page.id,
                     title,
                     image,
                     url,

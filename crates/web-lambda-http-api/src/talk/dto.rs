@@ -1,5 +1,6 @@
 #[derive(Debug, Clone)]
 pub struct TalkDto {
+    pub id: String,
     pub title: String,
     pub image: String,
     pub url: String,

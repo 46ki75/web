@@ -1,5 +1,6 @@
 #[derive(Debug, Clone)]
 pub struct TalkEntity {
+    pub id: String,
     pub title: String,
     pub image: String,
     pub url: String,
@@ -11,6 +12,7 @@ pub struct TalkEntity {
 impl From<super::dto::TalkDto> for TalkEntity {
     fn from(value: super::dto::TalkDto) -> Self {
         Self {
+            id: value.id,
             title: value.title,
             image: value.image,
             url: value.url,

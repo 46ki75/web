@@ -1,5 +1,6 @@
 #[derive(Debug, Clone, serde::Serialize, utoipa::ToSchema)]
 pub struct TalkResponse {
+    pub id: String,
     pub title: String,
     pub image: String,
     pub url: String,
@@ -11,6 +12,7 @@ pub struct TalkResponse {
 impl From<super::entity::TalkEntity> for TalkResponse {
     fn from(value: super::entity::TalkEntity) -> Self {
         Self {
+            id: value.id,
             title: value.title,
             image: value.image,
             url: value.url,
