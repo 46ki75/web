@@ -37,8 +37,6 @@ import { client } from "~/openapi/client";
 
 const { locale } = useI18n();
 
-const router = useRouter();
-
 const blogStore = useBlogStore();
 
 const route = useRoute();
@@ -47,7 +45,6 @@ const appConfig = useAppConfig();
 const handleTagClick = (tagId: string) => {
   blogStore.tagReset();
   blogStore.tagSelect(tagId);
-  router.push(`${locale.value === "en" ? "" : locale.value}/blog/search`);
 };
 
 const convert = (
