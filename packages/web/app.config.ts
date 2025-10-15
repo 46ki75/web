@@ -1,5 +1,5 @@
 import { version } from "./package.json";
-import { ENDPOINT, STAGE_NAME } from "./scripts/fetchConfig";
+import { ENDPOINT, STAGE_NAME } from "./scripts/config";
 
 export default defineAppConfig({
   SITE_NAME: "SrcJar",

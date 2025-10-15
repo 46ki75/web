@@ -1,5 +1,5 @@
 import { Feed } from "feed";
-import { ENDPOINT } from "../scripts/fetchConfig";
+import { ENDPOINT } from "./config";
 import { fetchBlogListEn, fetchBlogListJa } from "./fetchBlogList";
 import { rm, mkdir, writeFile } from "node:fs/promises";
 

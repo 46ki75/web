@@ -1,6 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 
-import { GTAG } from "./scripts/fetchConfig";
+import { GTAG } from "./scripts/config";
 import { fetchPrerenderRoutes } from "./scripts/fetchRoutes";
 import { fetchCloudWatchRumConfig } from "./scripts/fetchCloudWatchRumConfig";
 import { fetchBlogList } from "./scripts/fetchBlogList";

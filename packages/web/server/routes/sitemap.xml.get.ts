@@ -1,6 +1,6 @@
 import { SitemapStream, streamToPromise } from "sitemap";
 import { fetchPrerenderRoutes } from "../../scripts/fetchRoutes";
-import { ENDPOINT } from "../../scripts/fetchConfig";
+import { ENDPOINT } from "../../scripts/config";
 
 export const generateSitemap = async (routes: string[]): Promise<string> => {
   console.log("🗺️", "Generating sitemap.xml ...");

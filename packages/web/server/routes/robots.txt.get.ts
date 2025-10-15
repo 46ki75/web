@@ -1,4 +1,4 @@
-import { ENDPOINT } from "../../scripts/fetchConfig";
+import { ENDPOINT } from "../../scripts/config";
 
 const TEMPLATE = (ENDPOINT: string) =>
   `
