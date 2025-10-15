@@ -75,17 +75,6 @@ export const useBlogStore = defineStore("BlogSearchStore", {
     };
   },
   actions: {
-    getTags(tagIds: string[]): Array<Tag> {
-      const tags = this[this.locale].tags
-        ?.filter((tag) => tagIds.some((id) => id === tag.id))
-        .map((tag) => ({
-          id: tag.id,
-          name: tag.name,
-          iconUrl: tag.iconUrl,
-        }));
-      return tags ?? [];
-    },
-
     tagSelect(tagId: string) {
       this[this.locale].searchSelectedTagIds.push(tagId);
     },
@@ -149,6 +138,19 @@ export const useBlogStore = defineStore("BlogSearchStore", {
               new Date(pre.created_at).getTime()
           )
           .slice(0, 10);
+    },
+
+    tags(): (tagIds: string[]) => Tag[] {
+      return (tagIds: string[]) => {
+        const tags = this[this.locale].tags
+          ?.filter((tag) => tagIds.some((id) => id === tag.id))
+          .map((tag) => ({
+            id: tag.id,
+            name: tag.name,
+            iconUrl: tag.iconUrl,
+          }));
+        return tags ?? [];
+      };
     },
   },
 });
