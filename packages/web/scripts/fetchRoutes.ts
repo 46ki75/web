@@ -18,7 +18,9 @@ export const fetchPrerenderRoutes = async (): Promise<string[]> => {
     .map((route) => [route, `/ja${route}`])
     .flat();
 
-  const routes = [...staticRoutes, ...articleRoutes];
+  const commonRoutes = ["/robots.txt", "/sitemap.xml"];
+
+  const routes = [...staticRoutes, ...articleRoutes, ...commonRoutes];
 
   console.info("Routes:");
   routes.forEach((route) => console.log(`🔗 ${route}`));
