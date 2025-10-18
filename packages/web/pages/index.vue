@@ -14,11 +14,7 @@ const texts: string[] = [
   "Welcome to my portfolio and blog.",
 ];
 
-const { t, locale, defaultLocale } = useI18n();
-
-await navigateTo(
-  locale.value === defaultLocale ? `/about` : `/${locale.value}/about`
-);
+const { t } = useI18n();
 </script>
 
 <template>
