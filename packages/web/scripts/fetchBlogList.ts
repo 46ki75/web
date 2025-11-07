@@ -13,6 +13,7 @@ export interface PrerenderBlog {
   tag_ids: string[];
   title: string;
   updated_at: string;
+  language: "en" | "ja";
 }
 
 let BLOG_LIST_CACHE: PrerenderBlog[] | null = null;
@@ -30,7 +31,7 @@ export const fetchBlogListEn = async (): Promise<PrerenderBlog[]> => {
     throw new Error("Failed to fetch blogs");
   }
 
-  BLOG_LIST_CACHE_EN = data;
+  BLOG_LIST_CACHE_EN = data.map((d) => ({ ...d, language: "en" }));
 
   return BLOG_LIST_CACHE_EN;
 };
@@ -46,7 +47,7 @@ export const fetchBlogListJa = async (): Promise<PrerenderBlog[]> => {
     throw new Error("Failed to fetch blogs");
   }
 
-  BLOG_LIST_CACHE_JA = data;
+  BLOG_LIST_CACHE_JA = data.map((d) => ({ ...d, language: "ja" }));
 
   return BLOG_LIST_CACHE_JA;
 };
