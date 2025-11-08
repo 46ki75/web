@@ -118,7 +118,7 @@ useSeoMeta({
   description: () => blogMeta.value?.description,
   ogDescription: () => blogMeta.value?.description,
   ogImage: () =>
-    `${appConfig.ENDPOINT}/_notion/blog/image/${blogMeta.value?.slug}/ogp.webp`,
+    `${appConfig.ENDPOINT}/_notion/blog/image/${blogMeta.value?.slug}/${locale}/ogp.webp`,
   twitterCard: "summary_large_image",
   articlePublishedTime: () => blogMeta.value?.created_at,
   articleModifiedTime: () => blogMeta.value?.updated_at,
@@ -135,7 +135,7 @@ useHead({
         name: blogMeta.value?.title,
         headline: blogMeta.value?.title,
         abstract: blogMeta.value?.description,
-        image: `${appConfig.ENDPOINT}/_notion/blog/image/${blogMeta.value?.slug}/ogp.webp`,
+        image: `${appConfig.ENDPOINT}/_notion/blog/image/${blogMeta.value?.slug}/${locale}/ogp.webp`,
         url: `${appConfig.ENDPOINT}${route.fullPath}`,
         author: {
           "@type": "Person",
