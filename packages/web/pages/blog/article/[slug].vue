@@ -111,42 +111,41 @@ const blogMeta = computed(() => {
   return blogMeta;
 });
 
-if (blogMeta.value) {
-  useSeoMeta({
-    ogType: "article",
-    title: `${blogMeta.value.title} | ${appConfig.SITE_NAME}`,
-    ogTitle: blogMeta.value.title,
-    description: blogMeta.value.description,
-    ogDescription: blogMeta.value.description,
-    ogImage: `${appConfig.ENDPOINT}/_notion/blog/image/${blogMeta.value.slug}/ogp.webp`,
-    twitterCard: "summary_large_image",
-    articlePublishedTime: blogMeta.value.created_at,
-    articleModifiedTime: blogMeta.value.updated_at,
-  });
+useSeoMeta({
+  ogType: "article",
+  title: () => `${blogMeta.value?.title} | ${appConfig.SITE_NAME}`,
+  ogTitle: () => blogMeta.value?.title,
+  description: () => blogMeta.value?.description,
+  ogDescription: () => blogMeta.value?.description,
+  ogImage: () =>
+    `${appConfig.ENDPOINT}/_notion/blog/image/${blogMeta.value?.slug}/ogp.webp`,
+  twitterCard: "summary_large_image",
+  articlePublishedTime: () => blogMeta.value?.created_at,
+  articleModifiedTime: () => blogMeta.value?.updated_at,
+});
 
-  // @see https://json-ld.org/playground/
-  useHead({
-    script: [
-      {
-        type: "application/ld+json",
-        innerHTML: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "Article",
-          name: blogMeta.value.title,
-          headline: blogMeta.value.title,
-          abstract: blogMeta.value.description,
-          image: `${appConfig.ENDPOINT}/_notion/blog/image/${blogMeta.value.slug}/ogp.webp`,
-          url: `${appConfig.ENDPOINT}${route.fullPath}`,
-          author: {
-            "@type": "Person",
-            givenName: "Ikuma",
-            familyName: "Yamashita",
-          },
-          datePublished: blogMeta.value.created_at,
-          dateModified: blogMeta.value.updated_at,
-        }),
-      },
-    ],
-  });
-}
+// @see https://json-ld.org/playground/
+useHead({
+  script: [
+    {
+      type: "application/ld+json",
+      innerHTML: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Article",
+        name: blogMeta.value?.title,
+        headline: blogMeta.value?.title,
+        abstract: blogMeta.value?.description,
+        image: `${appConfig.ENDPOINT}/_notion/blog/image/${blogMeta.value?.slug}/ogp.webp`,
+        url: `${appConfig.ENDPOINT}${route.fullPath}`,
+        author: {
+          "@type": "Person",
+          givenName: "Ikuma",
+          familyName: "Yamashita",
+        },
+        datePublished: blogMeta.value?.created_at,
+        dateModified: blogMeta.value?.updated_at,
+      }),
+    },
+  ],
+});
 </script>
