@@ -140,9 +140,21 @@ export const useBlogStore = defineStore("BlogSearchStore", {
           .slice(0, 10);
     },
 
-    tags(): (tagIds: string[]) => Tag[] {
-      return (tagIds: string[]) => {
-        const tags = this[this.locale].tags
+    tags(): ({
+      tagIds,
+      locale,
+    }: {
+      tagIds: string[];
+      locale: "en" | "ja";
+    }) => Tag[] {
+      return ({
+        tagIds,
+        locale,
+      }: {
+        tagIds: string[];
+        locale: "en" | "ja";
+      }) => {
+        const tags = this[locale].tags
           ?.filter((tag) => tagIds.some((id) => id === tag.id))
           .map((tag) => ({
             id: tag.id,

@@ -17,7 +17,7 @@
           },
         ]"
         :image="`/_notion/blog/image/${blogMeta.slug}/${locale}/ogp.webp`"
-        :tags="blogStore.tags(blogMeta.tag_ids)"
+        :tags="blogStore.tags({ tagIds: blogMeta.tag_ids, locale })"
         @tag-click="handleTagClick"
       />
 
