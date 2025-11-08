@@ -33,7 +33,7 @@
             :key="tag.id"
             :name="tag.name"
             :icon-url="tag.iconUrl"
-            @click="blogStore.tagSelect(tag.id)"
+            @click="blogStore.tagSelect({ tagId: tag.id, locale })"
           />
         </div>
       </div>
@@ -46,14 +46,15 @@
         />
         <TransitionGroup name="tag" class="tag-pool" tag="dev">
           <BlogTag
-            v-for="tag in blogStore.tags(
-              blogStore[locale].searchSelectedTagIds
-            )"
+            v-for="tag in blogStore.tags({
+              tagIds: blogStore[locale].searchSelectedTagIds,
+              locale,
+            })"
             :id="tag.id"
             :key="tag.id"
             :name="tag.name"
             :icon-url="tag.iconUrl"
-            @click="blogStore.tagDeselect(tag.id)"
+            @click="blogStore.tagDeselect({ tagId: tag.id, locale })"
           />
           <div
             v-if="blogStore[locale].searchSelectedTagIds.length === 0"
@@ -65,7 +66,7 @@
           </div>
         </TransitionGroup>
 
-        <ElmButton block @click="blogStore.tagReset">
+        <ElmButton block @click="blogStore.tagReset({ locale })">
           <Icon icon="fluent:tag-reset-20-filled" height="20px" />
           {{ t("blog.search.clearSelection") }}
         </ElmButton>
@@ -99,7 +100,7 @@
             :id="blog.slug"
             :title="blog.title"
             :description="blog.description"
-            :tags="blogStore.tags(blog.tag_ids)"
+            :tags="blogStore.tags({ tagIds: blog.tag_ids, locale })"
             :created-at="blog.created_at"
             :updated-at="blog.updated_at"
             :featured="blog.featured"

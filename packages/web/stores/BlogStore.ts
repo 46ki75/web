@@ -75,18 +75,18 @@ export const useBlogStore = defineStore("BlogSearchStore", {
     };
   },
   actions: {
-    tagSelect(tagId: string) {
-      this[this.locale].searchSelectedTagIds.push(tagId);
+    tagSelect({ tagId, locale }: { tagId: string; locale: "en" | "ja" }) {
+      this[locale].searchSelectedTagIds.push(tagId);
     },
 
-    tagDeselect(tagId: string) {
-      this[this.locale].searchSelectedTagIds = this[
-        this.locale
+    tagDeselect({ tagId, locale }: { tagId: string; locale: "en" | "ja" }) {
+      this[locale].searchSelectedTagIds = this[
+        locale
       ].searchSelectedTagIds.filter((deselectTagId) => deselectTagId !== tagId);
     },
 
-    tagReset() {
-      this[this.locale].searchSelectedTagIds = [];
+    tagReset({ locale }: { locale: "en" | "ja" }) {
+      this[locale].searchSelectedTagIds = [];
     },
 
     searchBlog() {
@@ -140,9 +140,21 @@ export const useBlogStore = defineStore("BlogSearchStore", {
           .slice(0, 10);
     },
 
-    tags(): (tagIds: string[]) => Tag[] {
-      return (tagIds: string[]) => {
-        const tags = this[this.locale].tags
+    tags(): ({
+      tagIds,
+      locale,
+    }: {
+      tagIds: string[];
+      locale: "en" | "ja";
+    }) => Tag[] {
+      return ({
+        tagIds,
+        locale,
+      }: {
+        tagIds: string[];
+        locale: "en" | "ja";
+      }) => {
+        const tags = this[locale].tags
           ?.filter((tag) => tagIds.some((id) => id === tag.id))
           .map((tag) => ({
             id: tag.id,

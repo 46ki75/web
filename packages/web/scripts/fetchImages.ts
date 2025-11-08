@@ -83,18 +83,20 @@ export const fetchImages = async (blogs: PrerenderBlog[]) => {
       });
 
       // Fetch OGP Images
-      const ogpS3Url = blog.ogp_image_s3_signed_url;
-      if (ogpS3Url == null) throw new Error("OGP image is not set");
-      const response = await fetch(ogpS3Url);
-      const image = await response.arrayBuffer();
-      const buffer = Buffer.from(image);
-      const webpBuffer = await sharp(buffer)
-        .resize({ width: 1920, withoutEnlargement: true })
-        .webp()
-        .toBuffer();
-      const path = `./public/_notion/blog/image/${blog.slug}/${language}/ogp.webp`;
-      ogpImagePromises.push(writeFile(path, webpBuffer));
-      console.info(`💾 [🖼️  OGP] Saved image: ${path}`);
+      if (blog.language === language) {
+        const ogpS3Url = blog.ogp_image_s3_signed_url;
+        if (ogpS3Url == null) throw new Error("OGP image is not set");
+        const response = await fetch(ogpS3Url);
+        const image = await response.arrayBuffer();
+        const buffer = Buffer.from(image);
+        const webpBuffer = await sharp(buffer)
+          .resize({ width: 1920, withoutEnlargement: true })
+          .webp()
+          .toBuffer();
+        const path = `./public/_notion/blog/image/${blog.slug}/${language}/ogp.webp`;
+        ogpImagePromises.push(writeFile(path, webpBuffer));
+        console.info(`💾 [🖼️  OGP] Saved image: ${path}`);
+      }
 
       // blockList
       const blockList = await client.GET("/api/v2/blog/{slug}", {

@@ -64,13 +64,13 @@ interface BlogSearchResultProps {
   locale: "en" | "ja";
 }
 
-defineProps<BlogSearchResultProps>();
+const props = defineProps<BlogSearchResultProps>();
 
 const blogStore = useBlogStore();
 
 const handleTagClick = (tagId: string) => {
-  blogStore.tagReset();
-  blogStore.tagSelect(tagId);
+  blogStore.tagReset({ locale: props.locale });
+  blogStore.tagSelect({ tagId, locale: props.locale });
 };
 </script>
 
