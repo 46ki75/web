@@ -36,6 +36,18 @@
         href="https://www.linkedin.com/in/ikuma-yamashita-b3080a344/"
         favicon="https://static.licdn.com/aero-v1/sc/h/akt4ae504epesldzj74dzred8"
       />
+      <ElmBookmarkIcon
+        title="X"
+        name="X"
+        href="https://x.com/ikuma_cloud"
+        favicon="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjgiIGhlaWdodD0iMTI4IiB2aWV3Qm94PSIwIDAgMTI4IDEyOCI+PHBhdGggZD0iTTc1LjkxNiA1NC4yTDEyMi41NDIgMGgtMTEuMDVMNzEuMDA4IDQ3LjA2TDM4LjY3MiAwSDEuMzc2bDQ4Ljg5OCA3MS4xNjRMMS4zNzYgMTI4aDExLjA1TDU1LjE4IDc4LjMwM0w4OS4zMjggMTI4aDM3LjI5Nkw3NS45MTMgNTQuMlpNNjAuNzgyIDcxLjc5bC00Ljk1NS03LjA4NmwtMzkuNDItNTYuMzg2aDE2Ljk3Mkw2NS4xOSA1My44MjRsNC45NTQgNy4wODZsNDEuMzUzIDU5LjE1aC0xNi45N0w2MC43ODIgNzEuNzkzWiIvPjwvc3ZnPg=="
+      />
+      <ElmBookmarkIcon
+        title="pixiv"
+        name="pixiv"
+        href="https://www.pixiv.net/users/120506329"
+        favicon="https://www.pixiv.net/favicon20250122.ico"
+      />
       <!-- MIT Iconify fluent-color:mail-28 -->
       <ElmBookmarkIcon
         title="Email"
