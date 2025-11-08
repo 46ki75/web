@@ -75,18 +75,18 @@ export const useBlogStore = defineStore("BlogSearchStore", {
     };
   },
   actions: {
-    tagSelect(tagId: string) {
-      this[this.locale].searchSelectedTagIds.push(tagId);
+    tagSelect({ tagId, locale }: { tagId: string; locale: "en" | "ja" }) {
+      this[locale].searchSelectedTagIds.push(tagId);
     },
 
-    tagDeselect(tagId: string) {
-      this[this.locale].searchSelectedTagIds = this[
+    tagDeselect({ tagId, locale }: { tagId: string; locale: "en" | "ja" }) {
+      this[locale].searchSelectedTagIds = this[
         this.locale
       ].searchSelectedTagIds.filter((deselectTagId) => deselectTagId !== tagId);
     },
 
-    tagReset() {
-      this[this.locale].searchSelectedTagIds = [];
+    tagReset({ locale }: { locale: "en" | "ja" }) {
+      this[locale].searchSelectedTagIds = [];
     },
 
     searchBlog() {

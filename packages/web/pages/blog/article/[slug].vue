@@ -43,8 +43,8 @@ const route = useRoute();
 const appConfig = useAppConfig();
 
 const handleTagClick = (tagId: string) => {
-  blogStore.tagReset();
-  blogStore.tagSelect(tagId);
+  blogStore.tagReset({ locale: locale.value });
+  blogStore.tagSelect({ tagId, locale: locale.value });
 };
 
 const convert = (
