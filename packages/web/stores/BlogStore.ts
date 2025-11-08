@@ -81,7 +81,7 @@ export const useBlogStore = defineStore("BlogSearchStore", {
 
     tagDeselect({ tagId, locale }: { tagId: string; locale: "en" | "ja" }) {
       this[locale].searchSelectedTagIds = this[
-        this.locale
+        locale
       ].searchSelectedTagIds.filter((deselectTagId) => deselectTagId !== tagId);
     },
 
