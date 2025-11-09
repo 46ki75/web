@@ -24,7 +24,7 @@ export const fetchBlogListEn = async (): Promise<PrerenderBlog[]> => {
   if (BLOG_LIST_CACHE_EN != null) return BLOG_LIST_CACHE_EN;
 
   const { data } = await client.GET("/api/v2/blog", {
-    params: { query: { language: "en" } },
+    params: { header: { "accept-language": "en" } },
   });
 
   if (data == null) {
@@ -40,7 +40,7 @@ export const fetchBlogListJa = async (): Promise<PrerenderBlog[]> => {
   if (BLOG_LIST_CACHE_JA != null) return BLOG_LIST_CACHE_JA;
 
   const { data } = await client.GET("/api/v2/blog", {
-    params: { query: { language: "ja" } },
+    params: { header: { "accept-language": "ja" } },
   });
 
   if (data == null) {
