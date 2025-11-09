@@ -1,9 +1,4 @@
-#[derive(Debug, serde::Deserialize, utoipa::ToSchema, utoipa::IntoParams)]
-#[into_params(parameter_in = Query)]
-pub struct ListBlogsQuery {
-    #[param(inline)]
-    language: BlogLanguageQueryParam,
-}
+use http::header::ACCEPT_LANGUAGE;
 
 #[derive(Debug, serde::Deserialize, utoipa::ToSchema)]
 #[serde(rename_all = "snake_case")]
@@ -15,7 +10,9 @@ pub enum BlogLanguageQueryParam {
 #[utoipa::path(
     get,
     path = "/api/v2/blog",
-    params(ListBlogsQuery),
+    params(
+         ("accept-language" = String , Header),
+    ),
     responses(
         (status = 200, description = "Blogs", body = Vec<super::response::BlogResponse>),
         (status = 400, description = "Bad request", body = String)
@@ -25,12 +22,16 @@ pub async fn list_blogs(
     axum::extract::State(state): axum::extract::State<
         std::sync::Arc<crate::axum_router::AxumAppState>,
     >,
-    query: axum::extract::Query<ListBlogsQuery>,
+    headers: http::header::HeaderMap,
 ) -> Result<axum::response::Response<axum::body::Body>, (axum::http::StatusCode, String)> {
-    let language = match query.language {
-        BlogLanguageQueryParam::En => super::entity::BlogLanguageEntity::En,
-        BlogLanguageQueryParam::Ja => super::entity::BlogLanguageEntity::Ja,
-    };
+    let language = headers
+        .get(ACCEPT_LANGUAGE)
+        .and_then(|accept_language| accept_language.to_str().ok())
+        .map(|accept_language| match accept_language {
+            "ja" => super::entity::BlogLanguageEntity::Ja,
+            _ => super::entity::BlogLanguageEntity::En,
+        })
+        .unwrap_or(super::entity::BlogLanguageEntity::En);
 
     let blogs = match state.blog_use_case.list_blogs(language).await {
         Ok(blog_entities) => {
