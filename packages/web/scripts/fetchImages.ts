@@ -100,7 +100,10 @@ export const fetchImages = async (blogs: PrerenderBlog[]) => {
 
       // blockList
       const blockList = await client.GET("/api/v2/blog/{slug}", {
-        params: { path: { slug: blog.slug }, query: { language } },
+        params: {
+          path: { slug: blog.slug },
+          header: { "accept-language": language },
+        },
       });
 
       // Fetch Block Images

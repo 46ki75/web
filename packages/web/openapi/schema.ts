@@ -193,10 +193,10 @@ export interface operations {
     };
     list_blogs: {
         parameters: {
-            query: {
-                language: "en" | "ja";
+            query?: never;
+            header: {
+                "accept-language": string;
             };
-            header?: never;
             path?: never;
             cookie?: never;
         };
@@ -253,10 +253,10 @@ export interface operations {
     };
     get_blog_contents: {
         parameters: {
-            query: {
-                language: "en" | "ja";
+            query?: never;
+            header: {
+                "accept-language": string;
             };
-            header?: never;
             path: {
                 /** @description Blog slug */
                 slug: string;

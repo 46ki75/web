@@ -88,7 +88,7 @@ const fetchBlog = async (locale: "en" | "ja") => {
   const { data: enBlogContents } = await client.GET("/api/v2/blog/{slug}", {
     params: {
       path: { slug: route.params.slug as string },
-      query: { language: locale },
+      header: { "accept-language": locale },
     },
   });
 

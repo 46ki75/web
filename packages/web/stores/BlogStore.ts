@@ -16,7 +16,7 @@ export const useBlogStore = defineStore("BlogSearchStore", {
 
     const { data: enBlogs } = useAsyncData("/en/api/v2/blog", async () => {
       const { data: enBlogs } = await client.GET("/api/v2/blog", {
-        params: { query: { language: "en" } },
+        params: { header: { "accept-language": "en" } },
       });
       if (enBlogs == null) throw new Error("Failed to fetch blogs.");
       return enBlogs;
@@ -24,7 +24,7 @@ export const useBlogStore = defineStore("BlogSearchStore", {
 
     const { data: jaBlogs } = useAsyncData("/ja/api/v2/blog", async () => {
       const { data: jaBlogs } = await client.GET("/api/v2/blog", {
-        params: { query: { language: "ja" } },
+        params: { header: { "accept-language": "ja" } },
       });
       if (jaBlogs == null) throw new Error("Failed to fetch blogs.");
       return jaBlogs;
