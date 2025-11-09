@@ -172,3 +172,57 @@ pub async fn list_tags(
 
     tags
 }
+
+#[utoipa::path(
+    get,
+    path = "/api/v2/blog/{slug}/og-image",
+    params(
+        ("slug" = String, Path, description = "Blog slug"),
+        ("accept-language" = String, Header),
+    ),
+    responses(
+        (status = 200, description = "Blog Contents", body = Vec<u8>),
+        (status = 400, description = "Bad request", body = String)
+    ),
+)]
+pub async fn get_blog_og_image(
+    axum::extract::State(state): axum::extract::State<
+        std::sync::Arc<crate::axum_router::AxumAppState>,
+    >,
+    axum::extract::Path(slug): axum::extract::Path<String>,
+    headers: http::header::HeaderMap,
+) -> Result<axum::response::Response<axum::body::Body>, (axum::http::StatusCode, String)> {
+    let language = headers
+        .get(ACCEPT_LANGUAGE)
+        .and_then(|accept_language| accept_language.to_str().ok())
+        .map(|accept_language| match accept_language {
+            "ja" => super::entity::BlogLanguageEntity::Ja,
+            _ => super::entity::BlogLanguageEntity::En,
+        })
+        .unwrap_or(super::entity::BlogLanguageEntity::En);
+
+    let contents = match state
+        .blog_use_case
+        .fetch_ogp_image_by_slug(&slug, language)
+        .await
+    {
+        Ok(image_bytes) => {
+            let content_type = state.blog_use_case.infer_mime_type(&image_bytes);
+
+            let response = axum::response::Response::builder()
+                .header(http::header::CONTENT_TYPE, content_type)
+                .body(axum::body::Body::from(image_bytes.to_vec()))
+                .map_err(|e| {
+                    (
+                        axum::http::StatusCode::INTERNAL_SERVER_ERROR,
+                        format!("Failed to build response: {}", e),
+                    )
+                })?;
+
+            Ok(response)
+        }
+        Err(e) => Err(e.as_client_response()),
+    };
+
+    contents
+}

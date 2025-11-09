@@ -47,6 +47,20 @@ pub trait BlogRepository: Send + Sync {
                 > + Send,
         >,
     >;
+
+    fn fetch_image_by_url(
+        &self,
+        url: &str,
+    ) -> std::pin::Pin<
+        Box<dyn std::future::Future<Output = Result<bytes::Bytes, crate::error::Error>> + Send>,
+    >;
+
+    fn fetch_image_by_block_id(
+        &self,
+        block_id: &str,
+    ) -> std::pin::Pin<
+        Box<dyn std::future::Future<Output = Result<bytes::Bytes, crate::error::Error>> + Send>,
+    >;
 }
 
 #[derive(Debug)]
@@ -428,6 +442,68 @@ impl BlogRepository for BlogRepositoryImpl {
             }
 
             Ok(tags)
+        })
+    }
+
+    fn fetch_image_by_url(
+        &self,
+        url: &str,
+    ) -> std::pin::Pin<
+        Box<dyn std::future::Future<Output = Result<bytes::Bytes, crate::error::Error>> + Send>,
+    > {
+        let url = url.to_owned();
+
+        Box::pin(async move {
+            let response = reqwest::get(url).await.map_err(|e| {
+                tracing::error!("An error occurred while fetch image: {}", e);
+                crate::error::Error::FetchImage(e.to_string())
+            })?;
+
+            let bytes = response.bytes().await.map_err(|e| {
+                tracing::error!("An error occurred while fetch image: {}", e);
+                crate::error::Error::FetchImage(e.to_string())
+            })?;
+
+            Ok(bytes)
+        })
+    }
+
+    fn fetch_image_by_block_id(
+        &self,
+        block_id: &str,
+    ) -> std::pin::Pin<
+        Box<dyn std::future::Future<Output = Result<bytes::Bytes, crate::error::Error>> + Send>,
+    > {
+        let block_id = block_id.to_owned();
+
+        Box::pin(async move {
+            let notionrs_client =
+                crate::once_cell_cache::notionrs_client::init_notionrs_client().await?;
+
+            let request = notionrs_client.get_block().block_id(block_id);
+
+            let response = request.send().await?;
+
+            let url = match response.block {
+                notionrs_types::object::block::Block::Image { image } => image.get_url(),
+                _ => {
+                    return Err(crate::error::Error::NotionInvalidSchema(
+                        "The requested block is not an Image block.".to_string(),
+                    ));
+                }
+            };
+
+            let response = reqwest::get(url).await.map_err(|e| {
+                tracing::error!("An error occurred while fetch image: {}", e);
+                crate::error::Error::FetchImage(e.to_string())
+            })?;
+
+            let bytes = response.bytes().await.map_err(|e| {
+                tracing::error!("An error occurred while fetch image: {}", e);
+                crate::error::Error::FetchImage(e.to_string())
+            })?;
+
+            Ok(bytes)
         })
     }
 }
