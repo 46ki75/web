@@ -23,6 +23,26 @@ impl BlogUseCase {
         Ok(blog_entities)
     }
 
+    pub async fn get_blog_by_slug(
+        &self,
+        slug: &str,
+        language: super::entity::BlogLanguageEntity,
+    ) -> Result<super::entity::BlogEntity, crate::error::Error> {
+        let language = match language {
+            crate::blog::entity::BlogLanguageEntity::En => super::dto::BlogLanguageDto::En,
+            crate::blog::entity::BlogLanguageEntity::Ja => super::dto::BlogLanguageDto::Ja,
+        };
+
+        let blog_dtoes = self.blog_repository.list_blogs(language).await?;
+
+        let blog_dto = blog_dtoes
+            .into_iter()
+            .find(|blog| blog.slug == slug)
+            .ok_or(crate::error::Error::NotionBlogNotFound(slug.to_owned()))?;
+
+        Ok(blog_dto.into())
+    }
+
     pub async fn get_blog_contents(
         &self,
         slug: &str,
@@ -183,5 +203,48 @@ impl BlogUseCase {
             }
         }
         Ok(())
+    }
+
+    /// Infers mime-type from bytes.
+    pub fn infer_mime_type(&self, image_bytes: &bytes::Bytes) -> String {
+        infer::get(&image_bytes)
+            .map(|t| t.to_string())
+            .unwrap_or(String::from("application/octet-stream"))
+    }
+
+    /// Fetches OGP image binary by its blog page ID.
+    pub async fn fetch_ogp_image_by_slug(
+        &self,
+        slug: &str,
+        language: super::entity::BlogLanguageEntity,
+    ) -> Result<bytes::Bytes, crate::error::Error> {
+        let blog = self.get_blog_by_slug(slug, language).await?;
+
+        let ogp_image_s3_signed_url =
+            blog.ogp_image_s3_signed_url
+                .ok_or(crate::error::Error::NotionPagePropertyNotSet {
+                    page_id: blog.page_id,
+                    property: "cover".to_owned(),
+                })?;
+
+        let image_bytes = self
+            .blog_repository
+            .fetch_image_by_url(&ogp_image_s3_signed_url)
+            .await?;
+
+        Ok(image_bytes)
+    }
+
+    /// Fetches image bynary of the block by its block ID.
+    pub async fn fetch_block_image_by_id(
+        &self,
+        block_id: &str,
+    ) -> Result<bytes::Bytes, crate::error::Error> {
+        let image_bytes = self
+            .blog_repository
+            .fetch_image_by_block_id(block_id)
+            .await?;
+
+        Ok(image_bytes)
     }
 }

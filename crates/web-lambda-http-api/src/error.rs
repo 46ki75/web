@@ -23,6 +23,9 @@ pub enum Error {
     #[error("notion-to-jarkup error: {0}")]
     NotionToJarkup(#[from] notion_to_jarkup::error::Error),
 
+    #[error("slug '{0}' not found in blog")]
+    NotionBlogNotFound(String),
+
     #[error("property '{0}' not found in Notion page")]
     NotionPagePropertyNotFound(String),
 
@@ -34,6 +37,9 @@ pub enum Error {
 
     #[error("{0}")]
     NotionRecord(String),
+
+    #[error("{0}")]
+    FetchImage(String),
 }
 
 impl Error {
@@ -67,6 +73,7 @@ impl Error {
                 StatusCode::BAD_REQUEST,
                 format!("Notion to Jarkup error: {}", e),
             ),
+            Error::NotionBlogNotFound(prop) => (StatusCode::NOT_FOUND, prop.to_owned()),
             Error::NotionPagePropertyNotFound(prop) => (
                 StatusCode::BAD_REQUEST,
                 format!("Property '{}' not found in Notion page", prop),
@@ -80,6 +87,7 @@ impl Error {
                 format!("Property '{}' has unexpected schema type", prop),
             ),
             Error::NotionRecord(msg) => (StatusCode::BAD_REQUEST, msg.clone()),
+            Error::FetchImage(msg) => (StatusCode::INTERNAL_SERVER_ERROR, msg.clone()),
         }
     }
 }
