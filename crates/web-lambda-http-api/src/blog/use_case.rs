@@ -239,12 +239,12 @@ impl BlogUseCase {
     pub async fn fetch_block_image_by_id(
         &self,
         block_id: &str,
-    ) -> Result<Option<bytes::Bytes>, crate::error::Error> {
+    ) -> Result<bytes::Bytes, crate::error::Error> {
         let image_bytes = self
             .blog_repository
             .fetch_image_by_block_id(block_id)
             .await?;
 
-        Ok(Some(image_bytes))
+        Ok(image_bytes)
     }
 }
