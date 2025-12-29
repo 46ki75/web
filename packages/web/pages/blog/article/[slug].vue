@@ -16,7 +16,7 @@
                 : `/${locale}/blog/article/${blog.meta.slug}`,
           },
         ]"
-        :image="`/_notion/blog/image/${blog.meta.slug}/${locale}/ogp.webp`"
+        :image="`/api/v2/blog/${blog.meta.slug}/og-image`"
         :tags="blogStore.tags({ tagIds: blog.meta.tag_ids, locale })"
         @tag-click="handleTagClick"
       />
@@ -82,7 +82,7 @@ useSeoMeta({
   description: () => blog.value?.meta?.description,
   ogDescription: () => blog.value?.meta?.description,
   ogImage: () =>
-    `${appConfig.ENDPOINT}/_notion/blog/image/${blog.value?.meta?.slug}/${locale.value}/ogp.webp`,
+    `${appConfig.ENDPOINT}/api/v2/blog/${blog.value?.meta.slug}/og-image`,
   twitterCard: "summary_large_image",
   articlePublishedTime: () => blog.value?.meta?.created_at,
   articleModifiedTime: () => blog.value?.meta?.updated_at,
