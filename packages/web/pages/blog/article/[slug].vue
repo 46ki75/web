@@ -51,27 +51,25 @@ const handleTagClick = (tagId: string) => {
   blogStore.tagSelect({ tagId, locale: locale.value });
 };
 
-const fetchBlog = async (locale: "en" | "ja") => {
-  if (typeof route.params.slug !== "string") {
-    throw new Error("Invalid path params");
-  }
-
-  const { data: blogContents } = await client.GET("/api/v2/blog/{slug}", {
-    params: {
-      path: { slug: route.params.slug as string },
-      header: { "accept-language": locale },
-    },
-  });
-
-  return blogContents as {
-    meta: paths["/api/v2/blog/{slug}"]["get"]["responses"]["200"]["content"]["application/json"]["meta"];
-    components: Component[];
-  };
-};
-
 const { data: blog } = await useAsyncData(
   computed(() => `/${locale.value}/blog/article/${route.params.slug}`),
-  async () => await fetchBlog(locale.value),
+  async () => {
+    if (typeof route.params.slug !== "string") {
+      throw new Error("Invalid path params");
+    }
+
+    const { data: blogContents } = await client.GET("/api/v2/blog/{slug}", {
+      params: {
+        path: { slug: route.params.slug },
+        header: { "accept-language": locale.value },
+      },
+    });
+
+    return blogContents as {
+      meta: paths["/api/v2/blog/{slug}"]["get"]["responses"]["200"]["content"]["application/json"]["meta"];
+      components: Component[];
+    };
+  },
   {
     watch: [() => route.params.slug, locale],
   }
