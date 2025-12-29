@@ -66,9 +66,9 @@ pub async fn init_router() -> Result<&'static axum::Router, crate::error::Error>
             let customized_api = ApiDoc::openapi().merge_from(auto_generated_api);
 
             let app = router
-                .route(
-                    "/api/v2/openapi.json",
-                    axum::routing::get(move || async move { axum::Json(customized_api) }),
+                .merge(
+                    utoipa_swagger_ui::SwaggerUi::new("/api/v2/swagger-ui")
+                        .url("/api/v2/openapi.json", customized_api),
                 )
                 .layer(
                     tower_http::compression::CompressionLayer::new()

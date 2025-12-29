@@ -1,11 +1,11 @@
 dev:
-	STAGE_NAME=dev AWS_LAMBDA_LOG_LEVEL=debug AWS_LAMBDA_LOG_FORMAT=pretty cargo lambda watch -P 10000
+	STAGE_NAME=dev AWS_LAMBDA_LOG_LEVEL=debug AWS_LAMBDA_LOG_FORMAT=pretty cargo lambda watch -P 10000 --package web-lambda-http-api
 
 stg:
-	STAGE_NAME=stg AWS_LAMBDA_LOG_LEVEL=debug AWS_LAMBDA_LOG_FORMAT=pretty cargo lambda watch -P 10000
+	STAGE_NAME=stg AWS_LAMBDA_LOG_LEVEL=debug AWS_LAMBDA_LOG_FORMAT=pretty cargo lambda watch -P 10000 --package web-lambda-http-api
 
 prod:
-	STAGE_NAME=prod AWS_LAMBDA_LOG_LEVEL=debug AWS_LAMBDA_LOG_FORMAT=pretty cargo lambda watch -P 10000
+	STAGE_NAME=prod AWS_LAMBDA_LOG_LEVEL=debug AWS_LAMBDA_LOG_FORMAT=pretty cargo lambda watch -P 10000 --package web-lambda-http-api
 
 build:
 	cargo lambda build --release --arm64
