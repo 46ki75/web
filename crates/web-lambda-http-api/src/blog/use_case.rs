@@ -248,7 +248,9 @@ impl BlogUseCase {
             .fetch_image_by_url(&ogp_image_s3_signed_url)
             .await?;
 
-        Ok(image_bytes)
+        let webp_bytes = self.convert(&image_bytes)?;
+
+        Ok(webp_bytes)
     }
 
     /// Fetches image bynary of the block by its block ID.
@@ -261,10 +263,12 @@ impl BlogUseCase {
             .fetch_image_by_block_id(block_id)
             .await?;
 
-        Ok(image_bytes)
+        let webp_bytes = self.convert(&image_bytes)?;
+
+        Ok(webp_bytes)
     }
 
-    pub fn convert(&self, image_bytes: &[u8]) -> Result<Vec<u8>, crate::error::Error> {
+    pub fn convert(&self, image_bytes: &[u8]) -> Result<bytes::Bytes, crate::error::Error> {
         let img = image::ImageReader::new(std::io::Cursor::new(image_bytes))
             .with_guessed_format()?
             .decode()?;
@@ -275,6 +279,6 @@ impl BlogUseCase {
 
         img.write_with_encoder(encoder)?;
 
-        Ok(bytes)
+        Ok(bytes::Bytes::from(bytes))
     }
 }
