@@ -85,8 +85,8 @@ pub async fn init_router() -> Result<&'static axum::Router, crate::error::Error>
                         .br(true)
                         .zstd(true),
                 )
-                .layer(tower_http::catch_panic::CatchPanicLayer::new())
-                .layer(cors);
+                .layer(cors)
+                .layer(tower_http::catch_panic::CatchPanicLayer::new());
 
             Ok(app)
         })
