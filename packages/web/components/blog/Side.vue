@@ -15,7 +15,7 @@
 
     <ClientOnly>
       <div
-        v-for="(blog, index) in blogStore.sideBlogs(locale)"
+        v-for="(blog, index) in blogStore.getSideBlogs()"
         :key="blog.slug"
         class="card"
         :style="{ '--delay': `${100 * index}ms` }"
@@ -24,7 +24,7 @@
           :slug="blog.slug"
           :title="blog.title"
           :description="blog.description"
-          :tags="blogStore.tags({ tagIds: blog.tag_ids, locale })"
+          :tags="blogStore.getTags({ tagIds: blog.tag_ids, locale })"
           :created-at="blog.created_at"
           :updated-at="blog.updated_at"
           :featured="blog.featured"

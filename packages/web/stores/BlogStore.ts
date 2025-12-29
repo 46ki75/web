@@ -49,7 +49,7 @@ export const useBlogStore = defineStore("BlogSearchStore", {
       locale,
 
       // keep tags for both locales in state; getter will pick by locale
-      tags: computed(() => tags.value),
+      tags: tags,
       blogs: blogs,
       fuse: fuse,
 
@@ -111,7 +111,7 @@ export const useBlogStore = defineStore("BlogSearchStore", {
     },
   },
   getters: {
-    sideBlogs(state): () => BlogMeta[] | undefined {
+    getSideBlogs(state): () => BlogMeta[] | undefined {
       return () =>
         state.blogs
           ?.sort(
@@ -122,7 +122,7 @@ export const useBlogStore = defineStore("BlogSearchStore", {
           .slice(0, 10);
     },
 
-    tags(
+    getTags(
       state
     ): ({
       tagIds,
@@ -138,15 +138,30 @@ export const useBlogStore = defineStore("BlogSearchStore", {
         tagIds: string[];
         locale: "en" | "ja";
       }) => {
-        const allTags = state.tags?.[locale] ?? [];
+        const tagsObject = ((state.tags as { value?: { en: Tag[]; ja: Tag[] } })
+          ?.value ?? (state.tags as { en: Tag[]; ja: Tag[] })) as
+          | { en: Tag[]; ja: Tag[] }
+          | undefined;
+        const allTags: Tag[] = tagsObject?.[locale] ?? [];
         const filtered = allTags
-          .filter((tag) => tagIds.some((id) => id === tag.id))
-          .map((tag) => ({
+          .filter((tag: Tag) => tagIds.some((id) => id === tag.id))
+          .map((tag: Tag) => ({
             id: tag.id,
             name: tag.name,
             iconUrl: tag.iconUrl,
           }));
         return filtered ?? [];
+      };
+    },
+
+    // return all tags for a given locale
+    allTags(state): (locale: "en" | "ja") => Tag[] {
+      return (locale: "en" | "ja") => {
+        const tagsObject = ((state.tags as { value?: { en: Tag[]; ja: Tag[] } })
+          ?.value ?? (state.tags as { en: Tag[]; ja: Tag[] })) as
+          | { en: Tag[]; ja: Tag[] }
+          | undefined;
+        return tagsObject?.[locale] ?? [];
       };
     },
   },

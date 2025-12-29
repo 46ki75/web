@@ -26,9 +26,9 @@
           :text="t('blog.search.allTags')"
           disable-fragment-identifier
         />
-        <div v-if="blogStore[locale].tags" class="tag-pool">
+        <div v-if="blogStore.allTags(locale).length > 0" class="tag-pool">
           <BlogTag
-            v-for="tag in blogStore[locale].tags"
+            v-for="tag in blogStore.allTags(locale)"
             :id="tag.id"
             :key="tag.id"
             :name="tag.name"
@@ -46,8 +46,8 @@
         />
         <TransitionGroup name="tag" class="tag-pool" tag="dev">
           <BlogTag
-            v-for="tag in blogStore.tags({
-              tagIds: blogStore[locale].searchSelectedTagIds,
+            v-for="tag in blogStore.getTags({
+              tagIds: blogStore.searchSelectedTagIds,
               locale,
             })"
             :id="tag.id"
@@ -57,7 +57,7 @@
             @click="blogStore.tagDeselect({ tagId: tag.id, locale })"
           />
           <div
-            v-if="blogStore[locale].searchSelectedTagIds.length === 0"
+            v-if="blogStore.searchSelectedTagIds.length === 0"
             class="empty-container"
             :style="{ position: 'absolute', top: '-2rem', left: 0 }"
           >
@@ -80,7 +80,7 @@
 
       <TransitionGroup name="search" class="search-results" tag="div">
         <div
-          v-if="blogStore[locale].searchResults.length === 0"
+          v-if="blogStore.searchResults.length === 0"
           class="empty-container"
           :style="{ '--height': '16rem' }"
         >
@@ -92,7 +92,7 @@
           <span>{{ t("blog.search.noResultsFound") }}</span>
         </div>
         <div
-          v-for="blog in blogStore[locale].searchResults"
+          v-for="blog in blogStore.searchResults"
           :key="blog.slug"
           class="search-results-item"
         >
@@ -100,7 +100,7 @@
             :slug="blog.slug"
             :title="blog.title"
             :description="blog.description"
-            :tags="blogStore.tags({ tagIds: blog.tag_ids, locale })"
+            :tags="blogStore.getTags({ tagIds: blog.tag_ids, locale })"
             :created-at="blog.created_at"
             :updated-at="blog.updated_at"
             :featured="blog.featured"
@@ -126,14 +126,14 @@ const debouncedKeyword = shallowRef<string>("");
 watchDebounced(
   debouncedKeyword,
   () => {
-    blogStore[locale.value].searchKeyword = debouncedKeyword.value;
+    blogStore.searchKeyword = debouncedKeyword.value;
     blogStore.searchBlog();
   },
   { debounce: 300, maxWait: 3000 }
 );
 
 watch(
-  [() => blogStore[locale.value].searchSelectedTagIds],
+  blogStore.searchSelectedTagIds,
   async () => {
     await nextTick();
     blogStore.searchBlog();

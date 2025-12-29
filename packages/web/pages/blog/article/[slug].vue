@@ -17,7 +17,7 @@
           },
         ]"
         :image="`/api/v2/blog/${blog.meta.slug}/og-image`"
-        :tags="blogStore.tags({ tagIds: blog.meta.tag_ids, locale })"
+        :tags="blogStore.getTags({ tagIds: blog.meta.tag_ids, locale })"
         @tag-click="handleTagClick"
       />
 
