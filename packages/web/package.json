@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "nuxt dev --no-fork",
+    "build": "nuxt build",
+    "start": "nuxt start",
     "generate": "nuxt generate",
     "preview": "serve .output/public",
     "postinstall": "nuxt prepare",
@@ -16,7 +18,7 @@
     "generate:openapi": "openapi-typescript http://dev-www.ikuma.cloud/api/v2/openapi.json -o openapi/schema.ts"
   },
   "dependencies": {
-    "@elmethis/core": "0.8.0",
+    "@elmethis/vue": "0.2.1",
     "@iconify/vue": "^5.0.0",
     "@nuxtjs/i18n": "10.1.0",
     "@pinia/nuxt": "0.11.2",

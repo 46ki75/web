@@ -22,7 +22,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElmInlineText } from "@elmethis/core";
+import { ElmInlineText } from "@elmethis/vue";
 import { Icon } from "@iconify/vue";
 
 const showCover = ref(false);

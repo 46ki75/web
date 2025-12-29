@@ -113,7 +113,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ElmButton, ElmHeading, ElmTextField } from "@elmethis/core";
+import { ElmButton, ElmHeading, ElmTextField } from "@elmethis/vue";
 import { Icon } from "@iconify/vue";
 import { watchDebounced } from "@vueuse/core";
 

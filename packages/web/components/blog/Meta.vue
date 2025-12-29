@@ -48,7 +48,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElmBreadcrumb, ElmHeading, ElmImage } from "@elmethis/core";
+import { ElmBreadcrumb, ElmHeading, ElmImage } from "@elmethis/vue";
 import { useI18n } from "vue-i18n";
 
 interface BlogMetaProps {

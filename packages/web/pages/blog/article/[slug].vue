@@ -31,7 +31,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElmJsonComponentRenderer } from "@elmethis/core";
+import { ElmJsonComponentRenderer } from "@elmethis/vue";
 import type { Component } from "jarkup-ts";
 
 import { client } from "~/openapi/client";

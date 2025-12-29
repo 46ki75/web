@@ -60,7 +60,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElmHeading, ElmMarkdown } from "@elmethis/core";
+import { ElmHeading, ElmMarkdown } from "@elmethis/vue";
 
 const { locale, t } = useI18n();
 const blogStore = useBlogStore();

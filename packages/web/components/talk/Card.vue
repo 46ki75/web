@@ -30,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElmImage, ElmInlineText } from "@elmethis/core";
+import { ElmImage, ElmInlineText } from "@elmethis/vue";
 import { Icon } from "@iconify/vue";
 
 export interface TalkCardProps {

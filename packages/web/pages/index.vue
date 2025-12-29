@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ElmHeading, ElmTypingAnimation } from "@elmethis/core";
+import { ElmHeading, ElmTypingAnimation } from "@elmethis/vue";
 
 const texts: string[] = [
   "Hi, there.",

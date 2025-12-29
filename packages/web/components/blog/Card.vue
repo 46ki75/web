@@ -46,7 +46,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ElmImage, ElmInlineText } from "@elmethis/core";
+import { ElmImage, ElmInlineText } from "@elmethis/vue";
 import { Icon } from "@iconify/vue";
 
 interface BlogSearchResultProps {

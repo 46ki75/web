@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElmParallax } from "@elmethis/core";
+import { ElmParallax } from "@elmethis/vue";
 </script>
 
 <style scoped lang="scss">
