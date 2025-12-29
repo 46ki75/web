@@ -57,6 +57,7 @@ resource "aws_lambda_function" "http_api" {
   handler       = "bootstrap.handler"
   runtime       = "provided.al2023"
   architectures = ["arm64"]
+  memory_size   = 256
   publish       = true # Publish a new version
   timeout       = 30
 
