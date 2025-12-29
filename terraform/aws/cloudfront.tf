@@ -75,6 +75,22 @@ resource "aws_cloudfront_response_headers_policy" "security" {
 
   name = "${terraform.workspace}-46ki75-web-cloudfront-response_headers_policy-security"
 
+  cors_config {
+    access_control_allow_origins {
+      items = ["http://localhost:*"]
+    }
+    access_control_allow_methods {
+      items = ["OPTIONS", "HEAD", "GET"]
+    }
+
+    access_control_allow_headers {
+      items = ["*"]
+    }
+
+    access_control_allow_credentials = false
+    origin_override                  = true
+  }
+
   security_headers_config {
 
     strict_transport_security {

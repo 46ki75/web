@@ -65,14 +65,6 @@ pub async fn init_router() -> Result<&'static axum::Router, crate::error::Error>
 
             let customized_api = ApiDoc::openapi().merge_from(auto_generated_api);
 
-            let cors = tower_http::cors::CorsLayer::new()
-                // Allow specific methods
-                .allow_methods([http::Method::GET, http::Method::HEAD, http::Method::OPTIONS])
-                // Allow requests from any origin
-                .allow_origin(tower_http::cors::AllowOrigin::list(["http://localhost:*"
-                    .parse()
-                    .unwrap()]));
-
             let app = router
                 .merge(
                     utoipa_swagger_ui::SwaggerUi::new("/api/v2/swagger-ui")
@@ -85,7 +77,6 @@ pub async fn init_router() -> Result<&'static axum::Router, crate::error::Error>
                         .br(true)
                         .zstd(true),
                 )
-                .layer(cors)
                 .layer(tower_http::catch_panic::CatchPanicLayer::new());
 
             Ok(app)
