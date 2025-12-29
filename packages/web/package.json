@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nuxt dev --no-fork",
     "build": "nuxt build",
-    "start": "nuxt start",
+    "start": "node .output/server/index.mjs",
     "generate": "nuxt generate",
     "preview": "serve .output/public",
     "postinstall": "nuxt prepare",
