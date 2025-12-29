@@ -1,5 +1,8 @@
 use http::header::ACCEPT_LANGUAGE;
 
+// Client: 1 year, CDN: 10 minutes
+static CACHE_VALUE: &str = "public, max-age=31536000, s-maxage=600";
+
 #[derive(Debug, serde::Deserialize, utoipa::ToSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum BlogLanguageQueryParam {
@@ -51,6 +54,8 @@ pub async fn list_blogs(
             };
             let response = axum::response::Response::builder()
                 .header(http::header::CONTENT_TYPE, "application/json")
+                .header(http::header::VARY, "Accept-Language")
+                .header(http::header::CACHE_CONTROL, CACHE_VALUE)
                 .body(axum::body::Body::from(json))
                 .map_err(|e| {
                     (
@@ -110,6 +115,8 @@ pub async fn get_blog_contents(
             };
             let response = axum::response::Response::builder()
                 .header(http::header::CONTENT_TYPE, "application/json")
+                .header(http::header::VARY, "Accept-Language")
+                .header(http::header::CACHE_CONTROL, CACHE_VALUE)
                 .body(axum::body::Body::from(json))
                 .map_err(|e| {
                     (
@@ -157,6 +164,7 @@ pub async fn list_tags(
             };
             let response = axum::response::Response::builder()
                 .header(http::header::CONTENT_TYPE, "application/json")
+                .header(http::header::CACHE_CONTROL, CACHE_VALUE)
                 .body(axum::body::Body::from(json))
                 .map_err(|e| {
                     (
@@ -211,7 +219,8 @@ pub async fn get_blog_og_image(
 
             let response = axum::response::Response::builder()
                 .header(http::header::CONTENT_TYPE, content_type)
-                .header(http::header::ACCEPT_LANGUAGE, language.to_string())
+                .header(http::header::VARY, "Accept-Language")
+                .header(http::header::CACHE_CONTROL, CACHE_VALUE)
                 .body(axum::body::Body::from(image_bytes.to_vec()))
                 .map_err(|e| {
                     (
@@ -252,6 +261,7 @@ pub async fn get_blog_block_image(
 
             let response = axum::response::Response::builder()
                 .header(http::header::CONTENT_TYPE, content_type)
+                .header(http::header::CACHE_CONTROL, CACHE_VALUE)
                 .body(axum::body::Body::from(image_bytes.to_vec()))
                 .map_err(|e| {
                     (
