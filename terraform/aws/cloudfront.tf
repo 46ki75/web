@@ -44,12 +44,18 @@ resource "aws_cloudfront_cache_policy" "http_api" {
     }
 
     headers_config {
-      header_behavior = "none"
+      header_behavior = "whitelist"
+      headers {
+        items = ["Accept-Language"]
+      }
     }
 
     query_strings_config {
       query_string_behavior = "none"
     }
+
+    enable_accept_encoding_brotli = true
+    enable_accept_encoding_gzip   = true
   }
 }
 
