@@ -40,6 +40,9 @@ pub enum Error {
 
     #[error("{0}")]
     FetchImage(String),
+
+    #[error("{0}")]
+    SerdeJson(#[from] serde_json::Error),
 }
 
 impl Error {
@@ -88,6 +91,10 @@ impl Error {
             ),
             Error::NotionRecord(msg) => (StatusCode::BAD_REQUEST, msg.clone()),
             Error::FetchImage(msg) => (StatusCode::INTERNAL_SERVER_ERROR, msg.clone()),
+            Error::SerdeJson(e) => (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                format!("JSON serialization/deserialization error: {}", e),
+            ),
         }
     }
 }

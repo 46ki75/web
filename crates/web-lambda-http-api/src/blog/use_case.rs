@@ -59,15 +59,31 @@ impl BlogUseCase {
             .await?;
 
         let mut icons: Vec<String> = vec![];
-        let mut images: Vec<String> = vec![];
+        let mut images: Vec<(String, String)> = vec![];
         let mut files: Vec<String> = vec![];
 
         Self::extract_files(&components, &mut icons, &mut images, &mut files)?;
 
+        let mut components_string = serde_json::to_string(&components).inspect_err(|_| {
+            tracing::error!("Failed to serialize blog components to JSON string");
+        })?;
+
+        for image in images.iter() {
+            components_string = components_string.replace(
+                &image.0,
+                &format!("/api/v2/blog/{}/block-image/{}", slug, image.1),
+            );
+        }
+
+        let components: Vec<jarkup_rs::Component> = serde_json::from_str(&components_string)
+            .inspect_err(|_| {
+                tracing::error!("Failed to deserialize blog components from JSON string");
+            })?;
+
         Ok(super::entity::BlogContentsEntity {
             components,
             icons,
-            images,
+            images: images.into_iter().map(|(_, id)| id).collect(),
             files,
         })
     }
@@ -87,7 +103,7 @@ impl BlogUseCase {
     fn extract_files(
         components: &Vec<jarkup_rs::Component>,
         icons: &mut Vec<String>,
-        images: &mut Vec<String>,
+        images: &mut Vec<(String, String)>,
         files: &mut Vec<String>,
     ) -> Result<(), crate::error::Error> {
         for component in components {
@@ -102,7 +118,7 @@ impl BlogUseCase {
                         files.push(file.props.src.clone());
                     }
                     jarkup_rs::BlockComponent::Image(image) => {
-                        images.push(image.props.src.clone());
+                        images.push((image.props.src.clone(), image.id.clone().unwrap()));
                     }
                     jarkup_rs::BlockComponent::Heading(heading) => {
                         Self::extract_from_inline_components(
@@ -194,7 +210,7 @@ impl BlogUseCase {
     fn extract_from_inline_components(
         inline_components: &[jarkup_rs::InlineComponent],
         icons: &mut Vec<String>,
-        _images: &mut Vec<String>,
+        _images: &mut Vec<(String, String)>,
         _files: &mut Vec<String>,
     ) -> Result<(), crate::error::Error> {
         for inline in inline_components {
