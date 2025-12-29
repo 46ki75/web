@@ -47,3 +47,4 @@ utoipa-axum = { workspace = true }
 utoipa-swagger-ui = { workspace = true }
 aws-sdk-ssm = "1.96.0"
 aws-config = "1.8.8"
+image = "0.25.9"

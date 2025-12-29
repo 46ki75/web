@@ -263,4 +263,18 @@ impl BlogUseCase {
 
         Ok(image_bytes)
     }
+
+    pub fn convert(&self, image_bytes: &[u8]) -> Result<Vec<u8>, crate::error::Error> {
+        let img = image::ImageReader::new(std::io::Cursor::new(image_bytes))
+            .with_guessed_format()?
+            .decode()?;
+
+        let mut bytes = Vec::new();
+
+        let encoder = image::codecs::webp::WebPEncoder::new_lossless(&mut bytes);
+
+        img.write_with_encoder(encoder)?;
+
+        Ok(bytes)
+    }
 }

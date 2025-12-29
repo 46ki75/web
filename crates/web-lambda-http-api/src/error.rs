@@ -43,6 +43,12 @@ pub enum Error {
 
     #[error("{0}")]
     SerdeJson(#[from] serde_json::Error),
+
+    #[error("image conversion error: {0}")]
+    ImageConversion(#[from] image::ImageError),
+
+    #[error("IO error: {0}")]
+    ImegeIoError(#[from] std::io::Error),
 }
 
 impl Error {
@@ -94,6 +100,14 @@ impl Error {
             Error::SerdeJson(e) => (
                 StatusCode::INTERNAL_SERVER_ERROR,
                 format!("JSON serialization/deserialization error: {}", e),
+            ),
+            Error::ImageConversion(e) => (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                format!("Image conversion error: {}", e),
+            ),
+            Error::ImegeIoError(e) => (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                format!("Image IO error: {}", e),
             ),
         }
     }
