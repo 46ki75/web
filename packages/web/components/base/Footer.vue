@@ -3,7 +3,7 @@
     <div class="container">
       <div class="sitelinks">
         <div style="margin-bottom: 0.5em">
-          <ElmInlineText text="SITE" size="1em" bold />
+          <ElmInlineText text="SITE" size="1em" bold class="heading" />
         </div>
 
         <NuxtLinkLocale class="sitelink" to="/about">
@@ -118,6 +118,30 @@ const currentYear = new Date().getFullYear();
 
 .container {
   width: 80%;
+}
+
+.heading {
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 0;
+    height: 3px;
+    width: 12px;
+    background-color: gray;
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 0;
+    height: 1px;
+    width: 32px;
+    background-color: gray;
+  }
 }
 
 .sitelinks {
