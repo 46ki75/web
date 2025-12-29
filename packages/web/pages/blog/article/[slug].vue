@@ -33,6 +33,7 @@
 <script setup lang="ts">
 import { ElmJsonComponentRenderer } from "@elmethis/core";
 import type { Component } from "jarkup-ts";
+
 import { client } from "~/openapi/client";
 
 const { locale } = useI18n();
@@ -47,56 +48,19 @@ const handleTagClick = (tagId: string) => {
   blogStore.tagSelect({ tagId, locale: locale.value });
 };
 
-const convert = (
-  blocks: Component[],
-  results: Array<{ from: string; to: string }>,
-  slug: string
-) => {
-  for (const block of blocks) {
-    if (block.type === "Image" && block.props?.src && block.id) {
-      results.push({
-        from: block.props.src,
-        to: `/_notion/blog/image/${slug}/${locale.value}/${block.id}.webp`,
-      });
-    } else if (block.type === "Icon" && block.props?.src && block.id) {
-      results.push({
-        from: block.props.src,
-        to: `/_notion/blog/image/${slug}/${locale.value}/${block.id}.webp`,
-      });
-    }
-
-    if (block.slots && "default" in block.slots) {
-      convert(block.slots.default, results, slug);
-    }
-  }
-
-  const serialized = JSON.stringify(blocks);
-  const converted = results.reduce(
-    (acc, { from, to }) => acc.split(from).join(to),
-    serialized
-  );
-  const deserialized = JSON.parse(converted);
-
-  return deserialized as Component[];
-};
-
 const fetchBlog = async (locale: "en" | "ja") => {
   if (typeof route.params.slug !== "string") {
     throw new Error("Invalid path params");
   }
 
-  const { data: enBlogContents } = await client.GET("/api/v2/blog/{slug}", {
+  const { data: blogContents } = await client.GET("/api/v2/blog/{slug}", {
     params: {
       path: { slug: route.params.slug as string },
       header: { "accept-language": locale },
     },
   });
 
-  return convert(
-    enBlogContents?.components as Component[],
-    [],
-    route.params.slug
-  );
+  return blogContents?.components as Component[];
 };
 
 const { data: jarkup } = await useAsyncData(
@@ -135,7 +99,7 @@ useHead({
         name: blogMeta.value?.title,
         headline: blogMeta.value?.title,
         abstract: blogMeta.value?.description,
-        image: `${appConfig.ENDPOINT}/_notion/blog/image/${blogMeta.value?.slug}/${locale.value}/ogp.webp`,
+        image: `${appConfig.ENDPOINT}/api/v2/blog/${blogMeta.value?.slug}/og-image`,
         url: `${appConfig.ENDPOINT}${route.fullPath}`,
         author: {
           "@type": "Person",

@@ -1,10 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 
-import { GTAG } from "./scripts/config";
-import { fetchPrerenderRoutes } from "./scripts/fetchRoutes";
-import { fetchBlogList } from "./scripts/fetchBlogList";
-import { fetchImages } from "./scripts/fetchImages";
-import { generateBlogFeed } from "./scripts/generateBlogFeeds";
+import { GTAG, ENDPOINT } from "./scripts/config";
 import { client } from "./openapi/client";
 
 const { RUM_IDPOOL_ID, RUM_APP_MONITOR_ID } = await (async () => {
@@ -38,16 +34,17 @@ export default defineNuxtConfig({
     },
   },
   vite: {
-    server: {},
+    server: {
+      proxy: {
+        "/api": {
+          target: `${ENDPOINT}/api`,
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api/, ""),
+        },
+      },
+    },
     optimizeDeps: {
       exclude: ["web-image-converter"],
-    },
-  },
-  nitro: {
-    prerender: {
-      routes: await fetchPrerenderRoutes(),
-      crawlLinks: false,
-      concurrency: 20,
     },
   },
 
@@ -56,14 +53,7 @@ export default defineNuxtConfig({
     dirs: ["./components"],
   },
 
-  hooks: {
-    async ready() {
-      const blogs = await fetchBlogList();
-      fetchImages(blogs);
-      generateBlogFeed();
-    },
-    // "prerender:routes"({ routes }) {},
-  },
+  hooks: {},
 
   app: {
     head: {
