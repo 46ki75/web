@@ -8,7 +8,7 @@ edition = "2021"
 web-blog-sdk = { path = "../web-blog-sdk" }
 axum = { workspace = true, features = ["macros"] }
 http = { workspace = true }
-tower-http = { workspace = true }
+tower-http = { workspace = true, features = ["cors"] }
 
 # HTTP Client
 reqwest = { workspace = true }
