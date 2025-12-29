@@ -71,7 +71,10 @@ const fetchBlog = async (locale: "en" | "ja") => {
 
 const { data: blog } = await useAsyncData(
   computed(() => `/${locale.value}/blog/article/${route.params.slug}`),
-  async () => await fetchBlog(locale.value)
+  async () => await fetchBlog(locale.value),
+  {
+    watch: [() => route.params.slug, locale],
+  }
 );
 
 useSeoMeta({
