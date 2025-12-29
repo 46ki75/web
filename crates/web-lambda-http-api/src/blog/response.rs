@@ -78,9 +78,6 @@ impl From<super::entity::BlogStatusEntity> for BlogStatusresponse {
 #[derive(Debug, Clone, serde::Serialize, utoipa::ToSchema)]
 pub struct BlogContentsResponse {
     pub components: Vec<serde_json::Value>,
-    pub icons: Vec<String>,
-    pub images: Vec<String>,
-    pub files: Vec<String>,
 }
 
 impl From<super::entity::BlogContentsEntity> for BlogContentsResponse {
@@ -91,9 +88,6 @@ impl From<super::entity::BlogContentsEntity> for BlogContentsResponse {
                 .into_iter()
                 .map(|e| serde_json::to_value(&e).unwrap())
                 .collect::<Vec<serde_json::Value>>(),
-            icons: value.icons,
-            images: value.images,
-            files: value.files,
         }
     }
 }

@@ -93,9 +93,6 @@ impl From<super::dto::BlogLanguageDto> for BlogLanguageEntity {
 #[derive(Debug, Clone)]
 pub struct BlogContentsEntity {
     pub components: Vec<jarkup_rs::Component>,
-    pub icons: Vec<String>,
-    pub images: Vec<String>,
-    pub files: Vec<String>,
 }
 
 #[derive(Debug, Clone)]

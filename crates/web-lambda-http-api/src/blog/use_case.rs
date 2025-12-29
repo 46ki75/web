@@ -80,12 +80,7 @@ impl BlogUseCase {
                 tracing::error!("Failed to deserialize blog components from JSON string");
             })?;
 
-        Ok(super::entity::BlogContentsEntity {
-            components,
-            icons,
-            images: images.into_iter().map(|(_, id)| id).collect(),
-            files,
-        })
+        Ok(super::entity::BlogContentsEntity { components })
     }
 
     pub async fn list_tags(
