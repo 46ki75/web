@@ -27,6 +27,8 @@
 
       <BlogEditOnNotion :url="blog.meta.notion_url" />
     </div>
+
+    <div v-else>LOADING</div>
   </article>
 </template>
 
@@ -68,7 +70,7 @@ const fetchBlog = async (locale: "en" | "ja") => {
 };
 
 const { data: blog } = await useAsyncData(
-  `/${locale.value}/blog/article/${route.params.slug}`,
+  computed(() => `/${locale.value}/blog/article/${route.params.slug}`),
   async () => await fetchBlog(locale.value)
 );
 
