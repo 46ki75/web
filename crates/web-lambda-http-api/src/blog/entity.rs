@@ -103,6 +103,7 @@ impl fmt::Display for BlogLanguageEntity {
 
 #[derive(Debug, Clone)]
 pub struct BlogContentsEntity {
+    pub meta: BlogEntity,
     pub components: Vec<jarkup_rs::Component>,
 }
 

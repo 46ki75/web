@@ -48,6 +48,8 @@ impl BlogUseCase {
         slug: &str,
         language: super::entity::BlogLanguageEntity,
     ) -> Result<super::entity::BlogContentsEntity, crate::error::Error> {
+        let blog = self.get_blog_by_slug(slug, language.clone()).await?;
+
         let language = match language {
             crate::blog::entity::BlogLanguageEntity::En => super::dto::BlogLanguageDto::En,
             crate::blog::entity::BlogLanguageEntity::Ja => super::dto::BlogLanguageDto::Ja,
@@ -80,7 +82,10 @@ impl BlogUseCase {
                 tracing::error!("Failed to deserialize blog components from JSON string");
             })?;
 
-        Ok(super::entity::BlogContentsEntity { components })
+        Ok(super::entity::BlogContentsEntity {
+            meta: blog,
+            components,
+        })
     }
 
     pub async fn list_tags(
