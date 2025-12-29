@@ -97,7 +97,7 @@
           class="search-results-item"
         >
           <BlogCard
-            :id="blog.slug"
+            :slug="blog.slug"
             :title="blog.title"
             :description="blog.description"
             :tags="blogStore.tags({ tagIds: blog.tag_ids, locale })"

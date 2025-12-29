@@ -21,7 +21,7 @@
         :style="{ '--delay': `${100 * index}ms` }"
       >
         <BlogCard
-          :id="blog.slug"
+          :slug="blog.slug"
           :title="blog.title"
           :description="blog.description"
           :tags="blogStore.tags({ tagIds: blog.tag_ids, locale })"

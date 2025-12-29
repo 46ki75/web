@@ -23,7 +23,7 @@
           v-for="(blog, index) in blogStore[locale].blogs?.filter(
             (blog) => blog.featured
           )"
-          :id="blog.slug"
+          :slug="blog.slug"
           :key="blog.slug"
           :title="blog.title"
           :description="blog.description"
@@ -42,7 +42,7 @@
       <div class="blog-container">
         <BlogCard
           v-for="(blog, index) in blogStore[locale].blogs?.slice(0, 4)"
-          :id="blog.slug"
+          :slug="blog.slug"
           :key="blog.slug"
           :title="blog.title"
           :description="blog.description"
