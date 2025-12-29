@@ -1,7 +1,7 @@
 use http::header::ACCEPT_LANGUAGE;
 
-// Client: 1 year, CDN: 10 minutes
-static CACHE_VALUE: &str = "public, max-age=31536000, s-maxage=600";
+// CDN: 1 year, Client: 10 minutes // TODO: ↓ temporary setting (0), adjust later
+static CACHE_VALUE: &str = "public, max-age=0, s-maxage=31536000";
 
 #[derive(Debug, serde::Deserialize, utoipa::ToSchema)]
 #[serde(rename_all = "snake_case")]
