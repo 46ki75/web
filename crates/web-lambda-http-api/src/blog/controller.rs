@@ -203,7 +203,7 @@ pub async fn get_blog_og_image(
 
     let contents = match state
         .blog_use_case
-        .fetch_ogp_image_by_slug(&slug, language)
+        .fetch_ogp_image_by_slug(&slug, language.clone())
         .await
     {
         Ok(image_bytes) => {
@@ -211,6 +211,7 @@ pub async fn get_blog_og_image(
 
             let response = axum::response::Response::builder()
                 .header(http::header::CONTENT_TYPE, content_type)
+                .header(http::header::ACCEPT_LANGUAGE, language.to_string())
                 .body(axum::body::Body::from(image_bytes.to_vec()))
                 .map_err(|e| {
                     (

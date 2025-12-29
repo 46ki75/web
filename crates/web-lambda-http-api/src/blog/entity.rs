@@ -1,3 +1,5 @@
+use core::fmt;
+
 #[derive(Debug, Clone)]
 pub struct BlogEntity {
     /// Notion page ID
@@ -86,6 +88,15 @@ impl From<super::dto::BlogLanguageDto> for BlogLanguageEntity {
         match value {
             super::dto::BlogLanguageDto::En => BlogLanguageEntity::En,
             super::dto::BlogLanguageDto::Ja => BlogLanguageEntity::Ja,
+        }
+    }
+}
+
+impl fmt::Display for BlogLanguageEntity {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            BlogLanguageEntity::En => write!(f, "en"),
+            BlogLanguageEntity::Ja => write!(f, "ja"),
         }
     }
 }
