@@ -138,9 +138,7 @@ export interface components {
     schemas: {
         BlogContentsResponse: {
             components: unknown[];
-            files: string[];
-            icons: string[];
-            images: string[];
+            meta: components["schemas"]["BlogResponse"];
         };
         BlogResponse: {
             /** @description The date and time when the blog was created (ISO 3339) */
