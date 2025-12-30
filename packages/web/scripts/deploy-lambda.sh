@@ -14,8 +14,8 @@ cp -r "${ARTIFACT_PATH}"/* "${TEMPDIR}/"
 # create zip preserving directory structure to avoid duplicate basenames
 ( cd "${TEMPDIR}" && zip -r "${ZIP_FILE}" . )
 
-aws lambda update-function-code --function-name "${FUNCTION_NAME}" --zip-file "fileb://${ZIP_FILE}" --publish
+aws lambda update-function-code --function-name "${FUNCTION_NAME}" --zip-file "fileb://${ZIP_FILE}" --publish > /dev/null
 
-aws lambda update-alias --function-name "${FUNCTION_NAME}" --name "stable" --function-version '$LATEST'
+aws lambda update-alias --function-name "${FUNCTION_NAME}" --name "stable" --function-version '$LATEST' > /dev/null
 
 echo "Deployed Lambda function: ${FUNCTION_NAME}"
