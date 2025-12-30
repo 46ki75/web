@@ -5,6 +5,12 @@ static CACHE_VALUE: &str = "public, max-age=0, s-maxage=31536000";
 
 #[derive(Debug, serde::Deserialize, utoipa::ToSchema)]
 #[serde(rename_all = "snake_case")]
+pub struct BlogOgImageQueryParam {
+    pub lang: Option<BlogLanguageQueryParam>,
+}
+
+#[derive(Debug, serde::Deserialize, utoipa::ToSchema)]
+#[serde(rename_all = "snake_case")]
 pub enum BlogLanguageQueryParam {
     En,
     Ja,
@@ -186,7 +192,8 @@ pub async fn list_tags(
     path = "/api/v2/blog/{slug}/og-image",
     params(
         ("slug" = String, Path, description = "Blog slug"),
-        ("accept-language" = String, Header),
+        ("accept-language" = Option<String>, Header),
+        ("lang" = Option<String>, Query),
     ),
     responses(
         (status = 200, description = "Blog Contents", body = Vec<u8>),
@@ -199,15 +206,25 @@ pub async fn get_blog_og_image(
     >,
     axum::extract::Path(slug): axum::extract::Path<String>,
     headers: http::header::HeaderMap,
+    axum::extract::Query(BlogOgImageQueryParam { lang }): axum::extract::Query<
+        BlogOgImageQueryParam,
+    >,
 ) -> Result<axum::response::Response<axum::body::Body>, (axum::http::StatusCode, String)> {
-    let language = headers
-        .get(ACCEPT_LANGUAGE)
-        .and_then(|accept_language| accept_language.to_str().ok())
-        .map(|accept_language| match accept_language {
-            "ja" => super::entity::BlogLanguageEntity::Ja,
-            _ => super::entity::BlogLanguageEntity::En,
+    let language = lang
+        .map(|query_lang| match query_lang {
+            BlogLanguageQueryParam::Ja => super::entity::BlogLanguageEntity::Ja,
+            BlogLanguageQueryParam::En => super::entity::BlogLanguageEntity::En,
         })
-        .unwrap_or(super::entity::BlogLanguageEntity::En);
+        .unwrap_or_else(|| {
+            headers
+                .get(ACCEPT_LANGUAGE)
+                .and_then(|accept_language| accept_language.to_str().ok())
+                .map(|accept_language| match accept_language {
+                    "ja" => super::entity::BlogLanguageEntity::Ja,
+                    _ => super::entity::BlogLanguageEntity::En,
+                })
+                .unwrap_or(super::entity::BlogLanguageEntity::En)
+        });
 
     let contents = match state
         .blog_use_case
