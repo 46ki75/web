@@ -15,21 +15,25 @@ export const generateSitemap = async (): Promise<string> => {
   console.log("🔧 Generating pages sitemap (sitemap package)");
 
   const base = normalizeBase(ENDPOINT);
-  const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
 
   // Static routes (pages). Keep paths relative so hostname option is used below.
   const paths: UrlEntry[] = [
-    { url: "/", lastmod: today, changefreq: "monthly", priority: 0.9 },
-    { url: "/about", lastmod: today, changefreq: "yearly", priority: 0.3 },
-    { url: "/blog", lastmod: today, changefreq: "daily", priority: 0.6 },
-    { url: "/talks", lastmod: today, changefreq: "monthly", priority: 0.4 },
+    { url: "/", lastmod: undefined, changefreq: "monthly", priority: 0.9 },
+    { url: "/about", lastmod: undefined, changefreq: "yearly", priority: 0.3 },
+    { url: "/blog", lastmod: undefined, changefreq: "daily", priority: 0.6 },
+    { url: "/talks", lastmod: undefined, changefreq: "monthly", priority: 0.4 },
     {
       url: "/image-converter",
-      lastmod: today,
+      lastmod: undefined,
       changefreq: "monthly",
       priority: 0.4,
     },
-    { url: "/privacy", lastmod: today, changefreq: "yearly", priority: 0.2 },
+    {
+      url: "/privacy",
+      lastmod: undefined,
+      changefreq: "yearly",
+      priority: 0.2,
+    },
   ];
 
   // Prevent accidental self-reference or index references
