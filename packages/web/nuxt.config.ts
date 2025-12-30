@@ -18,6 +18,10 @@ export default defineNuxtConfig({
   devServer: { host: "127.0.0.1" },
   modules: ["@pinia/nuxt", "@nuxtjs/i18n"],
 
+  nitro: {
+    preset: "aws-lambda",
+  },
+
   i18n: {
     strategy: "prefix_except_default",
     defaultLocale: "en",
