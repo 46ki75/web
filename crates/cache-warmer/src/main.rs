@@ -15,8 +15,16 @@ struct Page {
 fn report(pages: &HashMap<String, Page>) {
     println!("Visited {} pages", pages.len());
 
-    for (path, ..) in pages {
-        println!("{}", path);
+    for (path, page) in pages {
+        println!(
+            "{} | {}",
+            if page.is_cloudfront_cache_hit {
+                "HIT "
+            } else {
+                "MISS"
+            },
+            path
+        );
     }
 }
 
