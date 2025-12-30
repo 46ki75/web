@@ -1,4 +1,4 @@
-use std::{collections::HashMap, path};
+use std::collections::HashMap;
 
 fn get_base_domain() -> String {
     "www.ikuma.cloud".to_owned()
