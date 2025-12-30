@@ -3,7 +3,7 @@
 set -eu -o pipefail
 
 FUNCTION_NAME="${STAGE_NAME}-46ki75-web-lambda-function-nitro"
-ARTIFACT_PATH="../.output/server/"
+ARTIFACT_PATH="./.output/server/"
 
 TEMPDIR=$(mktemp -d)
 trap "rm -rf ${TEMPDIR}" EXIT
