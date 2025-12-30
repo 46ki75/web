@@ -6,8 +6,6 @@
   "scripts": {
     "dev": "nuxt dev --no-fork",
     "build": "nuxt build",
-    "start": "node .output/server/index.mjs",
-    "preview": "serve .output/public",
     "postinstall": "nuxt prepare",
     "predeploy": "pnpm run build",
     "deploy": "./scripts/deploy-s3.sh && ./scripts/deploy-lambda.sh",
