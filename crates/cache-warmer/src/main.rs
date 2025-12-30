@@ -58,6 +58,13 @@ fn crawl(body: &str) -> Vec<String> {
         }
     }
 
+    let link_selector = scraper::Selector::parse("link").unwrap();
+    for link_element in html.select(&link_selector) {
+        if let Some(href) = link_element.value().attr("href") {
+            urls.push(href.to_owned());
+        }
+    }
+
     let same_origin_path = urls
         .into_iter()
         .filter(|url| {
