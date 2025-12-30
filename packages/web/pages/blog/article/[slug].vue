@@ -99,7 +99,7 @@ useHead({
         name: blog.value?.meta?.title,
         headline: blog.value?.meta?.title,
         abstract: blog.value?.meta?.description,
-        image: `${appConfig.ENDPOINT}/api/v2/blog/${blog.value?.meta?.slug}/og-image`,
+        image: `${appConfig.ENDPOINT}/api/v2/blog/${blog.value?.meta?.slug}/og-image?lang=${locale.value}`,
         url: `${appConfig.ENDPOINT}${route.fullPath}`,
         author: {
           "@type": "Person",
