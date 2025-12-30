@@ -22,6 +22,14 @@ export default defineNuxtConfig({
     preset: "aws-lambda",
   },
 
+  routeRules: {
+    "/**": {
+      headers: {
+        "Cache-Control": "public, max-age=60, s-maxage=31536000",
+      },
+    },
+  },
+
   i18n: {
     strategy: "prefix_except_default",
     defaultLocale: "en",
