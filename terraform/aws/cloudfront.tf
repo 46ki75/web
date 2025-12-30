@@ -293,6 +293,11 @@ resource "aws_cloudfront_distribution" "default" {
     response_headers_policy_id = aws_cloudfront_response_headers_policy.security.id
 
     compress = true
+
+    function_association {
+      event_type   = "viewer-request"
+      function_arn = aws_cloudfront_function.rename_uri.arn
+    }
   }
 
   origin {
