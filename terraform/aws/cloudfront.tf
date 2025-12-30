@@ -250,13 +250,9 @@ resource "aws_cloudfront_distribution" "default" {
   ordered_cache_behavior {
     path_pattern = "/api/*"
     allowed_methods = [
-      "DELETE",
       "GET",
       "HEAD",
       "OPTIONS",
-      "PATCH",
-      "POST",
-      "PUT"
     ]
     cached_methods         = ["GET", "HEAD"]
     viewer_protocol_policy = "redirect-to-https"
