@@ -144,7 +144,7 @@ resource "aws_cloudfront_distribution" "default" {
     }
   }
 
-  default_root_object = "index.html"
+  default_root_object = ""
 
   # >>> custom domain
   viewer_certificate {
