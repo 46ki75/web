@@ -297,7 +297,7 @@ pub async fn get_blog_block_image(
 
 #[utoipa::path(
     get,
-    path = "/api/v2/blog/sitemap",
+    path = "/api/v2/blog/sitemap.xml",
     responses(
         (status = 200, description = "Blog Sitemap", body = String, content_type = "application/xml"),
     ),
