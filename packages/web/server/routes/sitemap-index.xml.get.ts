@@ -15,6 +15,7 @@ export const generateSitemapIndex = async (): Promise<string> => {
   const base = normalizeBase(ENDPOINT);
 
   const entries: SitemapEntry[] = [
+    { url: `${base}/sitemap.xml`, lastmod: undefined },
     { url: `${base}/api/v2/blog/sitemap.xml`, lastmod: undefined },
   ];
 
