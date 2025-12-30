@@ -283,10 +283,10 @@ impl BlogUseCase {
     }
 
     pub async fn generate_sitemap(&self) -> Result<String, crate::error::Error> {
-        let languages = vec![
-            crate::blog::entity::BlogLanguageEntity::En,
-            crate::blog::entity::BlogLanguageEntity::Ja,
-        ];
+        use strum::IntoEnumIterator;
+
+        let languages: Vec<crate::blog::entity::BlogLanguageEntity> =
+            crate::blog::entity::BlogLanguageEntity::iter().collect();
 
         // collect blogs per language
         let mut blogs_by_lang: std::collections::HashMap<String, Vec<super::entity::BlogEntity>> =

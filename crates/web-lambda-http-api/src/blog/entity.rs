@@ -1,4 +1,5 @@
 use core::fmt;
+use strum_macros::EnumIter;
 
 #[derive(Debug, Clone)]
 pub struct BlogEntity {
@@ -77,7 +78,7 @@ impl From<super::dto::BlogStatusDto> for BlogStatusEntity {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, EnumIter)]
 pub enum BlogLanguageEntity {
     En,
     Ja,
