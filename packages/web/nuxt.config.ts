@@ -68,14 +68,18 @@ export default defineNuxtConfig({
         },
       ],
       link: [
-        { rel: "icon", type: "image/svg+xml", href: "/brand/favicon.svg" },
+        {
+          rel: "icon",
+          type: "image/svg+xml",
+          href: "/static/brand/favicon.svg",
+        },
         {
           rel: "icon",
           type: "image/png",
-          href: "/brand/favicon.png",
+          href: "/static/brand/favicon.png",
           sizes: "64x64",
         },
-        { rel: "apple-touch-icon", href: "/brand/apple-touch-icon.png" },
+        { rel: "apple-touch-icon", href: "/static/brand/apple-touch-icon.png" },
         { rel: "preconnect", href: "https://fonts.googleapis.com" },
         {
           rel: "preconnect",

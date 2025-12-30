@@ -5,8 +5,8 @@
     <slot />
     <ClientOnly>
       <ElmParallax
-        image-url1="/image/bg-crimson.webp"
-        image-url2="/image/bg-amber.webp"
+        image-url1="/static/image/bg-crimson.webp"
+        image-url2="/static/image/bg-amber.webp"
       />
     </ClientOnly>
   </div>

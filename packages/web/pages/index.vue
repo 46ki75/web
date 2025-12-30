@@ -50,7 +50,7 @@ const { t } = useI18n();
           title="WASM Image Converter"
           :description="t('profile.navigation.image-converter')"
           to="/image-converter"
-          src="/image/image-converter.png"
+          src="/static/image/image-converter.png"
         />
 
         <home-card

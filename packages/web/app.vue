@@ -30,7 +30,7 @@ useSeoMeta({
   articleAuthor: ["Ikuma Yamashita"],
   twitterSite: "@46ki75",
   ogUrl: `${appConfig.ENDPOINT}${fullPath}`,
-  ogImage: "/image/ogp.png",
+  ogImage: "/static/image/ogp.png",
 });
 
 useHead({

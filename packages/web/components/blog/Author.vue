@@ -2,7 +2,10 @@
   <div>
     <div class="author">
       <div class="image">
-        <ElmImage src="/image/profile.webp" alt="Portrait of the Author" />
+        <ElmImage
+          src="/static/image/profile.webp"
+          alt="Portrait of the Author"
+        />
       </div>
 
       <div class="text-container">

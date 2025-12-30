@@ -2,7 +2,7 @@
   <header class="header">
     <div class="header-left flex-center">
       <NuxtLinkLocale to="/" class="logo">
-        <img alt="Logo" src="/brand/logo.svg" class="logo-image" />
+        <img alt="Logo" src="/static/brand/logo.svg" class="logo-image" />
       </NuxtLinkLocale>
     </div>
 
