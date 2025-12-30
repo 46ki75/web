@@ -313,6 +313,8 @@ impl BlogUseCase {
             })
             .collect::<Vec<super::entity::BlogSitemapUrl>>();
 
+        let preamble = r#"<?xml version="1.0" encoding="UTF-8"?>"#;
+
         let sitemap_entity = super::entity::BlogSitemapEntity {
             urls: urlset,
             ..Default::default()
@@ -322,6 +324,6 @@ impl BlogUseCase {
             tracing::error!("{e}");
         })?;
 
-        Ok(sitemap)
+        Ok(format!("{preamble}{sitemap}"))
     }
 }

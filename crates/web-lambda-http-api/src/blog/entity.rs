@@ -127,6 +127,7 @@ impl From<super::dto::BlogTagDto> for BlogTagEntity {
 }
 
 #[derive(Debug, Clone, serde::Serialize)]
+#[serde(rename = "urlset")]
 pub struct BlogSitemapEntity {
     #[serde(rename = "@xmlns")]
     pub xmlns: String,
