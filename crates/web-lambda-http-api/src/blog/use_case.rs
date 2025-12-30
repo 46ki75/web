@@ -283,10 +283,19 @@ impl BlogUseCase {
     }
 
     pub async fn generate_sitemap(&self) -> Result<String, crate::error::Error> {
-        // TODO: Support multi-language sitemap
-        let language = crate::blog::entity::BlogLanguageEntity::En;
+        // Support multi-language sitemap
+        let languages = vec![
+            crate::blog::entity::BlogLanguageEntity::En,
+            crate::blog::entity::BlogLanguageEntity::Ja,
+        ];
 
-        let blogs = self.list_blogs(language.clone()).await?;
+        // collect blogs per language
+        let mut blogs_by_lang: std::collections::HashMap<String, Vec<super::entity::BlogEntity>> =
+            std::collections::HashMap::new();
+        for lang in &languages {
+            let list = self.list_blogs(lang.clone()).await?;
+            blogs_by_lang.insert(lang.to_string(), list);
+        }
 
         let stage_name = crate::stage_name()?;
 
@@ -296,26 +305,64 @@ impl BlogUseCase {
             _ => "dev-www.ikuma.cloud",
         };
 
-        let base_url = match language {
-            crate::blog::entity::BlogLanguageEntity::En => {
-                format!("https://{domain}",)
-            }
-            _ => {
-                format!("https://{domain}/{}", language.to_string())
-            }
-        };
+        let mut urlset: Vec<super::entity::BlogSitemapUrl> = Vec::new();
 
-        let urlset = blogs
-            .into_iter()
-            .map(|blog| super::entity::BlogSitemapUrl {
-                loc: format!("{base_url}/blog/article/{slug}", slug = blog.slug),
-                ..Default::default()
-            })
-            .collect::<Vec<super::entity::BlogSitemapUrl>>();
+        for lang in &languages {
+            let lang_key = lang.to_string();
+            if let Some(blogs) = blogs_by_lang.get(&lang_key) {
+                for blog in blogs {
+                    let base_url = match lang {
+                        crate::blog::entity::BlogLanguageEntity::En => format!("https://{domain}"),
+                        _ => format!("https://{domain}/{}", lang.to_string()),
+                    };
+
+                    let loc = format!("{base_url}/blog/article/{slug}", slug = blog.slug);
+
+                    // build alternates only when corresponding slug exists in that language
+                    let mut alternates: Vec<super::entity::BlogAlternateLink> = Vec::new();
+                    for alt_lang in &languages {
+                        let alt_key = alt_lang.to_string();
+                        if let Some(alt_blogs) = blogs_by_lang.get(&alt_key) {
+                            if alt_blogs.iter().any(|b| b.slug == blog.slug) {
+                                let alt_base = match alt_lang {
+                                    crate::blog::entity::BlogLanguageEntity::En => {
+                                        format!("https://{domain}")
+                                    }
+                                    _ => format!("https://{domain}/{}", alt_lang.to_string()),
+                                };
+                                let href =
+                                    format!("{alt_base}/blog/article/{slug}", slug = blog.slug);
+                                alternates.push(super::entity::BlogAlternateLink {
+                                    rel: "alternate".to_string(),
+                                    hreflang: alt_lang.to_string(),
+                                    href,
+                                });
+                            }
+                        }
+                    }
+
+                    // x-default -> point to english canonical
+                    let default_href =
+                        format!("https://{domain}/blog/article/{slug}", slug = blog.slug);
+                    alternates.push(super::entity::BlogAlternateLink {
+                        rel: "alternate".to_string(),
+                        hreflang: "x-default".to_string(),
+                        href: default_href,
+                    });
+
+                    urlset.push(super::entity::BlogSitemapUrl {
+                        loc,
+                        alternates,
+                        ..Default::default()
+                    });
+                }
+            }
+        }
 
         let preamble = r#"<?xml version="1.0" encoding="UTF-8"?>"#;
 
         let sitemap_entity = super::entity::BlogSitemapEntity {
+            xmlns_xhtml: Some("http://www.w3.org/1999/xhtml".to_string()),
             urls: urlset,
             ..Default::default()
         };
