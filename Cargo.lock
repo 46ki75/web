@@ -954,6 +954,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "cache-warmer"
+version = "0.1.0"
+dependencies = [
+ "reqwest",
+ "tokio",
+]
+
+[[package]]
 name = "cc"
 version = "1.2.41"
 source = "registry+https://github.com/rust-lang/crates.io-index"
