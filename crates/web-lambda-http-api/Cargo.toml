@@ -34,7 +34,7 @@ tower = { workspace = true }
 thiserror = { workspace = true }
 futures = { workspace = true }
 bytes = { workspace = true }
-infer = "0.19.0"
+infer = { workspace = true }
 strum = { workspace = true }
 strum_macros = { workspace = true }
 
