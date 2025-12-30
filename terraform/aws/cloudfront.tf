@@ -216,6 +216,29 @@ resource "aws_cloudfront_distribution" "default" {
     }
   }
 
+  ordered_cache_behavior {
+    path_pattern = "/_nuxt/*"
+    allowed_methods = [
+      "GET",
+      "HEAD",
+      "OPTIONS"
+    ]
+    cached_methods         = ["GET", "HEAD"]
+    viewer_protocol_policy = "redirect-to-https"
+    target_origin_id       = "s3-web"
+
+    cache_policy_id            = aws_cloudfront_cache_policy.s3.id
+    origin_request_policy_id   = aws_cloudfront_origin_request_policy.all_viewer.id
+    response_headers_policy_id = aws_cloudfront_response_headers_policy.security.id
+
+    compress = true
+
+    function_association {
+      event_type   = "viewer-request"
+      function_arn = aws_cloudfront_function.rename_uri.arn
+    }
+  }
+
   origin {
     domain_name              = aws_s3_bucket.web.bucket_regional_domain_name
     origin_id                = "s3-web"
