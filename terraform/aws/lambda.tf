@@ -86,9 +86,27 @@ resource "aws_lambda_alias" "http_api" {
 }
 
 resource "aws_lambda_function_url" "http_api" {
-  authorization_type = "NONE"
+  authorization_type = "AWS_IAM"
   function_name      = aws_lambda_function.http_api.function_name
   qualifier          = aws_lambda_alias.http_api.name
+}
+
+resource "aws_lambda_permission" "http_api_cloudfront_invoke_function_url" {
+  statement_id  = "AllowCloudFrontServicePrincipal"
+  action        = "lambda:InvokeFunctionUrl"
+  function_name = aws_lambda_function.http_api.function_name
+  principal     = "cloudfront.amazonaws.com"
+  source_arn    = aws_cloudfront_distribution.default.arn
+  qualifier     = aws_lambda_alias.http_api.name
+}
+
+resource "aws_lambda_permission" "http_api_cloudfront_invoke_function" {
+  statement_id  = "AllowCloudFrontServicePrincipalInvokeFunction"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.http_api.function_name
+  principal     = "cloudfront.amazonaws.com"
+  source_arn    = aws_cloudfront_distribution.default.arn
+  qualifier     = aws_lambda_alias.http_api.name
 }
 
 locals {
@@ -184,9 +202,27 @@ resource "aws_lambda_alias" "nitro" {
 }
 
 resource "aws_lambda_function_url" "nitro" {
-  authorization_type = "NONE"
+  authorization_type = "AWS_IAM"
   function_name      = aws_lambda_function.nitro.function_name
   qualifier          = aws_lambda_alias.nitro.name
+}
+
+resource "aws_lambda_permission" "nitro_cloudfront_invoke_function_url" {
+  statement_id  = "AllowCloudFrontServicePrincipal"
+  action        = "lambda:InvokeFunctionUrl"
+  function_name = aws_lambda_function.nitro.function_name
+  principal     = "cloudfront.amazonaws.com"
+  source_arn    = aws_cloudfront_distribution.default.arn
+  qualifier     = aws_lambda_alias.nitro.name
+}
+
+resource "aws_lambda_permission" "nitro_cloudfront_invoke_function" {
+  statement_id  = "AllowCloudFrontServicePrincipalInvokeFunction"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.nitro.function_name
+  principal     = "cloudfront.amazonaws.com"
+  source_arn    = aws_cloudfront_distribution.default.arn
+  qualifier     = aws_lambda_alias.nitro.name
 }
 
 locals {
