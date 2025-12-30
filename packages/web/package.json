@@ -11,7 +11,7 @@
     "preview": "serve .output/public",
     "postinstall": "nuxt prepare",
     "predeploy": "pnpm run generate",
-    "deploy": "./scripts/deploy-s3.sh",
+    "deploy": "./scripts/deploy-s3.sh && ./scripts/deploy-lambda.sh",
     "postdeploy": "./scripts/invalidate.sh",
     "lint": "eslint",
     "stylelint": "stylelint '**/*.vue'",
