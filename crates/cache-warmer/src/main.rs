@@ -37,11 +37,18 @@ fn crawl(body: &str) -> Vec<String> {
     let mut urls: Vec<String> = Vec::new();
 
     let html = scraper::Html::parse_document(body);
-    let a_selector = scraper::Selector::parse("a").unwrap();
 
+    let a_selector = scraper::Selector::parse("a").unwrap();
     for a_element in html.select(&a_selector) {
         if let Some(href) = a_element.value().attr("href") {
             urls.push(href.to_owned());
+        }
+    }
+
+    let img_selector = scraper::Selector::parse("img").unwrap();
+    for img_element in html.select(&img_selector) {
+        if let Some(src) = img_element.value().attr("src") {
+            urls.push(src.to_owned());
         }
     }
 
