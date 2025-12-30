@@ -133,7 +133,7 @@ pub struct BlogSitemapEntity {
     #[serde(rename = "@xmlns")]
     pub xmlns: String,
 
-    #[serde(rename = "xmlns:xhtml", skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "@xmlns:xhtml", skip_serializing_if = "Option::is_none")]
     pub xmlns_xhtml: Option<String>,
 
     #[serde(rename = "url", default)]
@@ -173,5 +173,32 @@ impl Default for BlogSitemapEntity {
             xmlns_xhtml: Some("http://www.w3.org/1999/xhtml".to_string()),
             urls: Vec::new(),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn sitemap_serializes_with_xhtml_namespace() {
+        let sitemap = BlogSitemapEntity {
+            xmlns: "http://www.sitemaps.org/schemas/sitemap/0.9".into(),
+            xmlns_xhtml: Some("http://www.w3.org/1999/xhtml".into()),
+            urls: vec![BlogSitemapUrl {
+                loc: "https://example.com/".into(),
+                alternates: vec![BlogAlternateLink {
+                    rel: "alternate".into(),
+                    hreflang: "x-default".into(),
+                    href: "https://example.com/".into(),
+                }],
+                ..Default::default()
+            }],
+        };
+
+        let xml = quick_xml::se::to_string(&sitemap).unwrap();
+        println!("sitemap xml: {}", xml);
+        assert!(xml.contains(r#"xmlns:xhtml="http://www.w3.org/1999/xhtml""#));
+        assert!(xml.contains("xhtml:link"));
     }
 }
