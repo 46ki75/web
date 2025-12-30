@@ -83,7 +83,7 @@ resource "aws_cloudfront_response_headers_policy" "security" {
 
   cors_config {
     access_control_allow_origins {
-      items = ["http://localhost:*"]
+      items = ["http://localhost:*", "http://127.0.0.1:*"]
     }
     access_control_allow_methods {
       items = ["OPTIONS", "HEAD", "GET"]
