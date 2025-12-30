@@ -351,9 +351,11 @@ export interface operations {
     };
     get_blog_og_image: {
         parameters: {
-            query?: never;
-            header: {
-                "accept-language": string;
+            query?: {
+                lang?: string;
+            };
+            header?: {
+                "accept-language"?: string | null;
             };
             path: {
                 /** @description Blog slug */
