@@ -51,7 +51,7 @@ resource "aws_cloudfront_cache_policy" "http_api" {
     }
 
     query_strings_config {
-      query_string_behavior = "none"
+      query_string_behavior = "all"
     }
 
     enable_accept_encoding_brotli = true
