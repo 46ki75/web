@@ -10,11 +10,57 @@ async def warm_spa_routes():
         max_pages=100,  # Limit total pages
     )
 
-    async with AsyncWebCrawler() as crawler:
-        # Use a CrawlerRunConfig so DeepCrawlDecorator sees the strategy and runs deep crawling
-        from crawl4ai import CrawlerRunConfig
+    # Build BrowserConfig with optional headers (safer: Playwright context-level headers)
+    from crawl4ai import CrawlerRunConfig, BrowserConfig
+    import os
 
-        config = CrawlerRunConfig(deep_crawl_strategy=strategy, stream=False)
+    # Support Basic Auth via environment variables (safe defaults):
+    # - BASIC_AUTH_USER & BASIC_AUTH_PASSWORD
+    # - BASIC_AUTH can be one of:
+    #   * "user:pass"  -> encoded
+    #   * "Basic <token>" -> used as-is
+    #   * "<base64token>" -> used as token
+    # If no env vars are provided, the crawler runs normally without auth.
+    user = os.getenv("BASIC_AUTH_USER")
+    pwd = os.getenv("BASIC_AUTH_PASSWORD")
+    basic = os.getenv("BASIC_AUTH")
+
+    headers = None
+    if user and pwd:
+        import base64
+
+        token = base64.b64encode(f"{user}:{pwd}".encode()).decode()
+        headers = {"Authorization": f"Basic {token}"}
+        if os.getenv("CRAWLER_DEBUG"):
+            print("Using Basic Auth from env (username redacted)")
+    elif basic:
+        basic = basic.strip()
+        if basic.lower().startswith("basic "):
+            headers = {"Authorization": basic}
+            if os.getenv("CRAWLER_DEBUG"):
+                print("Using Basic Auth from env (prebuilt header)")
+        elif ":" in basic:
+            import base64
+
+            token = base64.b64encode(basic.encode()).decode()
+            headers = {"Authorization": f"Basic {token}"}
+            if os.getenv("CRAWLER_DEBUG"):
+                print("Using Basic Auth from env (user:pass string)")
+        else:
+            # Treat as base64 token
+            headers = {"Authorization": f"Basic {basic}"}
+            if os.getenv("CRAWLER_DEBUG"):
+                print("Using Basic Auth from env (base64 token)")
+
+    # Create BrowserConfig with headers (Playwright will apply these to context)
+    browser_config = BrowserConfig(headers=headers) if headers else BrowserConfig()
+
+    # Use AsyncWebCrawler with the prepared BrowserConfig
+    async with AsyncWebCrawler(config=browser_config) as crawler:
+        config = CrawlerRunConfig(
+            deep_crawl_strategy=strategy,
+            stream=False,
+        )
         result = await crawler.arun(
             url="https://www.ikuma.cloud/",
             config=config,
