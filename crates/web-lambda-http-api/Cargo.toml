@@ -35,6 +35,8 @@ thiserror = { workspace = true }
 futures = { workspace = true }
 bytes = { workspace = true }
 infer = "0.19.0"
+strum = { workspace = true }
+strum_macros = { workspace = true }
 
 # Notion
 jarkup-rs = { workspace = true }
