@@ -13,9 +13,9 @@
       </NuxtLinkLocale>
     </div>
 
-    <ClientOnly :key="locale">
+    <div :key="locale">
       <div
-        v-for="(blog, index) in blogStore.getSideBlogs()"
+        v-for="(blog, index) in blogStore.getSideBlogs"
         :key="blog.slug"
         class="card"
         :style="{ '--delay': `${100 * index}ms` }"
@@ -31,7 +31,7 @@
           :locale="locale"
         />
       </div>
-    </ClientOnly>
+    </div>
   </div>
 </template>
 

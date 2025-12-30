@@ -111,15 +111,14 @@ export const useBlogStore = defineStore("BlogSearchStore", {
     },
   },
   getters: {
-    getSideBlogs(state): () => BlogMeta[] | undefined {
-      return () =>
-        state.blogs
-          ?.sort(
-            (pre, next) =>
-              new Date(next.created_at).getTime() -
-              new Date(pre.created_at).getTime()
-          )
-          .slice(0, 10);
+    getSideBlogs(state): BlogMeta[] | undefined {
+      return state.blogs
+        ?.sort(
+          (pre, next) =>
+            new Date(next.created_at).getTime() -
+            new Date(pre.created_at).getTime()
+        )
+        .slice(0, 10);
     },
 
     getTags(
