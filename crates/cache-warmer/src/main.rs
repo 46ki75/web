@@ -13,6 +13,10 @@ struct Page {
 
 fn report(pages: &HashMap<String, Page>) {
     println!("Visited {} pages", pages.len());
+
+    for (path, ..) in pages {
+        println!("{}", path);
+    }
 }
 
 async fn visit(path: &str) -> Page {
