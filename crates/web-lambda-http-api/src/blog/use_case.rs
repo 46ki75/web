@@ -282,10 +282,10 @@ impl BlogUseCase {
         Ok(bytes::Bytes::from(bytes))
     }
 
-    pub async fn generate_sitemap(
-        &self,
-        language: super::entity::BlogLanguageEntity,
-    ) -> Result<String, crate::error::Error> {
+    pub async fn generate_sitemap(&self) -> Result<String, crate::error::Error> {
+        // TODO: Support multi-language sitemap
+        let language = crate::blog::entity::BlogLanguageEntity::En;
+
         let blogs = self.list_blogs(language.clone()).await?;
 
         let stage_name = crate::stage_name()?;

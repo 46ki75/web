@@ -294,3 +294,36 @@ pub async fn get_blog_block_image(
 
     contents
 }
+
+#[utoipa::path(
+    get,
+    path = "/api/v2/blog/sitemap",
+    responses(
+        (status = 200, description = "Blog Sitemap", body = String, content_type = "application/xml"),
+    ),
+)]
+pub async fn get_blog_sitemap(
+    axum::extract::State(state): axum::extract::State<
+        std::sync::Arc<crate::axum_router::AxumAppState>,
+    >,
+) -> Result<axum::response::Response<axum::body::Body>, (axum::http::StatusCode, String)> {
+    let sitemap = match state.blog_use_case.generate_sitemap().await {
+        Ok(sitemap_xml) => {
+            let response = axum::response::Response::builder()
+                .header(http::header::CONTENT_TYPE, "application/xml")
+                .header(http::header::CACHE_CONTROL, CACHE_VALUE)
+                .body(axum::body::Body::from(sitemap_xml))
+                .map_err(|e| {
+                    (
+                        axum::http::StatusCode::INTERNAL_SERVER_ERROR,
+                        format!("Failed to build response: {}", e),
+                    )
+                })?;
+
+            Ok(response)
+        }
+        Err(e) => Err(e.as_client_response()),
+    };
+
+    sitemap
+}
