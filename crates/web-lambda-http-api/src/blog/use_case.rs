@@ -281,4 +281,47 @@ impl BlogUseCase {
 
         Ok(bytes::Bytes::from(bytes))
     }
+
+    pub async fn generate_sitemap(
+        &self,
+        language: super::entity::BlogLanguageEntity,
+    ) -> Result<String, crate::error::Error> {
+        let blogs = self.list_blogs(language.clone()).await?;
+
+        let stage_name = crate::stage_name()?;
+
+        let domain = match stage_name.as_str() {
+            "prod" => "www.ikuma.cloud",
+            "staging" => "stg-www.ikuma.cloud",
+            _ => "dev-www.ikuma.cloud",
+        };
+
+        let base_url = match language {
+            crate::blog::entity::BlogLanguageEntity::En => {
+                format!("https://{domain}",)
+            }
+            _ => {
+                format!("https://{domain}/{}", language.to_string())
+            }
+        };
+
+        let urlset = blogs
+            .into_iter()
+            .map(|blog| super::entity::BlogSitemapUrl {
+                loc: format!("{base_url}/blog/article/{slug}", slug = blog.slug),
+                ..Default::default()
+            })
+            .collect::<Vec<super::entity::BlogSitemapUrl>>();
+
+        let sitemap_entity = super::entity::BlogSitemapEntity {
+            urls: urlset,
+            ..Default::default()
+        };
+
+        let sitemap = quick_xml::se::to_string(&sitemap_entity).inspect_err(|e| {
+            tracing::error!("{e}");
+        })?;
+
+        Ok(sitemap)
+    }
 }

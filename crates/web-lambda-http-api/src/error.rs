@@ -44,6 +44,9 @@ pub enum Error {
     #[error("{0}")]
     SerdeJson(#[from] serde_json::Error),
 
+    #[error("{0}")]
+    SerializeXml(#[from] quick_xml::SeError),
+
     #[error("image conversion error: {0}")]
     ImageConversion(#[from] image::ImageError),
 
@@ -100,6 +103,10 @@ impl Error {
             Error::SerdeJson(e) => (
                 StatusCode::INTERNAL_SERVER_ERROR,
                 format!("JSON serialization/deserialization error: {}", e),
+            ),
+            Error::SerializeXml(e) => (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                format!("XML serialization error: {}", e),
             ),
             Error::ImageConversion(e) => (
                 StatusCode::INTERNAL_SERVER_ERROR,

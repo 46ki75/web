@@ -125,3 +125,31 @@ impl From<super::dto::BlogTagDto> for BlogTagEntity {
         }
     }
 }
+
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BlogSitemapEntity {
+    #[serde(rename = "@xmlns")]
+    pub xmlns: String,
+    #[serde(rename = "url", default)]
+    pub urls: Vec<BlogSitemapUrl>,
+}
+
+#[derive(Debug, Clone, serde::Serialize, Default)]
+pub struct BlogSitemapUrl {
+    pub loc: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub lastmod: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub changefreq: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub priority: Option<String>,
+}
+
+impl Default for BlogSitemapEntity {
+    fn default() -> Self {
+        BlogSitemapEntity {
+            xmlns: "http://www.sitemaps.org/schemas/sitemap/0.9".to_string(),
+            urls: Vec::new(),
+        }
+    }
+}
