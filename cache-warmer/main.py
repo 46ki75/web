@@ -62,7 +62,7 @@ async def warm_spa_routes():
             stream=False,
         )
         result = await crawler.arun(
-            url="https://www.ikuma.cloud/",
+            url="https://dev-www.ikuma.cloud/",
             config=config,
         )
 
