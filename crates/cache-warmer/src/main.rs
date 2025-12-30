@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 fn get_base_domain() -> String {
-    "www.ikuma.cloud".to_owned()
+    "dev-www.ikuma.cloud".to_owned()
 }
 
 #[derive(Debug, Default, Clone)]
@@ -23,7 +23,13 @@ async fn visit(path: &str) -> Page {
     let client = reqwest::Client::new();
     let url = format!("https://{}{}", get_base_domain(), path);
 
-    let response = client.get(&url).send().await.unwrap();
+    let authorization = std::env::var("AUTHORIZATION").unwrap();
+    let response = client
+        .get(&url)
+        .header(http::header::AUTHORIZATION, authorization)
+        .send()
+        .await
+        .unwrap();
     let body = response.text().await.unwrap();
 
     Page {
@@ -68,6 +74,8 @@ fn crawl(body: &str) -> Vec<String> {
 
 #[tokio::main]
 async fn main() {
+    dotenvy::dotenv().ok();
+
     let mut pages = HashMap::new();
     pages.insert(
         "/".to_owned(),
