@@ -6,6 +6,22 @@ resource "aws_cloudfront_origin_access_control" "web" {
   signing_protocol                  = "sigv4"
 }
 
+resource "aws_cloudfront_origin_access_control" "http_api" {
+  name                              = "${terraform.workspace}-46ki75-web-cloudfront-oac-http_api"
+  description                       = "Lambda HTTP API OAC"
+  origin_access_control_origin_type = "lambda"
+  signing_behavior                  = "always"
+  signing_protocol                  = "sigv4"
+}
+
+resource "aws_cloudfront_origin_access_control" "nitro" {
+  name                              = "${terraform.workspace}-46ki75-web-cloudfront-oac-nitro"
+  description                       = "Lambda Nitro OAC"
+  origin_access_control_origin_type = "lambda"
+  signing_behavior                  = "always"
+  signing_protocol                  = "sigv4"
+}
+
 resource "aws_cloudfront_cache_policy" "s3" {
   name = "${terraform.workspace}-46ki75-web-cloudfront-cache_policy-s3"
 
@@ -190,6 +206,8 @@ resource "aws_cloudfront_distribution" "default" {
       origin_shield_region = "ap-northeast-1"
     }
 
+    origin_access_control_id = aws_cloudfront_origin_access_control.nitro.id
+
     custom_origin_config {
       http_port              = 80
       https_port             = 443
@@ -280,6 +298,8 @@ resource "aws_cloudfront_distribution" "default" {
       enabled              = true
       origin_shield_region = "ap-northeast-1"
     }
+
+    origin_access_control_id = aws_cloudfront_origin_access_control.http_api.id
 
     custom_origin_config {
       http_port              = 80
