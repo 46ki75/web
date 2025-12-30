@@ -2,7 +2,7 @@
   <div :key="slug" class="container">
     <NuxtLinkLocale class="top" :to="`/blog/article/${slug}`" :locale="locale">
       <div class="image">
-        <ElmImage :src="`/api/v2/blog/${slug}/og-image`" />
+        <ElmImage :src="`/api/v2/blog/${slug}/og-image?lang=${locale}`" />
       </div>
 
       <div class="text-container">
