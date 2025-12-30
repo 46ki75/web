@@ -38,7 +38,8 @@
     "ghcr.io/devcontainers-extra/features/zig": {},
     "ghcr.io/devcontainers/features/rust": {},
     "./features/cargo-binstall": {},
-    "ghcr.io/devcontainers/features/terraform": {}
+    "ghcr.io/devcontainers/features/terraform": {},
+    "./features/uv": {}
   },
   "postCreateCommand": "echo 'eval \"$(starship init bash)\"' >> ~/.bashrc",
   "mounts": [
