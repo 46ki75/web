@@ -1,4 +1,7 @@
-use std::collections::{HashMap, HashSet};
+use std::{
+    collections::{HashMap, HashSet},
+    path,
+};
 
 struct Page {
     path: String,
@@ -6,6 +9,12 @@ struct Page {
 
 fn report(pages: &HashMap<String, Page>) {
     println!("Visited {} pages", pages.len());
+}
+
+async fn visit(path: &str) -> Page {
+    Page {
+        path: path.to_owned(),
+    }
 }
 
 #[tokio::main]
@@ -17,9 +26,9 @@ async fn main() {
     let mut pages: HashMap<String, Page> = HashMap::new();
 
     for path in queue.iter() {
-        println!("Visiting: {}", path);
+        let page = visit(path).await;
 
-        pages.insert(path.clone(), Page { path: path.clone() });
+        pages.insert(path.clone(), page);
     }
 
     report(&pages);
