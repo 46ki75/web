@@ -13,7 +13,7 @@
       </NuxtLinkLocale>
     </div>
 
-    <ClientOnly>
+    <ClientOnly :key="locale">
       <div
         v-for="(blog, index) in blogStore.getSideBlogs()"
         :key="blog.slug"
