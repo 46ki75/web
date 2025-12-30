@@ -9,6 +9,7 @@ struct Page {
     path: String,
     body: Option<String>,
     visited: bool,
+    is_cloudfront_cache_hit: bool,
 }
 
 fn report(pages: &HashMap<String, Page>) {
@@ -30,11 +31,20 @@ async fn visit(path: &str) -> Page {
         .send()
         .await
         .unwrap();
+
+    let is_cloudfront_cache_hit = response
+        .headers()
+        .get("x-cache")
+        .and_then(|v| v.to_str().ok())
+        .map(|v| v.contains("Hit"))
+        .unwrap_or_default();
+
     let body = response.text().await.unwrap();
 
     Page {
         path: path.to_owned(),
         body: Some(body),
+        is_cloudfront_cache_hit,
         ..Default::default()
     }
 }
