@@ -57,7 +57,7 @@ resource "aws_lambda_function" "http_api" {
   handler       = "bootstrap.handler"
   runtime       = "provided.al2023"
   architectures = ["arm64"]
-  memory_size   = 256
+  memory_size   = 512
   publish       = true # Publish a new version
   timeout       = 30
 
@@ -155,7 +155,7 @@ resource "aws_lambda_function" "nitro" {
   handler       = "index.handler"
   runtime       = "nodejs22.x"
   architectures = ["arm64"]
-  memory_size   = 256
+  memory_size   = 512
   publish       = true # Publish a new version
   timeout       = 30
 
