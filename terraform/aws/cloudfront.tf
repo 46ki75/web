@@ -156,8 +156,45 @@ resource "aws_cloudfront_distribution" "default" {
   aliases = [aws_acm_certificate.cloudfront_cert.domain_name]
   # <<< custom domain
 
-  # >>> [S3 web] origin
+  # >>> [Nitro] origin
   default_cache_behavior {
+    allowed_methods = [
+      "GET",
+      "HEAD",
+      "OPTIONS"
+    ]
+    cached_methods         = ["GET", "HEAD"]
+    viewer_protocol_policy = "redirect-to-https"
+    target_origin_id       = "nitro-backend"
+
+    cache_policy_id            = aws_cloudfront_cache_policy.http_api.id
+    origin_request_policy_id   = aws_cloudfront_origin_request_policy.all_viewer.id
+    response_headers_policy_id = aws_cloudfront_response_headers_policy.security.id
+
+    compress = true
+
+    function_association {
+      event_type   = "viewer-request"
+      function_arn = aws_cloudfront_function.rename_uri.arn
+    }
+  }
+
+  origin {
+    domain_name = local.lambda_function_url_domain_nitro
+    origin_id   = "nitro-backend"
+
+    custom_origin_config {
+      http_port              = 80
+      https_port             = 443
+      origin_protocol_policy = "https-only"
+      origin_ssl_protocols   = ["TLSv1.2"]
+    }
+  }
+  # <<< [S3 web] origin
+
+  # # >>> [S3 web] origin
+  ordered_cache_behavior {
+    path_pattern = "/static/*"
     allowed_methods = [
       "GET",
       "HEAD",
@@ -184,7 +221,7 @@ resource "aws_cloudfront_distribution" "default" {
     origin_id                = "s3-web"
     origin_access_control_id = aws_cloudfront_origin_access_control.web.id
   }
-  # <<< [S3 web] origin
+  # # <<< [S3 web] origin
 
   # >>> [Lambda Function URLs] origin
   ordered_cache_behavior {
