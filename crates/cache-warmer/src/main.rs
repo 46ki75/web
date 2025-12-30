@@ -34,6 +34,8 @@ async fn visit(path: &str) -> Page {
     let client = reqwest::Client::new();
     let url = format!("https://{}{}", get_base_domain(), path);
 
+    tracing::info!("Visiting {}", url);
+
     let authorization = std::env::var("AUTHORIZATION").unwrap();
     let response = client
         .get(&url)
@@ -52,6 +54,17 @@ async fn visit(path: &str) -> Page {
         .unwrap_or_default();
 
     let body = response.text().await.unwrap();
+
+    tracing::info!(
+        "| {} | {} | {}",
+        if is_cloudfront_cache_hit {
+            "HIT "
+        } else {
+            "MISS"
+        },
+        status.as_u16(),
+        path
+    );
 
     Page {
         path: path.to_owned(),
@@ -112,6 +125,7 @@ fn crawl(body: &str) -> Vec<String> {
 #[tokio::main]
 async fn main() {
     dotenvy::dotenv().ok();
+    tracing_subscriber::fmt::fmt().init();
 
     let mut pages = HashMap::new();
     pages.insert(

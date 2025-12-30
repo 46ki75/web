@@ -962,6 +962,8 @@ dependencies = [
  "reqwest",
  "scraper 0.25.0",
  "tokio",
+ "tracing",
+ "tracing-subscriber",
 ]
 
 [[package]]
