@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, path};
 
 fn get_base_domain() -> String {
     "www.ikuma.cloud".to_owned()
@@ -29,10 +29,30 @@ async fn visit(path: &str) -> Page {
     }
 }
 
-fn crawl(page: &str) -> Vec<String> {
-    // Dummy implementation: In a real crawler, you'd parse the page body
-    // and extract links. Here we just return an empty vector.
-    vec!["/".to_owned(), "/about".to_owned(), "/contact".to_owned()]
+fn crawl(body: &str) -> Vec<String> {
+    let mut urls: Vec<String> = Vec::new();
+
+    let html = scraper::Html::parse_document(body);
+    let a_selector = scraper::Selector::parse("a").unwrap();
+
+    for a_element in html.select(&a_selector) {
+        if let Some(href) = a_element.value().attr("href") {
+            urls.push(href.to_owned());
+        }
+    }
+
+    let same_origin_path = urls
+        .into_iter()
+        .filter(|url| {
+            let is_starting_slash = url.starts_with('/');
+
+            let is_same_origin = url.starts_with(&format!("https://{}", get_base_domain()));
+
+            is_starting_slash || is_same_origin
+        })
+        .collect::<Vec<String>>();
+
+    same_origin_path
 }
 
 #[tokio::main]
@@ -64,12 +84,16 @@ async fn main() {
             pages.insert(visited_page.path.clone(), visited_page.clone());
 
             // Crawl the page
-            let extracted_paths = crawl(&visited_page.path);
-            for new_path in extracted_paths {
-                pages.entry(new_path.clone()).or_insert(Page {
-                    path: new_path,
-                    ..Default::default()
-                });
+
+            if let Some(body) = &visited_page.body {
+                let extracted_paths = crawl(&body);
+                for new_path in extracted_paths {
+                    pages.entry(new_path.clone()).or_insert(Page {
+                        path: new_path,
+                        ..Default::default()
+                    });
+                }
+            } else {
             }
         }
     }
