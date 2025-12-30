@@ -138,6 +138,8 @@ resource "aws_cloudfront_distribution" "default" {
   http_version = "http2and3"
   enabled      = true
 
+  price_class = "PriceClass_All"
+
   restrictions {
     geo_restriction {
       restriction_type = "none"
@@ -182,6 +184,11 @@ resource "aws_cloudfront_distribution" "default" {
   origin {
     domain_name = local.lambda_function_url_domain_nitro
     origin_id   = "nitro-backend"
+
+    origin_shield {
+      enabled              = true
+      origin_shield_region = "ap-northeast-1"
+    }
 
     custom_origin_config {
       http_port              = 80
@@ -268,6 +275,11 @@ resource "aws_cloudfront_distribution" "default" {
   origin {
     domain_name = local.lambda_function_url_domain_http_api
     origin_id   = "api-backend"
+
+    origin_shield {
+      enabled              = true
+      origin_shield_region = "ap-northeast-1"
+    }
 
     custom_origin_config {
       http_port              = 80
