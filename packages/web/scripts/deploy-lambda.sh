@@ -6,14 +6,16 @@ FUNCTION_NAME="${STAGE_NAME}-46ki75-web-lambda-function-nitro"
 ARTIFACT_PATH="./.output/server/"
 
 TEMPDIR=$(mktemp -d)
-trap "rm -rf ${TEMPDIR}" EXIT
+ZIP_FILE="${TEMPDIR}.zip"
+trap 'rm -rf "${TEMPDIR}" "${ZIP_FILE}"' EXIT
 
 cp -r "${ARTIFACT_PATH}"/* "${TEMPDIR}/"
 
-zip -j -r "${TEMPDIR}/lambda.zip" "${TEMPDIR}/"*
+# create zip preserving directory structure to avoid duplicate basenames
+( cd "${TEMPDIR}" && zip -r "${ZIP_FILE}" . )
 
-aws lambda update-function-code --function-name "${FUNCTION_NAME}" --zip-file "fileb://${TEMPDIR}/lambda.zip" --publish
+aws lambda update-function-code --function-name "${FUNCTION_NAME}" --zip-file "fileb://${ZIP_FILE}" --publish
 
-aws lambda update-aliase --function-name "${FUNCTION_NAME}" --name "stable" --function-version "\$LATEST"
+aws lambda update-alias --function-name "${FUNCTION_NAME}" --name "stable" --function-version '$LATEST'
 
 echo "Deployed Lambda function: ${FUNCTION_NAME}"
