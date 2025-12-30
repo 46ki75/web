@@ -1,7 +1,10 @@
 import { AwsRum } from "aws-rum-web";
 
 export default defineNuxtPlugin(async () => {
-  if (window.location.hostname !== "localhost") {
+  if (
+    window.location.hostname !== "localhost" &&
+    window.location.hostname !== "127.0.0.1"
+  ) {
     const appConfig = useAppConfig();
     const runtimeConfig = useRuntimeConfig();
 
