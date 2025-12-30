@@ -58,6 +58,13 @@ fn crawl(body: &str) -> Vec<String> {
         }
     }
 
+    let script_selector = scraper::Selector::parse("script").unwrap();
+    for script_element in html.select(&script_selector) {
+        if let Some(src) = script_element.value().attr("src") {
+            urls.push(src.to_owned());
+        }
+    }
+
     let link_selector = scraper::Selector::parse("link").unwrap();
     for link_element in html.select(&link_selector) {
         if let Some(href) = link_element.value().attr("href") {
