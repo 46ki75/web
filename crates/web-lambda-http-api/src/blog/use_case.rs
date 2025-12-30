@@ -283,7 +283,6 @@ impl BlogUseCase {
     }
 
     pub async fn generate_sitemap(&self) -> Result<String, crate::error::Error> {
-        // Support multi-language sitemap
         let languages = vec![
             crate::blog::entity::BlogLanguageEntity::En,
             crate::blog::entity::BlogLanguageEntity::Ja,
