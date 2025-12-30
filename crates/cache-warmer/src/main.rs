@@ -8,6 +8,7 @@ fn get_base_domain() -> String {
 struct Page {
     path: String,
     body: Option<String>,
+    status: u16,
     visited: bool,
     is_cloudfront_cache_hit: bool,
 }
@@ -17,12 +18,13 @@ fn report(pages: &HashMap<String, Page>) {
 
     for (path, page) in pages {
         println!(
-            "{} | {}",
+            "| {} | {} | {}",
             if page.is_cloudfront_cache_hit {
                 "HIT "
             } else {
                 "MISS"
             },
+            page.status,
             path
         );
     }
@@ -40,6 +42,8 @@ async fn visit(path: &str) -> Page {
         .await
         .unwrap();
 
+    let status = response.status();
+
     let is_cloudfront_cache_hit = response
         .headers()
         .get("x-cache")
@@ -52,6 +56,7 @@ async fn visit(path: &str) -> Page {
     Page {
         path: path.to_owned(),
         body: Some(body),
+        status: status.as_u16(),
         is_cloudfront_cache_hit,
         ..Default::default()
     }
