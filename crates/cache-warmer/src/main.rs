@@ -32,17 +32,35 @@ fn report(pages: &HashMap<String, Page>) {
 
 async fn visit(path: &str) -> Page {
     let client = reqwest::Client::new();
-    let url = format!("https://{}{}", get_base_domain(), path);
+    let url = if path.starts_with("http://") || path.starts_with("https://") {
+        path.to_owned()
+    } else if path.starts_with("//") {
+        format!("https:{}", path)
+    } else if path.starts_with('/') {
+        format!("https://{}{}", get_base_domain(), path)
+    } else {
+        format!("https://{}/{}", get_base_domain(), path)
+    };
 
     tracing::info!("Visiting {}", url);
 
-    let authorization = std::env::var("AUTHORIZATION").unwrap();
-    let response = client
-        .get(&url)
-        .header(http::header::AUTHORIZATION, authorization)
-        .send()
-        .await
-        .unwrap();
+    let mut req = client.get(&url);
+    if let Ok(auth) = std::env::var("AUTHORIZATION") {
+        req = req.header(http::header::AUTHORIZATION, auth);
+    }
+
+    let response = match req.send().await {
+        Ok(r) => r,
+        Err(e) => {
+            tracing::error!("Request failed for {}: {}", url, e);
+            return Page {
+                path: path.to_owned(),
+                body: None,
+                status: 0,
+                ..Default::default()
+            };
+        }
+    };
 
     let status = response.status();
 
@@ -53,7 +71,13 @@ async fn visit(path: &str) -> Page {
         .map(|v| v.contains("Hit"))
         .unwrap_or_default();
 
-    let body = response.text().await.unwrap();
+    let body = match response.text().await {
+        Ok(t) => Some(t),
+        Err(e) => {
+            tracing::error!("Failed reading body for {}: {}", url, e);
+            None
+        }
+    };
 
     tracing::info!(
         "| {} | {} | {}",
@@ -68,7 +92,7 @@ async fn visit(path: &str) -> Page {
 
     Page {
         path: path.to_owned(),
-        body: Some(body),
+        body,
         status: status.as_u16(),
         is_cloudfront_cache_hit,
         ..Default::default()
