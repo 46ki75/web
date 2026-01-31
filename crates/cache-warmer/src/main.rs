@@ -103,7 +103,7 @@ async fn visit(path: &str) -> Page {
     }
 }
 
-fn crawl(body: &str) -> Vec<String> {
+fn extract_links_from_html(body: &str) -> Vec<String> {
     let mut urls: Vec<String> = Vec::new();
 
     let html = scraper::Html::parse_document(body);
@@ -135,6 +135,12 @@ fn crawl(body: &str) -> Vec<String> {
             urls.push(href.to_owned());
         }
     }
+
+    urls
+}
+
+fn crawl(body: &str) -> Vec<String> {
+    let urls = extract_links_from_html(body);
 
     // Normalize same-origin absolute URLs to path-only and dedupe
     use std::collections::HashSet;
