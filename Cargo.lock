@@ -276,6 +276,7 @@ dependencies = [
  "diligent-date-parser",
  "never",
  "quick-xml 0.37.5",
+ "serde",
 ]
 
 [[package]]
@@ -1033,6 +1034,7 @@ dependencies = [
  "iana-time-zone",
  "js-sys",
  "num-traits",
+ "serde",
  "wasm-bindgen",
  "windows-link",
 ]
@@ -4973,6 +4975,7 @@ dependencies = [
 name = "web-lambda-http-api"
 version = "0.1.0"
 dependencies = [
+ "atom_syndication",
  "aws-config",
  "aws-sdk-ssm",
  "axum",

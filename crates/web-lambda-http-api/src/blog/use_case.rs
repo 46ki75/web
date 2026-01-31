@@ -425,4 +425,55 @@ impl BlogUseCase {
 
         Ok(rss_feed)
     }
+
+    pub async fn generate_atom(
+        &self,
+        language: super::entity::BlogLanguageEntity,
+    ) -> Result<String, crate::error::Error> {
+        let stage_name = crate::stage_name()?;
+        let domain = match stage_name.as_str() {
+            "prod" => "www.ikuma.cloud",
+            "staging" => "stg-www.ikuma.cloud",
+            _ => "dev-www.ikuma.cloud",
+        };
+
+        let blogs = self.list_blogs(language.clone()).await?;
+
+        let entries = blogs
+            .into_iter()
+            .map(|blog| {
+                let url = format!(
+                    "https://{domain}{language_prefix}/blog/article/{}",
+                    blog.slug,
+                    language_prefix = match language {
+                        crate::blog::entity::BlogLanguageEntity::En => "".to_string(),
+                        _ => format!("/{}", language.to_string()),
+                    }
+                );
+
+                atom_syndication::EntryBuilder::default()
+                    .title(blog.title)
+                    .summary(
+                        atom_syndication::TextBuilder::default()
+                            .value(blog.description)
+                            .build(),
+                    )
+                    .id(url.clone())
+                    .link(atom_syndication::LinkBuilder::default().href(url).build())
+                    .build()
+            })
+            .collect::<Vec<atom_syndication::Entry>>();
+
+        let feed = atom_syndication::FeedBuilder::default()
+            .entries(entries)
+            .title("Ikuma's Blog")
+            .author(atom_syndication::Person {
+                name: "Ikuma Yamashita".to_owned(),
+                email: None,
+                uri: None,
+            })
+            .build();
+
+        Ok(feed.to_string())
+    }
 }
