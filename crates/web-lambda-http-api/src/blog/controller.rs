@@ -332,7 +332,7 @@ pub async fn get_blog_sitemap(
     get,
     path = "/api/v2/blog/feed/rss/{language}",
     responses(
-        (status = 200, description = "Blog Sitemap", body = String, content_type = "application/xml"),
+        (status = 200, description = "Blog RSS Feed", body = String, content_type = "application/xml"),
     ),
 )]
 pub async fn get_blog_rss_feed(
