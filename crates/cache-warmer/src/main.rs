@@ -42,7 +42,11 @@ async fn visit(path: &str) -> Page {
         format!("https://{}/{}", get_base_domain(), path)
     };
 
-    tracing::info!("Visiting {}", url);
+    let only_path = url
+        .replace(&format!("https://{}", get_base_domain()), "")
+        .to_owned();
+
+    tracing::info!("Visiting {}", only_path);
 
     let mut req = client.get(&url);
     if let Ok(auth) = std::env::var("AUTHORIZATION") {
@@ -91,7 +95,7 @@ async fn visit(path: &str) -> Page {
     );
 
     Page {
-        path: path.to_owned(),
+        path: only_path,
         body,
         status: status.as_u16(),
         is_cloudfront_cache_hit,
@@ -132,18 +136,57 @@ fn crawl(body: &str) -> Vec<String> {
         }
     }
 
-    let same_origin_path = urls
-        .into_iter()
-        .filter(|url| {
-            let is_starting_slash = url.starts_with('/');
+    // Normalize same-origin absolute URLs to path-only and dedupe
+    use std::collections::HashSet;
+    let mut seen: HashSet<String> = HashSet::new();
+    let mut normalized: Vec<String> = Vec::new();
 
-            let is_same_origin = url.starts_with(&format!("https://{}", get_base_domain()));
+    let https_prefix = format!("https://{}", get_base_domain());
+    let http_prefix = format!("http://{}", get_base_domain());
+    let proto_rel_prefix = format!("//{}", get_base_domain());
 
-            is_starting_slash || is_same_origin
-        })
-        .collect::<Vec<String>>();
+    for url in urls.into_iter() {
+        let p = if url.starts_with('/') {
+            // already a path
+            if url.is_empty() { "/".to_string() } else { url }
+        } else if url.starts_with(&https_prefix) {
+            let mut s = url[https_prefix.len()..].to_owned();
+            if s.is_empty() {
+                s = "/".to_string();
+            }
+            if !s.starts_with('/') {
+                s.insert(0, '/');
+            }
+            s
+        } else if url.starts_with(&http_prefix) {
+            let mut s = url[http_prefix.len()..].to_owned();
+            if s.is_empty() {
+                s = "/".to_string();
+            }
+            if !s.starts_with('/') {
+                s.insert(0, '/');
+            }
+            s
+        } else if url.starts_with(&proto_rel_prefix) {
+            let mut s = url[proto_rel_prefix.len()..].to_owned();
+            if s.is_empty() {
+                s = "/".to_string();
+            }
+            if !s.starts_with('/') {
+                s.insert(0, '/');
+            }
+            s
+        } else {
+            // Not same-origin and not a path — skip
+            continue;
+        };
 
-    same_origin_path
+        if seen.insert(p.clone()) {
+            normalized.push(p);
+        }
+    }
+
+    normalized
 }
 
 #[tokio::main]
