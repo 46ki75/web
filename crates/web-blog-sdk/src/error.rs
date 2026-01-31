@@ -17,4 +17,7 @@ pub enum Error {
 
     #[error("{0}")]
     NotionRecord(String),
+
+    #[error("time parse error: {0}")]
+    TimeParse(#[from] time::error::Parse),
 }
