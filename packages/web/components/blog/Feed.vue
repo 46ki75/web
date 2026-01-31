@@ -4,7 +4,7 @@
       <Icon class="icon" icon="mdi:rss" />
       <span class="label">RSS</span>
     </a>
-    <a :href="`/api/v2/blog/feed/atom`" target="_blank" class="a">
+    <a :href="`/api/v2/blog/feed/atom/${language}`" target="_blank" class="a">
       <Icon class="icon" icon="mdi:atom" />
       <span class="label">Atom</span>
     </a>
