@@ -14,8 +14,7 @@
     <ElmHeading :level="1" :text="title" disable-fragment-identifier />
 
     <div class="feed-date">
-      <!-- <BlogFeed :language="locale" /> -->
-      <div></div>
+      <BlogFeed :language="locale" />
       <BaseDate :created-at="createdAt" :updated-at="updatedAt" />
     </div>
 
@@ -70,6 +69,8 @@ interface BlogMetaProps {
 }
 
 defineProps<BlogMetaProps>();
+
+const { locale } = useI18n();
 </script>
 
 <style lang="scss" scoped>
