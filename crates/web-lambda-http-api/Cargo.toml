@@ -51,9 +51,11 @@ utoipa-swagger-ui = { workspace = true }
 aws-sdk-ssm = "1.96.0"
 aws-config = "1.8.8"
 image = "0.25.9"
-rss = "2.0.12"
-atom_syndication = { version = "0.12.7", features = ["with-serde"] }
 
 # time
 time = { workspace = true }
 chrono = { workspace = true }
+
+# feed
+rss = { workspace = true }
+atom_syndication = { workspace = true }

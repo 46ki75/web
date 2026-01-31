@@ -60,3 +60,7 @@ utoipa-swagger-ui = { version = "9.0.2", features = ["axum"] }
 # time
 time = { version = "0.3.46", features = ["formatting"] }
 chrono = "0.4.43"
+
+# feed
+rss = "2.0.12"
+atom_syndication = { version = "0.12.7", features = ["with-serde"] }
