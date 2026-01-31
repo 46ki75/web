@@ -32,10 +32,11 @@ export default defineNuxtConfig({
 
   i18n: {
     strategy: "prefix_except_default",
+    baseUrl: ENDPOINT,
     defaultLocale: "en",
     locales: [
-      { code: "en", name: "English", file: "en.json" },
-      { code: "ja", name: "日本語", file: "ja.json" },
+      { code: "en", language: "en", name: "English", file: "en.json" },
+      { code: "ja", language: "ja", name: "日本語", file: "ja.json" },
     ],
   },
 
