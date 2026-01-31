@@ -52,6 +52,9 @@ pub enum Error {
 
     #[error("IO error: {0}")]
     ImegeIoError(#[from] std::io::Error),
+
+    #[error("{0}")]
+    TimeError(#[from] time::Error),
 }
 
 impl Error {
@@ -115,6 +118,10 @@ impl Error {
             Error::ImegeIoError(e) => (
                 StatusCode::INTERNAL_SERVER_ERROR,
                 format!("Image IO error: {}", e),
+            ),
+            Error::TimeError(e) => (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                format!("Time error: {}", e),
             ),
         }
     }

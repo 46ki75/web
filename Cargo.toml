@@ -58,4 +58,5 @@ utoipa-axum = "0.2.0"
 utoipa-swagger-ui = { version = "9.0.2", features = ["axum"] }
 
 # time
-time = "0.3.46"
+time = { version = "0.3.46", features = ["formatting"] }
+chrono = "0.4.43"

@@ -34,10 +34,10 @@ pub struct BlogEntity {
     pub keywords: Vec<String>,
 
     /// The date and time when the blog was created (ISO 3339)
-    pub created_at: String,
+    pub created_at: time::UtcDateTime,
 
     /// The date and time when the blog was updated (ISO 3339)
-    pub updated_at: String,
+    pub updated_at: time::UtcDateTime,
 }
 
 impl From<super::dto::BlogDto> for BlogEntity {

@@ -50,8 +50,14 @@ impl From<super::entity::BlogEntity> for BlogResponse {
             title: value.title,
             description: value.description,
             keywords: value.keywords,
-            created_at: value.created_at,
-            updated_at: value.updated_at,
+            created_at: value
+                .created_at
+                .format(&time::format_description::well_known::Rfc3339)
+                .unwrap(),
+            updated_at: value
+                .updated_at
+                .format(&time::format_description::well_known::Rfc3339)
+                .unwrap(),
         }
     }
 }

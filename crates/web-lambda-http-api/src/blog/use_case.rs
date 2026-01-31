@@ -402,7 +402,11 @@ impl BlogUseCase {
                 rss::ItemBuilder::default()
                     .title(blog.title)
                     .description(blog.description)
-                    .pub_date(blog.created_at)
+                    .pub_date(
+                        blog.created_at
+                            .format(&time::format_description::well_known::Rfc3339)
+                            .unwrap(),
+                    )
                     .link(link)
                     .build()
             })
@@ -451,6 +455,13 @@ impl BlogUseCase {
                     }
                 );
 
+                let timestamp = blog.created_at.unix_timestamp();
+                let nanos = blog.created_at.nanosecond();
+                let chrono_utc_dt =
+                    chrono::DateTime::<chrono::Utc>::from_timestamp(timestamp, nanos)
+                        .expect("Invalid timestamp");
+                let chrono_datetime = chrono_utc_dt.fixed_offset();
+
                 atom_syndication::EntryBuilder::default()
                     .title(blog.title)
                     .summary(
@@ -460,6 +471,7 @@ impl BlogUseCase {
                     )
                     .id(url.clone())
                     .link(atom_syndication::LinkBuilder::default().href(url).build())
+                    .published(Some(chrono_datetime))
                     .build()
             })
             .collect::<Vec<atom_syndication::Entry>>();
