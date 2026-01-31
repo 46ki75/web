@@ -488,4 +488,64 @@ impl BlogUseCase {
 
         Ok(feed.to_string())
     }
+
+    pub async fn generate_jsonfeed(
+        &self,
+        language: super::entity::BlogLanguageEntity,
+    ) -> Result<String, crate::error::Error> {
+        let blogs = self.list_blogs(language.clone()).await?;
+
+        let stage_name = crate::stage_name()?;
+
+        let domain = match stage_name.as_str() {
+            "prod" => "www.ikuma.cloud",
+            "staging" => "stg-www.ikuma.cloud",
+            _ => "dev-www.ikuma.cloud",
+        };
+
+        let items: Vec<jsonfeed::Item> = blogs
+            .into_iter()
+            .map(|blog| {
+                let url = format!(
+                    "https://{domain}{language_prefix}/blog/article/{slug}",
+                    language_prefix = match language {
+                        crate::blog::entity::BlogLanguageEntity::En => "".to_string(),
+                        _ => format!("/{}", language.to_string()),
+                    },
+                    slug = blog.slug
+                );
+
+                jsonfeed::Item {
+                    id: url.clone(),
+                    url: Some(url),
+                    title: Some(blog.title),
+                    content: jsonfeed::Content::Text(blog.description),
+                    ..Default::default()
+                }
+            })
+            .collect();
+
+        let feed = jsonfeed::Feed {
+            version: "https://jsonfeed.org/version/1".to_string(),
+            title: "Ikuma's Blog".to_string(),
+            home_page_url: Some(format!(
+                "https://{domain}{language_prefix}/blog",
+                language_prefix = match language {
+                    crate::blog::entity::BlogLanguageEntity::En => "".to_string(),
+                    _ => format!("/{}", language.to_string()),
+                }
+            )),
+            description: Some(
+                "Ikuma's personal blog about software development and technology.".to_string(),
+            ),
+            items,
+            ..Default::default()
+        };
+
+        let json_feed = serde_json::to_string_pretty(&feed).inspect_err(|e| {
+            tracing::error!("{e}");
+        })?;
+
+        Ok(json_feed)
+    }
 }

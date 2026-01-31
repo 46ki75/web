@@ -59,3 +59,4 @@ chrono = { workspace = true }
 # feed
 rss = { workspace = true }
 atom_syndication = { workspace = true }
+jsonfeed = "0.2.0"

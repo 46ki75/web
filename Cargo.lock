@@ -1423,6 +1423,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "error-chain"
+version = "0.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d9435d864e017c3c6afeac1654189b06cdb491cf2ff73dbf0d73b0f292f42ff8"
+dependencies = [
+ "backtrace",
+]
+
+[[package]]
 name = "exr"
 version = "1.74.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2375,6 +2384,18 @@ checksum = "1cfaf33c695fc6e08064efbc1f72ec937429614f25eef83af942d0e227c3a28f"
 dependencies = [
  "once_cell",
  "wasm-bindgen",
+]
+
+[[package]]
+name = "jsonfeed"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "97b28289373f8aa883484d9396d8daa96c5ddcd2a46d6e292c884b6c8d6babb7"
+dependencies = [
+ "error-chain",
+ "serde",
+ "serde_derive",
+ "serde_json",
 ]
 
 [[package]]
@@ -4980,6 +5001,7 @@ dependencies = [
  "image",
  "infer",
  "jarkup-rs 0.5.1",
+ "jsonfeed",
  "lambda_http 0.17.0",
  "notion-to-jarkup 0.8.0",
  "notionrs 0.3.0",

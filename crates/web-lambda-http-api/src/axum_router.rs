@@ -61,6 +61,7 @@ pub async fn init_router() -> Result<&'static axum::Router, crate::error::Error>
                 .routes(routes!(crate::blog::controller::get_blog_sitemap))
                 .routes(routes!(crate::blog::controller::get_blog_rss_feed))
                 .routes(routes!(crate::blog::controller::get_blog_atom_feed))
+                .routes(routes!(crate::blog::controller::get_blog_json_feed))
                 .routes(routes!(crate::web_config::controller::fetch_web_config))
                 .routes(routes!(crate::talk::controller::list_talks))
                 .with_state(app_state)

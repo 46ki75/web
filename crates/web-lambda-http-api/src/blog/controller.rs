@@ -405,3 +405,42 @@ pub async fn get_blog_atom_feed(
 
     atom_feed
 }
+
+#[utoipa::path(
+    get,
+    path = "/api/v2/blog/feed/json-feed/{language}",
+    responses(
+        (status = 200, description = "Blog JSONFeed", body = String, content_type = "application/json"),
+    ),
+)]
+pub async fn get_blog_json_feed(
+    axum::extract::State(state): axum::extract::State<
+        std::sync::Arc<crate::axum_router::AxumAppState>,
+    >,
+    axum::extract::Path(language): axum::extract::Path<String>,
+) -> Result<axum::response::Response<axum::body::Body>, (axum::http::StatusCode, String)> {
+    let language = match language.as_str() {
+        "ja" => super::entity::BlogLanguageEntity::Ja,
+        _ => super::entity::BlogLanguageEntity::En,
+    };
+
+    let json_feed = match state.blog_use_case.generate_jsonfeed(language).await {
+        Ok(json_feed) => {
+            let response = axum::response::Response::builder()
+                .header(http::header::CONTENT_TYPE, "application/json")
+                .header(http::header::CACHE_CONTROL, CACHE_VALUE)
+                .body(axum::body::Body::from(json_feed))
+                .map_err(|e| {
+                    (
+                        axum::http::StatusCode::INTERNAL_SERVER_ERROR,
+                        format!("Failed to build response: {}", e),
+                    )
+                })?;
+
+            Ok(response)
+        }
+        Err(e) => Err(e.as_client_response()),
+    };
+
+    json_feed
+}
