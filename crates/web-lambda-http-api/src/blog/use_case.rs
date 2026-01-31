@@ -372,4 +372,57 @@ impl BlogUseCase {
 
         Ok(format!("{preamble}{sitemap}"))
     }
+
+    pub async fn generate_rss(
+        &self,
+        language: super::entity::BlogLanguageEntity,
+    ) -> Result<String, crate::error::Error> {
+        let blogs = self.list_blogs(language.clone()).await?;
+
+        let stage_name = crate::stage_name()?;
+
+        let domain = match stage_name.as_str() {
+            "prod" => "www.ikuma.cloud",
+            "staging" => "stg-www.ikuma.cloud",
+            _ => "dev-www.ikuma.cloud",
+        };
+
+        let items: Vec<rss::Item> = blogs
+            .into_iter()
+            .map(|blog| {
+                let link = format!(
+                    "https://{domain}{language_prefix}/blog/article/{slug}",
+                    language_prefix = match language {
+                        crate::blog::entity::BlogLanguageEntity::En => "".to_string(),
+                        _ => format!("/{}", language.to_string()),
+                    },
+                    slug = blog.slug
+                );
+
+                rss::ItemBuilder::default()
+                    .title(blog.title)
+                    .description(blog.description)
+                    .pub_date(blog.created_at)
+                    .link(link)
+                    .build()
+            })
+            .collect();
+
+        let channel = rss::ChannelBuilder::default()
+            .title("Ikuma's Blog")
+            .link(format!(
+                "https://{domain}{language_prefix}/blog",
+                language_prefix = match language {
+                    crate::blog::entity::BlogLanguageEntity::En => "".to_string(),
+                    _ => format!("/{}", language.to_string()),
+                }
+            ))
+            .description("Ikuma's personal blog about software development and technology.")
+            .items(items)
+            .build();
+
+        let rss_feed = channel.to_string();
+
+        Ok(rss_feed)
+    }
 }
