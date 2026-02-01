@@ -2,7 +2,7 @@
 
 import { client } from "./openapi/client";
 
-export const STAGE_NAME = process?.env?.STAGE_NAME;
+export const STAGE_NAME = process?.env?.STAGE_NAME ?? "dev";
 
 export const ENDPOINT =
   STAGE_NAME === "prod"
