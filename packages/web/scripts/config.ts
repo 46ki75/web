@@ -5,7 +5,7 @@ export const ENDPOINT =
     ? STAGE_NAME === "prod"
       ? `https://www.ikuma.cloud`
       : `https://${STAGE_NAME}-www.ikuma.cloud`
-    : window.location.origin;
+    : window?.location?.origin;
 
 export const GTAG =
   STAGE_NAME === "prod"
