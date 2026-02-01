@@ -8,7 +8,11 @@
       <Icon class="icon" icon="mdi:atom" />
       <span class="label">Atom</span>
     </a>
-    <a :href="`/api/v2/blog/feed/json`" target="_blank" class="a">
+    <a
+      :href="`/api/v2/blog/feed/json-feed/${language}`"
+      target="_blank"
+      class="a"
+    >
       <Icon class="icon" icon="mdi:code-json" />
       <span class="label">Feed</span>
     </a>
