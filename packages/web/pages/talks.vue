@@ -53,7 +53,7 @@ import {
   ElmInlineText,
   ElmParagraph,
   ElmBreadcrumb,
-} from "@elmethis/core";
+} from "@elmethis/vue";
 
 const { t, locales } = useI18n();
 

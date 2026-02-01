@@ -17,7 +17,7 @@
 
 <script setup lang="ts">
 import { NuxtLinkLocale } from "#components";
-import { ElmInlineText } from "@elmethis/core";
+import { ElmInlineText } from "@elmethis/vue";
 import { Icon } from "@iconify/vue";
 
 export interface CardProps {

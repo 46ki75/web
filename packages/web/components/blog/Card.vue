@@ -1,8 +1,8 @@
 <template>
-  <div :key="id" class="container">
-    <NuxtLinkLocale class="top" :to="`/blog/article/${id}`" :locale="locale">
+  <div :key="slug" class="container">
+    <NuxtLinkLocale class="top" :to="`/blog/article/${slug}`" :locale="locale">
       <div class="image">
-        <ElmImage :src="`/_notion/blog/image/${id}/${locale}/ogp.webp`" />
+        <ElmImage :src="`/api/v2/blog/${slug}/og-image?lang=${locale}`" />
       </div>
 
       <div class="text-container">
@@ -46,11 +46,11 @@
 </template>
 
 <script lang="ts" setup>
-import { ElmImage, ElmInlineText } from "@elmethis/core";
+import { ElmImage, ElmInlineText } from "@elmethis/vue";
 import { Icon } from "@iconify/vue";
 
 interface BlogSearchResultProps {
-  id: string;
+  slug: string;
   title: string;
   description: string;
   tags: Array<{

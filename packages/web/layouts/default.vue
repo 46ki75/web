@@ -1,21 +1,44 @@
 <template>
-  <BaseHeader />
+  <Html :lang="head.htmlAttrs.lang" :dir="head.htmlAttrs.dir">
+    <Head>
+      <template v-for="link in head.link" :key="link.key">
+        <Link
+          :id="link.key"
+          :rel="link.rel"
+          :href="link.href"
+          :hreflang="link.hreflang"
+        />
+      </template>
+      <template v-for="meta in head.meta" :key="meta.key">
+        <Meta
+          :id="meta.key"
+          :property="meta.property"
+          :content="meta.content"
+        />
+      </template>
+    </Head>
+    <Body>
+      <BaseHeader />
 
-  <div class="bg">
-    <slot />
-    <ClientOnly>
-      <ElmParallax
-        image-url1="/image/bg-crimson.webp"
-        image-url2="/image/bg-amber.webp"
-      />
-    </ClientOnly>
-  </div>
+      <div class="bg">
+        <slot />
+        <ClientOnly>
+          <ElmParallax
+            image-url1="/static/image/bg-crimson.webp"
+            image-url2="/static/image/bg-amber.webp"
+          />
+        </ClientOnly>
+      </div>
 
-  <BaseFooter />
+      <BaseFooter />
+    </Body>
+  </Html>
 </template>
 
 <script setup lang="ts">
-import { ElmParallax } from "@elmethis/core";
+import { ElmParallax } from "@elmethis/vue";
+
+const head = useLocaleHead();
 </script>
 
 <style scoped lang="scss">

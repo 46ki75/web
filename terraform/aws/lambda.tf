@@ -57,6 +57,7 @@ resource "aws_lambda_function" "http_api" {
   handler       = "bootstrap.handler"
   runtime       = "provided.al2023"
   architectures = ["arm64"]
+  memory_size   = 512
   publish       = true # Publish a new version
   timeout       = 30
 
@@ -85,11 +86,145 @@ resource "aws_lambda_alias" "http_api" {
 }
 
 resource "aws_lambda_function_url" "http_api" {
-  authorization_type = "NONE"
+  authorization_type = "AWS_IAM"
   function_name      = aws_lambda_function.http_api.function_name
   qualifier          = aws_lambda_alias.http_api.name
 }
 
+resource "aws_lambda_permission" "http_api_cloudfront_invoke_function_url" {
+  statement_id  = "AllowCloudFrontServicePrincipal"
+  action        = "lambda:InvokeFunctionUrl"
+  function_name = aws_lambda_function.http_api.function_name
+  principal     = "cloudfront.amazonaws.com"
+  source_arn    = aws_cloudfront_distribution.default.arn
+  qualifier     = aws_lambda_alias.http_api.name
+}
+
+resource "aws_lambda_permission" "http_api_cloudfront_invoke_function" {
+  statement_id  = "AllowCloudFrontServicePrincipalInvokeFunction"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.http_api.function_name
+  principal     = "cloudfront.amazonaws.com"
+  source_arn    = aws_cloudfront_distribution.default.arn
+  qualifier     = aws_lambda_alias.http_api.name
+}
+
 locals {
   lambda_function_url_domain_http_api = split("/", replace(aws_lambda_function_url.http_api.function_url, "https://", ""))[0]
+}
+
+# nitro ----------
+
+
+resource "aws_iam_role" "lambda_role_nitro" {
+  name = "${terraform.workspace}-46ki75-web-iam-role-lambda-nitro"
+  assume_role_policy = jsonencode({
+    "Version" : "2012-10-17",
+    "Statement" : [
+      {
+        "Effect" : "Allow",
+        "Principal" : {
+          "Service" : "lambda.amazonaws.com"
+        },
+        "Action" : "sts:AssumeRole"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_policy" "lambda_policy_nitro" {
+  name        = "${terraform.workspace}-46ki75-web-iam-policy-lambda-nitro"
+  description = "Allow lambda to access cloudwatch logs"
+  policy = jsonencode({
+    "Version" : "2012-10-17",
+    "Statement" : [
+      {
+        "Effect" : "Allow",
+        "Action" : [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents",
+          "ssm:GetParameter",
+          "xray:PutTraceSegments",
+          "xray:PutTelemetryRecords"
+        ],
+        "Resource" : "*"
+      },
+      {
+        "Effect" : "Allow",
+        "Action" : [
+          "ssm:GetParameter"
+        ],
+        "Resource" : "*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_policy_attachment_nitro" {
+  role       = aws_iam_role.lambda_role_nitro.name
+  policy_arn = aws_iam_policy.lambda_policy_nitro.arn
+}
+
+resource "aws_lambda_function" "nitro" {
+  function_name = "${terraform.workspace}-46ki75-web-lambda-function-nitro"
+  role          = aws_iam_role.lambda_role_nitro.arn
+  filename      = "${path.module}/assets/bootstrap.zip"
+  handler       = "index.handler"
+  runtime       = "nodejs22.x"
+  architectures = ["arm64"]
+  memory_size   = 512
+  publish       = true # Publish a new version
+  timeout       = 30
+
+  tracing_config {
+    mode = "PassThrough"
+  }
+
+  logging_config {
+    log_group             = aws_cloudwatch_log_group.lambda_nitro.name
+    log_format            = "JSON"
+    application_log_level = "INFO"
+    system_log_level      = "WARN"
+  }
+
+  environment {
+    variables = {
+      STAGE_NAME = terraform.workspace
+    }
+  }
+}
+
+resource "aws_lambda_alias" "nitro" {
+  name             = "stable"
+  function_name    = aws_lambda_function.nitro.function_name
+  function_version = "$LATEST"
+}
+
+resource "aws_lambda_function_url" "nitro" {
+  authorization_type = "AWS_IAM"
+  function_name      = aws_lambda_function.nitro.function_name
+  qualifier          = aws_lambda_alias.nitro.name
+}
+
+resource "aws_lambda_permission" "nitro_cloudfront_invoke_function_url" {
+  statement_id  = "AllowCloudFrontServicePrincipal"
+  action        = "lambda:InvokeFunctionUrl"
+  function_name = aws_lambda_function.nitro.function_name
+  principal     = "cloudfront.amazonaws.com"
+  source_arn    = aws_cloudfront_distribution.default.arn
+  qualifier     = aws_lambda_alias.nitro.name
+}
+
+resource "aws_lambda_permission" "nitro_cloudfront_invoke_function" {
+  statement_id  = "AllowCloudFrontServicePrincipalInvokeFunction"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.nitro.function_name
+  principal     = "cloudfront.amazonaws.com"
+  source_arn    = aws_cloudfront_distribution.default.arn
+  qualifier     = aws_lambda_alias.nitro.name
+}
+
+locals {
+  lambda_function_url_domain_nitro = split("/", replace(aws_lambda_function_url.nitro.function_url, "https://", ""))[0]
 }

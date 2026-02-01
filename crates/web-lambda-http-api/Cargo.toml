@@ -8,7 +8,7 @@ edition = "2021"
 web-blog-sdk = { path = "../web-blog-sdk" }
 axum = { workspace = true, features = ["macros"] }
 http = { workspace = true }
-tower-http = { workspace = true }
+tower-http = { workspace = true, features = ["cors"] }
 
 # HTTP Client
 reqwest = { workspace = true }
@@ -24,6 +24,7 @@ tracing-subscriber = { workspace = true }
 # Ser/De
 serde = { workspace = true }
 serde_json = { workspace = true }
+quick-xml = { workspace = true }
 
 # Asynchronous Runtime
 tokio = { workspace = true }
@@ -33,7 +34,9 @@ tower = { workspace = true }
 thiserror = { workspace = true }
 futures = { workspace = true }
 bytes = { workspace = true }
-infer = "0.19.0"
+infer = { workspace = true }
+strum = { workspace = true }
+strum_macros = { workspace = true }
 
 # Notion
 jarkup-rs = { workspace = true }
@@ -47,3 +50,13 @@ utoipa-axum = { workspace = true }
 utoipa-swagger-ui = { workspace = true }
 aws-sdk-ssm = "1.96.0"
 aws-config = "1.8.8"
+image = "0.25.9"
+
+# time
+time = { workspace = true }
+chrono = { workspace = true }
+
+# feed
+rss = { workspace = true }
+atom_syndication = { workspace = true }
+jsonfeed = "0.2.0"

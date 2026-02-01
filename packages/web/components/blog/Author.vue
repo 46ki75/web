@@ -2,7 +2,10 @@
   <div>
     <div class="author">
       <div class="image">
-        <ElmImage src="/image/profile.webp" alt="Portrait of the Author" />
+        <ElmImage
+          src="/static/image/profile.webp"
+          alt="Portrait of the Author"
+        />
       </div>
 
       <div class="text-container">
@@ -33,7 +36,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ElmImage, ElmInlineText } from "@elmethis/core";
+import { ElmImage, ElmInlineText } from "@elmethis/vue";
 import { Icon } from "@iconify/vue";
 
 const { t } = useI18n();

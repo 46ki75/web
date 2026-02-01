@@ -40,6 +40,21 @@ pub enum Error {
 
     #[error("{0}")]
     FetchImage(String),
+
+    #[error("{0}")]
+    SerdeJson(#[from] serde_json::Error),
+
+    #[error("{0}")]
+    SerializeXml(#[from] quick_xml::SeError),
+
+    #[error("image conversion error: {0}")]
+    ImageConversion(#[from] image::ImageError),
+
+    #[error("IO error: {0}")]
+    ImegeIoError(#[from] std::io::Error),
+
+    #[error("{0}")]
+    TimeError(#[from] time::Error),
 }
 
 impl Error {
@@ -88,6 +103,26 @@ impl Error {
             ),
             Error::NotionRecord(msg) => (StatusCode::BAD_REQUEST, msg.clone()),
             Error::FetchImage(msg) => (StatusCode::INTERNAL_SERVER_ERROR, msg.clone()),
+            Error::SerdeJson(e) => (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                format!("JSON serialization/deserialization error: {}", e),
+            ),
+            Error::SerializeXml(e) => (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                format!("XML serialization error: {}", e),
+            ),
+            Error::ImageConversion(e) => (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                format!("Image conversion error: {}", e),
+            ),
+            Error::ImegeIoError(e) => (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                format!("Image IO error: {}", e),
+            ),
+            Error::TimeError(e) => (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                format!("Time error: {}", e),
+            ),
         }
     }
 }

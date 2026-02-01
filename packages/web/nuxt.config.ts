@@ -1,10 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 
-import { GTAG } from "./scripts/config";
-import { fetchPrerenderRoutes } from "./scripts/fetchRoutes";
-import { fetchBlogList } from "./scripts/fetchBlogList";
-import { fetchImages } from "./scripts/fetchImages";
-import { generateBlogFeed } from "./scripts/generateBlogFeeds";
+import { GTAG, ENDPOINT } from "./scripts/config";
 import { client } from "./openapi/client";
 
 const { RUM_IDPOOL_ID, RUM_APP_MONITOR_ID } = await (async () => {
@@ -22,12 +18,25 @@ export default defineNuxtConfig({
   devServer: { host: "127.0.0.1" },
   modules: ["@pinia/nuxt", "@nuxtjs/i18n"],
 
+  nitro: {
+    preset: "aws-lambda",
+  },
+
+  routeRules: {
+    "/**": {
+      headers: {
+        "Cache-Control": "public, max-age=60, s-maxage=31536000",
+      },
+    },
+  },
+
   i18n: {
     strategy: "prefix_except_default",
+    baseUrl: ENDPOINT,
     defaultLocale: "en",
     locales: [
-      { code: "en", name: "English", file: "en.json" },
-      { code: "ja", name: "日本語", file: "ja.json" },
+      { code: "en", language: "en", name: "English", file: "en.json" },
+      { code: "ja", language: "ja", name: "日本語", file: "ja.json" },
     ],
   },
 
@@ -38,16 +47,17 @@ export default defineNuxtConfig({
     },
   },
   vite: {
-    server: {},
+    server: {
+      proxy: {
+        "/api": {
+          target: `${ENDPOINT}/api`,
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api/, ""),
+        },
+      },
+    },
     optimizeDeps: {
       exclude: ["web-image-converter"],
-    },
-  },
-  nitro: {
-    prerender: {
-      routes: await fetchPrerenderRoutes(),
-      crawlLinks: false,
-      concurrency: 20,
     },
   },
 
@@ -56,14 +66,7 @@ export default defineNuxtConfig({
     dirs: ["./components"],
   },
 
-  hooks: {
-    async ready() {
-      const blogs = await fetchBlogList();
-      fetchImages(blogs);
-      generateBlogFeed();
-    },
-    // "prerender:routes"({ routes }) {},
-  },
+  hooks: {},
 
   app: {
     head: {
@@ -74,14 +77,18 @@ export default defineNuxtConfig({
         },
       ],
       link: [
-        { rel: "icon", type: "image/svg+xml", href: "/brand/favicon.svg" },
+        {
+          rel: "icon",
+          type: "image/svg+xml",
+          href: "/static/brand/favicon.svg",
+        },
         {
           rel: "icon",
           type: "image/png",
-          href: "/brand/favicon.png",
+          href: "/static/brand/favicon.png",
           sizes: "64x64",
         },
-        { rel: "apple-touch-icon", href: "/brand/apple-touch-icon.png" },
+        { rel: "apple-touch-icon", href: "/static/brand/apple-touch-icon.png" },
         { rel: "preconnect", href: "https://fonts.googleapis.com" },
         {
           rel: "preconnect",

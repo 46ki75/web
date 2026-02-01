@@ -6,6 +6,22 @@ resource "aws_cloudfront_origin_access_control" "web" {
   signing_protocol                  = "sigv4"
 }
 
+resource "aws_cloudfront_origin_access_control" "http_api" {
+  name                              = "${terraform.workspace}-46ki75-web-cloudfront-oac-http_api"
+  description                       = "Lambda HTTP API OAC"
+  origin_access_control_origin_type = "lambda"
+  signing_behavior                  = "always"
+  signing_protocol                  = "sigv4"
+}
+
+resource "aws_cloudfront_origin_access_control" "nitro" {
+  name                              = "${terraform.workspace}-46ki75-web-cloudfront-oac-nitro"
+  description                       = "Lambda Nitro OAC"
+  origin_access_control_origin_type = "lambda"
+  signing_behavior                  = "always"
+  signing_protocol                  = "sigv4"
+}
+
 resource "aws_cloudfront_cache_policy" "s3" {
   name = "${terraform.workspace}-46ki75-web-cloudfront-cache_policy-s3"
 
@@ -36,7 +52,7 @@ resource "aws_cloudfront_cache_policy" "http_api" {
 
   default_ttl = 0
   min_ttl     = 0
-  max_ttl     = 0
+  max_ttl     = 3600 * 24 * 30 * 12
 
   parameters_in_cache_key_and_forwarded_to_origin {
     cookies_config {
@@ -44,12 +60,21 @@ resource "aws_cloudfront_cache_policy" "http_api" {
     }
 
     headers_config {
-      header_behavior = "none"
+      header_behavior = "whitelist"
+      headers {
+        items = ["Accept-Language"]
+      }
     }
 
     query_strings_config {
-      query_string_behavior = "none"
+      query_string_behavior = "whitelist"
+      query_strings {
+        items = ["lang"]
+      }
     }
+
+    enable_accept_encoding_brotli = true
+    enable_accept_encoding_gzip   = true
   }
 }
 
@@ -74,6 +99,22 @@ resource "aws_cloudfront_origin_request_policy" "all_viewer" {
 resource "aws_cloudfront_response_headers_policy" "security" {
 
   name = "${terraform.workspace}-46ki75-web-cloudfront-response_headers_policy-security"
+
+  cors_config {
+    access_control_allow_origins {
+      items = ["http://localhost:*", "http://127.0.0.1:*"]
+    }
+    access_control_allow_methods {
+      items = ["OPTIONS", "HEAD", "GET"]
+    }
+
+    access_control_allow_headers {
+      items = ["*"]
+    }
+
+    access_control_allow_credentials = false
+    origin_override                  = true
+  }
 
   security_headers_config {
 
@@ -113,13 +154,15 @@ resource "aws_cloudfront_distribution" "default" {
   http_version = "http2and3"
   enabled      = true
 
+  price_class = "PriceClass_All"
+
   restrictions {
     geo_restriction {
       restriction_type = "none"
     }
   }
 
-  default_root_object = "index.html"
+  default_root_object = ""
 
   # >>> custom domain
   viewer_certificate {
@@ -131,8 +174,75 @@ resource "aws_cloudfront_distribution" "default" {
   aliases = [aws_acm_certificate.cloudfront_cert.domain_name]
   # <<< custom domain
 
-  # >>> [S3 web] origin
+  # >>> [Nitro] origin
   default_cache_behavior {
+    allowed_methods = [
+      "GET",
+      "HEAD",
+      "OPTIONS"
+    ]
+    cached_methods         = ["GET", "HEAD"]
+    viewer_protocol_policy = "redirect-to-https"
+    target_origin_id       = "nitro-backend"
+
+    cache_policy_id            = aws_cloudfront_cache_policy.http_api.id
+    origin_request_policy_id   = aws_cloudfront_origin_request_policy.all_viewer.id
+    response_headers_policy_id = aws_cloudfront_response_headers_policy.security.id
+
+    compress = true
+
+    function_association {
+      event_type   = "viewer-request"
+      function_arn = aws_cloudfront_function.rename_uri.arn
+    }
+  }
+
+  origin {
+    domain_name = local.lambda_function_url_domain_nitro
+    origin_id   = "nitro-backend"
+
+    origin_shield {
+      enabled              = true
+      origin_shield_region = "ap-northeast-1"
+    }
+
+    origin_access_control_id = aws_cloudfront_origin_access_control.nitro.id
+
+    custom_origin_config {
+      http_port              = 80
+      https_port             = 443
+      origin_protocol_policy = "https-only"
+      origin_ssl_protocols   = ["TLSv1.2"]
+    }
+  }
+  # <<< [Nitro] origin
+
+  # # >>> [S3 web] origin
+  ordered_cache_behavior {
+    path_pattern = "/static/*"
+    allowed_methods = [
+      "GET",
+      "HEAD",
+      "OPTIONS"
+    ]
+    cached_methods         = ["GET", "HEAD"]
+    viewer_protocol_policy = "redirect-to-https"
+    target_origin_id       = "s3-web"
+
+    cache_policy_id            = aws_cloudfront_cache_policy.s3.id
+    origin_request_policy_id   = aws_cloudfront_origin_request_policy.all_viewer.id
+    response_headers_policy_id = aws_cloudfront_response_headers_policy.security.id
+
+    compress = true
+
+    function_association {
+      event_type   = "viewer-request"
+      function_arn = aws_cloudfront_function.rename_uri.arn
+    }
+  }
+
+  ordered_cache_behavior {
+    path_pattern = "/_nuxt/*"
     allowed_methods = [
       "GET",
       "HEAD",
@@ -158,20 +268,21 @@ resource "aws_cloudfront_distribution" "default" {
     domain_name              = aws_s3_bucket.web.bucket_regional_domain_name
     origin_id                = "s3-web"
     origin_access_control_id = aws_cloudfront_origin_access_control.web.id
+
+    origin_shield {
+      enabled              = true
+      origin_shield_region = "ap-northeast-1"
+    }
   }
-  # <<< [S3 web] origin
+  # # <<< [S3 web] origin
 
   # >>> [Lambda Function URLs] origin
   ordered_cache_behavior {
     path_pattern = "/api/*"
     allowed_methods = [
-      "DELETE",
       "GET",
       "HEAD",
       "OPTIONS",
-      "PATCH",
-      "POST",
-      "PUT"
     ]
     cached_methods         = ["GET", "HEAD"]
     viewer_protocol_policy = "redirect-to-https"
@@ -187,6 +298,13 @@ resource "aws_cloudfront_distribution" "default" {
   origin {
     domain_name = local.lambda_function_url_domain_http_api
     origin_id   = "api-backend"
+
+    origin_shield {
+      enabled              = true
+      origin_shield_region = "ap-northeast-1"
+    }
+
+    origin_access_control_id = aws_cloudfront_origin_access_control.http_api.id
 
     custom_origin_config {
       http_port              = 80

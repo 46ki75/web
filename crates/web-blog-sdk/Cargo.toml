@@ -18,6 +18,9 @@ notion-to-jarkup = { workspace = true }
 notionrs = { workspace = true }
 notionrs_types = { workspace = true }
 
+# time
+time = { workspace = true }
+
 [dev-dependencies]
 tokio = { workspace = true }
 dotenvy = { workspace = true }

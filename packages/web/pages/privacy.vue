@@ -37,7 +37,7 @@ import {
   ElmBreadcrumb,
   ElmInlineText,
   ElmMarkdown,
-} from "@elmethis/core";
+} from "@elmethis/vue";
 
 const { t, locale, defaultLocale, mergeLocaleMessage } = useI18n();
 

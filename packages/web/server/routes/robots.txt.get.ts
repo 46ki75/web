@@ -3,7 +3,9 @@ import { ENDPOINT } from "../../scripts/config";
 const TEMPLATE = (ENDPOINT: string) =>
   `
 User-agent: *
-Disallow:
+Disallow: /api/
+Allow: /api/v2/blog/sitemap.xml
+
 Sitemap: ${ENDPOINT}/sitemap-index.xml
 `.trim() + "\n";
 

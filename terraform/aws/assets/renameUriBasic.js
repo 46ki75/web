@@ -88,17 +88,19 @@ async function handler(event) {
       return errorResponse;
     }
 
-    if (basicAuth.password === storedPassword) {
-      if (uri && uri.indexOf(".") === -1) {
-        request.uri =
-          uri.charAt(uri.length - 1) === "/"
-            ? uri + "index.html"
-            : uri + "/index.html";
-      }
-      return request;
-    } else {
-      return errorResponse;
-    }
+    return request;
+
+    // if (basicAuth.password === storedPassword) {
+    //   if (uri && uri.indexOf(".") === -1) {
+    //     request.uri =
+    //       uri.charAt(uri.length - 1) === "/"
+    //         ? uri + "index.html"
+    //         : uri + "/index.html";
+    //   }
+    //   return request;
+    // } else {
+    //   return errorResponse;
+    // }
   } catch (_) {
     return errorResponse;
   }

@@ -1,3 +1,6 @@
+use core::fmt;
+use strum_macros::EnumIter;
+
 #[derive(Debug, Clone)]
 pub struct BlogEntity {
     /// Notion page ID
@@ -31,10 +34,10 @@ pub struct BlogEntity {
     pub keywords: Vec<String>,
 
     /// The date and time when the blog was created (ISO 3339)
-    pub created_at: String,
+    pub created_at: time::UtcDateTime,
 
     /// The date and time when the blog was updated (ISO 3339)
-    pub updated_at: String,
+    pub updated_at: time::UtcDateTime,
 }
 
 impl From<super::dto::BlogDto> for BlogEntity {
@@ -75,7 +78,7 @@ impl From<super::dto::BlogStatusDto> for BlogStatusEntity {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, EnumIter)]
 pub enum BlogLanguageEntity {
     En,
     Ja,
@@ -90,12 +93,19 @@ impl From<super::dto::BlogLanguageDto> for BlogLanguageEntity {
     }
 }
 
+impl fmt::Display for BlogLanguageEntity {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            BlogLanguageEntity::En => write!(f, "en"),
+            BlogLanguageEntity::Ja => write!(f, "ja"),
+        }
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct BlogContentsEntity {
+    pub meta: BlogEntity,
     pub components: Vec<jarkup_rs::Component>,
-    pub icons: Vec<String>,
-    pub images: Vec<String>,
-    pub files: Vec<String>,
 }
 
 #[derive(Debug, Clone)]
@@ -114,5 +124,81 @@ impl From<super::dto::BlogTagDto> for BlogTagEntity {
             name_ja: value.name_ja,
             icon_url: value.icon_url,
         }
+    }
+}
+
+#[derive(Debug, Clone, serde::Serialize)]
+#[serde(rename = "urlset")]
+pub struct BlogSitemapEntity {
+    #[serde(rename = "@xmlns")]
+    pub xmlns: String,
+
+    #[serde(rename = "@xmlns:xhtml", skip_serializing_if = "Option::is_none")]
+    pub xmlns_xhtml: Option<String>,
+
+    #[serde(rename = "url", default)]
+    pub urls: Vec<BlogSitemapUrl>,
+}
+
+#[derive(Debug, Clone, serde::Serialize, Default)]
+pub struct BlogSitemapUrl {
+    pub loc: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub lastmod: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub changefreq: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub priority: Option<String>,
+
+    #[serde(rename = "xhtml:link", default)]
+    pub alternates: Vec<BlogAlternateLink>,
+}
+
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct BlogAlternateLink {
+    #[serde(rename = "@rel")]
+    pub rel: String,
+
+    #[serde(rename = "@hreflang")]
+    pub hreflang: String,
+
+    #[serde(rename = "@href")]
+    pub href: String,
+}
+
+impl Default for BlogSitemapEntity {
+    fn default() -> Self {
+        BlogSitemapEntity {
+            xmlns: "http://www.sitemaps.org/schemas/sitemap/0.9".to_string(),
+            xmlns_xhtml: Some("http://www.w3.org/1999/xhtml".to_string()),
+            urls: Vec::new(),
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn sitemap_serializes_with_xhtml_namespace() {
+        let sitemap = BlogSitemapEntity {
+            xmlns: "http://www.sitemaps.org/schemas/sitemap/0.9".into(),
+            xmlns_xhtml: Some("http://www.w3.org/1999/xhtml".into()),
+            urls: vec![BlogSitemapUrl {
+                loc: "https://example.com/".into(),
+                alternates: vec![BlogAlternateLink {
+                    rel: "alternate".into(),
+                    hreflang: "x-default".into(),
+                    href: "https://example.com/".into(),
+                }],
+                ..Default::default()
+            }],
+        };
+
+        let xml = quick_xml::se::to_string(&sitemap).unwrap();
+        println!("sitemap xml: {}", xml);
+        assert!(xml.contains(r#"xmlns:xhtml="http://www.w3.org/1999/xhtml""#));
+        assert!(xml.contains("xhtml:link"));
     }
 }

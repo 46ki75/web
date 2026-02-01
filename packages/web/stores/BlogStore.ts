@@ -14,21 +14,17 @@ export const useBlogStore = defineStore("BlogSearchStore", {
   state: () => {
     const { locale } = useI18n();
 
-    const { data: enBlogs } = useAsyncData("/en/api/v2/blog", async () => {
-      const { data: enBlogs } = await client.GET("/api/v2/blog", {
-        params: { header: { "accept-language": "en" } },
-      });
-      if (enBlogs == null) throw new Error("Failed to fetch blogs.");
-      return enBlogs;
-    });
-
-    const { data: jaBlogs } = useAsyncData("/ja/api/v2/blog", async () => {
-      const { data: jaBlogs } = await client.GET("/api/v2/blog", {
-        params: { header: { "accept-language": "ja" } },
-      });
-      if (jaBlogs == null) throw new Error("Failed to fetch blogs.");
-      return jaBlogs;
-    });
+    const { data: blogs } = useAsyncData(
+      computed(() => `/${locale.value}/api/v2/blog`),
+      async () => {
+        const { data: blogs } = await client.GET("/api/v2/blog", {
+          params: { header: { "accept-language": locale.value } },
+        });
+        if (blogs == null) throw new Error("Failed to fetch blogs.");
+        return blogs;
+      },
+      { watch: [locale] }
+    );
 
     const { data: tags } = useAsyncData("/api/v2/blog/tag", async () => {
       const { data } = await client.GET("/api/v2/blog/tag");
@@ -47,60 +43,47 @@ export const useBlogStore = defineStore("BlogSearchStore", {
       };
     });
 
-    const enFuse = shallowRef<null | Fuse<BlogMeta>>(null);
-    const jaFuse = shallowRef<null | Fuse<BlogMeta>>(null);
+    const fuse = shallowRef<null | Fuse<BlogMeta>>(null);
 
     return {
       locale,
 
-      en: {
-        tags: computed(() => tags.value?.en),
-        blogs: enBlogs,
-        fuse: enFuse,
+      // keep tags for both locales in state; getter will pick by locale
+      tags: tags,
+      blogs: blogs,
+      fuse: fuse,
 
-        searchKeyword: "",
-        searchSelectedTagIds: ref<string[]>([]),
-        searchResults: ref<BlogMeta[]>([]),
-      },
-
-      ja: {
-        tags: computed(() => tags.value?.ja),
-        blogs: jaBlogs,
-        fuse: jaFuse,
-
-        searchKeyword: ref(""),
-        searchSelectedTagIds: ref<string[]>([]),
-        searchResults: ref<BlogMeta[]>([]),
-      },
+      searchKeyword: ref(""),
+      searchSelectedTagIds: ref<string[]>([]),
+      searchResults: ref<BlogMeta[]>([]),
     };
   },
   actions: {
-    tagSelect({ tagId, locale }: { tagId: string; locale: "en" | "ja" }) {
-      this[locale].searchSelectedTagIds.push(tagId);
+    tagSelect({ tagId }: { tagId: string; locale: "en" | "ja" }) {
+      this.searchSelectedTagIds.push(tagId);
     },
 
-    tagDeselect({ tagId, locale }: { tagId: string; locale: "en" | "ja" }) {
-      this[locale].searchSelectedTagIds = this[
-        locale
-      ].searchSelectedTagIds.filter((deselectTagId) => deselectTagId !== tagId);
+    tagDeselect({ tagId }: { tagId: string; locale: "en" | "ja" }) {
+      this.searchSelectedTagIds = this.searchSelectedTagIds.filter(
+        (deselectTagId) => deselectTagId !== tagId
+      );
     },
 
-    tagReset({ locale }: { locale: "en" | "ja" }) {
-      this[locale].searchSelectedTagIds = [];
+    tagReset({}: { locale: "en" | "ja" }) {
+      this.searchSelectedTagIds = [];
     },
 
     searchBlog() {
-      const blogs = this[this.locale].blogs;
+      const blogs = this.blogs;
       if (
         blogs == null ||
-        (this[this.locale].searchKeyword == null &&
-          this[this.locale].searchSelectedTagIds.length === 0)
+        (this.searchKeyword == null && this.searchSelectedTagIds.length === 0)
       ) {
         return;
       }
 
-      if (this[this.locale].fuse === null) {
-        this[this.locale].fuse = new Fuse(this[this.locale].blogs ?? [], {
+      if (this.fuse === null) {
+        this.fuse = new Fuse(this.blogs ?? [], {
           keys: [
             { name: "title", weight: 0.7 },
             { name: "description", weight: 0.3 },
@@ -109,19 +92,18 @@ export const useBlogStore = defineStore("BlogSearchStore", {
         });
       }
 
-      if (this[this.locale].searchKeyword.trim() !== "") {
-        const searchResults =
-          this[this.locale].fuse?.search(this[this.locale].searchKeyword) ?? [];
-        this[this.locale].searchResults = searchResults
+      if (this.searchKeyword.trim() !== "") {
+        const searchResults = this.fuse?.search(this.searchKeyword) ?? [];
+        this.searchResults = searchResults
           ?.map(({ item }) => item)
           .filter((blog) =>
-            this[this.locale].searchSelectedTagIds.every((tagId) =>
+            this.searchSelectedTagIds.every((tagId) =>
               blog.tag_ids.some((blogTagId) => blogTagId === tagId)
             )
           );
       } else {
-        this[this.locale].searchResults = blogs.filter((blog) =>
-          this[this.locale].searchSelectedTagIds.every((tagId) =>
+        this.searchResults = blogs.filter((blog) =>
+          this.searchSelectedTagIds.every((tagId) =>
             blog.tag_ids.some((blogTagId) => blogTagId === tagId)
           )
         );
@@ -129,18 +111,19 @@ export const useBlogStore = defineStore("BlogSearchStore", {
     },
   },
   getters: {
-    sideBlogs(): (locale: "en" | "ja") => BlogMeta[] | undefined {
-      return (locale: "en" | "ja") =>
-        this[locale].blogs
-          ?.sort(
-            (pre, next) =>
-              new Date(next.created_at).getTime() -
-              new Date(pre.created_at).getTime()
-          )
-          .slice(0, 10);
+    getSideBlogs(state): BlogMeta[] | undefined {
+      return state.blogs
+        ?.sort(
+          (pre, next) =>
+            new Date(next.created_at).getTime() -
+            new Date(pre.created_at).getTime()
+        )
+        .slice(0, 10);
     },
 
-    tags(): ({
+    getTags(
+      state
+    ): ({
       tagIds,
       locale,
     }: {
@@ -154,14 +137,30 @@ export const useBlogStore = defineStore("BlogSearchStore", {
         tagIds: string[];
         locale: "en" | "ja";
       }) => {
-        const tags = this[locale].tags
-          ?.filter((tag) => tagIds.some((id) => id === tag.id))
-          .map((tag) => ({
+        const tagsObject = ((state.tags as { value?: { en: Tag[]; ja: Tag[] } })
+          ?.value ?? (state.tags as { en: Tag[]; ja: Tag[] })) as
+          | { en: Tag[]; ja: Tag[] }
+          | undefined;
+        const allTags: Tag[] = tagsObject?.[locale] ?? [];
+        const filtered = allTags
+          .filter((tag: Tag) => tagIds.some((id) => id === tag.id))
+          .map((tag: Tag) => ({
             id: tag.id,
             name: tag.name,
             iconUrl: tag.iconUrl,
           }));
-        return tags ?? [];
+        return filtered ?? [];
+      };
+    },
+
+    // return all tags for a given locale
+    allTags(state): (locale: "en" | "ja") => Tag[] {
+      return (locale: "en" | "ja") => {
+        const tagsObject = ((state.tags as { value?: { en: Tag[]; ja: Tag[] } })
+          ?.value ?? (state.tags as { en: Tag[]; ja: Tag[] })) as
+          | { en: Tag[]; ja: Tag[] }
+          | undefined;
+        return tagsObject?.[locale] ?? [];
       };
     },
   },

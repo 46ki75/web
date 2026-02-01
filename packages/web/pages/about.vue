@@ -84,7 +84,7 @@ import {
   ElmBreadcrumb,
   ElmMarkdown,
   ElmBookmarkIcon,
-} from "@elmethis/core";
+} from "@elmethis/vue";
 
 const CREDLY_BADGES_ENDPOINT =
   "https://www.credly.com/users/ikuma-yamashita/badges.json";

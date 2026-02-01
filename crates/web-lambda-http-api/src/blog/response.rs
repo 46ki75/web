@@ -50,8 +50,14 @@ impl From<super::entity::BlogEntity> for BlogResponse {
             title: value.title,
             description: value.description,
             keywords: value.keywords,
-            created_at: value.created_at,
-            updated_at: value.updated_at,
+            created_at: value
+                .created_at
+                .format(&time::format_description::well_known::Rfc3339)
+                .unwrap(),
+            updated_at: value
+                .updated_at
+                .format(&time::format_description::well_known::Rfc3339)
+                .unwrap(),
         }
     }
 }
@@ -77,23 +83,19 @@ impl From<super::entity::BlogStatusEntity> for BlogStatusresponse {
 
 #[derive(Debug, Clone, serde::Serialize, utoipa::ToSchema)]
 pub struct BlogContentsResponse {
+    pub meta: BlogResponse,
     pub components: Vec<serde_json::Value>,
-    pub icons: Vec<String>,
-    pub images: Vec<String>,
-    pub files: Vec<String>,
 }
 
 impl From<super::entity::BlogContentsEntity> for BlogContentsResponse {
     fn from(value: super::entity::BlogContentsEntity) -> Self {
         BlogContentsResponse {
+            meta: BlogResponse::from(value.meta),
             components: value
                 .components
                 .into_iter()
                 .map(|e| serde_json::to_value(&e).unwrap())
                 .collect::<Vec<serde_json::Value>>(),
-            icons: value.icons,
-            images: value.images,
-            files: value.files,
         }
     }
 }

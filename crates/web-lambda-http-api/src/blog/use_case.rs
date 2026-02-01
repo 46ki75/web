@@ -48,6 +48,8 @@ impl BlogUseCase {
         slug: &str,
         language: super::entity::BlogLanguageEntity,
     ) -> Result<super::entity::BlogContentsEntity, crate::error::Error> {
+        let blog = self.get_blog_by_slug(slug, language.clone()).await?;
+
         let language = match language {
             crate::blog::entity::BlogLanguageEntity::En => super::dto::BlogLanguageDto::En,
             crate::blog::entity::BlogLanguageEntity::Ja => super::dto::BlogLanguageDto::Ja,
@@ -59,16 +61,30 @@ impl BlogUseCase {
             .await?;
 
         let mut icons: Vec<String> = vec![];
-        let mut images: Vec<String> = vec![];
+        let mut images: Vec<(String, String)> = vec![];
         let mut files: Vec<String> = vec![];
 
         Self::extract_files(&components, &mut icons, &mut images, &mut files)?;
 
+        let mut components_string = serde_json::to_string(&components).inspect_err(|_| {
+            tracing::error!("Failed to serialize blog components to JSON string");
+        })?;
+
+        for image in images.iter() {
+            components_string = components_string.replace(
+                &image.0,
+                &format!("/api/v2/blog/{}/block-image/{}", slug, image.1),
+            );
+        }
+
+        let components: Vec<jarkup_rs::Component> = serde_json::from_str(&components_string)
+            .inspect_err(|_| {
+                tracing::error!("Failed to deserialize blog components from JSON string");
+            })?;
+
         Ok(super::entity::BlogContentsEntity {
+            meta: blog,
             components,
-            icons,
-            images,
-            files,
         })
     }
 
@@ -87,7 +103,7 @@ impl BlogUseCase {
     fn extract_files(
         components: &Vec<jarkup_rs::Component>,
         icons: &mut Vec<String>,
-        images: &mut Vec<String>,
+        images: &mut Vec<(String, String)>,
         files: &mut Vec<String>,
     ) -> Result<(), crate::error::Error> {
         for component in components {
@@ -102,7 +118,7 @@ impl BlogUseCase {
                         files.push(file.props.src.clone());
                     }
                     jarkup_rs::BlockComponent::Image(image) => {
-                        images.push(image.props.src.clone());
+                        images.push((image.props.src.clone(), image.id.clone().unwrap()));
                     }
                     jarkup_rs::BlockComponent::Heading(heading) => {
                         Self::extract_from_inline_components(
@@ -194,7 +210,7 @@ impl BlogUseCase {
     fn extract_from_inline_components(
         inline_components: &[jarkup_rs::InlineComponent],
         icons: &mut Vec<String>,
-        _images: &mut Vec<String>,
+        _images: &mut Vec<(String, String)>,
         _files: &mut Vec<String>,
     ) -> Result<(), crate::error::Error> {
         for inline in inline_components {
@@ -232,7 +248,9 @@ impl BlogUseCase {
             .fetch_image_by_url(&ogp_image_s3_signed_url)
             .await?;
 
-        Ok(image_bytes)
+        let webp_bytes = self.convert(&image_bytes)?;
+
+        Ok(webp_bytes)
     }
 
     /// Fetches image bynary of the block by its block ID.
@@ -245,6 +263,266 @@ impl BlogUseCase {
             .fetch_image_by_block_id(block_id)
             .await?;
 
-        Ok(image_bytes)
+        let webp_bytes = self.convert(&image_bytes)?;
+
+        Ok(webp_bytes)
+    }
+
+    pub fn convert(&self, image_bytes: &[u8]) -> Result<bytes::Bytes, crate::error::Error> {
+        let img = image::ImageReader::new(std::io::Cursor::new(image_bytes))
+            .with_guessed_format()?
+            .decode()?;
+
+        let mut bytes = Vec::new();
+
+        let encoder = image::codecs::webp::WebPEncoder::new_lossless(&mut bytes);
+
+        img.write_with_encoder(encoder)?;
+
+        Ok(bytes::Bytes::from(bytes))
+    }
+
+    pub async fn generate_sitemap(&self) -> Result<String, crate::error::Error> {
+        use strum::IntoEnumIterator;
+
+        let languages: Vec<crate::blog::entity::BlogLanguageEntity> =
+            crate::blog::entity::BlogLanguageEntity::iter().collect();
+
+        // collect blogs per language
+        let mut blogs_by_lang: std::collections::HashMap<String, Vec<super::entity::BlogEntity>> =
+            std::collections::HashMap::new();
+        for lang in &languages {
+            let list = self.list_blogs(lang.clone()).await?;
+            blogs_by_lang.insert(lang.to_string(), list);
+        }
+
+        let domain = crate::domain_name()?;
+
+        let mut urlset: Vec<super::entity::BlogSitemapUrl> = Vec::new();
+
+        for lang in &languages {
+            let lang_key = lang.to_string();
+            if let Some(blogs) = blogs_by_lang.get(&lang_key) {
+                for blog in blogs {
+                    let base_url = match lang {
+                        crate::blog::entity::BlogLanguageEntity::En => format!("https://{domain}"),
+                        _ => format!("https://{domain}/{}", lang.to_string()),
+                    };
+
+                    let loc = format!("{base_url}/blog/article/{slug}", slug = blog.slug);
+
+                    // build alternates only when corresponding slug exists in that language
+                    let mut alternates: Vec<super::entity::BlogAlternateLink> = Vec::new();
+                    for alt_lang in &languages {
+                        let alt_key = alt_lang.to_string();
+                        if let Some(alt_blogs) = blogs_by_lang.get(&alt_key) {
+                            if alt_blogs.iter().any(|b| b.slug == blog.slug) {
+                                let alt_base = match alt_lang {
+                                    crate::blog::entity::BlogLanguageEntity::En => {
+                                        format!("https://{domain}")
+                                    }
+                                    _ => format!("https://{domain}/{}", alt_lang.to_string()),
+                                };
+                                let href =
+                                    format!("{alt_base}/blog/article/{slug}", slug = blog.slug);
+                                alternates.push(super::entity::BlogAlternateLink {
+                                    rel: "alternate".to_string(),
+                                    hreflang: alt_lang.to_string(),
+                                    href,
+                                });
+                            }
+                        }
+                    }
+
+                    // x-default -> point to english canonical
+                    let default_href =
+                        format!("https://{domain}/blog/article/{slug}", slug = blog.slug);
+                    alternates.push(super::entity::BlogAlternateLink {
+                        rel: "alternate".to_string(),
+                        hreflang: "x-default".to_string(),
+                        href: default_href,
+                    });
+
+                    urlset.push(super::entity::BlogSitemapUrl {
+                        loc,
+                        alternates,
+                        ..Default::default()
+                    });
+                }
+            }
+        }
+
+        let preamble = r#"<?xml version="1.0" encoding="UTF-8"?>"#;
+
+        let sitemap_entity = super::entity::BlogSitemapEntity {
+            xmlns_xhtml: Some("http://www.w3.org/1999/xhtml".to_string()),
+            urls: urlset,
+            ..Default::default()
+        };
+
+        let sitemap = quick_xml::se::to_string(&sitemap_entity).inspect_err(|e| {
+            tracing::error!("{e}");
+        })?;
+
+        Ok(format!("{preamble}{sitemap}"))
+    }
+
+    pub async fn generate_rss(
+        &self,
+        language: super::entity::BlogLanguageEntity,
+    ) -> Result<String, crate::error::Error> {
+        let blogs = self.list_blogs(language.clone()).await?;
+
+        let domain = crate::domain_name()?;
+
+        let items: Vec<rss::Item> = blogs
+            .into_iter()
+            .map(|blog| {
+                let link = format!(
+                    "https://{domain}{language_prefix}/blog/article/{slug}",
+                    language_prefix = match language {
+                        crate::blog::entity::BlogLanguageEntity::En => "".to_string(),
+                        _ => format!("/{}", language.to_string()),
+                    },
+                    slug = blog.slug
+                );
+
+                rss::ItemBuilder::default()
+                    .title(blog.title)
+                    .description(blog.description)
+                    .pub_date(
+                        blog.created_at
+                            .format(&time::format_description::well_known::Rfc3339)
+                            .unwrap(),
+                    )
+                    .link(link)
+                    .build()
+            })
+            .collect();
+
+        let channel = rss::ChannelBuilder::default()
+            .title("Ikuma's Blog")
+            .link(format!(
+                "https://{domain}{language_prefix}/blog",
+                language_prefix = match language {
+                    crate::blog::entity::BlogLanguageEntity::En => "".to_string(),
+                    _ => format!("/{}", language.to_string()),
+                }
+            ))
+            .description("Ikuma's personal blog about software development and technology.")
+            .items(items)
+            .build();
+
+        let rss_feed = channel.to_string();
+
+        Ok(rss_feed)
+    }
+
+    pub async fn generate_atom(
+        &self,
+        language: super::entity::BlogLanguageEntity,
+    ) -> Result<String, crate::error::Error> {
+        let domain = crate::domain_name()?;
+
+        let blogs = self.list_blogs(language.clone()).await?;
+
+        let entries = blogs
+            .into_iter()
+            .map(|blog| {
+                let url = format!(
+                    "https://{domain}{language_prefix}/blog/article/{}",
+                    blog.slug,
+                    language_prefix = match language {
+                        crate::blog::entity::BlogLanguageEntity::En => "".to_string(),
+                        _ => format!("/{}", language.to_string()),
+                    }
+                );
+
+                let timestamp = blog.created_at.unix_timestamp();
+                let nanos = blog.created_at.nanosecond();
+                let chrono_utc_dt =
+                    chrono::DateTime::<chrono::Utc>::from_timestamp(timestamp, nanos)
+                        .expect("Invalid timestamp");
+                let chrono_datetime = chrono_utc_dt.fixed_offset();
+
+                atom_syndication::EntryBuilder::default()
+                    .title(blog.title)
+                    .summary(
+                        atom_syndication::TextBuilder::default()
+                            .value(blog.description)
+                            .build(),
+                    )
+                    .id(url.clone())
+                    .link(atom_syndication::LinkBuilder::default().href(url).build())
+                    .published(Some(chrono_datetime))
+                    .build()
+            })
+            .collect::<Vec<atom_syndication::Entry>>();
+
+        let feed = atom_syndication::FeedBuilder::default()
+            .entries(entries)
+            .title("Ikuma's Blog")
+            .author(atom_syndication::Person {
+                name: "Ikuma Yamashita".to_owned(),
+                email: None,
+                uri: None,
+            })
+            .build();
+
+        Ok(feed.to_string())
+    }
+
+    pub async fn generate_jsonfeed(
+        &self,
+        language: super::entity::BlogLanguageEntity,
+    ) -> Result<String, crate::error::Error> {
+        let blogs = self.list_blogs(language.clone()).await?;
+
+        let domain = crate::domain_name()?;
+
+        let items: Vec<jsonfeed::Item> = blogs
+            .into_iter()
+            .map(|blog| {
+                let url = format!(
+                    "https://{domain}{language_prefix}/blog/article/{slug}",
+                    language_prefix = match language {
+                        crate::blog::entity::BlogLanguageEntity::En => "".to_string(),
+                        _ => format!("/{}", language.to_string()),
+                    },
+                    slug = blog.slug
+                );
+
+                jsonfeed::Item {
+                    id: url.clone(),
+                    url: Some(url),
+                    title: Some(blog.title),
+                    content: jsonfeed::Content::Text(blog.description),
+                    ..Default::default()
+                }
+            })
+            .collect();
+
+        let feed = jsonfeed::Feed {
+            version: "https://jsonfeed.org/version/1".to_string(),
+            title: "Ikuma's Blog".to_string(),
+            home_page_url: Some(format!(
+                "https://{domain}{language_prefix}/blog",
+                language_prefix = match language {
+                    crate::blog::entity::BlogLanguageEntity::En => "".to_string(),
+                    _ => format!("/{}", language.to_string()),
+                }
+            )),
+            description: Some(
+                "Ikuma's personal blog about software development and technology.".to_string(),
+            ),
+            items,
+            ..Default::default()
+        };
+
+        let json_feed = serde_json::to_string_pretty(&feed).inspect_err(|e| {
+            tracing::error!("{e}");
+        })?;
+
+        Ok(json_feed)
     }
 }

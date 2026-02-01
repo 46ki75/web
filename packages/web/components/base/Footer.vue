@@ -36,7 +36,11 @@
       <div class="bottom">
         <div class="left">
           <NuxtLinkLocale to="/" class="hidden-mobile">
-            <img class="favicon" src="/brand/favicon.svg" alt="Favicon" />
+            <img
+              class="favicon"
+              src="/static/brand/favicon.svg"
+              alt="Favicon"
+            />
           </NuxtLinkLocale>
 
           <div class="left-inner">
@@ -77,7 +81,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElmInlineText } from "@elmethis/core";
+import { ElmInlineText } from "@elmethis/vue";
 import { Icon } from "@iconify/vue";
 import { version } from "../../package.json";
 

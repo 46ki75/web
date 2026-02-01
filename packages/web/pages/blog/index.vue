@@ -20,14 +20,14 @@
 
       <div class="blog-container">
         <BlogCard
-          v-for="(blog, index) in blogStore[locale].blogs?.filter(
+          v-for="(blog, index) in blogStore.blogs?.filter(
             (blog) => blog.featured
           )"
-          :id="blog.slug"
           :key="blog.slug"
+          :slug="blog.slug"
           :title="blog.title"
           :description="blog.description"
-          :tags="blogStore.tags({ tagIds: blog.tag_ids, locale })"
+          :tags="blogStore.getTags({ tagIds: blog.tag_ids, locale })"
           :created-at="blog.created_at"
           :updated-at="blog.updated_at"
           :featured="blog.featured"
@@ -41,12 +41,12 @@
 
       <div class="blog-container">
         <BlogCard
-          v-for="(blog, index) in blogStore[locale].blogs?.slice(0, 4)"
-          :id="blog.slug"
+          v-for="(blog, index) in blogStore.blogs?.slice(0, 4)"
           :key="blog.slug"
+          :slug="blog.slug"
           :title="blog.title"
           :description="blog.description"
-          :tags="blogStore.tags({ tagIds: blog.tag_ids, locale })"
+          :tags="blogStore.getTags({ tagIds: blog.tag_ids, locale })"
           :created-at="blog.created_at"
           :updated-at="blog.updated_at"
           :featured="blog.featured"
@@ -60,7 +60,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElmHeading, ElmMarkdown } from "@elmethis/core";
+import { ElmHeading, ElmMarkdown } from "@elmethis/vue";
 
 const { locale, t } = useI18n();
 const blogStore = useBlogStore();

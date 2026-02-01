@@ -1,10 +1,10 @@
 <template>
   <article>
-    <div v-if="blogMeta != null">
+    <div v-if="blog?.meta != null">
       <BlogMeta
-        :title="blogMeta.title"
-        :created-at="blogMeta.created_at"
-        :updated-at="blogMeta.updated_at"
+        :title="blog.meta.title"
+        :created-at="blog.meta.created_at"
+        :updated-at="blog.meta.updated_at"
         :links="[
           { text: 'Home', href: locale === 'en' ? '/' : `/${locale}` },
           { text: 'Blog', href: locale === 'en' ? '/blog' : `/${locale}/blog` },
@@ -12,28 +12,32 @@
             text: 'Article',
             href:
               locale === 'en'
-                ? `/blog/article/${blogMeta.slug}`
-                : `/${locale}/blog/article/${blogMeta.slug}`,
+                ? `/blog/article/${blog.meta.slug}`
+                : `/${locale}/blog/article/${blog.meta.slug}`,
           },
         ]"
-        :image="`/_notion/blog/image/${blogMeta.slug}/${locale}/ogp.webp`"
-        :tags="blogStore.tags({ tagIds: blogMeta.tag_ids, locale })"
+        :image="`/api/v2/blog/${blog.meta.slug}/og-image?lang=${locale}`"
+        :tags="blogStore.getTags({ tagIds: blog.meta.tag_ids, locale })"
         @tag-click="handleTagClick"
       />
 
       <div>
-        <ElmJsonComponentRenderer :json-components="jarkup ?? []" />
+        <ElmJsonComponentRenderer :json-components="blog?.components ?? []" />
       </div>
 
-      <BlogEditOnNotion :url="blogMeta.notion_url" />
+      <BlogEditOnNotion :url="blog.meta.notion_url" />
     </div>
+
+    <div v-else>LOADING</div>
   </article>
 </template>
 
 <script setup lang="ts">
-import { ElmJsonComponentRenderer } from "@elmethis/core";
+import { ElmJsonComponentRenderer } from "@elmethis/vue";
 import type { Component } from "jarkup-ts";
+
 import { client } from "~/openapi/client";
+import type { paths } from "~/openapi/schema";
 
 const { locale } = useI18n();
 
@@ -47,81 +51,41 @@ const handleTagClick = (tagId: string) => {
   blogStore.tagSelect({ tagId, locale: locale.value });
 };
 
-const convert = (
-  blocks: Component[],
-  results: Array<{ from: string; to: string }>,
-  slug: string
-) => {
-  for (const block of blocks) {
-    if (block.type === "Image" && block.props?.src && block.id) {
-      results.push({
-        from: block.props.src,
-        to: `/_notion/blog/image/${slug}/${locale.value}/${block.id}.webp`,
-      });
-    } else if (block.type === "Icon" && block.props?.src && block.id) {
-      results.push({
-        from: block.props.src,
-        to: `/_notion/blog/image/${slug}/${locale.value}/${block.id}.webp`,
-      });
+const { data: blog } = await useAsyncData(
+  computed(() => `/${locale.value}/blog/article/${route.params.slug}`),
+  async () => {
+    if (typeof route.params.slug !== "string") {
+      throw new Error("Invalid path params");
     }
 
-    if (block.slots && "default" in block.slots) {
-      convert(block.slots.default, results, slug);
-    }
+    const { data: blogContents } = await client.GET("/api/v2/blog/{slug}", {
+      params: {
+        path: { slug: route.params.slug },
+        header: { "accept-language": locale.value },
+      },
+    });
+
+    return blogContents as {
+      meta: paths["/api/v2/blog/{slug}"]["get"]["responses"]["200"]["content"]["application/json"]["meta"];
+      components: Component[];
+    };
+  },
+  {
+    watch: [() => route.params.slug, locale],
   }
-
-  const serialized = JSON.stringify(blocks);
-  const converted = results.reduce(
-    (acc, { from, to }) => acc.split(from).join(to),
-    serialized
-  );
-  const deserialized = JSON.parse(converted);
-
-  return deserialized as Component[];
-};
-
-const fetchBlog = async (locale: "en" | "ja") => {
-  if (typeof route.params.slug !== "string") {
-    throw new Error("Invalid path params");
-  }
-
-  const { data: enBlogContents } = await client.GET("/api/v2/blog/{slug}", {
-    params: {
-      path: { slug: route.params.slug as string },
-      header: { "accept-language": locale },
-    },
-  });
-
-  return convert(
-    enBlogContents?.components as Component[],
-    [],
-    route.params.slug
-  );
-};
-
-const { data: jarkup } = await useAsyncData(
-  `/${locale.value}/blog/article/${route.params.slug}`,
-  async () => fetchBlog(locale.value)
 );
-
-const blogMeta = computed(() => {
-  const blogMeta = blogStore[locale.value].blogs?.find(
-    (blog) => blog.slug === route.params.slug
-  );
-  return blogMeta;
-});
 
 useSeoMeta({
   ogType: "article",
-  title: () => `${blogMeta.value?.title} | ${appConfig.SITE_NAME}`,
-  ogTitle: () => blogMeta.value?.title,
-  description: () => blogMeta.value?.description,
-  ogDescription: () => blogMeta.value?.description,
+  title: () => `${blog.value?.meta?.title} | ${appConfig.SITE_NAME}`,
+  ogTitle: () => blog.value?.meta?.title,
+  description: () => blog.value?.meta?.description,
+  ogDescription: () => blog.value?.meta?.description,
   ogImage: () =>
-    `${appConfig.ENDPOINT}/_notion/blog/image/${blogMeta.value?.slug}/${locale.value}/ogp.webp`,
+    `${appConfig.ENDPOINT}/api/v2/blog/${blog.value?.meta.slug}/og-image`,
   twitterCard: "summary_large_image",
-  articlePublishedTime: () => blogMeta.value?.created_at,
-  articleModifiedTime: () => blogMeta.value?.updated_at,
+  articlePublishedTime: () => blog.value?.meta?.created_at,
+  articleModifiedTime: () => blog.value?.meta?.updated_at,
 });
 
 // @see https://json-ld.org/playground/
@@ -132,18 +96,18 @@ useHead({
       innerHTML: JSON.stringify({
         "@context": "https://schema.org",
         "@type": "Article",
-        name: blogMeta.value?.title,
-        headline: blogMeta.value?.title,
-        abstract: blogMeta.value?.description,
-        image: `${appConfig.ENDPOINT}/_notion/blog/image/${blogMeta.value?.slug}/${locale.value}/ogp.webp`,
+        name: blog.value?.meta?.title,
+        headline: blog.value?.meta?.title,
+        abstract: blog.value?.meta?.description,
+        image: `${appConfig.ENDPOINT}/api/v2/blog/${blog.value?.meta?.slug}/og-image?lang=${locale.value}`,
         url: `${appConfig.ENDPOINT}${route.fullPath}`,
         author: {
           "@type": "Person",
           givenName: "Ikuma",
           familyName: "Yamashita",
         },
-        datePublished: blogMeta.value?.created_at,
-        dateModified: blogMeta.value?.updated_at,
+        datePublished: blog.value?.meta?.created_at,
+        dateModified: blog.value?.meta?.updated_at,
       }),
     },
   ],

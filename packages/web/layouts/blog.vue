@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElmPagetop } from "@elmethis/core";
+import { ElmPagetop } from "@elmethis/vue";
 import { Icon } from "@iconify/vue";
 
 // const { locale } = useI18n();

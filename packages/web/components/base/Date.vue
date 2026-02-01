@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
 import { Icon } from "@iconify/vue";
-import { ElmInlineText } from "@elmethis/core";
+import { ElmInlineText } from "@elmethis/vue";
 
 interface BaseDateProps {
   createdAt: string;

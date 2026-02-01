@@ -13,18 +13,18 @@
       </NuxtLinkLocale>
     </div>
 
-    <ClientOnly>
+    <ClientOnly :key="locale">
       <div
-        v-for="(blog, index) in blogStore.sideBlogs(locale)"
+        v-for="(blog, index) in blogStore.getSideBlogs"
         :key="blog.slug"
         class="card"
         :style="{ '--delay': `${100 * index}ms` }"
       >
         <BlogCard
-          :id="blog.slug"
+          :slug="blog.slug"
           :title="blog.title"
           :description="blog.description"
-          :tags="blogStore.tags({ tagIds: blog.tag_ids, locale })"
+          :tags="blogStore.getTags({ tagIds: blog.tag_ids, locale })"
           :created-at="blog.created_at"
           :updated-at="blog.updated_at"
           :featured="blog.featured"
@@ -36,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElmButton, ElmInlineText } from "@elmethis/core";
+import { ElmButton, ElmInlineText } from "@elmethis/vue";
 import { Icon } from "@iconify/vue";
 
 const { locale, t } = useI18n();
