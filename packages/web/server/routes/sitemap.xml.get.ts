@@ -1,4 +1,3 @@
-import { ENDPOINT } from "../../scripts/config";
 import { SitemapStream, streamToPromise } from "sitemap";
 import type { Readable } from "node:stream";
 
@@ -14,7 +13,9 @@ const normalizeBase = (endpoint: string) => endpoint.replace(/\/+$/g, "");
 export const generateSitemap = async (): Promise<string> => {
   console.log("🔧 Generating pages sitemap (sitemap package)");
 
-  const base = normalizeBase(ENDPOINT);
+  const runtimeConfig = useRuntimeConfig();
+
+  const base = normalizeBase(runtimeConfig.public.ENDPOINT);
 
   // Static routes (pages). Keep paths relative so hostname option is used below.
   const paths: UrlEntry[] = [

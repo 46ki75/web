@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "nuxt dev --no-fork",
+    "dev": "STAGE_NAME=dev nuxt dev --no-fork",
     "build": "nuxt build",
     "postinstall": "nuxt prepare",
     "predeploy": "pnpm run build",

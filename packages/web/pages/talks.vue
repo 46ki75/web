@@ -6,7 +6,7 @@
           text: 'Home',
           onClick: () =>
             $router.push(
-              $i18n.locale === $i18n.defaultLocale ? `/` : `/${$i18n.locale}`
+              $i18n.locale === $i18n.defaultLocale ? `/` : `/${$i18n.locale}`,
             ),
         },
         {
@@ -15,7 +15,7 @@
             $router.push(
               $i18n.locale === $i18n.defaultLocale
                 ? `/talks`
-                : `/${$i18n.locale}/talks`
+                : `/${$i18n.locale}/talks`,
             ),
         },
       ]"
@@ -57,8 +57,12 @@ import {
 
 const { t, locales } = useI18n();
 
+const runtimeConfig = useRuntimeConfig();
+
 const { data: talks } = useAsyncData("/api/v2/talks", async () => {
-  const { data } = await client.GET("/api/v2/talks");
+  const { data } = await client.GET("/api/v2/talks", {
+    baseUrl: runtimeConfig.public.ENDPOINT,
+  });
   return data;
 });
 
@@ -66,7 +70,7 @@ const getLocaleName = (
   code: Exclude<
     Required<(typeof talks)["value"]>,
     undefined
-  >[number]["language"]
+  >[number]["language"],
 ) => {
   const foundLocale = locales.value.find((l) => l.code === code);
   return foundLocale?.name || code;

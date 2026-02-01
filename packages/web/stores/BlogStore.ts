@@ -14,20 +14,25 @@ export const useBlogStore = defineStore("BlogSearchStore", {
   state: () => {
     const { locale } = useI18n();
 
+    const runtimeConfig = useRuntimeConfig();
+
     const { data: blogs } = useAsyncData(
       computed(() => `/${locale.value}/api/v2/blog`),
       async () => {
         const { data: blogs } = await client.GET("/api/v2/blog", {
+          baseUrl: runtimeConfig.public.ENDPOINT,
           params: { header: { "accept-language": locale.value } },
         });
         if (blogs == null) throw new Error("Failed to fetch blogs.");
         return blogs;
       },
-      { watch: [locale] }
+      { watch: [locale] },
     );
 
     const { data: tags } = useAsyncData("/api/v2/blog/tag", async () => {
-      const { data } = await client.GET("/api/v2/blog/tag");
+      const { data } = await client.GET("/api/v2/blog/tag", {
+        baseUrl: runtimeConfig.public.ENDPOINT,
+      });
       if (data == null) throw new Error("Failed to fetch blog tags.");
       return {
         en: data.map((tag) => ({
@@ -65,7 +70,7 @@ export const useBlogStore = defineStore("BlogSearchStore", {
 
     tagDeselect({ tagId }: { tagId: string; locale: "en" | "ja" }) {
       this.searchSelectedTagIds = this.searchSelectedTagIds.filter(
-        (deselectTagId) => deselectTagId !== tagId
+        (deselectTagId) => deselectTagId !== tagId,
       );
     },
 
@@ -98,14 +103,14 @@ export const useBlogStore = defineStore("BlogSearchStore", {
           ?.map(({ item }) => item)
           .filter((blog) =>
             this.searchSelectedTagIds.every((tagId) =>
-              blog.tag_ids.some((blogTagId) => blogTagId === tagId)
-            )
+              blog.tag_ids.some((blogTagId) => blogTagId === tagId),
+            ),
           );
       } else {
         this.searchResults = blogs.filter((blog) =>
           this.searchSelectedTagIds.every((tagId) =>
-            blog.tag_ids.some((blogTagId) => blogTagId === tagId)
-          )
+            blog.tag_ids.some((blogTagId) => blogTagId === tagId),
+          ),
         );
       }
     },
@@ -116,13 +121,13 @@ export const useBlogStore = defineStore("BlogSearchStore", {
         ?.sort(
           (pre, next) =>
             new Date(next.created_at).getTime() -
-            new Date(pre.created_at).getTime()
+            new Date(pre.created_at).getTime(),
         )
         .slice(0, 10);
     },
 
     getTags(
-      state
+      state,
     ): ({
       tagIds,
       locale,

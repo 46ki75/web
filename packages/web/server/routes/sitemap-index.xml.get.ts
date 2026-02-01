@@ -1,4 +1,3 @@
-import { ENDPOINT } from "../../scripts/config";
 import { SitemapIndexStream, streamToPromise } from "sitemap";
 import type { Readable } from "node:stream";
 
@@ -12,7 +11,9 @@ const normalizeBase = (endpoint: string) => endpoint.replace(/\/+$/g, "");
 export const generateSitemapIndex = async (): Promise<string> => {
   console.log("🔧 Generating sitemap index (sitemap package)");
 
-  const base = normalizeBase(ENDPOINT);
+  const runtimeConfig = useRuntimeConfig();
+
+  const base = normalizeBase(runtimeConfig.public.ENDPOINT);
 
   const entries: SitemapEntry[] = [
     { url: `${base}/sitemap.xml`, lastmod: undefined },
@@ -26,7 +27,7 @@ export const generateSitemapIndex = async (): Promise<string> => {
   }
 
   const smStream = new SitemapIndexStream(
-    {}
+    {},
   ) as unknown as SitemapIndexWritable;
 
   for (const e of entries) {
