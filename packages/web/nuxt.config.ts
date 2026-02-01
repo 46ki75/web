@@ -1,5 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 
+import { version } from "./package.json";
+
 import { client } from "./openapi/client";
 
 export const STAGE_NAME = process?.env?.STAGE_NAME ?? "dev";
@@ -53,6 +55,13 @@ export default defineNuxtConfig({
       { code: "en", language: "en", name: "English", file: "en.json" },
       { code: "ja", language: "ja", name: "日本語", file: "ja.json" },
     ],
+  },
+
+  appConfig: {
+    SITE_NAME: "SrcJar",
+    APPLICATION_VERSION: version,
+    AWS_PRIMARY_REGION: "ap-northeast-1",
+    AWS_GLOBAL_REGION: "us-east-1",
   },
 
   runtimeConfig: {
