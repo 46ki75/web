@@ -1,5 +1,3 @@
-import { ENDPOINT } from "../../scripts/config";
-
 const TEMPLATE = (ENDPOINT: string) =>
   `
 User-agent: *
@@ -10,9 +8,11 @@ Sitemap: ${ENDPOINT}/sitemap-index.xml
 `.trim() + "\n";
 
 const generateRobots = async (): Promise<string> => {
+  const runtimeConfig = useRuntimeConfig();
+
   console.log("🔧 Generating robots.txt");
 
-  const content = TEMPLATE(ENDPOINT);
+  const content = TEMPLATE(runtimeConfig.public.ENDPOINT);
 
   return content;
 };

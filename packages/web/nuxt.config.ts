@@ -1,10 +1,25 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 
-import { GTAG, ENDPOINT } from "./scripts/config";
 import { client } from "./openapi/client";
 
+export const STAGE_NAME = process?.env?.STAGE_NAME ?? "dev";
+
+export const ENDPOINT =
+  STAGE_NAME === "prod"
+    ? `https://www.ikuma.cloud`
+    : `https://${STAGE_NAME}-www.ikuma.cloud`;
+
+export const GTAG =
+  STAGE_NAME === "prod"
+    ? "G-TW1BVM24YT"
+    : STAGE_NAME === "stg"
+      ? "G-Q7K53RM4VC"
+      : "G-85QSG3WH5F";
+
 const { RUM_IDPOOL_ID, RUM_APP_MONITOR_ID } = await (async () => {
-  const { data } = await client.GET("/api/v2/web-config");
+  const { data } = await client.GET("/api/v2/web-config", {
+    baseUrl: ENDPOINT,
+  });
   if (data == null) throw new Error("Faild to fetch web config.");
   return {
     RUM_IDPOOL_ID: data.rum_identity_pool_id,
@@ -44,6 +59,8 @@ export default defineNuxtConfig({
     public: {
       RUM_IDPOOL_ID,
       RUM_APP_MONITOR_ID,
+      STAGE_NAME,
+      ENDPOINT,
     },
   },
   vite: {
