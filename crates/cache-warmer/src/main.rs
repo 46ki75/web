@@ -1,7 +1,12 @@
 use std::collections::HashMap;
 
 fn get_base_domain() -> String {
-    "dev-www.ikuma.cloud".to_owned()
+    let stage_name = std::env::var("STAGE_NAME").unwrap();
+
+    match stage_name.as_str() {
+        "prod" => "www.ikuma.cloud".to_owned(),
+        _ => format!("{}-www.ikuma.cloud", stage_name),
+    }
 }
 
 #[derive(Debug, Default, Clone)]

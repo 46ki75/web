@@ -1,0 +1,2 @@
+run STAGE_NAME:
+	STAGE_NAME={{STAGE_NAME}} cargo run
