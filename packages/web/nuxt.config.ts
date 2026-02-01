@@ -62,15 +62,14 @@ export default defineNuxtConfig({
     APPLICATION_VERSION: version,
     AWS_PRIMARY_REGION: "ap-northeast-1",
     AWS_GLOBAL_REGION: "us-east-1",
+    RUM_IDPOOL_ID,
+    RUM_APP_MONITOR_ID,
+    STAGE_NAME,
+    ENDPOINT,
   },
 
   runtimeConfig: {
-    public: {
-      RUM_IDPOOL_ID,
-      RUM_APP_MONITOR_ID,
-      STAGE_NAME,
-      ENDPOINT,
-    },
+    public: {},
   },
   vite: {
     server: {

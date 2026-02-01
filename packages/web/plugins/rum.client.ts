@@ -6,9 +6,8 @@ export default defineNuxtPlugin(async () => {
     window.location.hostname !== "127.0.0.1"
   ) {
     const appConfig = useAppConfig();
-    const runtimeConfig = useRuntimeConfig();
 
-    const APPLICATION_ID = runtimeConfig.public.RUM_APP_MONITOR_ID;
+    const APPLICATION_ID = appConfig.RUM_APP_MONITOR_ID;
     const APPLICATION_VERSION = appConfig.APPLICATION_VERSION;
     const APPLICATION_REGION = "ap-northeast-1";
 
@@ -16,7 +15,7 @@ export default defineNuxtPlugin(async () => {
       sessionSampleRate: 1,
       endpoint: "https://dataplane.rum.ap-northeast-1.amazonaws.com",
       telemetries: ["performance", "errors", "http"],
-      identityPoolId: runtimeConfig.public.RUM_IDPOOL_ID,
+      identityPoolId: appConfig.RUM_IDPOOL_ID,
       allowCookies: false,
       enableXRay: false,
     });

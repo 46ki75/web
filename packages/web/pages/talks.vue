@@ -57,11 +57,11 @@ import {
 
 const { t, locales } = useI18n();
 
-const runtimeConfig = useRuntimeConfig();
+const appConfig = useAppConfig();
 
 const { data: talks } = useAsyncData("/api/v2/talks", async () => {
   const { data } = await client.GET("/api/v2/talks", {
-    baseUrl: runtimeConfig.public.ENDPOINT,
+    baseUrl: appConfig.ENDPOINT,
   });
   return data;
 });

@@ -51,8 +51,6 @@ const handleTagClick = (tagId: string) => {
   blogStore.tagSelect({ tagId, locale: locale.value });
 };
 
-const runtimeConfig = useRuntimeConfig();
-
 const { data: blog } = await useAsyncData(
   computed(() => `/${locale.value}/blog/article/${route.params.slug}`),
   async () => {
@@ -61,7 +59,7 @@ const { data: blog } = await useAsyncData(
     }
 
     const { data: blogContents } = await client.GET("/api/v2/blog/{slug}", {
-      baseUrl: runtimeConfig.public.ENDPOINT,
+      baseUrl: appConfig.ENDPOINT,
       params: {
         path: { slug: route.params.slug },
         header: { "accept-language": locale.value },

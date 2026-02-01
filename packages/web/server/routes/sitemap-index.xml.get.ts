@@ -11,9 +11,9 @@ const normalizeBase = (endpoint: string) => endpoint.replace(/\/+$/g, "");
 export const generateSitemapIndex = async (): Promise<string> => {
   console.log("🔧 Generating sitemap index (sitemap package)");
 
-  const runtimeConfig = useRuntimeConfig();
+  const appConfig = useAppConfig();
 
-  const base = normalizeBase(runtimeConfig.public.ENDPOINT);
+  const base = normalizeBase(appConfig.ENDPOINT);
 
   const entries: SitemapEntry[] = [
     { url: `${base}/sitemap.xml`, lastmod: undefined },
