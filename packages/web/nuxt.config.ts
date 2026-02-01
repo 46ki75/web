@@ -1,5 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 
+import { version } from "./package.json";
+
 import { client } from "./openapi/client";
 
 export const STAGE_NAME = process?.env?.STAGE_NAME ?? "dev";
@@ -55,13 +57,19 @@ export default defineNuxtConfig({
     ],
   },
 
+  appConfig: {
+    SITE_NAME: "SrcJar",
+    APPLICATION_VERSION: version,
+    AWS_PRIMARY_REGION: "ap-northeast-1",
+    AWS_GLOBAL_REGION: "us-east-1",
+    RUM_IDPOOL_ID,
+    RUM_APP_MONITOR_ID,
+    STAGE_NAME,
+    ENDPOINT,
+  },
+
   runtimeConfig: {
-    public: {
-      RUM_IDPOOL_ID,
-      RUM_APP_MONITOR_ID,
-      STAGE_NAME,
-      ENDPOINT,
-    },
+    public: {},
   },
   vite: {
     server: {

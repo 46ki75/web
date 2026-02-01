@@ -14,13 +14,13 @@ export const useBlogStore = defineStore("BlogSearchStore", {
   state: () => {
     const { locale } = useI18n();
 
-    const runtimeConfig = useRuntimeConfig();
+    const appConfig = useAppConfig();
 
     const { data: blogs } = useAsyncData(
       computed(() => `/${locale.value}/api/v2/blog`),
       async () => {
         const { data: blogs } = await client.GET("/api/v2/blog", {
-          baseUrl: runtimeConfig.public.ENDPOINT,
+          baseUrl: appConfig.ENDPOINT,
           params: { header: { "accept-language": locale.value } },
         });
         if (blogs == null) throw new Error("Failed to fetch blogs.");
@@ -31,7 +31,7 @@ export const useBlogStore = defineStore("BlogSearchStore", {
 
     const { data: tags } = useAsyncData("/api/v2/blog/tag", async () => {
       const { data } = await client.GET("/api/v2/blog/tag", {
-        baseUrl: runtimeConfig.public.ENDPOINT,
+        baseUrl: appConfig.ENDPOINT,
       });
       if (data == null) throw new Error("Failed to fetch blog tags.");
       return {

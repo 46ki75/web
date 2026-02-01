@@ -13,9 +13,9 @@ const normalizeBase = (endpoint: string) => endpoint.replace(/\/+$/g, "");
 export const generateSitemap = async (): Promise<string> => {
   console.log("🔧 Generating pages sitemap (sitemap package)");
 
-  const runtimeConfig = useRuntimeConfig();
+  const appConfig = useAppConfig();
 
-  const base = normalizeBase(runtimeConfig.public.ENDPOINT);
+  const base = normalizeBase(appConfig.ENDPOINT);
 
   // Static routes (pages). Keep paths relative so hostname option is used below.
   const paths: UrlEntry[] = [

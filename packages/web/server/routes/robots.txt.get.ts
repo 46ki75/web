@@ -8,12 +8,11 @@ Sitemap: ${ENDPOINT}/sitemap-index.xml
 `.trim() + "\n";
 
 const generateRobots = async (): Promise<string> => {
-  const runtimeConfig = useRuntimeConfig();
+  const appConfig = useAppConfig();
 
   console.log("🔧 Generating robots.txt");
 
-  const content = TEMPLATE(runtimeConfig.public.ENDPOINT);
-
+  const content = TEMPLATE(appConfig.ENDPOINT);
   return content;
 };
 
