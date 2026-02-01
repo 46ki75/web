@@ -17,6 +17,17 @@ pub fn stage_name() -> Result<String, crate::error::Error> {
     Ok(stage_name)
 }
 
+pub fn domain_name() -> Result<String, crate::error::Error> {
+    let stage_name = crate::stage_name()?;
+
+    let domain = match stage_name.as_str() {
+        "prod" => "www.ikuma.cloud",
+        "staging" => "stg-www.ikuma.cloud",
+        _ => "dev-www.ikuma.cloud",
+    };
+    Ok(domain.to_owned())
+}
+
 pub async fn function_handler(
     event: http::Request<lambda_http::Body>,
 ) -> Result<http::Response<axum::body::Body>, lambda_http::Error> {

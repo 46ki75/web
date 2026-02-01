@@ -296,13 +296,7 @@ impl BlogUseCase {
             blogs_by_lang.insert(lang.to_string(), list);
         }
 
-        let stage_name = crate::stage_name()?;
-
-        let domain = match stage_name.as_str() {
-            "prod" => "www.ikuma.cloud",
-            "staging" => "stg-www.ikuma.cloud",
-            _ => "dev-www.ikuma.cloud",
-        };
+        let domain = crate::domain_name()?;
 
         let mut urlset: Vec<super::entity::BlogSitemapUrl> = Vec::new();
 
@@ -379,13 +373,7 @@ impl BlogUseCase {
     ) -> Result<String, crate::error::Error> {
         let blogs = self.list_blogs(language.clone()).await?;
 
-        let stage_name = crate::stage_name()?;
-
-        let domain = match stage_name.as_str() {
-            "prod" => "www.ikuma.cloud",
-            "staging" => "stg-www.ikuma.cloud",
-            _ => "dev-www.ikuma.cloud",
-        };
+        let domain = crate::domain_name()?;
 
         let items: Vec<rss::Item> = blogs
             .into_iter()
@@ -434,12 +422,7 @@ impl BlogUseCase {
         &self,
         language: super::entity::BlogLanguageEntity,
     ) -> Result<String, crate::error::Error> {
-        let stage_name = crate::stage_name()?;
-        let domain = match stage_name.as_str() {
-            "prod" => "www.ikuma.cloud",
-            "staging" => "stg-www.ikuma.cloud",
-            _ => "dev-www.ikuma.cloud",
-        };
+        let domain = crate::domain_name()?;
 
         let blogs = self.list_blogs(language.clone()).await?;
 
@@ -495,13 +478,7 @@ impl BlogUseCase {
     ) -> Result<String, crate::error::Error> {
         let blogs = self.list_blogs(language.clone()).await?;
 
-        let stage_name = crate::stage_name()?;
-
-        let domain = match stage_name.as_str() {
-            "prod" => "www.ikuma.cloud",
-            "staging" => "stg-www.ikuma.cloud",
-            _ => "dev-www.ikuma.cloud",
-        };
+        let domain = crate::domain_name()?;
 
         let items: Vec<jsonfeed::Item> = blogs
             .into_iter()
