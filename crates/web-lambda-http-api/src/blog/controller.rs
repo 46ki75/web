@@ -192,7 +192,6 @@ pub async fn list_tags(
     path = "/api/v2/blog/{slug}/og-image",
     params(
         ("slug" = String, Path, description = "Blog slug"),
-        ("accept-language" = Option<String>, Header),
         ("lang" = Option<String>, Query),
     ),
     responses(
@@ -205,7 +204,6 @@ pub async fn get_blog_og_image(
         std::sync::Arc<crate::axum_router::AxumAppState>,
     >,
     axum::extract::Path(slug): axum::extract::Path<String>,
-    headers: http::header::HeaderMap,
     axum::extract::Query(BlogOgImageQueryParam { lang }): axum::extract::Query<
         BlogOgImageQueryParam,
     >,
@@ -215,16 +213,7 @@ pub async fn get_blog_og_image(
             BlogLanguageQueryParam::Ja => super::entity::BlogLanguageEntity::Ja,
             BlogLanguageQueryParam::En => super::entity::BlogLanguageEntity::En,
         })
-        .unwrap_or_else(|| {
-            headers
-                .get(ACCEPT_LANGUAGE)
-                .and_then(|accept_language| accept_language.to_str().ok())
-                .map(|accept_language| match accept_language {
-                    "ja" => super::entity::BlogLanguageEntity::Ja,
-                    _ => super::entity::BlogLanguageEntity::En,
-                })
-                .unwrap_or(super::entity::BlogLanguageEntity::En)
-        });
+        .unwrap_or(super::entity::BlogLanguageEntity::En);
 
     let contents = match state
         .blog_use_case
@@ -236,7 +225,6 @@ pub async fn get_blog_og_image(
 
             let response = axum::response::Response::builder()
                 .header(http::header::CONTENT_TYPE, content_type)
-                .header(http::header::VARY, "Accept-Language")
                 .header(http::header::CACHE_CONTROL, CACHE_VALUE)
                 .body(axum::body::Body::from(image_bytes.to_vec()))
                 .map_err(|e| {
