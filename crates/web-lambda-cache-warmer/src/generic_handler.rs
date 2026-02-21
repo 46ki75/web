@@ -1,13 +1,15 @@
 use lambda_runtime::{Error, LambdaEvent};
 use serde::Deserialize;
-use web_lambda_cache_warmer::{crawl_and_visit, ssm, util::create_basic_auth_header_value, Page};
+use web_lambda_cache_warmer::{
+    crawl_and_visit, ssm, util::create_basic_auth_header_value, FetchResult,
+};
 
 #[derive(Deserialize)]
 pub(crate) struct IncomingMessage {}
 
 pub(crate) async fn function_handler(
     _event: LambdaEvent<Option<IncomingMessage>>,
-) -> Result<Vec<Page>, Error> {
+) -> Result<Vec<FetchResult>, Error> {
     let stage_name = std::env::var("STAGE_NAME").unwrap_or_else(|_| "dev".to_string());
 
     let authorization =

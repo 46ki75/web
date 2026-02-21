@@ -1,11 +1,11 @@
 dev:
-	STAGE_NAME=dev AWS_LAMBDA_LOG_LEVEL=debug AWS_LAMBDA_LOG_FORMAT=pretty cargo lambda watch -P 11000 --package web-lambda-cache-warmer
+	STAGE_NAME=dev AWS_LAMBDA_LOG_LEVEL=info AWS_LAMBDA_LOG_FORMAT=pretty cargo lambda watch -P 11000 --package web-lambda-cache-warmer
 
 stg:
-	STAGE_NAME=stg AWS_LAMBDA_LOG_LEVEL=debug AWS_LAMBDA_LOG_FORMAT=pretty cargo lambda watch -P 11000 --package web-lambda-cache-warmer
+	STAGE_NAME=stg AWS_LAMBDA_LOG_LEVEL=info AWS_LAMBDA_LOG_FORMAT=pretty cargo lambda watch -P 11000 --package web-lambda-cache-warmer
 
 prod:
-	STAGE_NAME=prod AWS_LAMBDA_LOG_LEVEL=debug AWS_LAMBDA_LOG_FORMAT=pretty cargo lambda watch -P 11000 --package web-lambda-cache-warmer
+	STAGE_NAME=prod AWS_LAMBDA_LOG_LEVEL=info AWS_LAMBDA_LOG_FORMAT=pretty cargo lambda watch -P 11000 --package web-lambda-cache-warmer
 
 build:
 	cargo lambda build --release --arm64

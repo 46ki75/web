@@ -21,3 +21,4 @@ base64 = "0.22.1"
 # AWS SDK
 aws-config = { workspace = true }
 aws-sdk-ssm = { workspace = true }
+futures.workspace = true

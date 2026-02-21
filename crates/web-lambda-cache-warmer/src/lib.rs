@@ -1,35 +1,28 @@
 pub mod ssm;
 pub mod util;
 
-use std::collections::HashMap;
+use std::collections::HashSet;
 
 #[derive(Debug, Default, Clone, serde::Serialize)]
-pub struct Page {
+pub struct FetchResult {
     pub path: String,
-    pub body: Option<String>,
     pub status: u16,
-    pub visited: bool,
     pub is_cloudfront_cache_hit: bool,
 }
 
-pub fn report(pages: &HashMap<String, Page>) {
-    println!("Visited {} pages", pages.len());
+struct State {
+    queued_paths: HashSet<String>,
+    in_flight_paths: HashSet<String>,
+    completed_paths: HashSet<String>,
 
-    for (path, page) in pages {
-        println!(
-            "| {} | {} | {}",
-            if page.is_cloudfront_cache_hit {
-                "HIT "
-            } else {
-                "MISS"
-            },
-            page.status,
-            path
-        );
-    }
+    fetch_results: Vec<FetchResult>,
 }
 
-pub async fn visit(path: &str, stage_name: &str, authorization: Option<&str>) -> Page {
+pub async fn visit(
+    path: &str,
+    stage_name: &str,
+    authorization: Option<&str>,
+) -> (FetchResult, Option<String>) {
     let base_domain = util::get_base_domain(stage_name);
 
     let client = reqwest::Client::new();
@@ -58,12 +51,15 @@ pub async fn visit(path: &str, stage_name: &str, authorization: Option<&str>) ->
         Ok(r) => r,
         Err(e) => {
             tracing::error!("Request failed for {}: {}", url, e);
-            return Page {
-                path: path.to_owned(),
-                body: None,
-                status: 0,
-                ..Default::default()
-            };
+            return (
+                FetchResult {
+                    path: only_path,
+                    status: 0,
+                    is_cloudfront_cache_hit: false,
+                    ..Default::default()
+                },
+                None,
+            );
         }
     };
 
@@ -95,16 +91,18 @@ pub async fn visit(path: &str, stage_name: &str, authorization: Option<&str>) ->
         path
     );
 
-    Page {
-        path: only_path,
+    (
+        FetchResult {
+            path: only_path,
+            status: status.as_u16(),
+            is_cloudfront_cache_hit,
+            ..Default::default()
+        },
         body,
-        status: status.as_u16(),
-        is_cloudfront_cache_hit,
-        ..Default::default()
-    }
+    )
 }
 
-pub fn extract_links_from_html(body: &str) -> Vec<String> {
+pub fn extract_all_links_from_html(body: &str) -> Vec<String> {
     let mut urls: Vec<String> = Vec::new();
 
     let html = scraper::Html::parse_document(body);
@@ -140,10 +138,13 @@ pub fn extract_links_from_html(body: &str) -> Vec<String> {
     urls
 }
 
-pub fn crawl(body: &str, stage_name: &str) -> Vec<String> {
+pub fn extract_all_links_from_html_and_normalize_same_origin_paths(
+    body: &str,
+    stage_name: &str,
+) -> Vec<String> {
     let domain = util::get_base_domain(stage_name);
 
-    let urls = extract_links_from_html(body);
+    let urls = extract_all_links_from_html(body);
 
     // Normalize same-origin absolute URLs to path-only and dedupe
     use std::collections::HashSet;
@@ -205,47 +206,69 @@ pub fn crawl(body: &str, stage_name: &str) -> Vec<String> {
 pub async fn crawl_and_visit(
     stage_name: &str,
     authorization: Option<&str>,
-) -> Result<Vec<Page>, lambda_runtime::Error> {
-    let mut pages = HashMap::new();
-    pages.insert(
-        "/".to_owned(),
-        Page {
-            path: "/".to_owned(),
-            ..Default::default()
-        },
-    );
+) -> Result<Vec<FetchResult>, lambda_runtime::Error> {
+    let mut queued = HashSet::new();
+    queued.insert(String::from("/"));
+
+    let state = tokio::sync::Mutex::new(State {
+        queued_paths: queued,
+        in_flight_paths: HashSet::new(),
+        completed_paths: HashSet::new(),
+        fetch_results: Vec::new(),
+    });
 
     loop {
-        let unvisited_paths: Vec<String> = pages
-            .values()
-            .filter(|p| !p.visited)
-            .map(|p| p.path.clone())
-            .collect();
+        let queued_paths = {
+            let mut state_guard = state.lock().await;
 
-        if unvisited_paths.is_empty() {
-            break;
+            if state_guard.queued_paths.is_empty() {
+                break;
+            }
+
+            let drained_queued_paths = state_guard.queued_paths.drain().collect::<Vec<_>>();
+
+            state_guard
+                .in_flight_paths
+                .extend(drained_queued_paths.iter().cloned());
+
+            drained_queued_paths.into_iter().collect::<HashSet<_>>()
+        };
+
+        let futures = queued_paths
+            .iter()
+            .map(|path| visit(path, stage_name, authorization))
+            .collect::<Vec<_>>();
+
+        let results = futures::future::join_all(futures).await;
+
+        {
+            let mut state_guard = state.lock().await;
+            let drained_in_flight_paths = state_guard.in_flight_paths.drain().collect::<Vec<_>>();
+            state_guard.completed_paths.extend(drained_in_flight_paths);
         }
 
-        for path in unvisited_paths {
-            // Visit the page
-            let mut visited_page = visit(&path, stage_name, authorization).await;
-            visited_page.visited = true;
-            pages.insert(visited_page.path.clone(), visited_page.clone());
+        for (fetch_result, body) in results {
+            if let Some(body) = body {
+                let links =
+                    extract_all_links_from_html_and_normalize_same_origin_paths(&body, stage_name);
 
-            // Crawl the page
+                let mut state_guard = state.lock().await;
 
-            if let Some(body) = &visited_page.body {
-                let extracted_paths = crawl(&body, stage_name);
-                for new_path in extracted_paths {
-                    pages.entry(new_path.clone()).or_insert(Page {
-                        path: new_path,
-                        ..Default::default()
-                    });
+                for link in links {
+                    if !(state_guard.queued_paths.contains(&link)
+                        || state_guard.in_flight_paths.contains(&link)
+                        || state_guard.completed_paths.contains(&link))
+                    {
+                        state_guard.queued_paths.insert(link);
+                    }
                 }
-            } else {
-            }
+
+                state_guard.fetch_results.push(fetch_result);
+            };
         }
     }
 
-    Ok(pages.into_values().collect())
+    let fetch_results = state.lock().await.fetch_results.clone();
+
+    Ok(fetch_results)
 }
