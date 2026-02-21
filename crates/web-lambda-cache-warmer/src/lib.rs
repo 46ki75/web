@@ -1,20 +1,7 @@
 pub mod ssm;
+pub mod util;
 
-use base64::prelude::*;
 use std::collections::HashMap;
-
-pub fn get_base_domain(stage_name: &str) -> String {
-    match stage_name {
-        "prod" => "www.ikuma.cloud".to_owned(),
-        _ => format!("{}-www.ikuma.cloud", stage_name),
-    }
-}
-
-pub fn create_basic_auth_header_value(username: &str, password: &str) -> String {
-    let credentials = format!("{}:{}", username, password);
-    let encoded_credentials = BASE64_STANDARD.encode(credentials);
-    format!("Basic {}", encoded_credentials)
-}
 
 #[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct Page {
@@ -43,7 +30,7 @@ pub fn report(pages: &HashMap<String, Page>) {
 }
 
 pub async fn visit(path: &str, stage_name: &str, authorization: Option<&str>) -> Page {
-    let base_domain = get_base_domain(stage_name);
+    let base_domain = util::get_base_domain(stage_name);
 
     let client = reqwest::Client::new();
     let url = if path.starts_with("http://") || path.starts_with("https://") {
@@ -154,7 +141,7 @@ pub fn extract_links_from_html(body: &str) -> Vec<String> {
 }
 
 pub fn crawl(body: &str, stage_name: &str) -> Vec<String> {
-    let domain = get_base_domain(stage_name);
+    let domain = util::get_base_domain(stage_name);
 
     let urls = extract_links_from_html(body);
 

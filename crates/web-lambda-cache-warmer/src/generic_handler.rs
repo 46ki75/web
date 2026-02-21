@@ -1,6 +1,6 @@
 use lambda_runtime::{Error, LambdaEvent};
 use serde::Deserialize;
-use web_lambda_cache_warmer::{crawl_and_visit, create_basic_auth_header_value, ssm, Page};
+use web_lambda_cache_warmer::{crawl_and_visit, ssm, util::create_basic_auth_header_value, Page};
 
 #[derive(Deserialize)]
 pub(crate) struct IncomingMessage {}
