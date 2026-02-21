@@ -264,6 +264,15 @@ pub async fn crawl_and_visit(
                 state_guard.fetch_results.push(fetch_result);
             };
         }
+        {
+            let state_guard = state.lock().await;
+            tracing::info!(
+                "| queued: {} | in_flight: {} | completed: {} |",
+                state_guard.queued_paths.len(),
+                state_guard.in_flight_paths.len(),
+                state_guard.completed_paths.len(),
+            );
+        }
     }
 
     let fetch_results = state.lock().await.fetch_results.clone();
