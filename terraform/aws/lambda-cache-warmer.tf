@@ -57,7 +57,7 @@ resource "aws_lambda_function" "cache_warmer" {
   architectures = ["arm64"]
   memory_size   = 512
   publish       = true # Publish a new version
-  timeout       = 30
+  timeout       = 15 * 60
 
   tracing_config {
     mode = "PassThrough"
