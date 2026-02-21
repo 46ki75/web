@@ -40,8 +40,6 @@ pub async fn visit(
         .replace(&format!("https://{}", base_domain), "")
         .to_owned();
 
-    tracing::info!("Visiting {}", only_path);
-
     let mut req = client.get(&url);
     if let Some(auth) = authorization {
         req = req.header(http::header::AUTHORIZATION, auth);
@@ -80,7 +78,7 @@ pub async fn visit(
         }
     };
 
-    tracing::info!(
+    tracing::debug!(
         "| {} | {} | {}",
         if is_cloudfront_cache_hit {
             "HIT "
