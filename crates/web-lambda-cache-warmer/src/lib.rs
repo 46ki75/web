@@ -1,9 +1,7 @@
 use std::collections::HashMap;
 
-pub fn get_base_domain() -> String {
-    let stage_name = std::env::var("STAGE_NAME").unwrap();
-
-    match stage_name.as_str() {
+pub fn get_base_domain(stage_name: &str) -> String {
+    match stage_name {
         "prod" => "www.ikuma.cloud".to_owned(),
         _ => format!("{}-www.ikuma.cloud", stage_name),
     }
@@ -35,20 +33,22 @@ pub fn report(pages: &HashMap<String, Page>) {
     }
 }
 
-pub async fn visit(path: &str) -> Page {
+pub async fn visit(path: &str, stage_name: &str) -> Page {
+    let base_domain = get_base_domain(stage_name);
+
     let client = reqwest::Client::new();
     let url = if path.starts_with("http://") || path.starts_with("https://") {
         path.to_owned()
     } else if path.starts_with("//") {
         format!("https:{}", path)
     } else if path.starts_with('/') {
-        format!("https://{}{}", get_base_domain(), path)
+        format!("https://{}{}", base_domain, path)
     } else {
-        format!("https://{}/{}", get_base_domain(), path)
+        format!("https://{}/{}", base_domain, path)
     };
 
     let only_path = url
-        .replace(&format!("https://{}", get_base_domain()), "")
+        .replace(&format!("https://{}", base_domain), "")
         .to_owned();
 
     tracing::info!("Visiting {}", only_path);
@@ -144,7 +144,9 @@ pub fn extract_links_from_html(body: &str) -> Vec<String> {
     urls
 }
 
-pub fn crawl(body: &str) -> Vec<String> {
+pub fn crawl(body: &str, stage_name: &str) -> Vec<String> {
+    let domain = get_base_domain(stage_name);
+
     let urls = extract_links_from_html(body);
 
     // Normalize same-origin absolute URLs to path-only and dedupe
@@ -152,9 +154,9 @@ pub fn crawl(body: &str) -> Vec<String> {
     let mut seen: HashSet<String> = HashSet::new();
     let mut normalized: Vec<String> = Vec::new();
 
-    let https_prefix = format!("https://{}", get_base_domain());
-    let http_prefix = format!("http://{}", get_base_domain());
-    let proto_rel_prefix = format!("//{}", get_base_domain());
+    let https_prefix = format!("https://{}", domain);
+    let http_prefix = format!("http://{}", domain);
+    let proto_rel_prefix = format!("//{}", domain);
 
     for url in urls.into_iter() {
         let p = if url.starts_with('/') {
@@ -204,7 +206,7 @@ pub fn crawl(body: &str) -> Vec<String> {
     normalized
 }
 
-pub async fn crawl_and_visit() -> Result<Vec<Page>, lambda_runtime::Error> {
+pub async fn crawl_and_visit(stage_name: &str) -> Result<Vec<Page>, lambda_runtime::Error> {
     let mut pages = HashMap::new();
     pages.insert(
         "/".to_owned(),
@@ -227,14 +229,14 @@ pub async fn crawl_and_visit() -> Result<Vec<Page>, lambda_runtime::Error> {
 
         for path in unvisited_paths {
             // Visit the page
-            let mut visited_page = visit(&path).await;
+            let mut visited_page = visit(&path, stage_name).await;
             visited_page.visited = true;
             pages.insert(visited_page.path.clone(), visited_page.clone());
 
             // Crawl the page
 
             if let Some(body) = &visited_page.body {
-                let extracted_paths = crawl(&body);
+                let extracted_paths = crawl(&body, stage_name);
                 for new_path in extracted_paths {
                     pages.entry(new_path.clone()).or_insert(Page {
                         path: new_path,

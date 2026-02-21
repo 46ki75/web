@@ -8,7 +8,9 @@ pub(crate) struct IncomingMessage {}
 pub(crate) async fn function_handler(
     _event: LambdaEvent<IncomingMessage>,
 ) -> Result<Vec<Page>, Error> {
-    let pages = crawl_and_visit().await?;
+    let stage_name = std::env::var("STAGE_NAME").unwrap_or_else(|_| "dev".to_string());
+
+    let pages = crawl_and_visit(&stage_name).await?;
 
     Ok(pages)
 }
