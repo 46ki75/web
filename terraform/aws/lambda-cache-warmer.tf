@@ -55,7 +55,7 @@ resource "aws_lambda_function" "cache_warmer" {
   handler       = "bootstrap.handler"
   runtime       = "provided.al2023"
   architectures = ["arm64"]
-  memory_size   = 512
+  memory_size   = 256
   publish       = true # Publish a new version
   timeout       = 15 * 60
 
@@ -125,14 +125,20 @@ resource "aws_iam_role_policy_attachment" "events_invoke_lambda_policy_attachmen
 }
 
 resource "aws_scheduler_schedule" "cache_warmer" {
-  name       = "${terraform.workspace}-46ki75-web-scheduler-cache_warmer"
-  group_name = "default"
+  name                         = "${terraform.workspace}-46ki75-web-scheduler-cache_warmer"
+  group_name                   = "default"
+  state                        = "ENABLED"
+  schedule_expression_timezone = "Asia/Tokyo"
 
   schedule_expression = "rate(15 minutes)"
 
   target {
     arn      = aws_lambda_alias.cache_warmer.arn
     role_arn = aws_iam_role.events_invoke_lambda_role_cache_warmer.arn
+
+    retry_policy {
+      maximum_retry_attempts = 0
+    }
   }
 
   flexible_time_window {
