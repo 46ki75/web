@@ -5034,6 +5034,7 @@ dependencies = [
 name = "web-lambda-cache-warmer"
 version = "0.1.0"
 dependencies = [
+ "base64 0.22.1",
  "dotenvy",
  "http 1.3.1",
  "lambda_runtime 1.0.2",

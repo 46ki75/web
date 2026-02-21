@@ -1,3 +1,4 @@
+use base64::prelude::*;
 use std::collections::HashMap;
 
 pub fn get_base_domain(stage_name: &str) -> String {
@@ -5,6 +6,12 @@ pub fn get_base_domain(stage_name: &str) -> String {
         "prod" => "www.ikuma.cloud".to_owned(),
         _ => format!("{}-www.ikuma.cloud", stage_name),
     }
+}
+
+pub fn create_basic_auth_header_value(username: &str, password: &str) -> String {
+    let credentials = format!("{}:{}", username, password);
+    let encoded_credentials = BASE64_STANDARD.encode(credentials);
+    format!("Basic {}", encoded_credentials)
 }
 
 #[derive(Debug, Default, Clone, serde::Serialize)]
@@ -33,7 +40,7 @@ pub fn report(pages: &HashMap<String, Page>) {
     }
 }
 
-pub async fn visit(path: &str, stage_name: &str) -> Page {
+pub async fn visit(path: &str, stage_name: &str, authorization: Option<&str>) -> Page {
     let base_domain = get_base_domain(stage_name);
 
     let client = reqwest::Client::new();
@@ -54,7 +61,7 @@ pub async fn visit(path: &str, stage_name: &str) -> Page {
     tracing::info!("Visiting {}", only_path);
 
     let mut req = client.get(&url);
-    if let Ok(auth) = std::env::var("AUTHORIZATION") {
+    if let Some(auth) = authorization {
         req = req.header(http::header::AUTHORIZATION, auth);
     }
 
@@ -206,7 +213,10 @@ pub fn crawl(body: &str, stage_name: &str) -> Vec<String> {
     normalized
 }
 
-pub async fn crawl_and_visit(stage_name: &str) -> Result<Vec<Page>, lambda_runtime::Error> {
+pub async fn crawl_and_visit(
+    stage_name: &str,
+    authorization: Option<&str>,
+) -> Result<Vec<Page>, lambda_runtime::Error> {
     let mut pages = HashMap::new();
     pages.insert(
         "/".to_owned(),
@@ -229,7 +239,7 @@ pub async fn crawl_and_visit(stage_name: &str) -> Result<Vec<Page>, lambda_runti
 
         for path in unvisited_paths {
             // Visit the page
-            let mut visited_page = visit(&path, stage_name).await;
+            let mut visited_page = visit(&path, stage_name, authorization).await;
             visited_page.visited = true;
             pages.insert(visited_page.path.clone(), visited_page.clone());
 
