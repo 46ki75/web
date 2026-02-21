@@ -65,3 +65,7 @@ chrono = "0.4.43"
 # feed
 rss = "2.0.12"
 atom_syndication = { version = "0.12.7", features = ["with-serde"] }
+
+# AWS SDK
+aws-config = "1.8"
+aws-sdk-ssm = "1.106"

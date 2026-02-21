@@ -1,3 +1,5 @@
+pub mod ssm;
+
 use base64::prelude::*;
 use std::collections::HashMap;
 
