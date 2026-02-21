@@ -1,5 +1,7 @@
 pub async fn get_parameter(name: &str) -> Result<String, String> {
-    let client = aws_sdk_ssm::Client::new(&aws_config::load_from_env().await);
+    let sdk_config = aws_config::load_defaults(aws_config::BehaviorVersion::latest()).await;
+
+    let client = aws_sdk_ssm::Client::new(&sdk_config);
 
     let resp = client
         .get_parameter()
