@@ -16,7 +16,7 @@ pub(crate) async fn function_handler(
             .map(|password| create_basic_auth_header_value("cache_warmer", &password))
             .ok();
 
-    let pages = crawl_and_visit(&stage_name, authorization.as_deref()).await?;
+    let _pages = crawl_and_visit(&stage_name, authorization.as_deref()).await?;
 
-    Ok(pages)
+    Ok(vec![])
 }
