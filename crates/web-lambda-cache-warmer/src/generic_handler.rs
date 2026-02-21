@@ -6,7 +6,7 @@ use web_lambda_cache_warmer::{crawl_and_visit, create_basic_auth_header_value, s
 pub(crate) struct IncomingMessage {}
 
 pub(crate) async fn function_handler(
-    _event: LambdaEvent<IncomingMessage>,
+    _event: LambdaEvent<Option<IncomingMessage>>,
 ) -> Result<Vec<Page>, Error> {
     let stage_name = std::env::var("STAGE_NAME").unwrap_or_else(|_| "dev".to_string());
 
