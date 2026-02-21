@@ -2,6 +2,7 @@ pub mod ssm;
 pub mod util;
 
 use std::collections::HashSet;
+use std::sync::LazyLock;
 
 #[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct FetchResult {
@@ -10,22 +11,24 @@ pub struct FetchResult {
     pub is_cloudfront_cache_hit: bool,
 }
 
-struct State {
-    queued_paths: HashSet<String>,
-    in_flight_paths: HashSet<String>,
-    completed_paths: HashSet<String>,
-
-    fetch_results: Vec<FetchResult>,
-}
+// Compile CSS selectors once at startup rather than on every parse call.
+static A_SELECTOR: LazyLock<scraper::Selector> =
+    LazyLock::new(|| scraper::Selector::parse("a").unwrap());
+static IMG_SELECTOR: LazyLock<scraper::Selector> =
+    LazyLock::new(|| scraper::Selector::parse("img").unwrap());
+static SCRIPT_SELECTOR: LazyLock<scraper::Selector> =
+    LazyLock::new(|| scraper::Selector::parse("script").unwrap());
+static LINK_SELECTOR: LazyLock<scraper::Selector> =
+    LazyLock::new(|| scraper::Selector::parse("link").unwrap());
 
 pub async fn visit(
     path: &str,
     stage_name: &str,
     authorization: Option<&str>,
+    client: &reqwest::Client,
 ) -> (FetchResult, Option<String>) {
     let base_domain = util::get_base_domain(stage_name);
 
-    let client = reqwest::Client::new();
     let url = if path.starts_with("http://") || path.starts_with("https://") {
         path.to_owned()
     } else if path.starts_with("//") {
@@ -101,39 +104,36 @@ pub async fn visit(
 }
 
 pub fn extract_all_links_from_html(body: &str) -> Vec<String> {
-    let mut urls: Vec<String> = Vec::new();
-
     let html = scraper::Html::parse_document(body);
 
-    let a_selector = scraper::Selector::parse("a").unwrap();
-    for a_element in html.select(&a_selector) {
-        if let Some(href) = a_element.value().attr("href") {
-            urls.push(href.to_owned());
-        }
-    }
+    // (selector, attribute) pairs — selectors are compiled once via LazyLock.
+    let pairs: [(&scraper::Selector, &str); 4] = [
+        (&A_SELECTOR, "href"),
+        (&IMG_SELECTOR, "src"),
+        (&SCRIPT_SELECTOR, "src"),
+        (&LINK_SELECTOR, "href"),
+    ];
 
-    let img_selector = scraper::Selector::parse("img").unwrap();
-    for img_element in html.select(&img_selector) {
-        if let Some(src) = img_element.value().attr("src") {
-            urls.push(src.to_owned());
-        }
-    }
+    pairs
+        .iter()
+        .flat_map(|(sel, attr)| {
+            html.select(sel)
+                .filter_map(|el| el.value().attr(attr).map(str::to_owned))
+                .collect::<Vec<_>>()
+        })
+        .collect()
+}
 
-    let script_selector = scraper::Selector::parse("script").unwrap();
-    for script_element in html.select(&script_selector) {
-        if let Some(src) = script_element.value().attr("src") {
-            urls.push(src.to_owned());
-        }
+/// Strip a known prefix from `url` and ensure the remainder starts with `/`.
+fn strip_origin_prefix(url: &str, prefix: &str) -> String {
+    let rest = &url[prefix.len()..];
+    if rest.is_empty() {
+        "/".to_owned()
+    } else if rest.starts_with('/') {
+        rest.to_owned()
+    } else {
+        format!("/{}", rest)
     }
-
-    let link_selector = scraper::Selector::parse("link").unwrap();
-    for link_element in html.select(&link_selector) {
-        if let Some(href) = link_element.value().attr("href") {
-            urls.push(href.to_owned());
-        }
-    }
-
-    urls
 }
 
 pub fn extract_all_links_from_html_and_normalize_same_origin_paths(
@@ -141,55 +141,25 @@ pub fn extract_all_links_from_html_and_normalize_same_origin_paths(
     stage_name: &str,
 ) -> Vec<String> {
     let domain = util::get_base_domain(stage_name);
-
-    let urls = extract_all_links_from_html(body);
-
-    // Normalize same-origin absolute URLs to path-only and dedupe
-    use std::collections::HashSet;
-    let mut seen: HashSet<String> = HashSet::new();
-    let mut normalized: Vec<String> = Vec::new();
-
     let https_prefix = format!("https://{}", domain);
     let http_prefix = format!("http://{}", domain);
     let proto_rel_prefix = format!("//{}", domain);
 
-    for url in urls.into_iter() {
+    let mut seen: HashSet<String> = HashSet::new();
+    let mut normalized: Vec<String> = Vec::new();
+
+    for url in extract_all_links_from_html(body) {
         let p = if url.starts_with('/') {
-            // already a path
-            if url.is_empty() {
-                "/".to_string()
-            } else {
-                url
-            }
+            // Already a path (a non-empty string starting with '/' can't be empty).
+            url
         } else if url.starts_with(&https_prefix) {
-            let mut s = url[https_prefix.len()..].to_owned();
-            if s.is_empty() {
-                s = "/".to_string();
-            }
-            if !s.starts_with('/') {
-                s.insert(0, '/');
-            }
-            s
+            strip_origin_prefix(&url, &https_prefix)
         } else if url.starts_with(&http_prefix) {
-            let mut s = url[http_prefix.len()..].to_owned();
-            if s.is_empty() {
-                s = "/".to_string();
-            }
-            if !s.starts_with('/') {
-                s.insert(0, '/');
-            }
-            s
+            strip_origin_prefix(&url, &http_prefix)
         } else if url.starts_with(&proto_rel_prefix) {
-            let mut s = url[proto_rel_prefix.len()..].to_owned();
-            if s.is_empty() {
-                s = "/".to_string();
-            }
-            if !s.starts_with('/') {
-                s.insert(0, '/');
-            }
-            s
+            strip_origin_prefix(&url, &proto_rel_prefix)
         } else {
-            // Not same-origin and not a path — skip
+            // Cross-origin or non-URL — skip.
             continue;
         };
 
@@ -205,77 +175,50 @@ pub async fn crawl_and_visit(
     stage_name: &str,
     authorization: Option<&str>,
 ) -> Result<Vec<FetchResult>, lambda_runtime::Error> {
-    let mut queued = HashSet::new();
-    queued.insert(String::from("/"));
+    // A single client is reused across all requests for connection pooling.
+    let client = reqwest::Client::new();
 
-    let state = tokio::sync::Mutex::new(State {
-        queued_paths: queued,
-        in_flight_paths: HashSet::new(),
-        completed_paths: HashSet::new(),
-        fetch_results: Vec::new(),
-    });
+    // Plain mutable state — no Mutex needed because all concurrent work is
+    // awaited before state is touched (this is a single async task).
+    let mut queued: HashSet<String> = HashSet::from_iter([String::from("/")]);
+    let mut completed: HashSet<String> = HashSet::new();
+    let mut fetch_results: Vec<FetchResult> = Vec::new();
 
-    loop {
-        let queued_paths = {
-            let mut state_guard = state.lock().await;
+    while !queued.is_empty() {
+        // Drain the current batch and mark everything as in-flight by moving
+        // it into `completed` immediately after the await.
+        let batch: HashSet<String> = queued.drain().collect();
 
-            if state_guard.queued_paths.is_empty() {
-                break;
-            }
+        let results = futures::future::join_all(
+            batch
+                .iter()
+                .map(|path| visit(path, stage_name, authorization, &client)),
+        )
+        .await;
 
-            let drained_queued_paths = state_guard.queued_paths.drain().collect::<Vec<_>>();
+        // All requests in this batch are now done; mark them completed.
+        completed.extend(batch);
 
-            state_guard
-                .in_flight_paths
-                .extend(drained_queued_paths.iter().cloned());
-
-            drained_queued_paths.into_iter().collect::<HashSet<_>>()
-        };
-
-        let futures = queued_paths
-            .iter()
-            .map(|path| visit(path, stage_name, authorization))
-            .collect::<Vec<_>>();
-
-        let results = futures::future::join_all(futures).await;
-
-        {
-            let mut state_guard = state.lock().await;
-            let drained_in_flight_paths = state_guard.in_flight_paths.drain().collect::<Vec<_>>();
-            state_guard.completed_paths.extend(drained_in_flight_paths);
-        }
-
+        // Extract links from all results (CPU work) then update state in one pass.
         for (fetch_result, body) in results {
             if let Some(body) = body {
-                let links =
-                    extract_all_links_from_html_and_normalize_same_origin_paths(&body, stage_name);
-
-                let mut state_guard = state.lock().await;
-
-                for link in links {
-                    if !(state_guard.queued_paths.contains(&link)
-                        || state_guard.in_flight_paths.contains(&link)
-                        || state_guard.completed_paths.contains(&link))
-                    {
-                        state_guard.queued_paths.insert(link);
+                for link in
+                    extract_all_links_from_html_and_normalize_same_origin_paths(&body, stage_name)
+                {
+                    if !completed.contains(&link) && !queued.contains(&link) {
+                        queued.insert(link);
                     }
                 }
+                fetch_results.push(fetch_result);
+            }
+        }
 
-                state_guard.fetch_results.push(fetch_result);
-            };
-        }
-        {
-            let state_guard = state.lock().await;
-            tracing::info!(
-                "| queued: {} | in_flight: {} | completed: {} |",
-                state_guard.queued_paths.len(),
-                state_guard.in_flight_paths.len(),
-                state_guard.completed_paths.len(),
-            );
-        }
+        tracing::info!(
+            "| queued: {} | completed: {} |",
+            queued.len(),
+            completed.len(),
+        );
     }
-
-    let fetch_results = state.lock().await.fetch_results.clone();
 
     Ok(fetch_results)
 }
