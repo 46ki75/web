@@ -2,13 +2,16 @@ dev:
 	STAGE_NAME=dev AWS_LAMBDA_LOG_LEVEL=debug AWS_LAMBDA_LOG_FORMAT=pretty cargo lambda watch -P 11000 --package web-lambda-cache-warmer
 
 stg:
-	STAGE_NAME=stg AWS_LAMBDA_LOG_LEVEL=debug AWS_LAMBDA_LOG_FORMAT=pretty cargo lambda watch -P 10000 --package web-lambda-cache-warmer
+	STAGE_NAME=stg AWS_LAMBDA_LOG_LEVEL=debug AWS_LAMBDA_LOG_FORMAT=pretty cargo lambda watch -P 11000 --package web-lambda-cache-warmer
 
 prod:
-	STAGE_NAME=prod AWS_LAMBDA_LOG_LEVEL=debug AWS_LAMBDA_LOG_FORMAT=pretty cargo lambda watch -P 10000 --package web-lambda-cache-warmer
+	STAGE_NAME=prod AWS_LAMBDA_LOG_LEVEL=debug AWS_LAMBDA_LOG_FORMAT=pretty cargo lambda watch -P 11000 --package web-lambda-cache-warmer
 
 build:
 	cargo lambda build --release --arm64
 
 deploy STAGE_NAME:	build
 	cargo lambda deploy --binary-name web-lambda-cache-warmer "{{STAGE_NAME}}-46ki75-web-lambda-function-cache_warmer"
+
+invoke STAGE_NAME:
+	cargo lambda invoke -P 11000 --data-ascii "{}"
