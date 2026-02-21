@@ -82,3 +82,62 @@ resource "aws_lambda_alias" "cache_warmer" {
   function_name    = aws_lambda_function.cache_warmer.function_name
   function_version = "$LATEST"
 }
+
+
+resource "aws_iam_role" "events_invoke_lambda_role_cache_warmer" {
+  name = "${terraform.workspace}-46ki75-web-iam-role-events-invoke-lambda-cache_warmer"
+  assume_role_policy = jsonencode({
+    "Version" : "2012-10-17",
+    "Statement" : [
+      {
+        "Effect" : "Allow",
+        "Principal" : {
+          "Service" : [
+            "events.amazonaws.com",
+            "scheduler.amazonaws.com"
+          ]
+        },
+        "Action" : "sts:AssumeRole"
+    }]
+  })
+}
+
+resource "aws_iam_policy" "events_invoke_lambda_policy_cache_warmer" {
+  name        = "${terraform.workspace}-46ki75-web-iam-policy-events-invoke-lambda-cache_warmer"
+  description = "Allow events to invoke lambda function"
+  policy = jsonencode({
+    "Version" : "2012-10-17",
+    "Statement" : [
+      {
+        "Effect" : "Allow",
+        "Action" : [
+          "lambda:InvokeFunction"
+        ],
+        "Resource" : aws_lambda_alias.cache_warmer.arn
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "events_invoke_lambda_policy_attachment_cache_warmer" {
+  role       = aws_iam_role.events_invoke_lambda_role_cache_warmer.name
+  policy_arn = aws_iam_policy.events_invoke_lambda_policy_cache_warmer.arn
+}
+
+resource "aws_scheduler_schedule" "cache_warmer" {
+  name       = "${terraform.workspace}-46ki75-web-scheduler-cache_warmer"
+  group_name = "default"
+
+  schedule_expression = "rate(15 minutes)"
+
+  target {
+    arn      = aws_lambda_alias.cache_warmer.arn
+    role_arn = aws_iam_role.events_invoke_lambda_role_cache_warmer.arn
+  }
+
+  flexible_time_window {
+    mode                      = "FLEXIBLE"
+    maximum_window_in_minutes = 1
+  }
+}
+
