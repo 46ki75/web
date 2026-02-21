@@ -78,6 +78,31 @@ resource "aws_cloudfront_cache_policy" "http_api" {
   }
 }
 
+resource "aws_cloudfront_cache_policy" "nitro" {
+  name = "${terraform.workspace}-46ki75-web-cloudfront-cache_policy-nitro"
+
+  default_ttl = 0
+  min_ttl     = 0
+  max_ttl     = 3600 * 24 * 30 * 12
+
+  parameters_in_cache_key_and_forwarded_to_origin {
+    cookies_config {
+      cookie_behavior = "none"
+    }
+
+    headers_config {
+      header_behavior = "none"
+    }
+
+    query_strings_config {
+      query_string_behavior = "none"
+    }
+
+    enable_accept_encoding_brotli = true
+    enable_accept_encoding_gzip   = true
+  }
+}
+
 resource "aws_cloudfront_origin_request_policy" "all_viewer" {
 
   name = "${terraform.workspace}-46ki75-web-cloudfront-origin_request_policy-all_viewer"
@@ -185,7 +210,7 @@ resource "aws_cloudfront_distribution" "default" {
     viewer_protocol_policy = "redirect-to-https"
     target_origin_id       = "nitro-backend"
 
-    cache_policy_id            = aws_cloudfront_cache_policy.http_api.id
+    cache_policy_id            = aws_cloudfront_cache_policy.nitro.id
     origin_request_policy_id   = aws_cloudfront_origin_request_policy.all_viewer.id
     response_headers_policy_id = aws_cloudfront_response_headers_policy.security.id
 
