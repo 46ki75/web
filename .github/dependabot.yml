@@ -26,6 +26,20 @@ updates:
     labels:
       - "Rust"
       - "dependencies"
+    groups:
+      notionrs:
+        patterns:
+          - "notionrs"
+          - "notionrs*"
+          - "notion-to-jarkup"
+      aws-sdk:
+        patterns:
+          - "aws-config"
+          - "aws-sdk*"
+      serde:
+        patterns:
+          - "serde"
+          - "serde*"
 
   - package-ecosystem: "terraform"
     directory: "/terraform"
