@@ -19,6 +19,8 @@ pub(crate) struct Stat {
     server_error: u32,
     client_error: u32,
     success: u32,
+    cache_hit: u32,
+    cache_miss: u32,
 }
 
 pub(crate) async fn function_handler(
@@ -47,6 +49,12 @@ pub(crate) async fn function_handler(
             stat.client_error += 1;
             errors.push(page);
         } else {
+            if page.is_cloudfront_cache_hit {
+                stat.cache_hit += 1;
+            } else {
+                stat.cache_miss += 1;
+            }
+
             stat.success += 1;
             success.push(page);
         }
