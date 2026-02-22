@@ -36,6 +36,10 @@ updates:
         patterns:
           - "aws-config"
           - "aws-sdk*"
+      aws-lambda-runtime:
+        patterns:
+          - "lambda_http"
+          - "lambda_runtime"
       serde:
         patterns:
           - "serde"
