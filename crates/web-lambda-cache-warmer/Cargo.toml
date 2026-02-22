@@ -4,19 +4,29 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-lambda_runtime = { workspace = true }
+# Asynchronous runtime
 tokio = { workspace = true }
-dotenvy = { workspace = true }
+
+# HTTP
 http = { workspace = true }
+
+# HTTP Client
 reqwest = { workspace = true }
+
+# AWS Lambda
+lambda_runtime = { workspace = true }
+
+# Logging
 tracing = { workspace = true }
 tracing-subscriber = { workspace = true }
-scraper = "0.25.0"
 
 # Ser/De
 serde = { workspace = true }
 serde_json = { workspace = true }
-base64 = "0.22.1"
+
+# General Utils
+base64 = { workspace = true }
+dotenvy = { workspace = true }
 
 # AWS SDK
 aws-config = { workspace = true }
@@ -28,3 +38,4 @@ sitemap = { workspace = true }
 
 # Regular Expression
 regex = { workspace = true }
+scraper = { workspace = true }
