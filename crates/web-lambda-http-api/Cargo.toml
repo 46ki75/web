@@ -67,3 +67,6 @@ chrono = { workspace = true }
 rss = { workspace = true }
 atom_syndication = { workspace = true }
 jsonfeed = { workspace = true }
+
+# Regular Expression
+regex = { workspace = true }

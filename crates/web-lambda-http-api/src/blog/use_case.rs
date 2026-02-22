@@ -137,12 +137,7 @@ impl BlogUseCase {
                         )?;
                     }
                     jarkup_rs::BlockComponent::ListItem(list_item) => {
-                        Self::extract_from_inline_components(
-                            &list_item.slots.default,
-                            icons,
-                            images,
-                            files,
-                        )?;
+                        Self::extract_files(&list_item.slots.default, icons, images, files)?;
                     }
                     jarkup_rs::BlockComponent::List(list) => {
                         Self::extract_files(&list.slots.default, icons, images, files)?;

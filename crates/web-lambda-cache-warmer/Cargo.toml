@@ -23,5 +23,8 @@ aws-config = { workspace = true }
 aws-sdk-ssm = { workspace = true }
 futures.workspace = true
 
-regex = "1.12.3"
-sitemap = "0.4.1"
+# Feed
+sitemap = { workspace = true }
+
+# Regular Expression
+regex = { workspace = true }

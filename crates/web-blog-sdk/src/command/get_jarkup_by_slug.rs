@@ -102,7 +102,7 @@ fn extract_files(
                     extract_from_inline_components(&paragraph.slots.default, icons, images, files)?;
                 }
                 jarkup_rs::BlockComponent::ListItem(list_item) => {
-                    extract_from_inline_components(&list_item.slots.default, icons, images, files)?;
+                    extract_files(&list_item.slots.default, icons, images, files)?;
                 }
                 jarkup_rs::BlockComponent::List(list) => {
                     extract_files(&list.slots.default, icons, images, files)?;

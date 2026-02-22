@@ -4,13 +4,17 @@ version = "0.1.2"
 edition = "2024"
 
 [dependencies]
+# AWS SDK
+aws-sdk-ssm = { workspace = true }
+aws-config = { workspace = true }
+
+# AWS Lambda
+lambda_http = { workspace = true }
+
 async-graphql = "7.0.16"
 async-trait = "0.1.88"
-aws-config = "1.6.1"
-aws-sdk-ssm = "1.71.0"
 bytes = "1.11.1"
 chrono = "0.4.40"
-lambda_http = "0.14.0"
 serde = "1.0.219"
 serde_json = "1.0.140"
 thiserror = "2.0.12"
@@ -22,10 +26,13 @@ tracing = "0.1.41"
 url = "2.5.4"
 axum = "0.8.3"
 tower = "0.5.2"
-jarkup-rs = "0.4.0"
-notionrs = "1.0.0-beta"
-notionrs_types = "1.0.0-rc"
-notion-to-jarkup = "0.5"
+
+# Notion
+jarkup-rs = { workspace = true }
+notion-to-jarkup = { workspace = true }
+notionrs = { workspace = true }
+notionrs_types = { workspace = true }
+
 infer = "0.19.0"
 tower-http = { version = "0.6.4", features = [
     "catch-panic",
