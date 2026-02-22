@@ -15,3 +15,6 @@ deploy STAGE_NAME:	build
 
 invoke STAGE_NAME:
 	cargo lambda invoke -P 11000 --data-ascii "{}"
+
+test:
+	cargo test -- --nocapture

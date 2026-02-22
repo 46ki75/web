@@ -4,6 +4,8 @@ use http::header::AUTHORIZATION;
 use reqwest::Url;
 use sitemap::reader::{SiteMapEntity, SiteMapReader};
 
+use crate::{ssm::get_parameter, util::create_basic_auth_header_value};
+
 pub fn extract_sitemap_url_from_robots<'a>(robotstxt: &'a str) -> Option<&'a str> {
     let re = regex::Regex::new(r#"(?m)^Sitemap:\s(https://.*?)$"#).unwrap();
 
@@ -64,6 +66,37 @@ pub async fn parse_sitemap(
             };
         }
     }
+
+    Ok(urls)
+}
+
+pub async fn fetch_sitemap_urls() -> Result<Vec<String>, Box<dyn std::error::Error>> {
+    let authorization =
+        get_parameter("/shared/46ki75/web/ssm/parameter/basic-auth/cache_warmer/password")
+            .await
+            .map(|password| create_basic_auth_header_value("cache_warmer", &password))
+            .ok();
+
+    let client = reqwest::Client::new();
+
+    let robotstxt = client
+        .get("https://dev-www.ikuma.cloud/robots.txt")
+        .header(
+            AUTHORIZATION,
+            authorization
+                .clone()
+                .map(|a| a.to_string())
+                .unwrap_or_default(),
+        )
+        .send()
+        .await?
+        .text()
+        .await?;
+
+    let sitemap_url = extract_sitemap_url_from_robots(&robotstxt)
+        .ok_or("Failed to fetch the sitemap.".to_owned())?;
+
+    let urls = parse_sitemap(sitemap_url, authorization.as_deref()).await?;
 
     Ok(urls)
 }
