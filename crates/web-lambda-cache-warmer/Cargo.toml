@@ -24,3 +24,4 @@ aws-sdk-ssm = { workspace = true }
 futures.workspace = true
 
 regex = "1.12.3"
+sitemap = "0.4.1"
