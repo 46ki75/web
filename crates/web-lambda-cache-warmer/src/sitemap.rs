@@ -3,7 +3,7 @@ use std::{io::Cursor, str::FromStr};
 use reqwest::Url;
 use sitemap::reader::{SiteMapEntity, SiteMapReader};
 
-fn extract_sitemap_url_from_robots(robotstxt: &str) -> Option<&str> {
+pub fn extract_sitemap_url_from_robots(robotstxt: &str) -> Option<&str> {
     let re = regex::Regex::new(r#"(?m)^Sitemap:\s(https://.*?)$"#).unwrap();
 
     re.captures(robotstxt)
