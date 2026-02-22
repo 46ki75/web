@@ -1,9 +1,10 @@
 use std::{io::Cursor, str::FromStr};
 
+use http::header::AUTHORIZATION;
 use reqwest::Url;
 use sitemap::reader::{SiteMapEntity, SiteMapReader};
 
-pub fn extract_sitemap_url_from_robots(robotstxt: &str) -> Option<&str> {
+pub fn extract_sitemap_url_from_robots<'a>(robotstxt: &'a str) -> Option<&'a str> {
     let re = regex::Regex::new(r#"(?m)^Sitemap:\s(https://.*?)$"#).unwrap();
 
     re.captures(robotstxt)
@@ -11,7 +12,10 @@ pub fn extract_sitemap_url_from_robots(robotstxt: &str) -> Option<&str> {
         .map(|m| m.as_str())
 }
 
-pub async fn parse_sitemap(sitemap_url: &str) -> Result<Vec<String>, Box<dyn std::error::Error>> {
+pub async fn parse_sitemap(
+    sitemap_url: &str,
+    authorization: Option<&str>,
+) -> Result<Vec<String>, Box<dyn std::error::Error>> {
     let mut urls = Vec::new();
     let mut sitemap_entries = Vec::new();
     let mut errors = Vec::new();
@@ -31,7 +35,16 @@ pub async fn parse_sitemap(sitemap_url: &str) -> Result<Vec<String>, Box<dyn std
             None => break,
         };
 
-        let sitemap = client.get(url).send().await?.text().await?;
+        let sitemap = client
+            .get(url)
+            .header(
+                AUTHORIZATION,
+                authorization.map(|a| a.to_string()).unwrap_or_default(),
+            )
+            .send()
+            .await?
+            .text()
+            .await?;
 
         let parser = SiteMapReader::new(Cursor::new(sitemap.as_bytes()));
 
