@@ -22,3 +22,5 @@ base64 = "0.22.1"
 aws-config = { workspace = true }
 aws-sdk-ssm = { workspace = true }
 futures.workspace = true
+
+regex = "1.12.3"

@@ -1,3 +1,4 @@
+pub mod sitemap;
 pub mod ssm;
 pub mod util;
 
