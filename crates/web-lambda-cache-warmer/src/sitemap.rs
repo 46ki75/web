@@ -70,7 +70,9 @@ pub async fn parse_sitemap(
     Ok(urls)
 }
 
-pub async fn fetch_sitemap_urls() -> Result<Vec<String>, Box<dyn std::error::Error>> {
+pub async fn fetch_sitemap_urls(
+    robotstxt_url: &str,
+) -> Result<Vec<String>, Box<dyn std::error::Error>> {
     let authorization =
         get_parameter("/shared/46ki75/web/ssm/parameter/basic-auth/cache_warmer/password")
             .await
@@ -80,7 +82,7 @@ pub async fn fetch_sitemap_urls() -> Result<Vec<String>, Box<dyn std::error::Err
     let client = reqwest::Client::new();
 
     let robotstxt = client
-        .get("https://dev-www.ikuma.cloud/robots.txt")
+        .get(robotstxt_url)
         .header(
             AUTHORIZATION,
             authorization
