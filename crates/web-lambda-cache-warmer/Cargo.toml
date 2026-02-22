@@ -1,0 +1,27 @@
+[package]
+name = "web-lambda-cache-warmer"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+lambda_runtime = { workspace = true }
+tokio = { workspace = true }
+dotenvy = { workspace = true }
+http = { workspace = true }
+reqwest = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+scraper = "0.25.0"
+
+# Ser/De
+serde = { workspace = true }
+serde_json = { workspace = true }
+base64 = "0.22.1"
+
+# AWS SDK
+aws-config = { workspace = true }
+aws-sdk-ssm = { workspace = true }
+futures.workspace = true
+
+regex = "1.12.3"
+sitemap = "0.4.1"
