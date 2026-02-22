@@ -71,7 +71,7 @@ pub async fn parse_sitemap(
 }
 
 pub async fn fetch_sitemap_urls(
-    robotstxt_url: &str,
+    base_domain: &str,
 ) -> Result<Vec<String>, Box<dyn std::error::Error>> {
     let authorization =
         get_parameter("/shared/46ki75/web/ssm/parameter/basic-auth/cache_warmer/password")
@@ -82,7 +82,7 @@ pub async fn fetch_sitemap_urls(
     let client = reqwest::Client::new();
 
     let robotstxt = client
-        .get(robotstxt_url)
+        .get(format!("https://{}/robots.txt", base_domain))
         .header(
             AUTHORIZATION,
             authorization
