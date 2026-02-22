@@ -6,13 +6,20 @@ edition = "2021"
 [dependencies]
 # WORKSPACE
 web-blog-sdk = { path = "../web-blog-sdk" }
-axum = { workspace = true, features = ["macros"] }
+
+# HTTP
 http = { workspace = true }
+
+# HTTP Server
+axum = { workspace = true, features = ["macros"] }
 tower-http = { workspace = true, features = ["cors"] }
 
 # HTTP Client
 reqwest = { workspace = true }
 
+# AWS SDK
+aws-sdk-ssm = { workspace = true }
+aws-config = { workspace = true }
 
 # AWS Lambda
 lambda_http = { workspace = true }
@@ -48,9 +55,9 @@ notionrs_types = { workspace = true }
 utoipa = { workspace = true }
 utoipa-axum = { workspace = true }
 utoipa-swagger-ui = { workspace = true }
-aws-sdk-ssm = "1.96.0"
-aws-config = "1.8.8"
-image = "0.25.9"
+
+# Image
+image = { workspace = true }
 
 # time
 time = { workspace = true }
@@ -59,4 +66,7 @@ chrono = { workspace = true }
 # feed
 rss = { workspace = true }
 atom_syndication = { workspace = true }
-jsonfeed = "0.2.0"
+jsonfeed = { workspace = true }
+
+# Regular Expression
+regex = { workspace = true }
