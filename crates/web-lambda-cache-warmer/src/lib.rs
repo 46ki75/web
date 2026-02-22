@@ -5,6 +5,8 @@ pub mod util;
 use std::collections::HashSet;
 use std::sync::LazyLock;
 
+use crate::sitemap::fetch_sitemap_urls;
+
 #[derive(Debug, Default, Clone, serde::Serialize)]
 pub struct FetchResult {
     pub path: String,
@@ -179,9 +181,12 @@ pub async fn crawl_and_visit(
     // A single client is reused across all requests for connection pooling.
     let client = reqwest::Client::new();
 
+    let base_domain = util::get_base_domain(stage_name);
+    let urls = fetch_sitemap_urls(&base_domain).await.unwrap();
+
     // Plain mutable state — no Mutex needed because all concurrent work is
     // awaited before state is touched (this is a single async task).
-    let mut queued: HashSet<String> = HashSet::from_iter([String::from("/")]);
+    let mut queued: HashSet<String> = HashSet::from_iter(urls);
     let mut completed: HashSet<String> = HashSet::new();
     let mut fetch_results: Vec<FetchResult> = Vec::new();
 
