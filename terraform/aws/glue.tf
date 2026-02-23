@@ -20,11 +20,11 @@ resource "aws_glue_catalog_table" "cloudfront" {
     "projection.partition_date.range"         = "2025/04/03/00,NOW",
     "projection.partition_date.type"          = "date",
 
-    "storage.location.template" = "s3://${aws_s3_bucket.cloudfront.bucket}/$${partition_date}",
+    "storage.location.template" = "s3://${aws_s3_bucket.cloudfront.bucket}/AWSLogs/${data.aws_caller_identity.current.account_id}/CloudFront/$${partition_date}",
   }
 
   storage_descriptor {
-    location      = "s3://${aws_s3_bucket.cloudfront.bucket}/"
+    location      = "s3://${aws_s3_bucket.cloudfront.bucket}/AWSLogs/${data.aws_caller_identity.current.account_id}/CloudFront/"
     input_format  = "org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat"
     output_format = "org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat"
 

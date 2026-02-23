@@ -343,11 +343,6 @@ resource "aws_cloudfront_distribution" "default" {
     domain_name              = aws_s3_bucket.web.bucket_regional_domain_name
     origin_id                = "s3-web"
     origin_access_control_id = aws_cloudfront_origin_access_control.web.id
-
-    origin_shield {
-      enabled              = true
-      origin_shield_region = "ap-northeast-1"
-    }
   }
   # # <<< [S3 web] origin
 
@@ -371,6 +366,7 @@ resource "aws_cloudfront_distribution" "default" {
   }
 
   ordered_cache_behavior {
+
     path_pattern = "/api/v2/blog/*/og-image"
     allowed_methods = [
       "GET",
@@ -381,7 +377,7 @@ resource "aws_cloudfront_distribution" "default" {
     viewer_protocol_policy = "redirect-to-https"
     target_origin_id       = "api-backend"
 
-    cache_policy_id            = aws_cloudfront_cache_policy.http_api_block_image.id
+    cache_policy_id            = aws_cloudfront_cache_policy.http_api_ogp_image.id
     origin_request_policy_id   = aws_cloudfront_origin_request_policy.all_viewer.id
     response_headers_policy_id = aws_cloudfront_response_headers_policy.security.id
 

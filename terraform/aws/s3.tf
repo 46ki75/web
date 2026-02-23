@@ -72,3 +72,7 @@ resource "aws_s3_bucket_policy" "cloudfront" {
 resource "aws_s3_bucket" "athena" {
   bucket = "${terraform.workspace}-46ki75-web-s3-bucket-athena"
 }
+
+resource "aws_s3_bucket" "analyze" {
+  bucket = "${terraform.workspace}-46ki75-web-s3-bucket-analyze"
+}
