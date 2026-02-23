@@ -54,8 +54,8 @@ strum_macros = "0.27.2"
 base64 = "0.22.1"
 
 # Notion
-jarkup-rs = "0.6.0"
-notion-to-jarkup = "0.12.0"
+jarkup-rs = "0.7.0"
+notion-to-jarkup = "0.13.1"
 notionrs = "0.9.0"
 notionrs_types = "0.7.0"
 
