@@ -343,11 +343,6 @@ resource "aws_cloudfront_distribution" "default" {
     domain_name              = aws_s3_bucket.web.bucket_regional_domain_name
     origin_id                = "s3-web"
     origin_access_control_id = aws_cloudfront_origin_access_control.web.id
-
-    origin_shield {
-      enabled              = true
-      origin_shield_region = "ap-northeast-1"
-    }
   }
   # # <<< [S3 web] origin
 
