@@ -2,7 +2,10 @@
   <div :key="slug" class="container">
     <NuxtLinkLocale class="top" :to="`/blog/article/${slug}`" :locale="locale">
       <div class="image">
-        <ElmImage :src="`/api/v2/blog/${slug}/og-image?lang=${locale}`" />
+        <ElmImage
+          :src="`/api/v2/blog/${slug}/og-image?lang=${locale}`"
+          :alt="title"
+        />
       </div>
 
       <div class="text-container">
@@ -88,7 +91,10 @@ const handleTagClick = (tagId: string) => {
   all: unset;
   display: flex;
   cursor: pointer;
-  transition: opacity 200ms, transform 200ms, background-color 200ms;
+  transition:
+    opacity 200ms,
+    transform 200ms,
+    background-color 200ms;
   background-color: rgb(white, 0.3);
 
   [data-theme="dark"] & {
