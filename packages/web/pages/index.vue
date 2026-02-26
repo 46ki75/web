@@ -52,13 +52,6 @@ const { t } = useI18n();
           to="/image-converter"
           src="/static/image/image-converter.png"
         />
-
-        <home-card
-          title="Talks"
-          :description="t('profile.navigation.talks')"
-          to="/talks"
-          iconify-icon="fluent-color:person-feedback-32"
-        />
       </nav>
     </div>
   </div>

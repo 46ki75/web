@@ -22,7 +22,6 @@ export const generateSitemap = async (): Promise<string> => {
     { url: "/", lastmod: undefined, changefreq: "monthly", priority: 0.9 },
     { url: "/about", lastmod: undefined, changefreq: "yearly", priority: 0.3 },
     { url: "/blog", lastmod: undefined, changefreq: "daily", priority: 0.6 },
-    { url: "/talks", lastmod: undefined, changefreq: "monthly", priority: 0.4 },
     {
       url: "/image-converter",
       lastmod: undefined,

@@ -21,15 +21,21 @@
           <div>Blogs</div>
         </NuxtLinkLocale>
 
-        <NuxtLinkLocale class="sitelink" to="/talks">
-          <Icon icon="mdi:link-variant" size="16" color="#6987b8" />
-          <div>Talks</div>
-        </NuxtLinkLocale>
-
         <NuxtLinkLocale class="sitelink" to="/image-converter">
           <Icon icon="mdi:link-variant" size="16" color="#6987b8" />
           <div>WASM Image Converter (Beta)</div>
         </NuxtLinkLocale>
+
+        <a
+          class="sitelink"
+          href="https://speakerdeck.com/ikuma"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Icon icon="mdi:link-variant" size="16" color="#6987b8" />
+          <div>Speaker Deck</div>
+          <Icon icon="mdi:open-in-new" width="10px" color="gray" />
+        </a>
       </div>
 
       <hr class="hr" />
@@ -94,7 +100,7 @@ const { data: build } = useAsyncData(
       .replace(/-/g, "");
     return `v${version}+${dateBuildMeta}`;
   },
-  { server: true, lazy: false }
+  { server: true, lazy: false },
 );
 
 const currentYear = new Date().getFullYear();

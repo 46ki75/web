@@ -40,14 +40,24 @@
           color="gray"
         />
 
-        <NuxtLinkLocale to="/talks" class="header-center-link flex-center">
+        <a
+          href="https://speakerdeck.com/ikuma"
+          class="header-center-link flex-center"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <Icon
             class="header-center-link-icon"
             icon="mdi:account-voice"
             width="16px"
           />
-          <ElmInlineText text="Talks" />
-        </NuxtLinkLocale>
+          <ElmInlineText text="Speaker Deck" />
+          <Icon
+            class="header-center-link-icon"
+            icon="mdi:open-in-new"
+            width="12px"
+          />
+        </a>
       </div>
     </ClientOnly>
 

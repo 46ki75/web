@@ -7,7 +7,6 @@ use utoipa_axum::{router::OpenApiRouter, routes};
 pub struct AxumAppState {
     pub blog_use_case: std::sync::Arc<crate::blog::use_case::BlogUseCase>,
     pub web_config_use_case: std::sync::Arc<crate::web_config::use_case::WebConfigUseCase>,
-    pub talk_use_case: std::sync::Arc<crate::talk::use_case::TalkUseCase>,
 }
 
 #[derive(OpenApi)]
@@ -40,15 +39,9 @@ pub async fn init_router() -> Result<&'static axum::Router, crate::error::Error>
                 web_config_repository: std::sync::Arc::new(web_config_repository),
             };
 
-            let talk_repository = crate::talk::repository::TalkRepositoryImpl {};
-            let talk_use_case = crate::talk::use_case::TalkUseCase {
-                talk_repository: std::sync::Arc::new(talk_repository),
-            };
-
             let app_state = std::sync::Arc::new(AxumAppState {
                 blog_use_case: std::sync::Arc::new(blog_use_case),
                 web_config_use_case: std::sync::Arc::new(web_config_use_case),
-                talk_use_case: std::sync::Arc::new(talk_use_case),
             });
 
             let (router, auto_generated_api) = OpenApiRouter::new()
@@ -63,7 +56,6 @@ pub async fn init_router() -> Result<&'static axum::Router, crate::error::Error>
                 .routes(routes!(crate::blog::controller::get_blog_atom_feed))
                 .routes(routes!(crate::blog::controller::get_blog_json_feed))
                 .routes(routes!(crate::web_config::controller::fetch_web_config))
-                .routes(routes!(crate::talk::controller::list_talks))
                 .with_state(app_state)
                 .split_for_parts();
 
