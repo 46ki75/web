@@ -21,11 +21,6 @@
           <div>Blogs</div>
         </NuxtLinkLocale>
 
-        <NuxtLinkLocale class="sitelink" to="/talks">
-          <Icon icon="mdi:link-variant" size="16" color="#6987b8" />
-          <div>Talks</div>
-        </NuxtLinkLocale>
-
         <NuxtLinkLocale class="sitelink" to="/image-converter">
           <Icon icon="mdi:link-variant" size="16" color="#6987b8" />
           <div>WASM Image Converter (Beta)</div>
@@ -94,7 +89,7 @@ const { data: build } = useAsyncData(
       .replace(/-/g, "");
     return `v${version}+${dateBuildMeta}`;
   },
-  { server: true, lazy: false }
+  { server: true, lazy: false },
 );
 
 const currentYear = new Date().getFullYear();

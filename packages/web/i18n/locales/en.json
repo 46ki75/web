@@ -6,8 +6,7 @@
         "navigation": {
             "about": "View my detailed profile here.",
             "blog": "Insights, tutorials, and stories from real-world software projects.",
-            "image-converter": "Convert images locally in your browser using WebAssembly—no server upload required, fast and private.",
-            "talks": "Browse my lightning talks and presentations from developer events."
+            "image-converter": "Convert images locally in your browser using WebAssembly—no server upload required, fast and private."
         }
     },
     "blog": {
@@ -32,9 +31,5 @@
     },
     "privacy": {
         "title": "Privacy Policy"
-    },
-    "talks": {
-        "title": "Talks",
-        "description": "A list of my past presentations and Lightning Talks."
     }
 }
