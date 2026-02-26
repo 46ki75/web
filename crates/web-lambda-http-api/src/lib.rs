@@ -3,7 +3,6 @@ pub mod blog;
 pub mod error;
 pub mod execute_axum;
 pub mod once_cell_cache;
-pub mod talk;
 pub mod web_config;
 
 pub fn stage_name() -> Result<String, crate::error::Error> {
