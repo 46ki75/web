@@ -51,7 +51,7 @@
             icon="mdi:account-voice"
             width="16px"
           />
-          <ElmInlineText text="Talks" />
+          <ElmInlineText text="Speaker Deck" />
           <Icon
             class="header-center-link-icon"
             icon="mdi:open-in-new"
