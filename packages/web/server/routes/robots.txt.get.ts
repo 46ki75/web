@@ -1,8 +1,7 @@
 const TEMPLATE = (ENDPOINT: string) =>
   `
 User-agent: *
-Disallow: /api/
-Allow: /api/v2/blog/sitemap.xml
+Disallow:
 
 Sitemap: ${ENDPOINT}/sitemap-index.xml
 `.trim() + "\n";
