@@ -66,7 +66,7 @@ export const BlogSide = component$<BlogSideProps>(({ language }) => {
                     />
                   </div>
 
-                  <div class="side-card-tag">
+                  <div class="side-card-tag-container">
                     <ElmInlineText>TAG</ElmInlineText>
                   </div>
                 </div>
