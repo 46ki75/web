@@ -8,7 +8,7 @@ export default component$(() => {
 
   return (
     <>
-      <BlogArticle slug={loc.params.slug} lang="en" />
+      <BlogArticle slug={loc.params.slug} lang={loc.params.lang} />
     </>
   );
 });

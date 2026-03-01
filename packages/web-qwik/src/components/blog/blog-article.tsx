@@ -14,16 +14,17 @@ import { client } from "../../../openapi/client";
 
 export interface ArticleProps {
   slug: string;
+  lang: string;
 }
 
-export const BlogArticle = component$<ArticleProps>(({ slug }) => {
+export const BlogArticle = component$<ArticleProps>(({ slug, lang }) => {
   useStylesScoped$(styles);
 
   const jarkup = useResource$(async () => {
     const { data: blogContents } = await client.GET("/api/v2/blog/{slug}", {
       params: {
         path: { slug: slug! },
-        header: { "accept-language": "en" },
+        header: { "accept-language": lang },
       },
     });
 
