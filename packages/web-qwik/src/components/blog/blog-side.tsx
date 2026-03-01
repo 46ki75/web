@@ -10,6 +10,7 @@ import styles from "./blog-side.scoped.scss?inline";
 import { client } from "../../../openapi/client";
 import { ElmInlineText } from "@elmethis/qwik";
 import { Link } from "@builder.io/qwik-city";
+import { Date } from "../common/date";
 
 export type BlogSideProps = {
   language: string;
@@ -58,6 +59,11 @@ export const BlogSide = component$<BlogSideProps>(({ language }) => {
                         {blog.description}
                       </ElmInlineText>
                     </div>
+
+                    <Date
+                      createdAt={blog.created_at}
+                      updatedAt={blog.updated_at}
+                    />
                   </div>
                 </div>
               </Link>
