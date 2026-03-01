@@ -7,10 +7,11 @@ import {
 import type { Component } from "jarkup-ts";
 
 import styles from "./blog-article.scoped.scss?inline";
-import { ElmBlockFallback, ElmHeading, ElmJarkup } from "@elmethis/qwik";
+import { ElmBlockFallback, ElmJarkup } from "@elmethis/qwik";
 
 import { paths } from "../../../openapi/schema";
 import { client } from "../../../openapi/client";
+import { Meta } from "../common/meta";
 
 export interface ArticleProps {
   slug: string;
@@ -41,7 +42,12 @@ export const BlogArticle = component$<ArticleProps>(({ slug, lang }) => {
         onPending={() => <ElmBlockFallback />}
         onResolved={(data) => (
           <article>
-            <ElmHeading level={1}>{data.meta.title}</ElmHeading>
+            <Meta
+              title={data.meta.title}
+              createdAt={data.meta.created_at}
+              updatedAt={data.meta.updated_at}
+              image={`/api/v2/blog/${slug}/og-image?lang=${lang}`}
+            />
             <ElmJarkup jsonComponents={data.components} />
           </article>
         )}
