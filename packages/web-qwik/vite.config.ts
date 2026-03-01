@@ -2,11 +2,14 @@
  * This is the base config for vite.
  * When building, the adapter config is used which loads this file and extends it.
  */
-import { defineConfig, type UserConfig } from "vite";
+import { defineConfig, type UserConfig, loadEnv } from "vite";
 import { qwikVite } from "@builder.io/qwik/optimizer";
 import { qwikCity } from "@builder.io/qwik-city/vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import pkg from "./package.json";
+
+
+// DOMAIN depends on the Vite env and must be computed inside the config function
 
 type PkgDep = Record<string, string>;
 const { dependencies = {}, devDependencies = {} } = pkg as any as {
@@ -20,7 +23,14 @@ errorOnDuplicatesPkgDeps(devDependencies, dependencies);
  * Note that Vite normally starts from `index.html` but the qwikCity plugin makes start at `src/entry.ssr.tsx` instead.
  */
 export default defineConfig(({ command, mode }): UserConfig => {
+  const env = loadEnv(mode, process.cwd());
+  const stageName = env.VITE_STAGE_NAME ?? process.env.VITE_STAGE_NAME ?? "dev";
+  const DOMAIN = stageName === "prod" ? "www-ikuma.cloud" : `${stageName}-www.ikuma.cloud`;
+  
   return {
+    define: {
+      "import.meta.env.VITE_API_DOMAIN": JSON.stringify(DOMAIN),
+    },
     plugins: [qwikCity(), qwikVite(), tsconfigPaths({ root: "." })],
     // This tells Vite which dependencies to pre-build in dev mode.
     optimizeDeps: {
@@ -54,7 +64,7 @@ export default defineConfig(({ command, mode }): UserConfig => {
       
       proxy: {
         "/api": {
-          target: `https://dev-www.ikuma.cloud/api`,
+          target: `https://${DOMAIN}/api`,
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, ""),
         },
