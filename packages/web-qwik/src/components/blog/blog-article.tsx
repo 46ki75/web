@@ -7,7 +7,7 @@ import {
 import type { Component } from "jarkup-ts";
 
 import styles from "./blog-article.scoped.scss?inline";
-import { ElmHeading, ElmJarkup } from "@elmethis/qwik";
+import { ElmBlockFallback, ElmHeading, ElmJarkup } from "@elmethis/qwik";
 
 import { paths } from "../../../openapi/schema";
 import { client } from "../../../openapi/client";
@@ -38,7 +38,7 @@ export const BlogArticle = component$<ArticleProps>(({ slug, lang }) => {
     <>
       <Resource
         value={jarkup}
-        onPending={() => <p>Loading...</p>}
+        onPending={() => <ElmBlockFallback />}
         onResolved={(data) => (
           <article>
             <ElmHeading level={1}>{data.meta.title}</ElmHeading>
