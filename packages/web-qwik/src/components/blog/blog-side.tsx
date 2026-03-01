@@ -65,6 +65,10 @@ export const BlogSide = component$<BlogSideProps>(({ language }) => {
                       updatedAt={blog.updated_at}
                     />
                   </div>
+
+                  <div class="side-card-tag">
+                    <ElmInlineText>TAG</ElmInlineText>
+                  </div>
                 </div>
               </Link>
             ))}

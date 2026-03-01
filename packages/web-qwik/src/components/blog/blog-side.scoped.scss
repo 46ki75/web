@@ -45,8 +45,19 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  background-color: rgba(gray, 0.025);
 
   .side-card-content-description {
     opacity: 0.75;
   }
+}
+
+.side-card-tag {
+  box-sizing: border-box;
+  padding: 0.25rem 0.5rem;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  height: 2.25rem;
+  border-top: solid 1px rgba(gray, 0.2);
 }
