@@ -14,9 +14,9 @@ export const Date = component$<DateProps>(({ createdAt, updatedAt }) => {
   return (
     <div class="date">
       <ElmMdiIcon d={mdiCalendarEdit} color="#a17c5b" size="1.25rem" />
-      <ElmInlineText size="0.85rem">{createdAt}</ElmInlineText>
+      <ElmInlineText size="0.85rem">{createdAt.substring(0, 10)}</ElmInlineText>
       <ElmMdiIcon d={mdiCalendarClock} color="#a17c5b" size="1.25rem" />
-      <ElmInlineText size="0.85rem">{updatedAt}</ElmInlineText>
+      <ElmInlineText size="0.85rem">{updatedAt.substring(0, 10)}</ElmInlineText>
     </div>
   );
 });
