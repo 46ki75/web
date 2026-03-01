@@ -1,23 +1,14 @@
 import { component$ } from "@builder.io/qwik";
 import { Link, type DocumentHead } from "@builder.io/qwik-city";
 
-import { ElmCodeBlock, ElmInlineText } from "@elmethis/qwik";
-import code from "../../../../crates/web-lambda-http-api/src/lib.rs?raw";
+import { Date } from "~/components/common/date";
 
 export default component$(() => {
   return (
-    <>
-      {/* <ElmHeading level={1}>Hi 👋</ElmHeading> */}
-      <div>
-        <ElmInlineText>
-          Can't wait to see what you build with qwik!
-        </ElmInlineText>
-
-        <ElmCodeBlock language="rust" code={code}></ElmCodeBlock>
-
-        <Link href="/blog/article/leather-shoes-painting/">BLOG Sample</Link>
-      </div>
-    </>
+    <div>
+      <Date createdAt="2024-01-01" updatedAt="2024-06-01" />
+      <Link href="/blog/article/leather-shoes-painting/">BLOG Sample</Link>
+    </div>
   );
 });
 

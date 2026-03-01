@@ -122,6 +122,9 @@ importers:
 
   packages/web-qwik:
     dependencies:
+      '@mdi/js':
+        specifier: ^7.4.47
+        version: 7.4.47
       motion:
         specifier: ^12.34.3
         version: 12.34.3
