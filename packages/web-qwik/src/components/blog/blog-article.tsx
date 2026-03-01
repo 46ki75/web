@@ -6,7 +6,7 @@ import {
 } from "@builder.io/qwik";
 import type { Component } from "jarkup-ts";
 
-import styles from "./article.scoped.scss?inline";
+import styles from "./blog-article.scoped.scss?inline";
 import { ElmJarkup } from "@elmethis/qwik";
 
 import { paths } from "../../../openapi/schema";
