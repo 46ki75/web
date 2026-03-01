@@ -51,6 +51,14 @@ export default defineConfig(({ command, mode }): UserConfig => {
         // Don't cache the server response in dev mode
         "Cache-Control": "public, max-age=0",
       },
+      
+      proxy: {
+        "/api": {
+          target: `https://dev-www.ikuma.cloud/api`,
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api/, ""),
+        },
+      },
     },
     preview: {
       headers: {
