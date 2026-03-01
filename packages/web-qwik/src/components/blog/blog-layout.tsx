@@ -23,20 +23,24 @@ export const BlogLayout = component$<BlogLayoutProps>(({ language }) => {
   const blogState = useContext(BlogContext);
 
   useTask$(async () => {
-    const { data: blogMeta } = await client.GET("/api/v2/blog", {
-      params: {
-        header: { "accept-language": language },
-      },
-    });
+    if (blogState.blogMeta.length === 0) {
+      const { data: blogMeta } = await client.GET("/api/v2/blog", {
+        params: {
+          header: { "accept-language": language },
+        },
+      });
 
-    if (blogMeta != null) {
-      blogState.blogMeta = blogMeta;
+      if (blogMeta != null) {
+        blogState.blogMeta = blogMeta;
+      }
     }
 
-    const { data: blogTags } = await client.GET("/api/v2/blog/tag", {});
+    if (blogState.tags.length === 0) {
+      const { data: blogTags } = await client.GET("/api/v2/blog/tag", {});
 
-    if (blogTags != null) {
-      blogState.tags = blogTags;
+      if (blogTags != null) {
+        blogState.tags = blogTags;
+      }
     }
   });
 
