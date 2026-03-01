@@ -1,3 +1,4 @@
+/* eslint-disable qwik/jsx-img */
 import {
   component$,
   Resource,
@@ -7,6 +8,8 @@ import {
 
 import styles from "./blog-side.scoped.scss?inline";
 import { client } from "../../../openapi/client";
+import { ElmInlineText } from "@elmethis/qwik";
+import { Link } from "@builder.io/qwik-city";
 
 export type BlogSideProps = {
   language: string;
@@ -32,9 +35,32 @@ export const BlogSide = component$<BlogSideProps>(({ language }) => {
         onResolved={(blogs) => (
           <>
             {blogs?.map((blog) => (
-              <div key={blog.page_id} class="side-card">
-                {blog.title}
-              </div>
+              <Link
+                key={blog.page_id}
+                href={
+                  language === "en"
+                    ? `/blog/article/${blog.slug}`
+                    : `/${language}/blog/article/${blog.slug}`
+                }
+                style={{ all: "unset" }}
+              >
+                <div class="side-card">
+                  <img
+                    src={`/api/v2/blog/${blog.slug}/og-image?lang=${language}`}
+                    alt={blog.title}
+                  />
+
+                  <div class="side-card-content">
+                    <ElmInlineText bold>{blog.title}</ElmInlineText>
+
+                    <div class="side-card-content-description">
+                      <ElmInlineText size="0.8rem">
+                        {blog.description}
+                      </ElmInlineText>
+                    </div>
+                  </div>
+                </div>
+              </Link>
             ))}
           </>
         )}
