@@ -1,13 +1,8 @@
 /* eslint-disable qwik/jsx-img */
-import {
-  component$,
-  useContext,
-  useStylesScoped$,
-  useTask$,
-} from "@builder.io/qwik";
+import { component$, useContext, useStylesScoped$ } from "@builder.io/qwik";
 
 import styles from "./blog-side.scoped.scss?inline";
-import { client } from "../../../openapi/client";
+
 import { ElmInlineText } from "@elmethis/qwik";
 import { Link } from "@builder.io/qwik-city";
 import { Date } from "../common/date";
@@ -21,18 +16,6 @@ export const BlogSide = component$<BlogSideProps>(({ language }) => {
   useStylesScoped$(styles);
 
   const blogState = useContext(BlogContext);
-
-  useTask$(async () => {
-    const { data } = await client.GET("/api/v2/blog", {
-      params: {
-        header: { "accept-language": language },
-      },
-    });
-
-    if (data != null) {
-      blogState.blogMeta = data;
-    }
-  });
 
   return (
     <nav class="blog-side">
