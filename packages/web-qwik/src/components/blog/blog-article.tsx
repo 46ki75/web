@@ -7,7 +7,7 @@ import {
 import type { Component } from "jarkup-ts";
 
 import styles from "./blog-article.scoped.scss?inline";
-import { ElmJarkup } from "@elmethis/qwik";
+import { ElmHeading, ElmJarkup } from "@elmethis/qwik";
 
 import { paths } from "../../../openapi/schema";
 import { client } from "../../../openapi/client";
@@ -39,7 +39,12 @@ export const BlogArticle = component$<ArticleProps>(({ slug, lang }) => {
       <Resource
         value={jarkup}
         onPending={() => <p>Loading...</p>}
-        onResolved={(data) => <ElmJarkup jsonComponents={data.components} />}
+        onResolved={(data) => (
+          <>
+            <ElmHeading level={1}>{data.meta.title}</ElmHeading>
+            <ElmJarkup jsonComponents={data.components} />
+          </>
+        )}
         // onRejected={(err) => <p>Error: {err.message}</p>}
       />
     </article>
