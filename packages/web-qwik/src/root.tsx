@@ -19,7 +19,7 @@ export default component$(() => {
    * Don't remove the `<head>` and `<body>` elements.
    */
 
-  const state = useStore<BlogState>({ count: 0 });
+  const state = useStore<BlogState>({ blogMeta: [] });
   useContextProvider(BlogContext, state);
 
   return (
