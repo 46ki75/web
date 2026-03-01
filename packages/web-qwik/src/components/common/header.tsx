@@ -2,9 +2,7 @@ import { component$, useStylesScoped$ } from "@builder.io/qwik";
 
 import styles from "./header.scoped.scss?inline";
 
-export interface HeaderProps {}
-
-export const Header = component$<HeaderProps>(({}) => {
+export const Header = component$(() => {
   useStylesScoped$(styles);
   return <header class="header">HEADER</header>;
 });
