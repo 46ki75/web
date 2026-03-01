@@ -4,14 +4,14 @@ body {
   font-family: sans-serif;
 }
 
-html.transition {
+.routing-transition {
   view-transition-name: routing;
 }
 
-::view-transition-old(routing) {
+::view-transition-old(routing):only-child {
   animation: fade-out 200ms ease-out;
 }
-::view-transition-new(routing) {
+::view-transition-new(routing):only-child {
   animation: fade-in 200ms ease-in;
 }
 @keyframes fade-out {
