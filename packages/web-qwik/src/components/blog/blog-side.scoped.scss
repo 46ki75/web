@@ -53,11 +53,19 @@
 }
 
 .side-card-tag-container {
-  box-sizing: border-box;
-  padding: 0.25rem 0.5rem;
   display: flex;
   justify-content: flex-start;
   align-items: center;
+  gap: 0.25rem;
   height: 2.25rem;
   border-top: solid 1px rgba(gray, 0.2);
+}
+
+.side-card-tag {
+  box-sizing: border-box;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  line-height: 0.75rem;
+  gap: 0.5rem;
 }
