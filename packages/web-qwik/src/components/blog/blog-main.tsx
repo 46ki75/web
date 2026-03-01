@@ -8,8 +8,6 @@ export const BlogMain = component$<BlogMainProps>(() => {
   useStylesScoped$(styles);
   return (
     <main class="blog-main">
-      <div>MAIN (TODO)</div>
-
       <Slot />
     </main>
   );
