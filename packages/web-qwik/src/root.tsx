@@ -1,8 +1,15 @@
-import { component$, isDev } from "@builder.io/qwik";
+import {
+  component$,
+  isDev,
+  useContextProvider,
+  useStore,
+} from "@builder.io/qwik";
 import { QwikCityProvider, RouterOutlet } from "@builder.io/qwik-city";
 import { RouterHead } from "./components/router-head/router-head";
 
 import "./global.scss";
+
+import { BlogContext, BlogState } from "./context/blog";
 
 export default component$(() => {
   /**
@@ -11,6 +18,9 @@ export default component$(() => {
    *
    * Don't remove the `<head>` and `<body>` elements.
    */
+
+  const state = useStore<BlogState>({ count: 0 });
+  useContextProvider(BlogContext, state);
 
   return (
     <QwikCityProvider>
