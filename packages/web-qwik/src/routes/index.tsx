@@ -1,12 +1,9 @@
-import { component$, useContext } from "@builder.io/qwik";
+import { component$ } from "@builder.io/qwik";
 import { Link, type DocumentHead } from "@builder.io/qwik-city";
 
 import { Meta } from "~/components/common/meta";
-import { BlogContext } from "~/context/blog";
 
 export default component$(() => {
-  const blogState = useContext(BlogContext);
-
   return (
     <div>
       <div style={{ width: "800px", margin: "0 auto" }}>
@@ -20,8 +17,6 @@ export default component$(() => {
         <Link href="/blog/article/leather-shoes-painting/">
           <span style={{ fontSize: 64 }}>BLOG Sample</span>
         </Link>
-
-        <button onClick$={() => blogState.count++}>{blogState.count}</button>
       </div>
     </div>
   );
