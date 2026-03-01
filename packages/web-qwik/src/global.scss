@@ -5,13 +5,13 @@ body {
 }
 
 html.transition {
-  view-transition-name: root;
+  view-transition-name: routing;
 }
 
-::view-transition-old(root) {
+::view-transition-old(routing) {
   animation: fade-out 200ms ease-out;
 }
-::view-transition-new(root) {
+::view-transition-new(routing) {
   animation: fade-in 200ms ease-in;
 }
 @keyframes fade-out {
