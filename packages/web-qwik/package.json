@@ -43,6 +43,7 @@
     "vite-tsconfig-paths": "^4.2.1"
   },
   "dependencies": {
+    "motion": "^12.34.3",
     "openapi-fetch": "^0.14.1"
   }
 }

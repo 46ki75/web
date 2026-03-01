@@ -1,5 +1,5 @@
 import { component$ } from "@builder.io/qwik";
-import type { DocumentHead } from "@builder.io/qwik-city";
+import { Link, type DocumentHead } from "@builder.io/qwik-city";
 
 import { ElmCodeBlock, ElmInlineText } from "@elmethis/qwik";
 import code from "../../../../crates/web-lambda-http-api/src/lib.rs?raw";
@@ -14,6 +14,8 @@ export default component$(() => {
         </ElmInlineText>
 
         <ElmCodeBlock language="rust" code={code}></ElmCodeBlock>
+
+        <Link href="/blog/article/leather-shoes-painting/">BLOG Sample</Link>
       </div>
     </>
   );
