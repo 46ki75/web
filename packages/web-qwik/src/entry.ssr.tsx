@@ -23,6 +23,7 @@ export default function (opts: RenderToStreamOptions) {
     containerAttributes: {
       lang: "en-us",
       ...opts.containerAttributes,
+      class: "transition",
     },
     serverData: {
       ...opts.serverData,

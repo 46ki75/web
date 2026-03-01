@@ -3,3 +3,24 @@ body {
   padding: 0;
   font-family: sans-serif;
 }
+
+html.transition {
+  view-transition-name: root;
+}
+
+::view-transition-old(root) {
+  animation: fade-out 200ms ease-out;
+}
+::view-transition-new(root) {
+  animation: fade-in 200ms ease-in;
+}
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
