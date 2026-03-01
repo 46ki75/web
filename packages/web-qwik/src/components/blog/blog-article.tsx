@@ -16,7 +16,7 @@ export interface ArticleProps {
   slug: string;
 }
 
-export const Article = component$<ArticleProps>(({ slug }) => {
+export const BlogArticle = component$<ArticleProps>(({ slug }) => {
   useStylesScoped$(styles);
 
   const jarkup = useResource$(async () => {
