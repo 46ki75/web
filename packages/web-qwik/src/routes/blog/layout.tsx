@@ -1,19 +1,11 @@
-import { component$, Slot, useStylesScoped$ } from "@builder.io/qwik";
+import { component$, Slot } from "@builder.io/qwik";
 
-import styles from "./blog-layout.scoped.scss?inline";
-import { BlogSide } from "~/components/blog/blog-side";
-import { BlogMain } from "~/components/blog/blog-main";
+import { BlogLayout } from "~/components/blog/blog-layout";
 
 export default component$(() => {
-  useStylesScoped$(styles);
-
   return (
-    <div class="blog-layout">
-      <BlogMain>
-        <Slot />
-      </BlogMain>
-
-      <BlogSide />
-    </div>
+    <BlogLayout>
+      <Slot />
+    </BlogLayout>
   );
 });
