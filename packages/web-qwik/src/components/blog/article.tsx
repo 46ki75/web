@@ -21,7 +21,6 @@ export const Article = component$<ArticleProps>(({ slug }) => {
 
   const jarkup = useResource$(async () => {
     const { data: blogContents } = await client.GET("/api/v2/blog/{slug}", {
-      baseUrl: `https://${import.meta.env.VITE_API_DOMAIN}`,
       params: {
         path: { slug: slug! },
         header: { "accept-language": "en" },
