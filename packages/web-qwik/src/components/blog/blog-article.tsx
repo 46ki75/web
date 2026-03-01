@@ -21,11 +21,14 @@ export interface ArticleProps {
 export const BlogArticle = component$<ArticleProps>(({ slug, lang }) => {
   useStylesScoped$(styles);
 
-  const jarkup = useResource$(async () => {
+  const jarkup = useResource$(async ({ track }) => {
+    const trackedSlug = track(() => slug);
+    const trackedLang = track(() => lang);
+
     const { data: blogContents } = await client.GET("/api/v2/blog/{slug}", {
       params: {
-        path: { slug: slug! },
-        header: { "accept-language": lang },
+        path: { slug: trackedSlug! },
+        header: { "accept-language": trackedLang },
       },
     });
 
