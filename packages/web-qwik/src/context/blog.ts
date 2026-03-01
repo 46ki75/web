@@ -4,6 +4,7 @@ import { type paths } from "../../openapi/schema";
 
 export interface BlogState {
   blogMeta: paths["/api/v2/blog"]["get"]["responses"]["200"]["content"]["application/json"];
+  tags: paths["/api/v2/blog/tag"]["get"]["responses"]["200"]["content"]["application/json"];
 }
 
 export const BlogContext = createContextId<BlogState>("blog.global");
