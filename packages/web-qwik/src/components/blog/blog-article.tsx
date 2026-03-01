@@ -35,18 +35,19 @@ export const BlogArticle = component$<ArticleProps>(({ slug, lang }) => {
   });
 
   return (
-    <article>
+    <>
       <Resource
         value={jarkup}
         onPending={() => <p>Loading...</p>}
         onResolved={(data) => (
-          <>
+          <article>
             <ElmHeading level={1}>{data.meta.title}</ElmHeading>
             <ElmJarkup jsonComponents={data.components} />
-          </>
+          </article>
         )}
+        // TODO: Handle errors properly
         // onRejected={(err) => <p>Error: {err.message}</p>}
       />
-    </article>
+    </>
   );
 });
