@@ -4,7 +4,7 @@ import { BlogLayout } from "~/components/blog/blog-layout";
 
 export default component$(() => {
   return (
-    <BlogLayout>
+    <BlogLayout language="ja">
       <Slot />
     </BlogLayout>
   );
