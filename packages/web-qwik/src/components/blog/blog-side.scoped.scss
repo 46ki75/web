@@ -1,4 +1,10 @@
 .blog-side {
+  box-sizing: border-box;
+  padding: 0.25rem;
+  position: sticky;
+  top: 4rem;
+  overflow-y: auto;
+  height: calc(100vh - 5rem);
   width: 100%;
   max-width: 480px;
   display: flex;
