@@ -12,6 +12,11 @@ export default component$(() => {
           createdAt="2024-01-01"
           updatedAt="2024-06-01"
           image="https://www.ikuma.cloud/api/v2/blog/leather-shoes-painting/og-image?lang=en"
+          links={[
+            {
+              text: "Home",
+            },
+          ]}
         />
 
         <Link href="/blog/article/leather-shoes-painting/">

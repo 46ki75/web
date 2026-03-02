@@ -1,4 +1,5 @@
 import {
+  $,
   component$,
   Resource,
   useResource$,
@@ -12,6 +13,7 @@ import { ElmBlockFallback, ElmJarkup } from "@elmethis/qwik";
 import { paths } from "../../../openapi/schema";
 import { client } from "../../../openapi/client";
 import { Meta } from "../common/meta";
+import { useNavigate } from "@builder.io/qwik-city";
 
 export interface ArticleProps {
   slug: string;
@@ -38,6 +40,8 @@ export const BlogArticle = component$<ArticleProps>(({ slug, lang }) => {
     };
   });
 
+  const nav = useNavigate();
+
   return (
     <>
       <Resource
@@ -50,6 +54,28 @@ export const BlogArticle = component$<ArticleProps>(({ slug, lang }) => {
               createdAt={data.meta.created_at}
               updatedAt={data.meta.updated_at}
               image={`/api/v2/blog/${slug}/og-image?lang=${lang}`}
+              links={[
+                {
+                  text: "Home",
+                  onClick$: $(() => nav(lang === "en" ? "/" : `/${lang}`)),
+                },
+                {
+                  text: "Blog",
+                  onClick$: $(() =>
+                    nav(lang === "en" ? "/blog" : `/${lang}/blog`),
+                  ),
+                },
+                {
+                  text: "Article",
+                  onClick$: $(() =>
+                    nav(
+                      lang === "en"
+                        ? `/blog/article/${slug}`
+                        : `/${lang}/blog/article/${slug}`,
+                    ),
+                  ),
+                },
+              ]}
             />
             <ElmJarkup jsonComponents={data.components} />
           </article>
