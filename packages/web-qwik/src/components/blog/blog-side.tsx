@@ -1,4 +1,3 @@
-/* eslint-disable qwik/jsx-img */
 import { component$, useContext, useStylesScoped$ } from "@builder.io/qwik";
 
 import styles from "./blog-side.scoped.scss?inline";
@@ -32,8 +31,11 @@ export const BlogSide = component$<BlogSideProps>(({ language }) => {
           >
             <div class="side-card">
               <img
+                class="side-card-image"
                 src={`/api/v2/blog/${blog.slug}/og-image?lang=${language}`}
                 alt={blog.title}
+                width={1140}
+                height={600}
               />
 
               <div class="side-card-content">

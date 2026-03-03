@@ -25,7 +25,14 @@ export const Meta = component$<MetaProps>(
           <Date createdAt={createdAt} updatedAt={updatedAt} />
         </div>
 
-        {image && <ElmBlockImage src={image} alt={`OGP ${title}`} />}
+        {image && (
+          <ElmBlockImage
+            src={image}
+            alt={`OGP ${title}`}
+            width={1140}
+            height={600}
+          />
+        )}
       </div>
     );
   },

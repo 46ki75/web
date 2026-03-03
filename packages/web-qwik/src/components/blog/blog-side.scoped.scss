@@ -45,6 +45,13 @@
   }
 }
 
+.side-card-image {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1140 / 600;
+  object-fit: cover;
+}
+
 .side-card-content {
   box-sizing: border-box;
   padding: 0.5rem;
