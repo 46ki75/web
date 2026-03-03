@@ -11,7 +11,7 @@ export const Header = component$(() => {
   return (
     <header class="header">
       <Link href="/">
-        <Favicon style={{ height: "1.5rem" }} />
+        <Favicon style={{ height: "1.5rem", width: "min-content" }} />
       </Link>
 
       <ElmToggleTheme />
