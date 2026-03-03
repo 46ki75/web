@@ -1,6 +1,6 @@
-import { component$, useContext, useStylesScoped$ } from "@builder.io/qwik";
+import { component$, useContext } from "@builder.io/qwik";
 
-import styles from "./blog-side.scoped.scss?inline";
+import styles from "./blog-side.module.scss";
 
 import { ElmInlineText } from "@elmethis/qwik";
 import { Link } from "@builder.io/qwik-city";
@@ -13,16 +13,14 @@ export type BlogSideProps = {
 };
 
 export const BlogSide = component$<BlogSideProps>(({ language }) => {
-  useStylesScoped$(styles);
-
   const blogState = useContext(BlogContext);
 
   return (
-    <nav class="blog-side">
+    <nav class={styles["blog-side"]}>
       {blogState.blogMeta?.map((blog, index) => (
         <div
           key={blog.page_id}
-          class="side-card"
+          class={styles["side-card"]}
           style={{
             "--delay": `${(index + 1) * 100}ms`,
           }}
@@ -36,19 +34,19 @@ export const BlogSide = component$<BlogSideProps>(({ language }) => {
             }
             style={{ all: "unset" }}
           >
-            <div class="side-card-link">
+            <div class={styles["side-card-link"]}>
               <img
-                class="side-card-image"
+                class={styles["side-card-image"]}
                 src={`/api/v2/blog/${blog.slug}/og-image?lang=${language}`}
                 alt={blog.title}
                 width={1140}
                 height={600}
               />
 
-              <div class="side-card-content">
+              <div class={styles["side-card-content"]}>
                 <ElmInlineText bold>{blog.title}</ElmInlineText>
 
-                <div class="side-card-content-description">
+                <div class={styles["side-card-content-description"]}>
                   <ElmInlineText size="0.8rem">
                     {blog.description}
                   </ElmInlineText>
@@ -59,7 +57,7 @@ export const BlogSide = component$<BlogSideProps>(({ language }) => {
             </div>
           </Link>
 
-          <div class="side-card-tag-container">
+          <div class={styles["side-card-tag-container"]}>
             {blogState.tags
               ?.filter((tag) => blog.tag_ids?.includes(tag.id))
               .map((tag) => (
