@@ -122,6 +122,9 @@ importers:
 
   packages/web-qwik:
     dependencies:
+      '@elmethis/vue':
+        specifier: ^0.4.1
+        version: 0.4.1(vue@3.5.22(typescript@5.4.5))
       '@mdi/js':
         specifier: ^7.4.47
         version: 7.4.47
@@ -414,6 +417,11 @@ packages:
 
   '@elmethis/vue@0.3.1':
     resolution: {integrity: sha512-UAQZla3cgvEjJQ646OvPdiIJldWjfqNbfcY2C3XSVAJ03nfNJBJiGtni8W1KJMpXWeu7PgOV4Vsez1ua3a1qeA==}
+    peerDependencies:
+      vue: ^3.4.0
+
+  '@elmethis/vue@0.4.1':
+    resolution: {integrity: sha512-IInEROUnsDzgb2rdmQUJiHks4xWDNnWSTg8nHejtgx4iIKa+abGpQSEByGAXO+iO5aVh/GN1l0e87M/LKsJizQ==}
     peerDependencies:
       vue: ^3.4.0
 
@@ -7074,6 +7082,22 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@elmethis/vue@0.4.1(vue@3.5.22(typescript@5.4.5))':
+    dependencies:
+      '@mdi/js': 7.4.47
+      '@vueuse/core': 14.2.1(vue@3.5.22(typescript@5.4.5))
+      fuse.js: 7.1.0
+      katex: 0.16.33
+      lodash-es: 4.17.23
+      marked: 17.0.3
+      mermaid: 11.12.3
+      nanoid: 5.1.6
+      polished: 4.3.1
+      shiki: 4.0.1
+      vue: 3.5.22(typescript@5.4.5)
+    transitivePeerDependencies:
+      - supports-color
+
   '@emnapi/core@1.5.0':
     dependencies:
       '@emnapi/wasi-threads': 1.1.0
@@ -9162,6 +9186,12 @@ snapshots:
       '@vue/shared': 3.5.22
       csstype: 3.1.3
 
+  '@vue/server-renderer@3.5.22(vue@3.5.22(typescript@5.4.5))':
+    dependencies:
+      '@vue/compiler-ssr': 3.5.22
+      '@vue/shared': 3.5.22
+      vue: 3.5.22(typescript@5.4.5)
+
   '@vue/server-renderer@3.5.22(vue@3.5.22(typescript@5.9.3))':
     dependencies:
       '@vue/compiler-ssr': 3.5.22
@@ -9177,6 +9207,13 @@ snapshots:
       '@vueuse/shared': 13.9.0(vue@3.5.22(typescript@5.9.3))
       vue: 3.5.22(typescript@5.9.3)
 
+  '@vueuse/core@14.2.1(vue@3.5.22(typescript@5.4.5))':
+    dependencies:
+      '@types/web-bluetooth': 0.0.21
+      '@vueuse/metadata': 14.2.1
+      '@vueuse/shared': 14.2.1(vue@3.5.22(typescript@5.4.5))
+      vue: 3.5.22(typescript@5.4.5)
+
   '@vueuse/core@14.2.1(vue@3.5.22(typescript@5.9.3))':
     dependencies:
       '@types/web-bluetooth': 0.0.21
@@ -9191,6 +9228,10 @@ snapshots:
   '@vueuse/shared@13.9.0(vue@3.5.22(typescript@5.9.3))':
     dependencies:
       vue: 3.5.22(typescript@5.9.3)
+
+  '@vueuse/shared@14.2.1(vue@3.5.22(typescript@5.4.5))':
+    dependencies:
+      vue: 3.5.22(typescript@5.4.5)
 
   '@vueuse/shared@14.2.1(vue@3.5.22(typescript@5.9.3))':
     dependencies:
@@ -14238,6 +14279,16 @@ snapshots:
     dependencies:
       '@vue/devtools-api': 6.6.4
       vue: 3.5.22(typescript@5.9.3)
+
+  vue@3.5.22(typescript@5.4.5):
+    dependencies:
+      '@vue/compiler-dom': 3.5.22
+      '@vue/compiler-sfc': 3.5.22
+      '@vue/runtime-dom': 3.5.22
+      '@vue/server-renderer': 3.5.22(vue@3.5.22(typescript@5.4.5))
+      '@vue/shared': 3.5.22
+    optionalDependencies:
+      typescript: 5.4.5
 
   vue@3.5.22(typescript@5.9.3):
     dependencies:
