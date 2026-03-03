@@ -8,6 +8,7 @@ import { QwikCityProvider, RouterOutlet } from "@builder.io/qwik-city";
 import { RouterHead } from "./components/router-head/router-head";
 
 import "./global.scss";
+import "@elmethis/qwik/style.css";
 
 import { BlogContext, BlogState } from "./context/blog";
 
