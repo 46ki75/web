@@ -2,10 +2,11 @@ import { component$, useContext, useStylesScoped$ } from "@builder.io/qwik";
 
 import styles from "./blog-side.scoped.scss?inline";
 
-import { ElmInlineIcon, ElmInlineText } from "@elmethis/qwik";
+import { ElmInlineText } from "@elmethis/qwik";
 import { Link } from "@builder.io/qwik-city";
 import { Date } from "../common/date";
 import { BlogContext } from "~/context/blog";
+import { Tag } from "../common/tag";
 
 export type BlogSideProps = {
   language: string;
@@ -59,12 +60,11 @@ export const BlogSide = component$<BlogSideProps>(({ language }) => {
                 {blogState.tags
                   ?.filter((tag) => blog.tag_ids?.includes(tag.id))
                   .map((tag) => (
-                    <div key={tag.id} class="side-card-tag">
-                      <ElmInlineIcon src={tag.icon_url!} alt="ICON" />
-                      <ElmInlineText size="1rem">
-                        {language === "ja" ? tag.name_ja : tag.name_en}
-                      </ElmInlineText>
-                    </div>
+                    <Tag
+                      key={tag.id}
+                      name={language === "ja" ? tag.name_ja : tag.name_en}
+                      src={tag.icon_url!}
+                    />
                   ))}
               </div>
             </div>
