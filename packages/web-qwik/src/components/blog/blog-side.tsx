@@ -19,7 +19,7 @@ export const BlogSide = component$<BlogSideProps>(({ language }) => {
   return (
     <nav class="blog-side">
       <>
-        {blogState.blogMeta?.map((blog) => (
+        {blogState.blogMeta?.map((blog, index) => (
           <Link
             key={blog.page_id}
             href={
@@ -29,7 +29,12 @@ export const BlogSide = component$<BlogSideProps>(({ language }) => {
             }
             style={{ all: "unset" }}
           >
-            <div class="side-card">
+            <div
+              class="side-card"
+              style={{
+                "--delay": `${index * 200}ms`,
+              }}
+            >
               <img
                 class="side-card-image"
                 src={`/api/v2/blog/${blog.slug}/og-image?lang=${language}`}
