@@ -19,8 +19,14 @@ export const BlogSide = component$<BlogSideProps>(({ language }) => {
 
   return (
     <nav class="blog-side">
-      <>
-        {blogState.blogMeta?.map((blog, index) => (
+      {blogState.blogMeta?.map((blog, index) => (
+        <div
+          key={blog.page_id}
+          class="side-card"
+          style={{
+            "--delay": `${(index + 1) * 200}ms`,
+          }}
+        >
           <Link
             key={blog.page_id}
             href={
@@ -30,12 +36,7 @@ export const BlogSide = component$<BlogSideProps>(({ language }) => {
             }
             style={{ all: "unset" }}
           >
-            <div
-              class="side-card"
-              style={{
-                "--delay": `${(index + 1) * 200}ms`,
-              }}
-            >
+            <div class="side-card-link">
               <img
                 class="side-card-image"
                 src={`/api/v2/blog/${blog.slug}/og-image?lang=${language}`}
@@ -55,22 +56,22 @@ export const BlogSide = component$<BlogSideProps>(({ language }) => {
 
                 <Date createdAt={blog.created_at} updatedAt={blog.updated_at} />
               </div>
-
-              <div class="side-card-tag-container">
-                {blogState.tags
-                  ?.filter((tag) => blog.tag_ids?.includes(tag.id))
-                  .map((tag) => (
-                    <Tag
-                      key={tag.id}
-                      name={language === "ja" ? tag.name_ja : tag.name_en}
-                      src={tag.icon_url!}
-                    />
-                  ))}
-              </div>
             </div>
           </Link>
-        ))}
-      </>
+
+          <div class="side-card-tag-container">
+            {blogState.tags
+              ?.filter((tag) => blog.tag_ids?.includes(tag.id))
+              .map((tag) => (
+                <Tag
+                  key={tag.id}
+                  name={language === "ja" ? tag.name_ja : tag.name_en}
+                  src={tag.icon_url!}
+                />
+              ))}
+          </div>
+        </div>
+      ))}
     </nav>
   );
 });

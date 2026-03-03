@@ -14,8 +14,8 @@
   padding: 0 0.25rem;
   position: sticky;
   top: 4rem;
-  overflow-y: auto;
-  height: calc(100vh - 5rem);
+  // overflow-y: auto;
+  // height: calc(100vh - 5rem);
   width: 100%;
   max-width: 480px;
   display: flex;
@@ -24,7 +24,7 @@
 }
 
 .side-card {
-  all: unset;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   border-radius: 0.25rem;
@@ -36,7 +36,12 @@
   animation-duration: 800ms;
   animation-fill-mode: both;
   animation-delay: var(--delay);
+}
 
+.side-card-link {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
   transition:
     opacity 200ms,
     transform 200ms,
