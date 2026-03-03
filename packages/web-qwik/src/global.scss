@@ -36,12 +36,10 @@ body {
 @keyframes fade-out {
   to {
     opacity: 0;
-    transform: translateX(16px);
   }
 }
 @keyframes fade-in {
   from {
     opacity: 0;
-    transform: translateX(-16px);
   }
 }
