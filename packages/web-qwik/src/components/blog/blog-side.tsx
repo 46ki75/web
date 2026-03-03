@@ -32,7 +32,7 @@ export const BlogSide = component$<BlogSideProps>(({ language }) => {
             <div
               class="side-card"
               style={{
-                "--delay": `${index * 200}ms`,
+                "--delay": `${(index + 1) * 200}ms`,
               }}
             >
               <img
