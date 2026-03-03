@@ -1,5 +1,5 @@
 import { component$, Slot } from "@builder.io/qwik";
-import { ElmParallax } from "@elmethis/qwik";
+import { ElmPageTop, ElmParallax } from "@elmethis/qwik";
 import { Footer } from "~/components/common/footer";
 import { Header } from "~/components/common/header";
 
@@ -19,6 +19,8 @@ export default component$(() => {
       />
 
       <Footer />
+
+      <ElmPageTop />
     </>
   );
 });
