@@ -24,7 +24,7 @@ export const BlogSide = component$<BlogSideProps>(({ language }) => {
           key={blog.page_id}
           class="side-card"
           style={{
-            "--delay": `${(index + 1) * 200}ms`,
+            "--delay": `${(index + 1) * 100}ms`,
           }}
         >
           <Link
