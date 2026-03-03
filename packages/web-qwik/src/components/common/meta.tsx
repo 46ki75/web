@@ -1,6 +1,6 @@
-import { component$, PropsOf, useStylesScoped$ } from "@builder.io/qwik";
+import { component$, PropsOf } from "@builder.io/qwik";
 
-import styles from "./meta.scoped.scss?inline";
+import styles from "./meta.module.scss";
 import { ElmBlockImage, ElmBreadcrumb, ElmHeading } from "@elmethis/qwik";
 
 import { Date } from "./date";
@@ -15,13 +15,12 @@ export interface MetaProps {
 
 export const Meta = component$<MetaProps>(
   ({ title, createdAt, updatedAt, image, links }) => {
-    useStylesScoped$(styles);
     return (
       <div>
         <ElmBreadcrumb links={links} />
 
         <ElmHeading level={1}>{title}</ElmHeading>
-        <div class="date-container">
+        <div class={styles["date-container"]}>
           <Date createdAt={createdAt} updatedAt={updatedAt} />
         </div>
 

@@ -1,10 +1,9 @@
-import { component$, useStylesScoped$ } from "@builder.io/qwik";
+import { component$ } from "@builder.io/qwik";
 
-import styles from "./footer.scoped.scss?inline";
+import styles from "./footer.module.scss";
 
 export type FooterProps = object;
 
 export const Footer = component$<FooterProps>(() => {
-  useStylesScoped$(styles);
-  return <footer class="footer"></footer>;
+  return <footer class={styles.footer}></footer>;
 });

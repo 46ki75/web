@@ -1,12 +1,6 @@
-import {
-  component$,
-  Slot,
-  useContext,
-  useStylesScoped$,
-  useTask$,
-} from "@builder.io/qwik";
+import { component$, Slot, useContext, useTask$ } from "@builder.io/qwik";
 
-import styles from "./blog-layout.scoped.scss?inline";
+import styles from "./blog-layout.module.scss";
 
 import { BlogSide } from "~/components/blog/blog-side";
 import { BlogMain } from "~/components/blog/blog-main";
@@ -18,8 +12,6 @@ export interface BlogLayoutProps {
 }
 
 export const BlogLayout = component$<BlogLayoutProps>(({ language }) => {
-  useStylesScoped$(styles);
-
   const blogState = useContext(BlogContext);
 
   useTask$(async () => {
@@ -45,7 +37,7 @@ export const BlogLayout = component$<BlogLayoutProps>(({ language }) => {
   });
 
   return (
-    <div class="blog-layout">
+    <div class={styles["blog-layout"]}>
       <BlogMain>
         <Slot />
       </BlogMain>

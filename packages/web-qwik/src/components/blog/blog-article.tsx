@@ -1,13 +1,6 @@
-import {
-  $,
-  component$,
-  Resource,
-  useResource$,
-  useStylesScoped$,
-} from "@builder.io/qwik";
+import { $, component$, Resource, useResource$ } from "@builder.io/qwik";
 import type { Component } from "jarkup-ts";
 
-import styles from "./blog-article.scoped.scss?inline";
 import { ElmBlockFallback, ElmJarkup } from "@elmethis/qwik";
 
 import { paths } from "../../../openapi/schema";
@@ -21,8 +14,6 @@ export interface ArticleProps {
 }
 
 export const BlogArticle = component$<ArticleProps>(({ slug, lang }) => {
-  useStylesScoped$(styles);
-
   const jarkup = useResource$(async ({ track }) => {
     const trackedSlug = track(() => slug);
     const trackedLang = track(() => lang);
