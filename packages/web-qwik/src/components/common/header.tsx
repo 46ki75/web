@@ -4,6 +4,7 @@ import styles from "./header.scoped.scss?inline";
 import { Link } from "@builder.io/qwik-city";
 
 import Favicon from "../../../public/static/brand/logo.svg?jsx";
+import { ElmToggleTheme } from "@elmethis/qwik";
 
 export const Header = component$(() => {
   useStylesScoped$(styles);
@@ -12,6 +13,8 @@ export const Header = component$(() => {
       <Link href="/">
         <Favicon style={{ height: "1.5rem" }} />
       </Link>
+
+      <ElmToggleTheme />
     </header>
   );
 });
