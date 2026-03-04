@@ -42,18 +42,22 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
   });
 
   return (
-    <div class={styles["elm-my-something"]}>
+    <div class={styles["blog-search"]}>
       <ElmTextField value={searchKeyword} label="Keyword" icon="search" />
 
-      {searchResults.value?.map((blog, index) => (
-        <BlogCard
-          key={blog.slug}
-          blog={blog}
-          tags={blogState.tags?.filter((tag) => blog.tag_ids?.includes(tag.id))}
-          language={language}
-          delay={(index + 1) * 100}
-        />
-      ))}
+      <div class={styles["blog-search-result"]}>
+        {searchResults.value?.map((blog, index) => (
+          <BlogCard
+            key={blog.slug}
+            blog={blog}
+            tags={blogState.tags?.filter((tag) =>
+              blog.tag_ids?.includes(tag.id),
+            )}
+            language={language}
+            delay={(index + 1) * 100}
+          />
+        ))}
+      </div>
     </div>
   );
 });
