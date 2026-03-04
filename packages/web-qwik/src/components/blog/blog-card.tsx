@@ -20,7 +20,7 @@ export const BlogCard = component$<BlogCardProps>(
     return (
       <div
         key={blog.page_id}
-        class={styles["side-card"]}
+        class={styles["blog-card"]}
         style={{
           "--delay": `${delay}ms`,
         }}
@@ -34,19 +34,19 @@ export const BlogCard = component$<BlogCardProps>(
           }
           style={{ all: "unset" }}
         >
-          <div class={styles["side-card-link"]}>
+          <div class={styles["blog-card-link"]}>
             <img
-              class={styles["side-card-image"]}
+              class={styles["blog-card-image"]}
               src={`/api/v2/blog/${blog.slug}/og-image?lang=${language}`}
               alt={blog.title}
               width={1140}
               height={600}
             />
 
-            <div class={styles["side-card-content"]}>
+            <div class={styles["blog-card-content"]}>
               <ElmInlineText bold>{blog.title}</ElmInlineText>
 
-              <div class={styles["side-card-content-description"]}>
+              <div class={styles["blog-card-content-description"]}>
                 <ElmInlineText size="0.8rem">{blog.description}</ElmInlineText>
               </div>
 
@@ -55,7 +55,7 @@ export const BlogCard = component$<BlogCardProps>(
           </div>
         </Link>
 
-        <div class={styles["side-card-tag-container"]}>
+        <div class={styles["blog-card-tag-container"]}>
           {tags.map((tag) => (
             <Tag
               key={tag.id}

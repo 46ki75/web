@@ -1,3 +1,14 @@
+@keyframes blog-card-fade {
+  from {
+    opacity: 0;
+    transform: translateX(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 .blog-card {
   box-sizing: border-box;
   display: flex;
@@ -7,6 +18,12 @@
   box-shadow: 0 0 0.125rem rgba(black, 0.2);
   overflow: hidden;
   cursor: pointer;
+
+  animation-name: blog-card-fade;
+  animation-duration: 400ms;
+  animation-fill-mode: both;
+  animation-iteration-count: 1;
+  animation-delay: var(--delay);
 
   transition: background-color 200ms;
 
