@@ -42,6 +42,16 @@ export const Language = component$<LanguageProps>(() => {
 
       if (storedLanguage && storedLanguage !== languageState.language) {
         await handleToggleLanguage();
+      } else if (!storedLanguage) {
+        // First time visitor, set language based on browser settings
+        const browserLanguage = navigator.language.startsWith("ja")
+          ? "ja"
+          : "en";
+        localStorage.setItem("language", browserLanguage);
+
+        if (browserLanguage !== languageState.language) {
+          await handleToggleLanguage();
+        }
       }
     },
     { strategy: "document-ready" },
