@@ -19,6 +19,7 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
 
   useTask$(({ track }) => {
     track(() => searchKeyword.value);
+    track(() => language);
 
     if (!(searchKeyword.value.trim() === "")) {
       console.log("searching", searchKeyword.value);
@@ -43,6 +44,8 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
   return (
     <div class={styles["elm-my-something"]}>
       <ElmTextField value={searchKeyword} label="Keyword" icon="search" />
+
+      <div>{searchKeyword.value}</div>
 
       {searchResults.value?.map((blog) => (
         <div key={blog.page_id}>{blog.title}</div>
