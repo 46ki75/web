@@ -46,7 +46,10 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
       <ElmTextField value={searchKeyword} label="Keyword" icon="search" />
 
       <div class={styles["blog-search-result"]}>
-        {searchResults.value?.map((blog, index) => (
+        {(searchResults.value.length > 0
+          ? searchResults.value
+          : blogState.blogMeta[language]
+        ).map((blog, index) => (
           <BlogCard
             key={blog.slug}
             blog={blog}
