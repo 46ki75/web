@@ -6,6 +6,7 @@ import { BlogContext } from "~/context/blog";
 import Fuse from "fuse.js";
 import { ElmTextField } from "@elmethis/qwik";
 import { Language } from "~/types";
+import { BlogCard } from "./blog-card";
 
 export type BlogSearchProps = {
   language: Language;
@@ -44,13 +45,15 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
     <div class={styles["elm-my-something"]}>
       <ElmTextField value={searchKeyword} label="Keyword" icon="search" />
 
-      <div>{searchKeyword.value}</div>
-
-      {searchResults.value?.map((blog) => (
-        <div key={blog.page_id}>{blog.title}</div>
+      {searchResults.value?.map((blog, index) => (
+        <BlogCard
+          key={blog.slug}
+          blog={blog}
+          tags={blogState.tags?.filter((tag) => blog.tag_ids?.includes(tag.id))}
+          language={language}
+          delay={(index + 1) * 100}
+        />
       ))}
-
-      {JSON.stringify(searchResults.value)}
     </div>
   );
 });
