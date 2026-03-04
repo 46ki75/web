@@ -14,15 +14,16 @@ export const Language = component$<LanguageProps>(() => {
   const nav = useNavigate();
   const languageState = useContext(LanguageContext);
 
-  const handleToggleLanguage = $(() => {
-    languageState.language = languageState.language === "en" ? "ja" : "en";
-    localStorage.setItem("language", languageState.language);
+  const handleToggleLanguage = $(async () => {
+    const oldLang = languageState.language;
+    const newLang = oldLang === "en" ? "ja" : "en";
+    languageState.language = newLang;
+    localStorage.setItem("language", newLang);
 
-    if (
-      languageState.language !== "en" &&
-      !loc.url.pathname.startsWith(`/${languageState.language}`)
-    ) {
-      nav(`/${languageState.language}${loc.url.pathname}`);
+    if (newLang === "ja") {
+      await nav(`/ja${loc.url.pathname}`);
+    } else {
+      await nav(loc.url.pathname.replace(/^\/ja/, "") || "/");
     }
   });
 
