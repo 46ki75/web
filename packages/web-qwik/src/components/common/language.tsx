@@ -15,9 +15,7 @@ export const Language = component$<LanguageProps>(() => {
   const nav = useNavigate();
   const languageState = useContext(LanguageContext);
 
-  const handleToggleLanguage = $(async () => {
-    const oldLang = languageState.language;
-    const newLang = oldLang === "en" ? "ja" : "en";
+  const setLanguage = $(async (newLang: LanguageType) => {
     languageState.language = newLang;
 
     document.cookie = `language=${newLang};path=/;max-age=31536000`;
@@ -25,12 +23,21 @@ export const Language = component$<LanguageProps>(() => {
 
     // Remove any existing "/ja" prefix to prevent duplication
     const cleanPath = loc.url.pathname.replace(/^\/ja(\/|$)/, "/");
+    const targetPath =
+      newLang === "ja"
+        ? cleanPath === "/"
+          ? "/ja/"
+          : `/ja${cleanPath}`
+        : cleanPath;
 
-    if (newLang === "ja") {
-      await nav(cleanPath === "/" ? "/ja/" : `/ja${cleanPath}`);
-    } else {
-      await nav(cleanPath);
+    // Only navigate if the path actually needs to change
+    if (loc.url.pathname !== targetPath) {
+      await nav(targetPath);
     }
+  });
+
+  const handleToggleLanguage = $(async () => {
+    await setLanguage(languageState.language === "en" ? "ja" : "en");
   });
 
   // eslint-disable-next-line qwik/no-use-visible-task
@@ -41,16 +48,19 @@ export const Language = component$<LanguageProps>(() => {
       ) as LanguageType | null;
 
       if (storedLanguage && storedLanguage !== languageState.language) {
-        await handleToggleLanguage();
+        await setLanguage(storedLanguage);
       } else if (!storedLanguage) {
         // First time visitor, set language based on browser settings
         const browserLanguage = navigator.language.startsWith("ja")
           ? "ja"
           : "en";
-        localStorage.setItem("language", browserLanguage);
 
         if (browserLanguage !== languageState.language) {
-          await handleToggleLanguage();
+          await setLanguage(browserLanguage);
+        } else {
+          // Just save it if state is already correct
+          localStorage.setItem("language", browserLanguage);
+          document.cookie = `language=${browserLanguage};path=/;max-age=31536000`;
         }
       }
     },
