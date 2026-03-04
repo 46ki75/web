@@ -11,6 +11,7 @@ import "./global.scss";
 import "@elmethis/qwik/style.css";
 
 import { BlogContext, BlogState } from "./context/blog";
+import { LanguageContext } from "./context/language";
 
 export default component$(() => {
   /**
@@ -20,8 +21,14 @@ export default component$(() => {
    * Don't remove the `<head>` and `<body>` elements.
    */
 
-  const state = useStore<BlogState>({ blogMeta: { en: [], ja: [] }, tags: [] });
-  useContextProvider(BlogContext, state);
+  const blogState = useStore<BlogState>({
+    blogMeta: { en: [], ja: [] },
+    tags: [],
+  });
+  useContextProvider(BlogContext, blogState);
+
+  const languageState = useStore({ language: "en" });
+  useContextProvider(LanguageContext, languageState);
 
   return (
     <QwikCityProvider>
