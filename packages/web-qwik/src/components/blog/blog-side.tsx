@@ -7,9 +7,10 @@ import { Link } from "@builder.io/qwik-city";
 import { Date } from "../common/date";
 import { BlogContext } from "~/context/blog";
 import { Tag } from "../common/tag";
+import { Language } from "~/types";
 
 export type BlogSideProps = {
-  language: string;
+  language: Language;
 };
 
 export const BlogSide = component$<BlogSideProps>(({ language }) => {
@@ -23,7 +24,7 @@ export const BlogSide = component$<BlogSideProps>(({ language }) => {
         SEARCH (TODO)
       </Link>
 
-      {blogState.blogMeta?.map((blog, index) => (
+      {blogState.blogMeta[language]?.map((blog, index) => (
         <div
           key={blog.page_id}
           class={styles["side-card"]}

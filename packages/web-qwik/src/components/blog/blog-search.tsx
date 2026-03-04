@@ -5,22 +5,25 @@ import { BlogContext } from "~/context/blog";
 
 import Fuse from "fuse.js";
 import { ElmTextField } from "@elmethis/qwik";
+import { Language } from "~/types";
 
 export type BlogSearchProps = {
-  language: string;
+  language: Language;
 };
 
 export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
   const blogStore = useContext(BlogContext);
 
   const searchKeyword = useSignal("");
-  const searchResults = useSignal<typeof blogStore.blogMeta>([]);
+  const searchResults = useSignal<(typeof blogStore.blogMeta)[Language]>([]);
 
   useTask$(({ track }) => {
     track(() => searchKeyword.value);
 
     if (!(searchKeyword.value.trim() === "")) {
-      const fuse = new Fuse(blogStore.blogMeta, {
+      console.log("searching", searchKeyword.value);
+      console.log("blogMeta", blogStore.blogMeta[language]);
+      const fuse = new Fuse(blogStore.blogMeta[language], {
         keys: [
           { name: "title", weight: 0.7 },
           { name: "description", weight: 0.3 },
@@ -32,6 +35,7 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
 
       searchResults.value = results;
     } else {
+      console.log("empty");
       searchResults.value = [];
     }
   });
@@ -40,9 +44,11 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
     <div class={styles["elm-my-something"]}>
       <ElmTextField value={searchKeyword} label="Keyword" icon="search" />
 
-      {searchResults.value.map((blog) => (
+      {searchResults.value?.map((blog) => (
         <div key={blog.page_id}>{blog.title}</div>
       ))}
+
+      {JSON.stringify(searchResults.value)}
     </div>
   );
 });

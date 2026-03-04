@@ -1,9 +1,14 @@
 import { createContextId } from "@builder.io/qwik";
 
 import { type paths } from "../../openapi/schema";
+import { Language } from "~/types";
 
 export interface BlogState {
-  blogMeta: paths["/api/v2/blog"]["get"]["responses"]["200"]["content"]["application/json"];
+  blogMeta: Record<
+    Language,
+    paths["/api/v2/blog"]["get"]["responses"]["200"]["content"]["application/json"]
+  >;
+
   tags: paths["/api/v2/blog/tag"]["get"]["responses"]["200"]["content"]["application/json"];
 }
 

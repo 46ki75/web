@@ -20,7 +20,7 @@ export default component$(() => {
    * Don't remove the `<head>` and `<body>` elements.
    */
 
-  const state = useStore<BlogState>({ blogMeta: [], tags: [] });
+  const state = useStore<BlogState>({ blogMeta: { en: [], ja: [] }, tags: [] });
   useContextProvider(BlogContext, state);
 
   return (
