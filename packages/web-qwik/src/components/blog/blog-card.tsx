@@ -48,8 +48,8 @@ export const BlogCard = component$<BlogCardProps>(
 
               <div class={styles["blog-card-content-description"]}>
                 <ElmInlineText size="0.8rem">
-                  {blog.description.substring(0, 300)}
-                  {blog.description.length > 300 ? "..." : ""}
+                  {blog.description.substring(0, 250)}
+                  {blog.description.length > 250 ? "..." : ""}
                 </ElmInlineText>
               </div>
 
