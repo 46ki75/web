@@ -17,6 +17,12 @@ export const BlogSide = component$<BlogSideProps>(({ language }) => {
 
   return (
     <nav class={styles["blog-side"]}>
+      <Link
+        href={language === "en" ? "/blog/search" : `/${language}/blog/search`}
+      >
+        SEARCH (TODO)
+      </Link>
+
       {blogState.blogMeta?.map((blog, index) => (
         <div
           key={blog.page_id}

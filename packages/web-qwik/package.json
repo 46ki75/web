@@ -45,6 +45,7 @@
   "dependencies": {
     "@elmethis/vue": "^0.4.1",
     "@mdi/js": "^7.4.47",
+    "fuse.js": "^7.1.0",
     "motion": "^12.34.3",
     "openapi-fetch": "^0.14.1"
   }
