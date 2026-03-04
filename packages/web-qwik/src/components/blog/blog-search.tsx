@@ -36,7 +36,6 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
 
       searchResults.value = results;
     } else {
-      console.log("empty");
       searchResults.value = [];
     }
   });
