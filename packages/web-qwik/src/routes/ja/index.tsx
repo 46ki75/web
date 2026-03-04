@@ -1,5 +1,6 @@
 import { component$ } from "@builder.io/qwik";
-import { Link, type DocumentHead } from "@builder.io/qwik-city";
+import { type DocumentHead } from "@builder.io/qwik-city";
+import { LinkLocale } from "~/components/common/link-locale";
 
 import { Meta } from "~/components/common/meta";
 
@@ -19,9 +20,9 @@ export default component$(() => {
           ]}
         />
 
-        <Link href="/blog/article/leather-shoes-painting/">
+        <LinkLocale href="/blog/article/leather-shoes-painting/">
           <span style={{ fontSize: 64 }}>BLOG Sample</span>
-        </Link>
+        </LinkLocale>
       </div>
     </div>
   );

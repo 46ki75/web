@@ -1,18 +1,18 @@
 import { component$ } from "@builder.io/qwik";
 
 import styles from "./header.module.scss";
-import { Link } from "@builder.io/qwik-city";
 
 import Favicon from "../../../public/static/brand/logo.svg?jsx";
 import { ElmToggleTheme } from "@elmethis/qwik";
 import { Language } from "./language";
+import { LinkLocale } from "./link-locale";
 
 export const Header = component$(() => {
   return (
     <header class={styles.header}>
-      <Link href="/">
+      <LinkLocale href="/">
         <Favicon style={{ height: "1.5rem", width: "min-content" }} />
-      </Link>
+      </LinkLocale>
 
       <Language />
 
