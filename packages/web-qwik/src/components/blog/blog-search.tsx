@@ -12,18 +12,18 @@ export type BlogSearchProps = {
 };
 
 export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
-  const blogStore = useContext(BlogContext);
+  const blogState = useContext(BlogContext);
 
   const searchKeyword = useSignal("");
-  const searchResults = useSignal<(typeof blogStore.blogMeta)[Language]>([]);
+  const searchResults = useSignal<(typeof blogState.blogMeta)[Language]>([]);
 
   useTask$(({ track }) => {
     track(() => searchKeyword.value);
 
     if (!(searchKeyword.value.trim() === "")) {
       console.log("searching", searchKeyword.value);
-      console.log("blogMeta", blogStore.blogMeta[language]);
-      const fuse = new Fuse(blogStore.blogMeta[language], {
+      console.log("blogMeta", blogState.blogMeta[language]);
+      const fuse = new Fuse(blogState.blogMeta[language], {
         keys: [
           { name: "title", weight: 0.7 },
           { name: "description", weight: 0.3 },
