@@ -5,6 +5,7 @@ import { Link } from "@builder.io/qwik-city";
 
 import Favicon from "../../../public/static/brand/logo.svg?jsx";
 import { ElmToggleTheme } from "@elmethis/qwik";
+import { Language } from "./language";
 
 export const Header = component$(() => {
   return (
@@ -12,6 +13,8 @@ export const Header = component$(() => {
       <Link href="/">
         <Favicon style={{ height: "1.5rem", width: "min-content" }} />
       </Link>
+
+      <Language />
 
       <ElmToggleTheme />
     </header>
