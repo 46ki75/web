@@ -8,7 +8,7 @@ export default component$(() => {
     <div>
       <div style={{ width: "800px", margin: "0 auto" }}>
         <Meta
-          title="Welcome to Qwik"
+          title="Qwik へようこそ"
           createdAt="2024-01-01"
           updatedAt="2024-06-01"
           image="https://www.ikuma.cloud/api/v2/blog/leather-shoes-painting/og-image?lang=en"
