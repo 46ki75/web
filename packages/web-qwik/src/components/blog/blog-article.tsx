@@ -1,4 +1,10 @@
-import { $, component$, Resource, useResource$ } from "@builder.io/qwik";
+import {
+  $,
+  component$,
+  Resource,
+  useContext,
+  useResource$,
+} from "@builder.io/qwik";
 import type { Component } from "jarkup-ts";
 
 import { ElmBlockFallback, ElmJarkup } from "@elmethis/qwik";
@@ -7,6 +13,10 @@ import { paths } from "../../../openapi/schema";
 import { client } from "../../../openapi/client";
 import { Meta } from "../common/meta";
 import { useNavigate } from "@builder.io/qwik-city";
+import { BlogContext } from "~/context/blog";
+import { Tag } from "../common/tag";
+
+import styles from "./blog-article.module.scss";
 
 export interface ArticleProps {
   slug: string;
@@ -14,6 +24,8 @@ export interface ArticleProps {
 }
 
 export const BlogArticle = component$<ArticleProps>(({ slug, lang }) => {
+  const blogState = useContext(BlogContext);
+
   const jarkup = useResource$(async ({ track }) => {
     const trackedSlug = track(() => slug);
     const trackedLang = track(() => lang);
@@ -32,6 +44,11 @@ export const BlogArticle = component$<ArticleProps>(({ slug, lang }) => {
   });
 
   const nav = useNavigate();
+
+  const handleTagClick = $(async (tagId: string) => {
+    blogState.selectedTagIds = [tagId];
+    await nav(lang === "en" ? "/blog/search" : `/${lang}/blog/search`);
+  });
 
   return (
     <>
@@ -67,7 +84,24 @@ export const BlogArticle = component$<ArticleProps>(({ slug, lang }) => {
                   ),
                 },
               ]}
-            />
+            >
+              <div class={styles["tag-container"]}>
+                {data.meta.tag_ids
+                  .flatMap((id) => blogState.tags.find((t) => t.id === id))
+                  .map((tag) => (
+                    <span
+                      key={tag?.id}
+                      class={styles.tag}
+                      onClick$={() => handleTagClick(tag!.id!)}
+                    >
+                      <Tag
+                        name={(lang === "en" ? tag?.name_en : tag?.name_ja)!}
+                        src={tag!.icon_url!}
+                      ></Tag>
+                    </span>
+                  ))}
+              </div>
+            </Meta>
             <ElmJarkup jsonComponents={data.components} />
           </article>
         )}

@@ -1,0 +1,18 @@
+.tag-container {
+  margin-bottom: 1rem;
+  display: flex;
+  gap: 0.5rem;
+  user-select: none;
+}
+
+.tag {
+  box-sizing: border-box;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  transition: background-color 200ms;
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgba(#59a7b5, 0.1);
+  }
+}

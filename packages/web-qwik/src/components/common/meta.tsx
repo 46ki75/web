@@ -1,4 +1,4 @@
-import { component$, PropsOf } from "@builder.io/qwik";
+import { component$, PropsOf, Slot } from "@builder.io/qwik";
 
 import styles from "./meta.module.scss";
 import { ElmBlockImage, ElmBreadcrumb, ElmHeading } from "@elmethis/qwik";
@@ -23,6 +23,8 @@ export const Meta = component$<MetaProps>(
         <div class={styles["date-container"]}>
           <Date createdAt={createdAt} updatedAt={updatedAt} />
         </div>
+
+        <Slot />
 
         {image && (
           <ElmBlockImage
