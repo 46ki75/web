@@ -90,7 +90,9 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
 
   return (
     <div class={styles["blog-search"]}>
-      <ElmTextField value={searchKeyword} label="Keyword" icon="search" />
+      <div style={{ marginBlock: "2rem" }}>
+        <ElmTextField value={searchKeyword} label="Keyword" icon="search" />
+      </div>
 
       <ElmHeading level={2}>Tags</ElmHeading>
 
@@ -138,10 +140,14 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
         })}
       </div>
 
-      <ElmButton onClick$={handleTagReset} block>
-        <ElmMdiIcon d={mdiTagRemove} />
-        <ElmInlineText>Reset Tags</ElmInlineText>
-      </ElmButton>
+      <div style={{ marginBlock: "2rem" }}>
+        <ElmButton onClick$={handleTagReset} block>
+          <ElmMdiIcon d={mdiTagRemove} />
+          <ElmInlineText>Reset Tags</ElmInlineText>
+        </ElmButton>
+      </div>
+
+      <ElmHeading level={2}>Search Results</ElmHeading>
 
       <div class={styles["blog-search-result"]}>
         {(searchResults.value.length > 0
