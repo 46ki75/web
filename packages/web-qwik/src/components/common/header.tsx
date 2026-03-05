@@ -6,7 +6,12 @@ import Favicon from "../../../public/static/brand/logo.svg?jsx";
 import { ElmInlineText, ElmMdiIcon, ElmToggleTheme } from "@elmethis/qwik";
 import { Language } from "./language";
 import { LinkLocale } from "./link-locale";
-import { mdiAccount } from "@mdi/js";
+import {
+  mdiAccount,
+  mdiAccountVoice,
+  mdiNoteOutline,
+  mdiOpenInNew,
+} from "@mdi/js";
 import { LanguageContext } from "~/context/language";
 
 export const Header = component$(() => {
@@ -29,6 +34,30 @@ export const Header = component$(() => {
           <ElmMdiIcon d={mdiAccount} />
           <ElmInlineText>About</ElmInlineText>
         </LinkLocale>
+
+        <ElmInlineText>|</ElmInlineText>
+
+        <LinkLocale
+          href="/blog"
+          class={styles.link}
+          lang={languageState.language}
+        >
+          <ElmMdiIcon d={mdiNoteOutline} />
+          <ElmInlineText>Blog</ElmInlineText>
+        </LinkLocale>
+
+        <ElmInlineText>|</ElmInlineText>
+
+        <a
+          href="https://speakerdeck.com/ikuma"
+          class={styles.link}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <ElmMdiIcon d={mdiAccountVoice} />
+          <ElmInlineText>Speaker Deck</ElmInlineText>
+          <ElmMdiIcon d={mdiOpenInNew} />
+        </a>
       </div>
 
       <div class={styles["header-right"]}>
