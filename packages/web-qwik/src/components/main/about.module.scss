@@ -26,3 +26,16 @@
     background-color: rgba(#59a7b5, 0.1);
   }
 }
+
+.badge-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(6rem, 1fr));
+  gap: 2rem 0.25rem;
+  user-select: none;
+}
+
+.badge-container-fallback {
+  position: relative;
+  width: 100%;
+  height: 32rem;
+}

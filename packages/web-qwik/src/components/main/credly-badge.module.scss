@@ -1,0 +1,48 @@
+.badge {
+  all: unset;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: column;
+  max-width: 7rem;
+  opacity: 1;
+  transition: opacity 200ms;
+  cursor: pointer;
+  flex-grow: 1;
+}
+
+.badge:hover {
+  opacity: 0.8;
+}
+
+.image {
+  box-sizing: border-box;
+  padding: 0.5rem;
+  max-width: 100%;
+  height: auto;
+}
+
+.p {
+  font-size: 0.5rem;
+  line-height: 0.75rem;
+  font-weight: bold;
+  margin: 0;
+  padding: 0.25rem 0;
+  box-sizing: border-box;
+  height: 3rem;
+  text-align: center;
+  color: var(--elm-color-text-secondary, #3e434b);
+}
+
+:local([data-theme="dark"]) .p {
+  color: #adb3be;
+}
+
+.grid {
+  opacity: 0.7;
+  display: grid;
+  place-items: center;
+  grid-template-columns: 1fr 5fr 7fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 0.25rem 0;
+}
