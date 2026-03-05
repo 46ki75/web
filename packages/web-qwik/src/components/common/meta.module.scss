@@ -4,3 +4,9 @@
   display: flex;
   justify-content: flex-end;
 }
+
+.divider {
+  margin-block-end: 1rem;
+  border: none;
+  border-bottom: 1px dashed rgba(gray, 0.5);
+}

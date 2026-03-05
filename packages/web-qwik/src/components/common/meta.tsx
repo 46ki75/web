@@ -19,6 +19,8 @@ export const Meta = component$<MetaProps>(
       <div>
         <ElmBreadcrumb links={links} />
 
+        <hr class={styles.divider} />
+
         <ElmHeading level={1}>{title}</ElmHeading>
         <div class={styles["date-container"]}>
           <Date createdAt={createdAt} updatedAt={updatedAt} />
