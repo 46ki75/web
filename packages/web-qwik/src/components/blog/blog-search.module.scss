@@ -1,7 +1,32 @@
+.tag-pool {
+  margin-block: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  user-select: none;
+}
+
+.tag-wrapper {
+  box-sizing: border-box;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  transition: background-color 200ms;
+  cursor: pointer;
+
+  &.add:hover {
+    background-color: rgba(#59a7b5, 0.1);
+  }
+
+  &.remove:hover {
+    background-color: rgba(#c56565, 0.1);
+  }
+}
+
 .blog-search-result {
   container-type: inline-size;
   container-name: blog-card-list;
 
+  margin-block: 2rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;

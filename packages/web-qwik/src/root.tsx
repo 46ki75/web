@@ -24,6 +24,7 @@ export default component$(() => {
   const blogState = useStore<BlogState>({
     blogMeta: { en: [], ja: [] },
     tags: [],
+    selectedTagIds: [],
   });
   useContextProvider(BlogContext, blogState);
 

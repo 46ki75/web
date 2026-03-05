@@ -10,6 +10,8 @@ export interface BlogState {
   >;
 
   tags: paths["/api/v2/blog/tag"]["get"]["responses"]["200"]["content"]["application/json"];
+
+  selectedTagIds: string[];
 }
 
 export const BlogContext = createContextId<BlogState>("blog.global");
