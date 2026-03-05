@@ -111,7 +111,14 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
 
       <ElmHeading level={2}>Selected Tags</ElmHeading>
 
-      <div class={styles["tag-pool"]}>
+      <div
+        class={[
+          styles["tag-pool"],
+          {
+            [styles["empty"]]: blogState.selectedTagIds.length === 0,
+          },
+        ]}
+      >
         {blogState.selectedTagIds.map((tagId) => {
           const tag = blogState.tags.find((t) => t.id === tagId);
           if (tag == null) return null;

@@ -8,11 +8,19 @@
 }
 
 .tag-pool {
+  box-sizing: border-box;
   margin-block: 2rem;
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 0.5rem;
   user-select: none;
+
+  height: 8rem;
+
+  &.empty {
+    border: 1px dashed rgba(gray, 0.5);
+  }
 }
 
 .tag-wrapper {
