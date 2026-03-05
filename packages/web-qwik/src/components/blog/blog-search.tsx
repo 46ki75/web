@@ -23,12 +23,15 @@ import { Language } from "~/types";
 import { BlogCard } from "./blog-card";
 import { Tag } from "../common/tag";
 import { mdiTagRemove } from "@mdi/js";
+import { Meta } from "../common/meta";
+import { useNavigate } from "@builder.io/qwik-city";
 
 export type BlogSearchProps = {
   language: Language;
 };
 
 export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
+  const nav = useNavigate();
   const blogState = useContext(BlogContext);
 
   const searchKeyword = useSignal("");
@@ -89,82 +92,110 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
   });
 
   return (
-    <div class={styles["blog-search"]}>
-      <div style={{ marginBlock: "2rem" }}>
-        <ElmTextField value={searchKeyword} label="Keyword" icon="search" />
-      </div>
-
-      <ElmHeading level={2}>Tags</ElmHeading>
-
-      <div class={styles["tag-pool"]}>
-        {blogState.tags.map((tag) => (
-          <span
-            key={tag.id}
-            class={[styles["tag-wrapper"], styles["add"]]}
-            onClick$={() => handleTagAdd(tag.id)}
-          >
-            <Tag
-              name={language === "en" ? tag.name_en : tag.name_ja}
-              src={tag.icon_url!}
-            />
-          </span>
-        ))}
-      </div>
-
-      <ElmHeading level={2}>Selected Tags</ElmHeading>
-
-      <div
-        class={[
-          styles["tag-pool"],
+    <>
+      <Meta
+        title="Blog Search"
+        createdAt="2026-03-05"
+        updatedAt="2026-03-05"
+        links={[
           {
-            [styles["empty"]]: blogState.selectedTagIds.length === 0,
+            text: "Home",
+            onClick$: $(() => nav(language === "en" ? "/" : `/${language}`)),
+          },
+          {
+            text: "Blog",
+            onClick$: $(() =>
+              nav(language === "en" ? "/blog" : `/${language}/blog`),
+            ),
+          },
+          {
+            text: "Search",
+            onClick$: $(() =>
+              nav(
+                language === "en" ? "/blog/search" : `/${language}/blog/search`,
+              ),
+            ),
           },
         ]}
-      >
-        {blogState.selectedTagIds.map((tagId) => {
-          const tag = blogState.tags.find((t) => t.id === tagId);
-          if (tag == null) return null;
+      />
 
-          return (
+      <div class={styles["blog-search"]}>
+        <div style={{ marginBlock: "2rem" }}>
+          <ElmTextField value={searchKeyword} label="Keyword" icon="search" />
+        </div>
+
+        <ElmHeading level={2}>Tags</ElmHeading>
+
+        <div class={styles["tag-pool"]}>
+          {blogState.tags.map((tag) => (
             <span
               key={tag.id}
-              class={[styles["tag-wrapper"], styles["remove"]]}
-              onClick$={() => handleTagRemove(tag.id)}
+              class={[styles["tag-wrapper"], styles["add"]]}
+              onClick$={() => handleTagAdd(tag.id)}
             >
               <Tag
                 name={language === "en" ? tag.name_en : tag.name_ja}
                 src={tag.icon_url!}
               />
             </span>
-          );
-        })}
-      </div>
+          ))}
+        </div>
 
-      <div style={{ marginBlock: "2rem" }}>
-        <ElmButton onClick$={handleTagReset} block>
-          <ElmMdiIcon d={mdiTagRemove} />
-          <ElmInlineText>Reset Tags</ElmInlineText>
-        </ElmButton>
-      </div>
+        <ElmHeading level={2}>Selected Tags</ElmHeading>
 
-      <ElmHeading level={2}>Search Results</ElmHeading>
+        <div
+          class={[
+            styles["tag-pool"],
+            {
+              [styles["empty"]]: blogState.selectedTagIds.length === 0,
+            },
+          ]}
+        >
+          {blogState.selectedTagIds.map((tagId) => {
+            const tag = blogState.tags.find((t) => t.id === tagId);
+            if (tag == null) return null;
 
-      <div class={styles["blog-search-result"]}>
-        {(searchResults.value.length > 0
-          ? searchResults.value
-          : blogState.blogMeta[language]
-        ).map((blog, index) => (
-          <BlogCard
-            key={blog.slug}
-            blog={blog}
-            tags={blogState.tags?.filter((tag) =>
-              blog.tag_ids?.includes(tag.id),
-            )}
-            language={language}
-            delay={(index + 1) * 100}
-          />
-        ))}
+            return (
+              <span
+                key={tag.id}
+                class={[styles["tag-wrapper"], styles["remove"]]}
+                onClick$={() => handleTagRemove(tag.id)}
+              >
+                <Tag
+                  name={language === "en" ? tag.name_en : tag.name_ja}
+                  src={tag.icon_url!}
+                />
+              </span>
+            );
+          })}
+        </div>
+
+        <div style={{ marginBlock: "2rem" }}>
+          <ElmButton onClick$={handleTagReset} block>
+            <ElmMdiIcon d={mdiTagRemove} />
+            <ElmInlineText>Reset Tags</ElmInlineText>
+          </ElmButton>
+        </div>
+
+        <ElmHeading level={2}>Search Results</ElmHeading>
+
+        <div class={styles["blog-search-result"]}>
+          {(searchResults.value.length > 0
+            ? searchResults.value
+            : blogState.blogMeta[language]
+          ).map((blog, index) => (
+            <BlogCard
+              key={blog.slug}
+              blog={blog}
+              tags={blogState.tags?.filter((tag) =>
+                blog.tag_ids?.includes(tag.id),
+              )}
+              language={language}
+              delay={(index + 1) * 100}
+            />
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 });
