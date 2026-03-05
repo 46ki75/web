@@ -1,4 +1,4 @@
-import { component$ } from "@builder.io/qwik";
+import { component$, useContext } from "@builder.io/qwik";
 import { version } from "../../../package.json";
 import ImgFavicon from "../../../public/static/brand/favicon.svg?jsx";
 import ImgGitHub from "../../../public/static/image/github.svg?jsx";
@@ -7,12 +7,11 @@ import styles from "./footer.module.scss";
 import { ElmInlineText, ElmMdiIcon } from "@elmethis/qwik";
 import { LinkLocale } from "./link-locale";
 import { mdiLinkVariant, mdiOpenInNew, mdiSitemap } from "@mdi/js";
+import { LanguageContext } from "~/context/language";
 
-export type FooterProps = {
-  language: string;
-};
+export const Footer = component$(() => {
+  const languageState = useContext(LanguageContext);
 
-export const Footer = component$<FooterProps>(({ language }) => {
   const currentYear = new Date().getFullYear();
   const dateBuildMeta = new Date().toISOString().slice(0, 10).replace(/-/g, "");
   const build = `v${version}+${dateBuildMeta}`;
@@ -30,17 +29,29 @@ export const Footer = component$<FooterProps>(({ language }) => {
             </span>
           </div>
 
-          <LinkLocale lang={language} class={styles.sitelink} href="/about">
+          <LinkLocale
+            lang={languageState.language}
+            class={styles.sitelink}
+            href="/about"
+          >
             <ElmMdiIcon d={mdiLinkVariant} color="#6987b8" />
             <ElmInlineText>About</ElmInlineText>
           </LinkLocale>
 
-          <LinkLocale lang={language} class={styles.sitelink} href="/privacy">
+          <LinkLocale
+            lang={languageState.language}
+            class={styles.sitelink}
+            href="/privacy"
+          >
             <ElmMdiIcon d={mdiLinkVariant} color="#6987b8" />
             <ElmInlineText>Privacy Policy</ElmInlineText>
           </LinkLocale>
 
-          <LinkLocale lang={language} class={styles.sitelink} href="/blog">
+          <LinkLocale
+            lang={languageState.language}
+            class={styles.sitelink}
+            href="/blog"
+          >
             <ElmMdiIcon d={mdiLinkVariant} color="#6987b8" />
             <ElmInlineText>Blogs</ElmInlineText>
           </LinkLocale>
@@ -59,7 +70,11 @@ export const Footer = component$<FooterProps>(({ language }) => {
         <hr class={styles.hr} />
         <div class={styles.bottom}>
           <div class={styles.left}>
-            <LinkLocale lang={language} href="/" class={styles.hiddenMobile}>
+            <LinkLocale
+              lang={languageState.language}
+              href="/"
+              class={styles.hiddenMobile}
+            >
               <ImgFavicon class={styles.favicon} />
             </LinkLocale>
 
