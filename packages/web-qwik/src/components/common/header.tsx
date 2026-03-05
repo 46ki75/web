@@ -9,7 +9,7 @@ import { LinkLocale } from "./link-locale";
 import {
   mdiAccount,
   mdiAccountVoice,
-  mdiNoteOutline,
+  mdiNotebookMultiple,
   mdiOpenInNew,
 } from "@mdi/js";
 import { LanguageContext } from "~/context/language";
@@ -42,7 +42,7 @@ export const Header = component$(() => {
           class={styles.link}
           lang={languageState.language}
         >
-          <ElmMdiIcon d={mdiNoteOutline} />
+          <ElmMdiIcon d={mdiNotebookMultiple} />
           <ElmInlineText>Blog</ElmInlineText>
         </LinkLocale>
 
