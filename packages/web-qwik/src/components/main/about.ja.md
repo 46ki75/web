@@ -1,4 +1,6 @@
-Ikuma Yamashita (山下 生真)です。普段はAWSを使ったインフラ寄りのクラウドエンジニアとして仕事をしています。IaC は特に好きなものは無いですが仕事では Terraform/OpenTofu, AWS CDK. Pulumi, Ansibleなどを使うことが多いです。
+Ikuma Yamashita (山下 生真)です。
+
+AWSを使ったインフラ寄りのクラウドエンジニアとして仕事をしています。IaC は特に好きなものは無いですが仕事では Terraform/OpenTofu, AWS CDK. Pulumi, Ansibleなどを使うことが多いです。
 
 技術的には、Linuxカーネルやネットワークプロトコルのような基底の仕組みを理解するのが好きで、システムプログラミングと Web が主戦場です。特にRustが好きで、趣味では AWS Lambda の Rust ランタイムをはじめとする OSS のコントリビューターです。
 
