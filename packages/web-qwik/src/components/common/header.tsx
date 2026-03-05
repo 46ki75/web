@@ -1,22 +1,40 @@
-import { component$ } from "@builder.io/qwik";
+import { component$, useContext } from "@builder.io/qwik";
 
 import styles from "./header.module.scss";
 
 import Favicon from "../../../public/static/brand/logo.svg?jsx";
-import { ElmToggleTheme } from "@elmethis/qwik";
+import { ElmInlineText, ElmMdiIcon, ElmToggleTheme } from "@elmethis/qwik";
 import { Language } from "./language";
 import { LinkLocale } from "./link-locale";
+import { mdiAccount } from "@mdi/js";
+import { LanguageContext } from "~/context/language";
 
 export const Header = component$(() => {
+  const languageState = useContext(LanguageContext);
+
   return (
     <header class={styles.header}>
-      <LinkLocale href="/">
-        <Favicon style={{ height: "1.5rem", width: "min-content" }} />
-      </LinkLocale>
+      <div class={styles["header-left"]}>
+        <LinkLocale href="/" class={styles.link} lang={languageState.language}>
+          <Favicon style={{ height: "1.5rem", width: "min-content" }} />
+        </LinkLocale>
+      </div>
 
-      <Language />
+      <div class={styles["header-center"]}>
+        <LinkLocale
+          href="/about"
+          class={styles.link}
+          lang={languageState.language}
+        >
+          <ElmMdiIcon d={mdiAccount} />
+          <ElmInlineText>About</ElmInlineText>
+        </LinkLocale>
+      </div>
 
-      <ElmToggleTheme />
+      <div class={styles["header-right"]}>
+        <Language />
+        <ElmToggleTheme />
+      </div>
     </header>
   );
 });
