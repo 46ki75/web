@@ -6,7 +6,7 @@ import ImgGitHub from "../../../public/static/image/github.svg?jsx";
 import styles from "./footer.module.scss";
 import { ElmInlineText, ElmMdiIcon } from "@elmethis/qwik";
 import { LinkLocale } from "./link-locale";
-import { mdiSitemap } from "@mdi/js";
+import { mdiLinkVariant, mdiOpenInNew, mdiSitemap } from "@mdi/js";
 
 export type FooterProps = {
   language: string;
@@ -26,28 +26,23 @@ export const Footer = component$<FooterProps>(({ language }) => {
               class={styles.heading}
               style={{ fontSize: "1em", fontWeight: "bold" }}
             >
-              SITE
+              <ElmInlineText>SITE</ElmInlineText>
             </span>
           </div>
 
           <LinkLocale lang={language} class={styles.sitelink} href="/about">
+            <ElmMdiIcon d={mdiLinkVariant} color="#6987b8" />
             <ElmInlineText>About</ElmInlineText>
           </LinkLocale>
 
           <LinkLocale lang={language} class={styles.sitelink} href="/privacy">
+            <ElmMdiIcon d={mdiLinkVariant} color="#6987b8" />
             <ElmInlineText>Privacy Policy</ElmInlineText>
           </LinkLocale>
 
           <LinkLocale lang={language} class={styles.sitelink} href="/blog">
+            <ElmMdiIcon d={mdiLinkVariant} color="#6987b8" />
             <ElmInlineText>Blogs</ElmInlineText>
-          </LinkLocale>
-
-          <LinkLocale
-            lang={language}
-            class={styles.sitelink}
-            href="/image-converter"
-          >
-            <ElmInlineText>WASM Image Converter (Beta)</ElmInlineText>
           </LinkLocale>
 
           <a
@@ -56,6 +51,7 @@ export const Footer = component$<FooterProps>(({ language }) => {
             target="_blank"
             rel="noopener noreferrer"
           >
+            <ElmMdiIcon d={mdiOpenInNew} color="#6987b8" />
             <ElmInlineText>Speaker Deck</ElmInlineText>
           </a>
         </div>
