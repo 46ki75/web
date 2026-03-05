@@ -1,12 +1,14 @@
-import { component$ } from "@builder.io/qwik";
+import { $, component$, useContext } from "@builder.io/qwik";
 
 import styles from "./blog-card.module.scss";
+
 import { paths } from "../../../openapi/schema";
-import { Link } from "@builder.io/qwik-city";
+import { Link, useNavigate } from "@builder.io/qwik-city";
 import { Language } from "~/types";
 import { ElmInlineText } from "@elmethis/qwik";
 import { Tag } from "../common/tag";
 import { Date } from "../common/date";
+import { BlogContext } from "~/context/blog";
 
 export interface BlogCardProps {
   blog: paths["/api/v2/blog/{slug}"]["get"]["responses"]["200"]["content"]["application/json"]["meta"];
@@ -17,6 +19,17 @@ export interface BlogCardProps {
 
 export const BlogCard = component$<BlogCardProps>(
   ({ blog, tags, language, delay = 0 }) => {
+    const blogState = useContext(BlogContext);
+
+    const nav = useNavigate();
+
+    const handleTagClick = $(async (tagId: string) => {
+      blogState.selectedTagIds = [tagId];
+      await nav(
+        language === "en" ? "/blog/search" : `/${language}/blog/search`,
+      );
+    });
+
     return (
       <div
         key={blog.page_id}
@@ -60,11 +73,16 @@ export const BlogCard = component$<BlogCardProps>(
 
         <div class={styles["blog-card-tag-container"]}>
           {tags.map((tag) => (
-            <Tag
+            <span
               key={tag.id}
-              name={language === "ja" ? tag.name_ja : tag.name_en}
-              src={tag.icon_url!}
-            />
+              class={styles.tag}
+              onClick$={() => handleTagClick(tag.id!)}
+            >
+              <Tag
+                name={language === "ja" ? tag.name_ja : tag.name_en}
+                src={tag.icon_url!}
+              />
+            </span>
           ))}
         </div>
       </div>

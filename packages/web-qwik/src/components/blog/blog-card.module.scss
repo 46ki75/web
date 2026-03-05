@@ -99,3 +99,15 @@
     background-color: rgba(black, 0.2);
   }
 }
+
+.tag {
+  box-sizing: border-box;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  transition: background-color 200ms;
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgba(#59a7b5, 0.1);
+  }
+}
