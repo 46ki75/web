@@ -40,6 +40,7 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
   useTask$(({ track }) => {
     track(() => searchKeyword.value);
     track(() => language);
+    track(() => blogState.selectedTagIds);
 
     if (fuseInstance.value == null) {
       fuseInstance.value = noSerialize(
@@ -54,10 +55,16 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
       );
     }
 
-    if (!(searchKeyword.value.trim() === "") && fuseInstance.value != null) {
-      const results = fuseInstance.value
-        .search(searchKeyword.value, { limit: 10 })
-        ?.map(({ item }) => item);
+    if (fuseInstance.value != null) {
+      const results =
+        fuseInstance.value
+          .search(searchKeyword.value, { limit: 10 })
+          ?.map(({ item }) => item)
+          .filter((blog) =>
+            blogState.selectedTagIds.every((tagId) =>
+              blog.tag_ids?.includes(tagId),
+            ),
+          ) ?? [];
 
       searchResults.value = results;
     } else {
