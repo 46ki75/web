@@ -1,3 +1,12 @@
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 .badge {
   all: unset;
   display: flex;
@@ -9,6 +18,8 @@
   transition: opacity 200ms;
   cursor: pointer;
   flex-grow: 1;
+  animation: fade-in 400ms ease both;
+  animation-delay: var(--delay);
 }
 
 .badge:hover {

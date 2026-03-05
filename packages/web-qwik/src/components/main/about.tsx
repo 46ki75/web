@@ -161,7 +161,7 @@ export const About = component$<AboutProps>(({ language }) => {
             onRejected={() => <div>Failed to load badges.</div>}
             onResolved={(badges) => (
               <>
-                {badges.map((badge: any) => (
+                {badges.map((badge: any, index) => (
                   <CredlyBadge
                     key={badge.id}
                     src={badge.badge_template.image_url}
@@ -170,6 +170,7 @@ export const About = component$<AboutProps>(({ language }) => {
                     name={badge.badge_template.name}
                     issued_at_date={badge.issued_at_date}
                     expires_at_date={badge.expires_at_date}
+                    delay={25 * index}
                   />
                 ))}
               </>

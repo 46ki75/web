@@ -10,16 +10,18 @@ export interface CredlyBadgeProps {
   href: string;
   issued_at_date: string;
   expires_at_date?: string | null;
+  delay: number;
 }
 
 export const CredlyBadge = component$<CredlyBadgeProps>(
-  ({ name, src, alt, href, issued_at_date, expires_at_date = "-" }) => {
+  ({ name, src, alt, href, issued_at_date, expires_at_date = "-", delay }) => {
     return (
       <a
         class={styles.badge}
         href={href}
         target="_blank"
         rel="noopener noreferrer"
+        style={{ "--delay": `${delay}ms` }}
       >
         <img
           class={styles.image}
