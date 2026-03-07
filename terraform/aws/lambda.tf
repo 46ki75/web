@@ -191,6 +191,7 @@ resource "aws_lambda_function" "nitro" {
   environment {
     variables = {
       STAGE_NAME = terraform.workspace
+      VITE_STAGE_NAME = terraform.workspace
     }
   }
 }

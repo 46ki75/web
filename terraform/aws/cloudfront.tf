@@ -300,7 +300,6 @@ resource "aws_cloudfront_distribution" "default" {
       "/assets/*", 
       "/build/*", 
       "/favicon.ico", 
-      "/robot.txt", 
       "/manifest.json", 
       "/q-manifest.json"
     ]
