@@ -17,18 +17,20 @@ import { BlogContext } from "~/context/blog";
 import { Tag } from "../common/tag";
 
 import styles from "./blog-article.module.scss";
+import { BlogAuthor } from "./blog-author";
+import { Language } from "~/types";
 
 export interface ArticleProps {
   slug: string;
-  lang: string;
+  language: Language;
 }
 
-export const BlogArticle = component$<ArticleProps>(({ slug, lang }) => {
+export const BlogArticle = component$<ArticleProps>(({ slug, language }) => {
   const blogState = useContext(BlogContext);
 
   const jarkup = useResource$(async ({ track }) => {
     const trackedSlug = track(() => slug);
-    const trackedLang = track(() => lang);
+    const trackedLang = track(() => language);
 
     const { data: blogContents } = await client.GET("/api/v2/blog/{slug}", {
       params: {
@@ -47,7 +49,7 @@ export const BlogArticle = component$<ArticleProps>(({ slug, lang }) => {
 
   const handleTagClick = $(async (tagId: string) => {
     blogState.selectedTagIds = [tagId];
-    await nav(lang === "en" ? "/blog/search" : `/${lang}/blog/search`);
+    await nav(language === "en" ? "/blog/search" : `/${language}/blog/search`);
   });
 
   return (
@@ -61,25 +63,27 @@ export const BlogArticle = component$<ArticleProps>(({ slug, lang }) => {
               title={data.meta.title}
               createdAt={data.meta.created_at}
               updatedAt={data.meta.updated_at}
-              image={`/api/v2/blog/${slug}/og-image?lang=${lang}`}
+              image={`/api/v2/blog/${slug}/og-image?lang=${language}`}
               links={[
                 {
                   text: "Home",
-                  onClick$: $(() => nav(lang === "en" ? "/" : `/${lang}`)),
+                  onClick$: $(() =>
+                    nav(language === "en" ? "/" : `/${language}`),
+                  ),
                 },
                 {
                   text: "Blog",
                   onClick$: $(() =>
-                    nav(lang === "en" ? "/blog" : `/${lang}/blog`),
+                    nav(language === "en" ? "/blog" : `/${language}/blog`),
                   ),
                 },
                 {
                   text: "Article",
                   onClick$: $(() =>
                     nav(
-                      lang === "en"
+                      language === "en"
                         ? `/blog/article/${slug}`
-                        : `/${lang}/blog/article/${slug}`,
+                        : `/${language}/blog/article/${slug}`,
                     ),
                   ),
                 },
@@ -95,7 +99,9 @@ export const BlogArticle = component$<ArticleProps>(({ slug, lang }) => {
                       onClick$={() => handleTagClick(tag!.id!)}
                     >
                       <Tag
-                        name={(lang === "en" ? tag?.name_en : tag?.name_ja)!}
+                        name={
+                          (language === "en" ? tag?.name_en : tag?.name_ja)!
+                        }
                         src={tag!.icon_url!}
                       ></Tag>
                     </span>
@@ -103,6 +109,8 @@ export const BlogArticle = component$<ArticleProps>(({ slug, lang }) => {
               </div>
             </Meta>
             <ElmJarkup jsonComponents={data.components} />
+
+            <BlogAuthor language={language} />
           </article>
         )}
         // TODO: Handle errors properly

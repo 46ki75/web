@@ -1,0 +1,42 @@
+.author {
+  box-sizing: border-box;
+  padding: 0.5rem;
+  border: 1px solid rgba(gray, 0.25);
+  border-radius: 0.25rem;
+  display: grid;
+  grid-template-columns: 8rem 1fr;
+  grid-template-rows: auto auto auto;
+  gap: 0.5rem 1rem;
+  grid-template-areas:
+    "icon name"
+    "icon content"
+    "icon links";
+}
+
+.icon {
+  margin: 0;
+  width: 8rem;
+  height: 8rem;
+  border-radius: 0.25rem;
+  grid-area: icon;
+}
+
+.links {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  gap: 0.5rem;
+  grid-area: links;
+}
+
+.link-icon {
+  padding: 0;
+  height: 2rem;
+  width: 2rem;
+  fill: gray;
+  transition: opacity 200ms;
+
+  &:hover {
+    opacity: 0.5;
+  }
+}
