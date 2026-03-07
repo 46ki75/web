@@ -27,7 +27,7 @@
 
   transition: background-color 200ms;
 
-  background-color: rgba(white, 0.3);
+  background-color: rgba(white, 0.5);
 
   [data-theme="dark"] & {
     background-color: rgba(black, 0.1);
