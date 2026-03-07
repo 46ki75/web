@@ -8,11 +8,10 @@ Disallow:
 Sitemap: ${ENDPOINT}/sitemap-index.xml
 `.trim() + "\n";
 
-const stageName = process.env.VITE_STAGE_NAME ?? "dev";
-const DOMAIN =
-  stageName === "prod" ? "www-ikuma.cloud" : `${stageName}-www.ikuma.cloud`;
-
 export const onGet: RequestHandler = async (ev) => {
+  const stageName = ev.env.get("STAGE_NAME");
+  const DOMAIN =
+    stageName === "prod" ? "www-ikuma.cloud" : `${stageName}-www.ikuma.cloud`;
   const content = TEMPLATE(`https://${DOMAIN}`);
 
   ev.send(
