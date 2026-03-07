@@ -127,7 +127,7 @@ resource "aws_iam_role_policy_attachment" "events_invoke_lambda_policy_attachmen
 resource "aws_scheduler_schedule" "cache_warmer" {
   name                         = "${terraform.workspace}-46ki75-web-scheduler-cache_warmer"
   group_name                   = "default"
-  state                        = "ENABLED"
+  state                        = "DISABLED"
   schedule_expression_timezone = "Asia/Tokyo"
 
   schedule_expression = "rate(15 minutes)"
