@@ -10,8 +10,15 @@ Sitemap: ${ENDPOINT}/sitemap-index.xml
 
 export const onGet: RequestHandler = async (ev) => {
   const stageName = ev.env.get("STAGE_NAME");
+
+  if (!stageName) {
+    ev.send(new Response("STAGE_NAME is not set", { status: 500 }));
+    return;
+  }
+
   const DOMAIN =
     stageName === "prod" ? "www-ikuma.cloud" : `${stageName}-www.ikuma.cloud`;
+
   const content = TEMPLATE(`https://${DOMAIN}`);
 
   ev.send(
