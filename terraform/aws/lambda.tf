@@ -170,7 +170,7 @@ resource "aws_lambda_function" "nitro" {
   function_name = "${terraform.workspace}-46ki75-web-lambda-function-nitro"
   role          = aws_iam_role.lambda_role_nitro.arn
   filename      = "${path.module}/assets/bootstrap.zip"
-  handler       = "index.handler"
+  handler       = "entry_aws-lambda.handler"
   runtime       = "nodejs22.x"
   architectures = ["arm64"]
   memory_size   = 512
