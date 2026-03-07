@@ -137,6 +137,9 @@ importers:
       openapi-fetch:
         specifier: ^0.14.1
         version: 0.14.1
+      sitemap:
+        specifier: ^9.0.0
+        version: 9.0.0
     devDependencies:
       '@builder.io/qwik':
         specifier: ^1.19.0
