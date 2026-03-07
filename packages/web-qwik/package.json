@@ -24,6 +24,9 @@
     "qwik": "qwik",
     "predeploy": "pnpm run build",
     "deploy": "./scripts/deploy-s3.sh && ./scripts/deploy-lambda.sh",
+    "deploy:dev": "STAGE_NAME=dev pnpm run deploy",
+    "deploy:stg": "STAGE_NAME=stg pnpm run deploy",
+    "deploy:prod": "STAGE_NAME=prod pnpm run deploy",
     "postdeploy": "./scripts/invalidate.sh"
   },
   "devDependencies": {
