@@ -293,49 +293,40 @@ resource "aws_cloudfront_distribution" "default" {
   # <<< [Nitro] origin
 
   # # >>> [S3 web] origin
-  ordered_cache_behavior {
-    path_pattern = "/static/*"
-    allowed_methods = [
-      "GET",
-      "HEAD",
-      "OPTIONS"
+
+  dynamic "ordered_cache_behavior" {
+    for_each = [
+      "/static/*", 
+      "/assets/*", 
+      "/build/*", 
+      "/favicon.ico", 
+      "/robot.txt", 
+      "/manifest.json", 
+      "/q-manifest.json"
     ]
-    cached_methods         = ["GET", "HEAD"]
-    viewer_protocol_policy = "redirect-to-https"
-    target_origin_id       = "s3-web"
+    iterator = path_pattern
 
-    cache_policy_id            = aws_cloudfront_cache_policy.s3.id
-    origin_request_policy_id   = aws_cloudfront_origin_request_policy.all_viewer.id
-    response_headers_policy_id = aws_cloudfront_response_headers_policy.security.id
+    content {
+      path_pattern = path_pattern.value
+      allowed_methods = [
+        "GET",
+        "HEAD",
+        "OPTIONS"
+      ]
+      cached_methods         = ["GET", "HEAD"]
+      viewer_protocol_policy = "redirect-to-https"
+      target_origin_id       = "s3-web"
 
-    compress = true
+      cache_policy_id            = aws_cloudfront_cache_policy.s3.id
+      origin_request_policy_id   = aws_cloudfront_origin_request_policy.all_viewer.id
+      response_headers_policy_id = aws_cloudfront_response_headers_policy.security.id
 
-    function_association {
-      event_type   = "viewer-request"
-      function_arn = aws_cloudfront_function.rename_uri.arn
-    }
-  }
+      compress = true
 
-  ordered_cache_behavior {
-    path_pattern = "/_nuxt/*"
-    allowed_methods = [
-      "GET",
-      "HEAD",
-      "OPTIONS"
-    ]
-    cached_methods         = ["GET", "HEAD"]
-    viewer_protocol_policy = "redirect-to-https"
-    target_origin_id       = "s3-web"
-
-    cache_policy_id            = aws_cloudfront_cache_policy.s3.id
-    origin_request_policy_id   = aws_cloudfront_origin_request_policy.all_viewer.id
-    response_headers_policy_id = aws_cloudfront_response_headers_policy.security.id
-
-    compress = true
-
-    function_association {
-      event_type   = "viewer-request"
-      function_arn = aws_cloudfront_function.rename_uri.arn
+      function_association {
+        event_type   = "viewer-request"
+        function_arn = aws_cloudfront_function.rename_uri.arn
+      }
     }
   }
 
