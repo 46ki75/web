@@ -56,7 +56,7 @@ export const BlogArticle = component$<ArticleProps>(({ slug, language }) => {
     <>
       <Resource
         value={jarkup}
-        onPending={() => <ElmBlockFallback />}
+        onPending={() => <ElmBlockFallback height={"calc(100vh - 8rem)"} />}
         onResolved={(data) => (
           <article>
             <Meta
