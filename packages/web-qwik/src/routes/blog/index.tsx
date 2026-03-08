@@ -1,5 +1,6 @@
 import { component$ } from "@builder.io/qwik";
+import { BlogIndex } from "~/components/blog/blog-index";
 
 export default component$(() => {
-  return <>TODO: BLOG TOP PAGE</>;
+  return <BlogIndex language="en" />;
 });
