@@ -79,13 +79,29 @@
   flex-direction: column;
   gap: 0.5rem;
 
-  .side-card-content-description {
-    opacity: 0.75;
+  @container blog-card-list (min-width: 480px) {
+    width: 70%;
+    height: auto;
+  }
+}
+
+.blog-card-content-title {
+  @container blog-card-list (min-width: 480px) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    span {
+      white-space: nowrap;
+    }
   }
 }
 
 .blog-card-content-description {
   opacity: 0.6;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
 }
 
 .blog-card-tag-container {

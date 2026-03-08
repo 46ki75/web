@@ -57,13 +57,12 @@ export const BlogCard = component$<BlogCardProps>(
             />
 
             <div class={styles["blog-card-content"]}>
-              <ElmInlineText bold>{blog.title}</ElmInlineText>
+              <span class={styles["blog-card-content-title"]}>
+                <ElmInlineText bold>{blog.title}</ElmInlineText>
+              </span>
 
               <div class={styles["blog-card-content-description"]}>
-                <ElmInlineText size="0.8rem">
-                  {blog.description.substring(0, 250)}
-                  {blog.description.length > 250 ? "..." : ""}
-                </ElmInlineText>
+                <ElmInlineText size="0.75rem">{blog.description}</ElmInlineText>
               </div>
 
               <Date createdAt={blog.created_at} updatedAt={blog.updated_at} />

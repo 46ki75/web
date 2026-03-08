@@ -6,10 +6,20 @@ import { Language } from "~/types";
 import { BlogCard } from "./blog-card";
 import { Meta } from "../common/meta";
 import { useNavigate } from "@builder.io/qwik-city";
+import { ElmHeading } from "@elmethis/qwik";
 
 export interface BlogIndexProps {
   language: Language;
 }
+
+const translations = {
+  en: {
+    featured: "Featured",
+  },
+  ja: {
+    featured: "おすすめ",
+  },
+};
 
 export const BlogIndex = component$<BlogIndexProps>(({ language }) => {
   const nav = useNavigate();
@@ -33,6 +43,12 @@ export const BlogIndex = component$<BlogIndexProps>(({ language }) => {
             ),
           },
         ]}
+      />
+
+      <ElmHeading
+        level={2}
+        text={translations[language].featured}
+        style={{ "--margin-block": "2rem" }}
       />
 
       <div class={styles["blog-card-list"]}>
