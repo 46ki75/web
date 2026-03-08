@@ -52,17 +52,19 @@ export const BlogIndex = component$<BlogIndexProps>(({ language }) => {
       />
 
       <div class={styles["blog-card-list"]}>
-        {blogState.blogMeta[language].map((blog, index) => (
-          <BlogCard
-            key={blog.page_id}
-            blog={blog}
-            tags={blogState.tags?.filter((tag) =>
-              blog.tag_ids?.includes(tag.id),
-            )}
-            language={language}
-            delay={(index + 1) * 100}
-          ></BlogCard>
-        ))}
+        {blogState.blogMeta[language]
+          .filter(({ featured }) => featured)
+          .map((blog, index) => (
+            <BlogCard
+              key={blog.page_id}
+              blog={blog}
+              tags={blogState.tags?.filter((tag) =>
+                blog.tag_ids?.includes(tag.id),
+              )}
+              language={language}
+              delay={(index + 1) * 100}
+            ></BlogCard>
+          ))}
       </div>
     </div>
   );
