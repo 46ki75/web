@@ -53,12 +53,12 @@ export const BlogArticle = component$<ArticleProps>(({ slug, language }) => {
   });
 
   return (
-    <>
+    <article>
       <Resource
         value={jarkup}
         onPending={() => <ElmBlockFallback height={"calc(100vh - 8rem)"} />}
         onResolved={(data) => (
-          <article>
+          <>
             <Meta
               title={data.meta.title}
               createdAt={data.meta.created_at}
@@ -111,11 +111,11 @@ export const BlogArticle = component$<ArticleProps>(({ slug, language }) => {
             <ElmJarkup jsonComponents={data.components} />
 
             <BlogAuthor language={language} />
-          </article>
+          </>
         )}
         // TODO: Handle errors properly
         // onRejected={(err) => <p>Error: {err.message}</p>}
       />
-    </>
+    </article>
   );
 });
