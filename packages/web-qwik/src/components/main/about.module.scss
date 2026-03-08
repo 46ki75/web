@@ -28,6 +28,7 @@
 }
 
 .badge-container {
+  margin: 2rem 0;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(6rem, 1fr));
   gap: 2rem 0.25rem;

@@ -127,9 +127,9 @@ export const About = component$<AboutProps>(({ language }) => {
 
         <ElmMarkdown markdown={translation[language].markdown} />
 
-        <div aria-hidden style={{ marginBlock: "2rem" }}></div>
-
-        <ElmHeading level={2}>Find me on</ElmHeading>
+        <ElmHeading level={2} style={{ "--margin-block": "2rem" }}>
+          Find me on
+        </ElmHeading>
 
         <div class={styles["link-container"]}>
           {links.map((link) => (
@@ -146,7 +146,9 @@ export const About = component$<AboutProps>(({ language }) => {
           ))}
         </div>
 
-        <ElmHeading level={2}>Credly Badge Wallet</ElmHeading>
+        <ElmHeading level={2} style={{ "--margin-block": "2rem" }}>
+          Credly Badge Wallet
+        </ElmHeading>
 
         <ElmMarkdown markdown={translation[language].credly} />
 
