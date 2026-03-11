@@ -11,6 +11,11 @@
     "icon name"
     "icon content"
     "icon links";
+  background-color: rgba(white, 0.5);
+
+  [data-theme="dark"] & {
+    background-color: rgba(black, 0.25);
+  }
 }
 
 .icon {
