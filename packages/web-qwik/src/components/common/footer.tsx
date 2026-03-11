@@ -92,7 +92,7 @@ export const Footer = component$(() => {
             <a
               class={styles.icon}
               rel="noopener noreferrer"
-              href="/sitemap.xml"
+              href="/sitemap-index.xml"
               target="_blank"
               aria-label="Sitemap"
             >
