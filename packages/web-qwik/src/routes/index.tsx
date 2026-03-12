@@ -1,14 +1,9 @@
 import { component$ } from "@builder.io/qwik";
 import { type DocumentHead } from "@builder.io/qwik-city";
-
-import { LayerDecoration } from "~/components/main/layer-decoration";
+import { Home } from "~/components/main/home";
 
 export default component$(() => {
-  return (
-    <div>
-      <LayerDecoration />
-    </div>
-  );
+  return <Home language="en" />;
 });
 
 export const head: DocumentHead = {
