@@ -3,6 +3,7 @@ import { type DocumentHead } from "@builder.io/qwik-city";
 import { LinkLocale } from "~/components/common/link-locale";
 
 import { Meta } from "~/components/common/meta";
+import { LayerDecoration } from "~/components/main/layer-decoration";
 
 export default component$(() => {
   return (
@@ -23,6 +24,8 @@ export default component$(() => {
         <LinkLocale href="/blog/article/leather-shoes-painting/">
           <span style={{ fontSize: 64 }}>BLOG Sample</span>
         </LinkLocale>
+
+        <LayerDecoration />
       </div>
     </div>
   );
