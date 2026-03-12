@@ -1,6 +1,8 @@
 .about {
-  display: flex;
-  justify-content: center;
+  box-sizing: border-box;
+  padding: 1rem;
+  width: 100%;
+  min-height: calc(100vh - 3.5rem);
 }
 
 .link-container {

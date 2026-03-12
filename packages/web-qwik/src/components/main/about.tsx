@@ -1,4 +1,4 @@
-import { $, Resource, component$, useResource$ } from "@builder.io/qwik";
+import { Resource, component$, useResource$ } from "@builder.io/qwik";
 import { server$ } from "@builder.io/qwik-city";
 
 import styles from "./about.module.scss";
@@ -12,9 +12,6 @@ import {
   ElmMarkdown,
   ElmRectangleWave,
 } from "@elmethis/qwik";
-import { MainContainer } from "../common/main-container";
-import { Meta } from "../common/meta";
-import { useNavigate } from "@builder.io/qwik-city";
 
 import GitHubIcon from "../../assets/icons/github.svg?url";
 import XIcon from "../../assets/icons/x.svg?url";
@@ -98,88 +95,75 @@ const fetchBadges = server$(async () => {
 });
 
 export const About = component$<AboutProps>(({ language }) => {
-  const nav = useNavigate();
-
   const badgesResource = useResource$<any[]>(() => {
     return fetchBadges();
   });
 
   return (
     <div class={styles["about"]}>
-      <MainContainer>
-        <Meta
-          title={translation[language].title}
-          createdAt="2023-10-01"
-          updatedAt="2026-02-06"
-          links={[
-            {
-              text: "Home",
-              onClick$: $(() => nav(language === "en" ? "/" : "/ja/")),
-            },
-            {
-              text: "About",
-              onClick$: $(() =>
-                nav(language === "en" ? "/about" : "/ja/about"),
-              ),
-            },
-          ]}
+      <h1>
+        <ElmInlineText size="2.125rem">
+          {translation[language].title}
+        </ElmInlineText>
+      </h1>
+
+      <ElmMarkdown
+        markdown={translation[language].markdown}
+        style={{ "--margin-block": "1rem" }}
+      />
+
+      <ElmHeading level={2} style={{ "--margin-block": "2rem" }}>
+        Find me on
+      </ElmHeading>
+
+      <div class={styles["link-container"]}>
+        {links.map((link) => (
+          <a
+            key={link.text}
+            class={styles["link"]}
+            href={link.href}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img width={40} height={40} src={link.image} alt={link.text} />
+            <ElmInlineText size="0.75rem">{link.text}</ElmInlineText>
+          </a>
+        ))}
+      </div>
+
+      <ElmHeading level={2} style={{ "--margin-block": "2rem" }}>
+        Credly Badge Wallet
+      </ElmHeading>
+
+      <ElmMarkdown markdown={translation[language].credly} />
+
+      <div class={styles["badge-container"]}>
+        <Resource
+          value={badgesResource}
+          onPending={() => (
+            <div class={styles["badge-container-fallback"]}>
+              <ElmRectangleWave />
+            </div>
+          )}
+          onRejected={() => <div>Failed to load badges.</div>}
+          onResolved={(badges) => (
+            <>
+              {badges.map((badge: any, index) => (
+                <CredlyBadge
+                  key={badge.id}
+                  src={badge.badge_template.image_url}
+                  alt={badge.badge_template.description}
+                  href={badge.badge_template.url}
+                  name={badge.badge_template.name}
+                  issued_at_date={badge.issued_at_date}
+                  expires_at_date={badge.expires_at_date}
+                  delay={25 * index}
+                />
+              ))}
+            </>
+          )}
         />
-
-        <ElmMarkdown markdown={translation[language].markdown} />
-
-        <ElmHeading level={2} style={{ "--margin-block": "2rem" }}>
-          Find me on
-        </ElmHeading>
-
-        <div class={styles["link-container"]}>
-          {links.map((link) => (
-            <a
-              key={link.text}
-              class={styles["link"]}
-              href={link.href}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <img width={40} height={40} src={link.image} alt={link.text} />
-              <ElmInlineText size="0.75rem">{link.text}</ElmInlineText>
-            </a>
-          ))}
-        </div>
-
-        <ElmHeading level={2} style={{ "--margin-block": "2rem" }}>
-          Credly Badge Wallet
-        </ElmHeading>
-
-        <ElmMarkdown markdown={translation[language].credly} />
-
-        <div class={styles["badge-container"]}>
-          <Resource
-            value={badgesResource}
-            onPending={() => (
-              <div class={styles["badge-container-fallback"]}>
-                <ElmRectangleWave />
-              </div>
-            )}
-            onRejected={() => <div>Failed to load badges.</div>}
-            onResolved={(badges) => (
-              <>
-                {badges.map((badge: any, index) => (
-                  <CredlyBadge
-                    key={badge.id}
-                    src={badge.badge_template.image_url}
-                    alt={badge.badge_template.description}
-                    href={badge.badge_template.url}
-                    name={badge.badge_template.name}
-                    issued_at_date={badge.issued_at_date}
-                    expires_at_date={badge.expires_at_date}
-                    delay={25 * index}
-                  />
-                ))}
-              </>
-            )}
-          />
-        </div>
-      </MainContainer>
+      </div>
     </div>
   );
 });
