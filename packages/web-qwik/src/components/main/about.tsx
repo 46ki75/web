@@ -6,6 +6,7 @@ import en from "./about.en.md?raw";
 import ja from "./about.ja.md?raw";
 import { Language } from "~/types";
 import { ElmInlineText, ElmMarkdown } from "@elmethis/qwik";
+import { FindMeOn } from "./find-me-on";
 
 export interface AboutProps {
   language: Language;
@@ -36,6 +37,8 @@ export const About = component$<AboutProps>(({ language }) => {
           markdown={translation[language].markdown}
           style={{ "--margin-block": "1rem" }}
         />
+
+        <FindMeOn />
       </div>
     </div>
   );

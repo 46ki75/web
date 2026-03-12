@@ -1,5 +1,5 @@
 import { component$ } from "@builder.io/qwik";
-import { ElmHeading, ElmInlineText } from "@elmethis/qwik";
+import { ElmInlineText } from "@elmethis/qwik";
 
 import GitHubIcon from "../../assets/icons/github.svg?url";
 import XIcon from "../../assets/icons/x.svg?url";
@@ -40,10 +40,6 @@ const links = [
 export const FindMeOn = component$(() => {
   return (
     <>
-      <ElmHeading level={2} style={{ "--margin-block": "2rem" }}>
-        Find me on
-      </ElmHeading>
-
       <div class={styles["link-container"]}>
         {links.map((link) => (
           <a
