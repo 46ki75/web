@@ -1,6 +1,9 @@
+import { routeLoader$ } from "@builder.io/qwik-city";
 import { component$ } from "@builder.io/qwik";
-import { About } from "~/components/main/about";
 
-export default component$(() => {
-  return <About language="en" />;
+export const useRedirect = routeLoader$(({ redirect }) => {
+  throw redirect(308, "/");
 });
+
+// A default export is still required for the route to exist
+export default component$(() => <></>);
