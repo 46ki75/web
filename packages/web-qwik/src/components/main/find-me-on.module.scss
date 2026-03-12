@@ -15,10 +15,14 @@
   align-items: center;
   gap: 0.5rem;
   cursor: pointer;
-  transition: opacity 200ms;
+  filter: grayscale(100%);
+  transition:
+    opacity 200ms,
+    filter 400ms;
 
   &:hover {
     opacity: 0.8;
     background-color: rgba(#59a7b5, 0.1);
+    filter: grayscale(0%);
   }
 }
