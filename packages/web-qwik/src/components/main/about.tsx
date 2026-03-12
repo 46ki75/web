@@ -7,9 +7,6 @@ import ja from "./about.ja.md?raw";
 import { Language } from "~/types";
 import { ElmInlineText, ElmMarkdown } from "@elmethis/qwik";
 
-import { FindMeOn } from "./find-me-on";
-import { CredlyBadgeWallet } from "./credly-badge-wallet";
-
 export interface AboutProps {
   language: Language;
 }
@@ -28,20 +25,18 @@ const translation: Record<
 export const About = component$<AboutProps>(({ language }) => {
   return (
     <div class={styles["about"]}>
-      <h1>
-        <ElmInlineText size="2.125rem">
-          {translation[language].title}
-        </ElmInlineText>
-      </h1>
+      <div>
+        <h1>
+          <ElmInlineText size="2.125rem">
+            {translation[language].title}
+          </ElmInlineText>
+        </h1>
 
-      <ElmMarkdown
-        markdown={translation[language].markdown}
-        style={{ "--margin-block": "1rem" }}
-      />
-
-      <FindMeOn />
-
-      <CredlyBadgeWallet language={language} />
+        <ElmMarkdown
+          markdown={translation[language].markdown}
+          style={{ "--margin-block": "1rem" }}
+        />
+      </div>
     </div>
   );
 });
