@@ -7,8 +7,8 @@ import { ElmInlineText, ElmMdiIcon, ElmToggleTheme } from "@elmethis/qwik";
 import { Language } from "./language";
 import { LinkLocale } from "./link-locale";
 import {
-  mdiAccount,
   mdiAccountVoice,
+  mdiHome,
   mdiNotebookMultiple,
   mdiOpenInNew,
 } from "@mdi/js";
@@ -26,13 +26,9 @@ export const Header = component$(() => {
       </div>
 
       <div class={styles["header-center"]}>
-        <LinkLocale
-          href="/about"
-          class={styles.link}
-          lang={languageState.language}
-        >
-          <ElmMdiIcon d={mdiAccount} />
-          <ElmInlineText>About</ElmInlineText>
+        <LinkLocale href="/" class={styles.link} lang={languageState.language}>
+          <ElmMdiIcon d={mdiHome} />
+          <ElmInlineText>Home</ElmInlineText>
         </LinkLocale>
 
         <ElmInlineText>|</ElmInlineText>
