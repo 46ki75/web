@@ -1,9 +1,18 @@
 .about {
   box-sizing: border-box;
-  padding: 1rem;
-  width: 100%;
+  padding: 0 8rem;
+  width: 1024px;
   min-height: calc(100vh - 3.5rem);
   display: flex;
   justify-content: center;
   align-items: center;
+
+  @media (width < 1024px) {
+    width: 100%;
+    padding: 0 2rem;
+  }
+
+  @media (width < 512px) {
+    padding: 2rem 1rem;
+  }
 }
