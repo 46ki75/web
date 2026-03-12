@@ -1,7 +1,17 @@
+.fixed {
+  position: fixed;
+  top: 24rem;
+  right: 0;
+  opacity: 0.2;
+  user-select: none;
+  pointer-events: none;
+}
+
 .layer-decoration {
   position: relative;
   width: 50vmin;
-  height: 50vmin;
+  height: auto;
+  aspect-ratio: 1 / 1;
 
   transform: rotateX(75deg) rotateZ(30deg);
   transform-style: preserve-3d;
@@ -23,7 +33,7 @@
     position: absolute;
     top: 0;
     left: 100%;
-    width: var(--layer-thickness, 2rem);
+    width: var(--layer-thickness, 4rem);
     height: 100%;
     background-color: var(--layer-side-right);
     transform-origin: left;
@@ -36,7 +46,7 @@
     top: 100%;
     left: 0;
     width: 100%;
-    height: var(--layer-thickness, 2rem);
+    height: var(--layer-thickness, 4rem);
     background-color: var(--layer-side-bottom);
     transform-origin: top;
     transform: rotateX(-90deg);
@@ -56,7 +66,7 @@
   --layer-bg: #{rgba(#59a7b5, 0.25)};
   --layer-side-right: #{rgba(#59a7b5, 0.3)};
   --layer-side-bottom: #{rgba(#59a7b5, 0.4)};
-  --layer-tz: 5rem;
+  --layer-tz: 7rem;
 }
 
 .layer-blue {
@@ -64,7 +74,7 @@
   --layer-bg: #{rgba(#6987b8, 0.25)};
   --layer-side-right: #{rgba(#6987b8, 0.3)};
   --layer-side-bottom: #{rgba(#6987b8, 0.4)};
-  --layer-tz: 8rem;
+  --layer-tz: 12rem;
 }
 
 .layer-purple {
@@ -72,7 +82,7 @@
   --layer-bg: #{rgba(#9771bd, 0.25)};
   --layer-side-right: #{rgba(#9771bd, 0.3)};
   --layer-side-bottom: #{rgba(#9771bd, 0.4)};
-  --layer-tz: 11rem;
+  --layer-tz: 17rem;
 }
 
 .layer-pink {
@@ -80,5 +90,5 @@
   --layer-bg: #{rgba(#c9699e, 0.25)};
   --layer-side-right: #{rgba(#c9699e, 0.3)};
   --layer-side-bottom: #{rgba(#c9699e, 0.4)};
-  --layer-tz: 14rem;
+  --layer-tz: 22rem;
 }
