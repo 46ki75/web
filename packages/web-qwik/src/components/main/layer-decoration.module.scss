@@ -2,14 +2,14 @@
   position: fixed;
   top: 24rem;
   right: 0;
-  opacity: 0.2;
+  opacity: 0.15;
   user-select: none;
   pointer-events: none;
 }
 
 .layer-decoration {
   position: relative;
-  width: 50vmin;
+  width: max(30vw, 16rem);
   height: auto;
   aspect-ratio: 1 / 1;
 
