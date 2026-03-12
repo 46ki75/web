@@ -22,7 +22,13 @@
 
   &:hover {
     opacity: 0.8;
-    background-color: rgba(#59a7b5, 0.1);
+    background-color: rgba(#6987b8, 0.1);
     filter: grayscale(0%);
   }
+}
+
+.link-icon {
+  width: 2rem;
+  height: 2rem;
+  fill: gray;
 }
