@@ -7,6 +7,7 @@ import { BlogCard } from "./blog-card";
 import { Meta } from "../common/meta";
 import { useNavigate } from "@builder.io/qwik-city";
 import { ElmHeading, ElmParagraph } from "@elmethis/qwik";
+import { BlogAuthor } from "./blog-author";
 
 export interface BlogIndexProps {
   language: Language;
@@ -15,11 +16,13 @@ export interface BlogIndexProps {
 const translations = {
   en: {
     featured: "Featured",
+    recent: "Recent",
     description:
       "This blog primarily publishes articles about software engineering and AWS. I have also started publishing blogs about how to draw illustrations. The types of articles provided may vary depending on the language.",
   },
   ja: {
     featured: "おすすめ",
+    recent: "最近の記事",
     description:
       "このブログは主にソフトウェア工学と AWS に関する記事を公開しています。イラストの描き方に関するブログの公開も開始しました。提供される記事の種類は、言語によって異なる場合があります。",
   },
@@ -73,6 +76,33 @@ export const BlogIndex = component$<BlogIndexProps>(({ language }) => {
               delay={(index + 1) * 100}
             ></BlogCard>
           ))}
+      </div>
+
+      <ElmHeading
+        level={2}
+        text={translations[language].recent}
+        style={{ "--margin-block": "2rem" }}
+      />
+
+      <div class={styles["blog-card-list"]}>
+        {blogState.blogMeta[language]
+          .sort((a, b) => b.created_at.localeCompare(a.created_at))
+          .slice(0, 3)
+          .map((blog, index) => (
+            <BlogCard
+              key={blog.page_id}
+              blog={blog}
+              tags={blogState.tags?.filter((tag) =>
+                blog.tag_ids?.includes(tag.id),
+              )}
+              language={language}
+              delay={(index + 1) * 100}
+            ></BlogCard>
+          ))}
+      </div>
+
+      <div style={{ marginBlockStart: "2rem" }}>
+        <BlogAuthor language={language} />
       </div>
     </div>
   );
