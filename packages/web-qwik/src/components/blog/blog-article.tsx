@@ -17,7 +17,6 @@ import { BlogContext } from "~/context/blog";
 import { Tag } from "../common/tag";
 
 import styles from "./blog-article.module.scss";
-import { BlogAuthor } from "./blog-author";
 import { Language } from "~/types";
 
 export interface ArticleProps {
@@ -109,8 +108,6 @@ export const BlogArticle = component$<ArticleProps>(({ slug, language }) => {
               </div>
             </Meta>
             <ElmJarkup jsonComponents={data.components} />
-
-            <BlogAuthor language={language} />
           </>
         )}
         // TODO: Handle errors properly

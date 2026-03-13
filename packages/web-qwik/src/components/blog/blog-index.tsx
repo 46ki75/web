@@ -7,7 +7,6 @@ import { BlogCard } from "./blog-card";
 import { Meta } from "../common/meta";
 import { useNavigate } from "@builder.io/qwik-city";
 import { ElmHeading, ElmParagraph } from "@elmethis/qwik";
-import { BlogAuthor } from "./blog-author";
 
 export interface BlogIndexProps {
   language: Language;
@@ -97,8 +96,6 @@ export const BlogIndex = component$<BlogIndexProps>(({ language }) => {
           ></BlogCard>
         ))}
       </div>
-
-      <BlogAuthor language={language} />
     </div>
   );
 });

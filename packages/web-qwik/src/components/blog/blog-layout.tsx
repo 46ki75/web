@@ -41,7 +41,7 @@ export const BlogLayout = component$<BlogLayoutProps>(({ language }) => {
 
   return (
     <div class={styles["blog-layout"]}>
-      <BlogMain>
+      <BlogMain language={language}>
         <Slot />
       </BlogMain>
 
