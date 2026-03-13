@@ -14,6 +14,7 @@ export const generateBlogMeta = ({
     url,
     title: blogMeta.title,
     description: blogMeta.description,
+    ogType: "article",
     ogImage: `${origin()}/api/v2/blog/${blogMeta.slug}/og-image?lang=${language}`,
     language,
   });

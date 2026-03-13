@@ -17,13 +17,15 @@ export const origin = () => {
 export const generateHead = ({
   url,
   title,
-  description,
-  ogImage,
+  description = "Personal blog and portfolio",
   language,
+  ogType,
+  ogImage,
 }: {
   url: string;
   title: string;
   language: Language;
+  ogType: "article" | "website" | "profile";
   description?: string;
   ogImage?: string;
 }) => {
@@ -31,13 +33,21 @@ export const generateHead = ({
     title: title,
     meta: [
       {
+        name: "og:site_name",
+        content: "SrcJar",
+      },
+      {
+        name: "og:type",
+        content: ogType,
+      },
+      {
         name: "description",
-        content: description || "Personal blog and portfolio",
+        content: description,
       },
       { property: "og:title", content: title },
       {
         property: "og:description",
-        content: description || "Personal blog and portfolio",
+        content: description,
       },
       { property: "og:url", content: url },
       {
@@ -50,6 +60,30 @@ export const generateHead = ({
           en: "en_US",
           ja: "ja_JP",
         }[language],
+      },
+      {
+        name: "twitter:card",
+        content: "summary_large_image",
+      },
+      {
+        name: "twitter:title",
+        content: title,
+      },
+      {
+        name: "twitter:description",
+        content: description,
+      },
+      {
+        name: "twitter:image",
+        content: ogImage,
+      },
+      {
+        name: "twitter:creator",
+        content: "@ikuma_cloud",
+      },
+      {
+        name: "twitter:site",
+        content: "@ikuma_cloud",
       },
     ],
     links: [{ rel: "canonical", href: url }],

@@ -15,6 +15,7 @@ export const head: DocumentHead = ({ resolveValue }) => {
   const headBase = generateHead({
     url,
     title: "SrcJar",
+    ogType: "profile",
     description: "Personal blog and portfolio",
     language: "en",
   });
