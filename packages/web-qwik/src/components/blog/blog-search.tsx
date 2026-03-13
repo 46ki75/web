@@ -30,6 +30,21 @@ export type BlogSearchProps = {
   language: Language;
 };
 
+const translations = {
+  en: {
+    tags: "Tags",
+    selectedTags: "Selected Tags",
+    searchResults: "Search Results",
+    resetTags: "Reset Tags",
+  },
+  ja: {
+    tags: "タグ",
+    selectedTags: "選択中のタグ",
+    searchResults: "検索結果",
+    resetTags: "タグ選択をリセット",
+  },
+};
+
 export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
   const nav = useNavigate();
   const blogState = useContext(BlogContext);
@@ -124,7 +139,7 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
           <ElmTextField value={searchKeyword} label="Keyword" icon="search" />
         </div>
 
-        <ElmHeading level={2}>Tags</ElmHeading>
+        <ElmHeading level={2}>{translations[language].tags}</ElmHeading>
 
         <div class={styles["tag-pool"]}>
           {blogState.tags.map((tag) => (
@@ -141,7 +156,7 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
           ))}
         </div>
 
-        <ElmHeading level={2}>Selected Tags</ElmHeading>
+        <ElmHeading level={2}>{translations[language].selectedTags}</ElmHeading>
 
         <div
           class={[
@@ -173,11 +188,13 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
         <div style={{ marginBlock: "2rem" }}>
           <ElmButton onClick$={handleTagReset} block>
             <ElmMdiIcon d={mdiTagRemove} />
-            <ElmInlineText>Reset Tags</ElmInlineText>
+            <ElmInlineText>{translations[language].resetTags}</ElmInlineText>
           </ElmButton>
         </div>
 
-        <ElmHeading level={2}>Search Results</ElmHeading>
+        <ElmHeading level={2}>
+          {translations[language].searchResults}
+        </ElmHeading>
 
         <div class={styles["blog-search-result"]}>
           {(searchResults.value.length > 0
