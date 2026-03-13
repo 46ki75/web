@@ -1,3 +1,16 @@
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.blog-article {
+  animation: 800ms ease 0ms 1 normal both running fade-in;
+}
+
 .tag-container {
   margin-bottom: 1rem;
   display: flex;
