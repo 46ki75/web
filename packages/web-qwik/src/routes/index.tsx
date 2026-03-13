@@ -16,6 +16,7 @@ export const head: DocumentHead = ({ resolveValue }) => {
     url,
     title: "SrcJar",
     description: "Personal blog and portfolio",
+    language: "en",
   });
 
   return headBase;

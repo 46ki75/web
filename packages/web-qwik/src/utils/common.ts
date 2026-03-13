@@ -1,4 +1,5 @@
 import { isServer } from "@builder.io/qwik";
+import { Language } from "~/types";
 
 export const origin = () => {
   if (isServer) {
@@ -18,9 +19,11 @@ export const generateHead = ({
   title,
   description,
   ogImage,
+  language,
 }: {
   url: string;
   title: string;
+  language: Language;
   description?: string;
   ogImage?: string;
 }) => {
@@ -40,6 +43,13 @@ export const generateHead = ({
       {
         property: "og:image",
         content: ogImage,
+      },
+      {
+        property: "og:locale",
+        content: {
+          en: "en_US",
+          ja: "ja_JP",
+        }[language],
       },
     ],
     links: [{ rel: "canonical", href: url }],
