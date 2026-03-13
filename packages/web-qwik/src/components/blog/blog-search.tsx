@@ -74,15 +74,21 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
     }
 
     if (fuseInstance.value != null) {
+      const fuseSearchResults =
+        searchKeyword.value.trim() === ""
+          ? blogState.blogMeta[language]
+          : fuseInstance.value
+              .search(searchKeyword.value, {
+                limit: 10,
+              })
+              .map(({ item }) => item);
+
       const results =
-        fuseInstance.value
-          .search(searchKeyword.value, { limit: 10 })
-          ?.map(({ item }) => item)
-          .filter((blog) =>
-            blogState.selectedTagIds.every((tagId) =>
-              blog.tag_ids?.includes(tagId),
-            ),
-          ) ?? [];
+        fuseSearchResults.filter((blog) =>
+          blogState.selectedTagIds.every((tagId) =>
+            blog.tag_ids?.includes(tagId),
+          ),
+        ) ?? [];
 
       searchResults.value = results;
     } else {
