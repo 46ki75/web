@@ -1,17 +1,22 @@
 import { component$ } from "@builder.io/qwik";
-import { type DocumentHead } from "@builder.io/qwik-city";
+import { routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
 import { Home } from "~/components/main/home";
+import { generateHead } from "~/utils/common";
 
 export default component$(() => {
   return <Home language="en" />;
 });
 
-export const head: DocumentHead = {
-  title: "Welcome to Qwik",
-  meta: [
-    {
-      name: "description",
-      content: "Qwik site description",
-    },
-  ],
+export const useUrl = routeLoader$(({ url }) => url.toString());
+
+export const head: DocumentHead = ({ resolveValue }) => {
+  const url = resolveValue(useUrl);
+
+  const headBase = generateHead({
+    url,
+    title: "SrcJar",
+    description: "Personal blog and portfolio",
+  });
+
+  return headBase;
 };
