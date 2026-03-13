@@ -85,20 +85,17 @@ export const BlogIndex = component$<BlogIndexProps>(({ language }) => {
       />
 
       <div class={styles["blog-card-list"]}>
-        {blogState.blogMeta[language]
-          .sort((a, b) => b.created_at.localeCompare(a.created_at))
-          .slice(0, 3)
-          .map((blog, index) => (
-            <BlogCard
-              key={blog.page_id}
-              blog={blog}
-              tags={blogState.tags?.filter((tag) =>
-                blog.tag_ids?.includes(tag.id),
-              )}
-              language={language}
-              delay={(index + 1) * 100}
-            ></BlogCard>
-          ))}
+        {blogState.blogMeta[language].slice(0, 3).map((blog, index) => (
+          <BlogCard
+            key={blog.page_id}
+            blog={blog}
+            tags={blogState.tags?.filter((tag) =>
+              blog.tag_ids?.includes(tag.id),
+            )}
+            language={language}
+            delay={(index + 1) * 100}
+          ></BlogCard>
+        ))}
       </div>
 
       <div style={{ marginBlockStart: "2rem" }}>

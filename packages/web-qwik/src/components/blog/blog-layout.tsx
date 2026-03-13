@@ -24,7 +24,9 @@ export const BlogLayout = component$<BlogLayoutProps>(({ language }) => {
       });
 
       if (blogMeta != null) {
-        blogState.blogMeta[language] = blogMeta;
+        blogState.blogMeta[language] = blogMeta.sort((a, b) =>
+          b.created_at.localeCompare(a.created_at),
+        );
       }
     }
 
