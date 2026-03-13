@@ -6,7 +6,7 @@ import { Language } from "~/types";
 import { BlogCard } from "./blog-card";
 import { Meta } from "../common/meta";
 import { useNavigate } from "@builder.io/qwik-city";
-import { ElmHeading } from "@elmethis/qwik";
+import { ElmHeading, ElmParagraph } from "@elmethis/qwik";
 
 export interface BlogIndexProps {
   language: Language;
@@ -15,9 +15,13 @@ export interface BlogIndexProps {
 const translations = {
   en: {
     featured: "Featured",
+    description:
+      "This blog primarily publishes articles about software engineering and AWS. I have also started publishing blogs about how to draw illustrations. The types of articles provided may vary depending on the language.",
   },
   ja: {
     featured: "おすすめ",
+    description:
+      "このブログは主にソフトウェア工学と AWS に関する記事を公開しています。イラストの描き方に関するブログの公開も開始しました。提供される記事の種類は、言語によって異なる場合があります。",
   },
 };
 
@@ -44,6 +48,10 @@ export const BlogIndex = component$<BlogIndexProps>(({ language }) => {
           },
         ]}
       />
+
+      <div style={{ "--margin-block": "2rem" }}>
+        <ElmParagraph>{translations[language].description}</ElmParagraph>
+      </div>
 
       <ElmHeading
         level={2}
