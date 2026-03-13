@@ -6,7 +6,7 @@ import { Language } from "~/types";
 import ImgProfileIcon from "../../assets/icons/profile-icon.webp?jsx";
 import ImgGitHubIcon from "../../assets/icons/github.svg?jsx";
 
-import { ElmInlineText } from "@elmethis/qwik";
+import { ElmInlineText, ElmParagraph } from "@elmethis/qwik";
 
 export interface BlogAuthorProps {
   language: Language;
@@ -30,7 +30,7 @@ export const BlogAuthor = component$<BlogAuthorProps>(({ language }) => {
       <ElmInlineText bold size="1.1rem">
         Ikuma Yamashita
       </ElmInlineText>
-      <ElmInlineText>{translations[language]?.selfIntroduction}</ElmInlineText>
+      <ElmParagraph>{translations[language]?.selfIntroduction}</ElmParagraph>
       <div class={styles["links"]}>
         <a
           href="https://github.com/46ki75"

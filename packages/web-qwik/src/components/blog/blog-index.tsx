@@ -98,9 +98,7 @@ export const BlogIndex = component$<BlogIndexProps>(({ language }) => {
         ))}
       </div>
 
-      <div style={{ marginBlockStart: "2rem" }}>
-        <BlogAuthor language={language} />
-      </div>
+      <BlogAuthor language={language} />
     </div>
   );
 });
