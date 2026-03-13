@@ -12,3 +12,36 @@ export const origin = () => {
     return location.origin;
   }
 };
+
+export const generateHead = ({
+  url,
+  title,
+  description,
+  ogImage,
+}: {
+  url: string;
+  title: string;
+  description?: string;
+  ogImage?: string;
+}) => {
+  return {
+    title: title,
+    meta: [
+      {
+        name: "description",
+        content: description || "Personal blog and portfolio",
+      },
+      { property: "og:title", content: title },
+      {
+        property: "og:description",
+        content: description || "Personal blog and portfolio",
+      },
+      { property: "og:url", content: url },
+      {
+        property: "og:image",
+        content: ogImage,
+      },
+    ],
+    links: [{ rel: "canonical", href: url }],
+  };
+};

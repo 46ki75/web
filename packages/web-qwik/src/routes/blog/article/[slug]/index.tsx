@@ -7,7 +7,7 @@ import { generateBlogMeta } from "~/utils/blog/seo";
 
 const LANGUAGE = "en";
 
-export const useBlogMeta = routeLoader$(async ({ params }) => {
+export const useBlogMeta = routeLoader$(async ({ params, url }) => {
   const { data: blogMeta } = await client.GET("/api/v2/blog/{slug}", {
     params: {
       header: { "accept-language": LANGUAGE },
@@ -15,14 +15,15 @@ export const useBlogMeta = routeLoader$(async ({ params }) => {
     },
   });
 
-  return blogMeta?.meta;
+  return { meta: blogMeta!.meta, url: url.toString() };
 });
 
 export const head: DocumentHead = ({ resolveValue }) => {
   const blogMeta = resolveValue(useBlogMeta);
 
   return generateBlogMeta({
-    blogMeta: blogMeta!,
+    url: blogMeta!.url,
+    blogMeta: blogMeta!.meta,
     language: LANGUAGE,
   });
 };

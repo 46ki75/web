@@ -1,32 +1,19 @@
 import type { BlogMeta, Language } from "~/types";
-import { origin } from "../common";
+import { generateHead, origin } from "../common";
 
 export const generateBlogMeta = ({
+  url,
   blogMeta,
   language,
 }: {
+  url: string;
   blogMeta: BlogMeta;
   language: Language;
-}) => ({
-  title: blogMeta ? blogMeta.title : "Blog Article",
-  meta: [
-    {
-      name: "description",
-      content: blogMeta ? blogMeta.description : "Blog Article",
-    },
-    {
-      property: "og:title",
-      content: blogMeta ? blogMeta.title : "Blog Article",
-    },
-    {
-      property: "og:description",
-      content: blogMeta ? blogMeta.description : "Blog Article",
-    },
-    {
-      property: "og:image",
-      content: blogMeta
-        ? `${origin()}/api/v2/blog/${blogMeta.slug}/og-image?lang=${language}`
-        : "",
-    },
-  ],
-});
+}) => {
+  return generateHead({
+    url,
+    title: blogMeta.title,
+    description: blogMeta.description,
+    ogImage: `${origin()}/api/v2/blog/${blogMeta.slug}/og-image?lang=${language}`,
+  });
+};
