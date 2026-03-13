@@ -29,7 +29,9 @@ export const BlogSide = component$<BlogSideProps>(({ language }) => {
         )}
       >
         <ElmMdiIcon d={mdiBookSearch} />
-        <ElmInlineText>Search</ElmInlineText>
+        <ElmInlineText>
+          {language === "en" ? "Search Blogs" : "記事を検索"}
+        </ElmInlineText>
       </ElmButton>
 
       {blogState.blogMeta[language]?.map((blog, index) => (
