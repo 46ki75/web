@@ -17,7 +17,7 @@ export const onGet: RequestHandler = async (ev) => {
   }
 
   const DOMAIN =
-    stageName === "prod" ? "www-ikuma.cloud" : `${stageName}-www.ikuma.cloud`;
+    stageName === "prod" ? "www.ikuma.cloud" : `${stageName}-www.ikuma.cloud`;
 
   const content = TEMPLATE(`https://${DOMAIN}`);
 
