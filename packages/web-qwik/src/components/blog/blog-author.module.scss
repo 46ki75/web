@@ -49,7 +49,7 @@
   grid-area: links;
 
   @media (width < 512px) {
-    justify-content: center;
+    justify-content: flex-start;
   }
 }
 
