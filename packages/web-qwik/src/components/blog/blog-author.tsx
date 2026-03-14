@@ -38,6 +38,7 @@ export const BlogAuthor = component$<BlogAuthorProps>(({ language }) => {
           href="https://github.com/46ki75"
           target="_blank"
           rel="noopener noreferrer"
+          aria-label="GitHub"
         >
           <ImgGitHubIcon class={styles["link-icon"]} />
         </a>
