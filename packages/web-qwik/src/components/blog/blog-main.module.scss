@@ -12,4 +12,8 @@
   [data-theme="dark"] & {
     background-color: rgba(0, 0, 0, 0.2);
   }
+
+  @media (width < 580px) {
+    padding: 0.5rem;
+  }
 }
