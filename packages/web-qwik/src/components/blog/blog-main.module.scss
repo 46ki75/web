@@ -15,5 +15,7 @@
 
   @media (width < 580px) {
     padding: 0.5rem;
+    margin: 0.25rem;
+    width: calc(100% - 0.5rem);
   }
 }
