@@ -1,0 +1,66 @@
+.author {
+  box-sizing: border-box;
+  padding: 0.5rem;
+  margin-block-start: 2rem;
+  border: 1px solid rgba(gray, 0.25);
+  border-radius: 0.25rem;
+  display: grid;
+  grid-template-columns: 8rem 1fr;
+  grid-template-rows: auto auto auto;
+  gap: 0.5rem 1rem;
+  grid-template-areas:
+    "icon name"
+    "icon content"
+    "icon links";
+  background-color: rgba(white, 0.5);
+
+  [data-theme="dark"] & {
+    background-color: rgba(black, 0.25);
+  }
+
+  @media (width < 512px) {
+    grid-template-columns: 5rem 1fr;
+    grid-template-rows: auto auto auto;
+    grid-template-areas:
+      "icon name"
+      "icon content"
+      "links content";
+  }
+}
+
+.icon {
+  margin: 0;
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  height: auto;
+  border-radius: 0.25rem;
+  grid-area: icon;
+}
+
+.content {
+  grid-area: content;
+}
+
+.links {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  gap: 0.5rem;
+  grid-area: links;
+
+  @media (width < 512px) {
+    justify-content: flex-start;
+  }
+}
+
+.link-icon {
+  padding: 0;
+  height: 2rem;
+  width: 2rem;
+  fill: gray;
+  transition: opacity 200ms;
+
+  &:hover {
+    opacity: 0.5;
+  }
+}

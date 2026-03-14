@@ -1,0 +1,12 @@
+.date-container {
+  margin: 1rem 0;
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.divider {
+  margin-block-end: 1rem;
+  border: none;
+  border-bottom: 1px dashed rgba(gray, 0.5);
+}

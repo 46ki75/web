@@ -1,0 +1,33 @@
+@keyframes blod-side-fade {
+  from {
+    opacity: 0;
+    transform: translateX(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.blog-side {
+  box-sizing: border-box;
+  padding: 0 0.25rem;
+  position: sticky;
+  top: 4rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: calc(100vh - 5rem);
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  @media (width < 1320px) {
+    height: 100%;
+    max-width: 100%;
+    container-type: inline-size;
+    container-name: blog-card-list;
+    overflow-y: visible;
+  }
+}
