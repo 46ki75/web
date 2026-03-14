@@ -29,6 +29,12 @@ export const generateHead = ({
   description?: string;
   ogImage?: string;
 }) => {
+  const parsedUrl = new URL(url);
+  const enUrl = url.replace("/ja", "");
+  const jaUrl = parsedUrl.pathname.startsWith("/ja")
+    ? url
+    : `${parsedUrl.origin}/ja${parsedUrl.pathname}`;
+
   return {
     title: title,
     meta: [
@@ -86,6 +92,23 @@ export const generateHead = ({
         content: "@ikuma_cloud",
       },
     ],
-    links: [{ rel: "canonical", href: url }],
+    links: [
+      { rel: "canonical", href: url },
+      {
+        rel: "alternate",
+        href: enUrl,
+        hreflang: "x-default",
+      },
+      {
+        rel: "alternate",
+        href: enUrl,
+        hreflang: "en",
+      },
+      {
+        rel: "alternate",
+        href: jaUrl,
+        hreflang: "ja",
+      },
+    ],
   };
 };
