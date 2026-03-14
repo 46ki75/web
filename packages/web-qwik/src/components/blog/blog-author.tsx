@@ -26,7 +26,7 @@ const translations: Record<Language, { selfIntroduction: string }> = {
 export const BlogAuthor = component$<BlogAuthorProps>(({ language }) => {
   return (
     <div class={styles["author"]}>
-      <ImgProfileIcon class={styles.icon} />
+      <ImgProfileIcon class={styles.icon} alt="Profile Icon" />
       <ElmInlineText bold size="1.1rem">
         Ikuma Yamashita
       </ElmInlineText>

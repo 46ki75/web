@@ -11,7 +11,7 @@ export interface TagProps {
 export const Tag = component$<TagProps>(({ name, src }) => {
   return (
     <span class={styles["tag"]}>
-      <ElmInlineIcon src={src} />
+      <ElmInlineIcon src={src} alt={`Icon of ${name}`} />
       <ElmInlineText style={{ whiteSpace: "nowrap" }}>{name}</ElmInlineText>
     </span>
   );
