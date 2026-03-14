@@ -1,6 +1,8 @@
 import { isServer } from "@builder.io/qwik";
 import { siteConfig } from "~/meta/site-config";
 import { Language } from "~/types";
+import type { Article, WithContext } from "schema-dts";
+import { DocumentScript } from "@builder.io/qwik-city";
 
 export const origin = () => {
   if (isServer) {
@@ -35,6 +37,18 @@ export const generateHead = ({
   const jaUrl = parsedUrl.pathname.startsWith("/ja")
     ? url
     : `${parsedUrl.origin}/ja${parsedUrl.pathname}`;
+
+  const jsonLd: WithContext<Article> = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: title,
+    author: {
+      "@type": "Person",
+      name: "Ikuma Yamashita",
+      url: "https://www.ikuma.cloud",
+    },
+    image: ogImage,
+  };
 
   return {
     title: `${title} | ${siteConfig[language].siteName}`,
@@ -111,5 +125,11 @@ export const generateHead = ({
         hreflang: "ja",
       },
     ],
+    scripts: [
+      {
+        props: { type: "application/ld+json" },
+        script: JSON.stringify(jsonLd),
+      },
+    ] as DocumentScript[],
   };
 };
