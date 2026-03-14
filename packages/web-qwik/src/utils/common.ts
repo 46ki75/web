@@ -1,4 +1,5 @@
 import { isServer } from "@builder.io/qwik";
+import { siteConfig } from "~/meta/site-config";
 import { Language } from "~/types";
 
 export const origin = () => {
@@ -36,7 +37,7 @@ export const generateHead = ({
     : `${parsedUrl.origin}/ja${parsedUrl.pathname}`;
 
   return {
-    title: title,
+    title: `${title} | ${siteConfig[language].siteName}`,
     meta: [
       {
         name: "og:site_name",
