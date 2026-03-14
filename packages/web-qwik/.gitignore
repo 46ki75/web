@@ -43,3 +43,5 @@ lerna-debug.log*
 
 # AWS-lambda
 .serverless
+
+tmp/

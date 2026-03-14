@@ -25,7 +25,7 @@ errorOnDuplicatesPkgDeps(devDependencies, dependencies);
 export default defineConfig(({ command, mode }): UserConfig => {
   const env = loadEnv(mode, process.cwd());
   const stageName = env.STAGE_NAME ?? process.env.STAGE_NAME;
-  const DOMAIN = stageName === "prod" ? "www-ikuma.cloud" : `${stageName}-www.ikuma.cloud`;
+  const DOMAIN = stageName === "prod" ? "www.ikuma.cloud" : `${stageName}-www.ikuma.cloud`;
   
   return {
     define: {
