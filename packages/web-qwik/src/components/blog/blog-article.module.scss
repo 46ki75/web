@@ -14,7 +14,8 @@
 .tag-container {
   margin-bottom: 1rem;
   display: flex;
-  gap: 0.5rem;
+  flex-wrap: wrap;
+  gap: 0 0.5rem;
   user-select: none;
 }
 

@@ -12,7 +12,7 @@ export const Tag = component$<TagProps>(({ name, src }) => {
   return (
     <span class={styles["tag"]}>
       <ElmInlineIcon src={src} />
-      <ElmInlineText>{name}</ElmInlineText>
+      <ElmInlineText style={{ whiteSpace: "nowrap" }}>{name}</ElmInlineText>
     </span>
   );
 });
