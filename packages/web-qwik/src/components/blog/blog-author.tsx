@@ -30,7 +30,9 @@ export const BlogAuthor = component$<BlogAuthorProps>(({ language }) => {
       <ElmInlineText bold size="1.1rem">
         Ikuma Yamashita
       </ElmInlineText>
-      <ElmParagraph>{translations[language]?.selfIntroduction}</ElmParagraph>
+      <div class={styles["content"]}>
+        <ElmParagraph>{translations[language]?.selfIntroduction}</ElmParagraph>
+      </div>
       <div class={styles["links"]}>
         <a
           href="https://github.com/46ki75"

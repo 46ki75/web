@@ -17,14 +17,28 @@
   [data-theme="dark"] & {
     background-color: rgba(black, 0.25);
   }
+
+  @media (width < 512px) {
+    grid-template-columns: 5rem 1fr;
+    grid-template-rows: auto auto auto;
+    grid-template-areas:
+      "icon name"
+      "icon content"
+      "links content";
+  }
 }
 
 .icon {
   margin: 0;
-  width: 8rem;
-  height: 8rem;
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  height: auto;
   border-radius: 0.25rem;
   grid-area: icon;
+}
+
+.content {
+  grid-area: content;
 }
 
 .links {
@@ -33,6 +47,10 @@
   align-items: flex-end;
   gap: 0.5rem;
   grid-area: links;
+
+  @media (width < 512px) {
+    justify-content: center;
+  }
 }
 
 .link-icon {
