@@ -20,7 +20,12 @@ export const Header = component$(() => {
   return (
     <header class={styles.header}>
       <div class={styles["header-left"]}>
-        <LinkLocale href="/" class={styles.link} lang={languageState.language}>
+        <LinkLocale
+          href="/"
+          class={styles.link}
+          lang={languageState.language}
+          aria-label="To Home"
+        >
           <Favicon style={{ height: "1.5rem", width: "min-content" }} />
         </LinkLocale>
       </div>
