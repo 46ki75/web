@@ -38,6 +38,10 @@ export const generateHead = ({
     ? url
     : `${parsedUrl.origin}/ja${parsedUrl.pathname}`;
 
+  if (!ogImage) {
+    ogImage = `${parsedUrl.origin}/static/image/ogp.png`;
+  }
+
   const jsonLd: WithContext<Article> = {
     "@context": "https://schema.org",
     "@type": "Article",
