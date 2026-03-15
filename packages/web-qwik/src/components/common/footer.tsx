@@ -74,6 +74,7 @@ export const Footer = component$(() => {
               lang={languageState.language}
               href="/"
               class={styles.hiddenMobile}
+              aria-label="Home"
             >
               <ImgFavicon class={styles.favicon} />
             </LinkLocale>

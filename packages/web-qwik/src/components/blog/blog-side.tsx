@@ -21,6 +21,7 @@ export const BlogSide = component$<BlogSideProps>(({ language }) => {
     <nav class={styles["blog-side"]}>
       <Link
         href={language === "en" ? "/blog/search" : `/${language}/blog/search`}
+        aria-label="Search Blogs"
       ></Link>
 
       <ElmButton
