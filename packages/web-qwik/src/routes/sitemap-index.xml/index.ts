@@ -10,7 +10,7 @@ export const onGet: RequestHandler = async (ev) => {
   }
 
   const DOMAIN =
-    stageName === "prod" ? "www-ikuma.cloud" : `${stageName}-www.ikuma.cloud`;
+    stageName === "prod" ? "www.ikuma.cloud" : `${stageName}-www.ikuma.cloud`;
 
   const smis = new SitemapIndexStream();
   smis.write({ url: `https://${DOMAIN}/sitemap.xml` });
