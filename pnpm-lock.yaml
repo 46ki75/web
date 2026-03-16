@@ -148,8 +148,8 @@ importers:
         specifier: ^1.19.0
         version: 1.19.0(@types/node@20.19.0)(jiti@2.6.1)(less@4.5.1)(rollup@4.59.0)(sass-embedded@1.97.3)(sass@1.97.3)(stylus@0.62.0)(terser@5.44.0)(tsx@4.20.6)(typescript@5.4.5)(yaml@2.8.1)
       '@elmethis/qwik':
-        specifier: 0.0.32
-        version: 0.0.32
+        specifier: 0.0.33
+        version: 0.0.33
       '@eslint/js':
         specifier: ^9.37.0
         version: 9.37.0
@@ -626,8 +626,8 @@ packages:
   '@dual-bundle/import-meta-resolve@4.2.1':
     resolution: {integrity: sha512-id+7YRUgoUX6CgV0DtuhirQWodeeA7Lf4i2x71JS/vtA5pRb/hIGWlw+G6MeXvsM+MXrz0VAydTGElX1rAfgPg==}
 
-  '@elmethis/qwik@0.0.32':
-    resolution: {integrity: sha512-zj0j/nAvx+bOzxSsV5yBTcmMyJeHYKDVORD9x0HePh6eM604odYmg6sLW5QN2Jr/1UHwythmYwoENeFUH9rV3A==}
+  '@elmethis/qwik@0.0.33':
+    resolution: {integrity: sha512-bz2QNIRwSf2jna+3b66m/BhbJRBuaQswY+piWvuFXR7OoJWP4T2bph48zhLWtvAeT38vk40f/GdGuT7fAuV3Zg==}
     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
 
   '@elmethis/vue@0.3.1':
@@ -9623,7 +9623,7 @@ snapshots:
 
   '@dual-bundle/import-meta-resolve@4.2.1': {}
 
-  '@elmethis/qwik@0.0.32':
+  '@elmethis/qwik@0.0.33':
     dependencies:
       '@mdi/js': 7.4.47
       katex: 0.16.33
