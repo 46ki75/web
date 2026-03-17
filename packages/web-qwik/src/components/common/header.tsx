@@ -2,7 +2,7 @@ import { component$, useContext } from "@builder.io/qwik";
 
 import styles from "./header.module.scss";
 
-import Favicon from "../../../public/static/brand/logo.svg?jsx";
+import Favicon from "../../assets/brand/logo.svg?jsx";
 import { ElmInlineText, ElmMdiIcon, ElmToggleTheme } from "@elmethis/qwik";
 import { Language } from "./language";
 import { LinkLocale } from "./link-locale";
