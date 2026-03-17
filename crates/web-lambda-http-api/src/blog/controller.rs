@@ -2,6 +2,7 @@ use http::header::ACCEPT_LANGUAGE;
 
 // CDN: 1 year, Client: 10 minutes // TODO: ↓ temporary setting (0), adjust later
 static CACHE_VALUE: &str = "public, max-age=0, s-maxage=31536000";
+static BLOCK_IMAGE_CACHE_VALUE: &str = "public, max-age=31536000, s-maxage=31536000, immutable";
 
 #[derive(Debug, serde::Deserialize, utoipa::ToSchema)]
 #[serde(rename_all = "snake_case")]
@@ -266,7 +267,7 @@ pub async fn get_blog_block_image(
 
             let response = axum::response::Response::builder()
                 .header(http::header::CONTENT_TYPE, content_type)
-                .header(http::header::CACHE_CONTROL, CACHE_VALUE)
+                .header(http::header::CACHE_CONTROL, BLOCK_IMAGE_CACHE_VALUE)
                 .body(axum::body::Body::from(image_bytes.to_vec()))
                 .map_err(|e| {
                     (
