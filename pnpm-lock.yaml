@@ -148,8 +148,8 @@ importers:
         specifier: ^1.19.0
         version: 1.19.0(@types/node@20.19.0)(jiti@2.6.1)(less@4.5.1)(rollup@4.59.0)(sass-embedded@1.97.3)(sass@1.97.3)(stylus@0.62.0)(terser@5.44.0)(tsx@4.20.6)(typescript@5.4.5)(yaml@2.8.1)
       '@elmethis/qwik':
-        specifier: 0.0.33
-        version: 0.0.33
+        specifier: 0.0.35
+        version: 0.0.35
       '@eslint/js':
         specifier: ^9.37.0
         version: 9.37.0
@@ -626,8 +626,8 @@ packages:
   '@dual-bundle/import-meta-resolve@4.2.1':
     resolution: {integrity: sha512-id+7YRUgoUX6CgV0DtuhirQWodeeA7Lf4i2x71JS/vtA5pRb/hIGWlw+G6MeXvsM+MXrz0VAydTGElX1rAfgPg==}
 
-  '@elmethis/qwik@0.0.33':
-    resolution: {integrity: sha512-bz2QNIRwSf2jna+3b66m/BhbJRBuaQswY+piWvuFXR7OoJWP4T2bph48zhLWtvAeT38vk40f/GdGuT7fAuV3Zg==}
+  '@elmethis/qwik@0.0.35':
+    resolution: {integrity: sha512-bvFtuAI4s3D6WvEnR+9/EAjfVX8HI2ZkqSKPTzTThiovUp4MpX74cWpO1dO+RzPiDJDfTnkSXRwtJ3ewvhyYuA==}
     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
 
   '@elmethis/vue@0.3.1':
@@ -5575,6 +5575,10 @@ packages:
     resolution: {integrity: sha512-q3N5u+1sY9Bu7T4nlXoiRBXWfwSefNGoKeOwekV+gw0cAXQlz2Ww6BLcmBxVDeXBMUDQv6fK5bcNaJLxob3ZQA==}
     hasBin: true
 
+  katex@0.16.38:
+    resolution: {integrity: sha512-cjHooZUmIAUmDsHBN+1n8LaZdpmbj03LtYeYPyuYB7OuloiaeaV6N4LcfjcnHVzGWjVQmKrxxTrpDcmSzEZQwQ==}
+    hasBin: true
+
   keyv@4.5.4:
     resolution: {integrity: sha512-oxVHkHR/EJf2CNXnWxRLW6mg7JyCCUcG0DtEGmL2ctUo1PNTin1PUil+r/+4r5MpVgC/fn1kjsx7mjSujKqIpw==}
 
@@ -5783,6 +5787,11 @@ packages:
 
   marked@17.0.3:
     resolution: {integrity: sha512-jt1v2ObpyOKR8p4XaUJVk3YWRJ5n+i4+rjQopxvV32rSndTJXvIzuUdWWIy/1pFQMkQmvTXawzDNqOH/CUmx6A==}
+    engines: {node: '>= 20'}
+    hasBin: true
+
+  marked@17.0.4:
+    resolution: {integrity: sha512-NOmVMM+KAokHMvjWmC5N/ZOvgmSWuqJB8FoYI019j4ogb/PeRMKoKIjReZ2w3376kkA8dSJIP8uD993Kxc0iRQ==}
     engines: {node: '>= 20'}
     hasBin: true
 
@@ -9623,12 +9632,12 @@ snapshots:
 
   '@dual-bundle/import-meta-resolve@4.2.1': {}
 
-  '@elmethis/qwik@0.0.33':
+  '@elmethis/qwik@0.0.35':
     dependencies:
       '@mdi/js': 7.4.47
-      katex: 0.16.33
+      katex: 0.16.38
       lodash-es: 4.17.23
-      marked: 17.0.3
+      marked: 17.0.4
       polished: 4.3.1
       shiki: 4.0.1
 
@@ -15313,6 +15322,10 @@ snapshots:
     dependencies:
       commander: 8.3.0
 
+  katex@0.16.38:
+    dependencies:
+      commander: 8.3.0
+
   keyv@4.5.4:
     dependencies:
       json-buffer: 3.0.1
@@ -15541,6 +15554,8 @@ snapshots:
   marked@16.4.0: {}
 
   marked@17.0.3: {}
+
+  marked@17.0.4: {}
 
   math-intrinsics@1.1.0: {}
 

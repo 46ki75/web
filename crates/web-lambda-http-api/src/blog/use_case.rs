@@ -243,7 +243,7 @@ impl BlogUseCase {
             .fetch_image_by_url(&ogp_image_s3_signed_url)
             .await?;
 
-        let webp_bytes = self.convert(&image_bytes)?;
+        let webp_bytes = self.convert_to_webp(&image_bytes)?;
 
         Ok(webp_bytes)
     }
@@ -258,23 +258,21 @@ impl BlogUseCase {
             .fetch_image_by_block_id(block_id)
             .await?;
 
-        let webp_bytes = self.convert(&image_bytes)?;
+        let webp_bytes = self.convert_to_webp(&image_bytes)?;
 
         Ok(webp_bytes)
     }
 
-    pub fn convert(&self, image_bytes: &[u8]) -> Result<bytes::Bytes, crate::error::Error> {
+    pub fn convert_to_webp(&self, image_bytes: &[u8]) -> Result<bytes::Bytes, crate::error::Error> {
         let img = image::ImageReader::new(std::io::Cursor::new(image_bytes))
             .with_guessed_format()?
             .decode()?;
 
-        let mut bytes = Vec::new();
+        let encoder = webp::Encoder::from_image(&img).unwrap();
 
-        let encoder = image::codecs::webp::WebPEncoder::new_lossless(&mut bytes);
+        let webp: webp::WebPMemory = encoder.encode(90f32);
 
-        img.write_with_encoder(encoder)?;
-
-        Ok(bytes::Bytes::from(bytes))
+        Ok(bytes::Bytes::from(webp.to_vec()))
     }
 
     pub async fn generate_sitemap(&self) -> Result<String, crate::error::Error> {

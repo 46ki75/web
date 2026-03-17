@@ -32,8 +32,8 @@ export const Meta = component$<MetaProps>(
           <ElmBlockImage
             src={image}
             alt={`OGP ${title}`}
-            width={1140}
-            height={600}
+            width={1200}
+            height={630}
           />
         )}
       </div>
