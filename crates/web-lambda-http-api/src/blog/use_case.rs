@@ -268,13 +268,11 @@ impl BlogUseCase {
             .with_guessed_format()?
             .decode()?;
 
-        let mut bytes = Vec::new();
+        let encoder = webp::Encoder::from_image(&img).unwrap();
 
-        let encoder = image::codecs::webp::WebPEncoder::new_lossless(&mut bytes);
+        let webp: webp::WebPMemory = encoder.encode(90f32);
 
-        img.write_with_encoder(encoder)?;
-
-        Ok(bytes::Bytes::from(bytes))
+        Ok(bytes::Bytes::from(webp.to_vec()))
     }
 
     pub async fn generate_sitemap(&self) -> Result<String, crate::error::Error> {

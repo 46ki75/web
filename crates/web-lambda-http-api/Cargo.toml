@@ -70,3 +70,4 @@ jsonfeed = { workspace = true }
 
 # Regular Expression
 regex = { workspace = true }
+webp = "0.3.1"
