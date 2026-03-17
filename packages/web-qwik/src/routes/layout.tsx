@@ -7,7 +7,7 @@ import { Header } from "~/components/common/header";
 export const onGet: RequestHandler = ({ cacheControl }) => {
   cacheControl({
     public: true,
-    maxAge: 60,
+    maxAge: 60 * 10,
     sMaxAge: 365 * 24 * 60 * 60,
   });
 };
