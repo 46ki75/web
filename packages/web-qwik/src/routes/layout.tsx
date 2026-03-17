@@ -4,6 +4,9 @@ import { ElmPageTop, ElmParallax } from "@elmethis/qwik";
 import { Footer } from "~/components/common/footer";
 import { Header } from "~/components/common/header";
 
+import bgBlue from "~/assets/parallax/bg-blue.webp?url";
+import bgEmerald from "~/assets/parallax/bg-emerald.webp?url";
+
 export const onGet: RequestHandler = ({ cacheControl }) => {
   cacheControl({
     public: true,
@@ -20,12 +23,7 @@ export default component$(() => {
         <Slot />
       </div>
 
-      <ElmParallax
-        images={[
-          "/static/image/bg-crimson.webp",
-          "/static/image/bg-amber.webp",
-        ]}
-      />
+      <ElmParallax images={[bgBlue, bgEmerald]} />
 
       <Footer />
 
