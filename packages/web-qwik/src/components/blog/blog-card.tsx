@@ -7,7 +7,7 @@ import { Link, useNavigate } from "@builder.io/qwik-city";
 import { Language } from "~/types";
 import { ElmInlineText } from "@elmethis/qwik";
 import { Tag } from "../common/tag";
-import { Date } from "../common/date";
+import { DateComponent } from "../common/date";
 import { BlogContext } from "~/context/blog";
 
 export interface BlogCardProps {
@@ -65,7 +65,10 @@ export const BlogCard = component$<BlogCardProps>(
                 <ElmInlineText size="0.75rem">{blog.description}</ElmInlineText>
               </div>
 
-              <Date createdAt={blog.created_at} updatedAt={blog.updated_at} />
+              <DateComponent
+                createdAt={blog.created_at}
+                updatedAt={blog.updated_at}
+              />
             </div>
           </div>
         </Link>
