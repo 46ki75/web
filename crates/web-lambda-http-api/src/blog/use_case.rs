@@ -120,6 +120,9 @@ impl BlogUseCase {
                     jarkup_rs::BlockComponent::Image(image) => {
                         images.push((image.props.src.clone(), image.id.clone().unwrap()));
                     }
+                    jarkup_rs::BlockComponent::Fragment(fragment) => {
+                        Self::extract_files(&fragment.slots.default, icons, images, files)?;
+                    }
                     jarkup_rs::BlockComponent::Heading(heading) => {
                         Self::extract_from_inline_components(
                             &heading.slots.default,
@@ -171,6 +174,18 @@ impl BlogUseCase {
                     }
                     jarkup_rs::BlockComponent::Katex(_katex) => {}
                     jarkup_rs::BlockComponent::Mermaid(_mermaid) => {}
+                    jarkup_rs::BlockComponent::Tab(tab) => {
+                        Self::extract_from_inline_components(
+                            &tab.slots.labels,
+                            icons,
+                            images,
+                            files,
+                        )?;
+                        Self::extract_files(&tab.slots.contents, icons, images, files)?;
+                    }
+                    jarkup_rs::BlockComponent::Tabs(tabs) => {
+                        Self::extract_files(&tabs.slots.default, icons, images, files)?;
+                    }
                     jarkup_rs::BlockComponent::Table(table) => {
                         if let Some(header) = &table.slots.header {
                             Self::extract_files(header, icons, images, files)?;

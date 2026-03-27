@@ -12,6 +12,7 @@ pub async fn init_notion_to_jarkup_client(
                 notionrs_client: notionrs::Client::new(notion_api_key),
                 reqwest_client: reqwest::Client::new(),
                 enable_unsupported_block: false,
+                enable_fetch_image_size: true,
             };
 
             Ok(notion_to_jarkup_client)
