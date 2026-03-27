@@ -6,9 +6,6 @@ pub struct BlogResponse {
     /// The URL of the Notion page
     pub notion_url: String,
 
-    /// The URL of the OGP image hosted on S3 by notion
-    pub ogp_image_s3_signed_url: Option<String>,
-
     /// The slug of the blog, which appears as part of the URL
     pub slug: String,
 
@@ -42,7 +39,6 @@ impl From<super::entity::BlogEntity> for BlogResponse {
         BlogResponse {
             page_id: value.page_id,
             notion_url: value.notion_url,
-            ogp_image_s3_signed_url: value.ogp_image_s3_signed_url,
             slug: value.slug,
             featured: value.featured,
             tag_ids: value.tag_ids,
