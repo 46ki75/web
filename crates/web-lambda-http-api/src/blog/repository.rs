@@ -246,8 +246,9 @@ impl BlogRepository for BlogRepositoryImpl {
                         .map(|start| match start {
                             DateOrDateTime::Date(date) => {
                                 time::UtcDateTime::new(date, time::Time::from_hms(0, 0, 0).unwrap())
+                                    .to_offset(time::macros::offset!(+0))
                             }
-                            DateOrDateTime::DateTime(offset_date_time) => offset_date_time.to_utc(),
+                            DateOrDateTime::DateTime(offset_date_time) => offset_date_time,
                         })
                         .ok_or(crate::error::Error::NotionRecord(format!(
                             "start date is not set in property `created_at` (page_id: {0})",
@@ -270,8 +271,9 @@ impl BlogRepository for BlogRepositoryImpl {
                         .map(|start| match start {
                             DateOrDateTime::Date(date) => {
                                 time::UtcDateTime::new(date, time::Time::from_hms(0, 0, 0).unwrap())
+                                    .to_offset(time::macros::offset!(+0))
                             }
-                            DateOrDateTime::DateTime(offset_date_time) => offset_date_time.to_utc(),
+                            DateOrDateTime::DateTime(offset_date_time) => offset_date_time,
                         })
                         .ok_or(crate::error::Error::NotionRecord(format!(
                             "start date is not set in property `updated_at` (page_id: {0})",
