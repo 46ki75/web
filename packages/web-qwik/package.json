@@ -27,7 +27,8 @@
     "deploy:dev": "STAGE_NAME=dev pnpm run deploy",
     "deploy:stg": "STAGE_NAME=stg pnpm run deploy",
     "deploy:prod": "STAGE_NAME=prod pnpm run deploy",
-    "postdeploy": "./scripts/invalidate.sh"
+    "postdeploy": "./scripts/invalidate.sh",
+    "generate:openapi": "openapi-typescript http://dev-www.ikuma.cloud/api/v2/openapi.json -o openapi/schema.ts"
   },
   "devDependencies": {
     "@builder.io/qwik": "^1.19.1",
