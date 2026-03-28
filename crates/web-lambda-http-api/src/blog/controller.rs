@@ -245,9 +245,8 @@ pub async fn get_blog_og_image(
 
 #[utoipa::path(
     get,
-    path = "/api/v2/blog/{slug}/block-image/{block_id}",
+    path = "/api/v2/blog/block-image/{block_id}",
     params(
-        ("slug" = String, Path, description = "Blog slug"),
         ("block_id" = String, Path, description = "Notion block id"),
     ),
     responses(
@@ -259,7 +258,7 @@ pub async fn get_blog_block_image(
     axum::extract::State(state): axum::extract::State<
         std::sync::Arc<crate::axum_router::AxumAppState>,
     >,
-    axum::extract::Path((_slug, block_id)): axum::extract::Path<(String, String)>,
+    axum::extract::Path(block_id): axum::extract::Path<String>,
 ) -> Result<axum::response::Response<axum::body::Body>, (axum::http::StatusCode, String)> {
     let contents = match state.blog_use_case.fetch_block_image_by_id(&block_id).await {
         Ok(image_bytes) => {
