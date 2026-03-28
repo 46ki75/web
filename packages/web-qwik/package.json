@@ -55,7 +55,7 @@
     "typescript-eslint": "8.38.0",
     "typescript-plugin-css-modules": "latest",
     "undici": "*",
-    "vite": "8.0.3"
+    "vite": "7.3.1"
   },
   "dependencies": {
     "@mdi/js": "^7.4.47",
