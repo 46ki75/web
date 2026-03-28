@@ -5,6 +5,7 @@
 import { defineConfig, type UserConfig, loadEnv } from "vite";
 import { qwikVite } from "@builder.io/qwik/optimizer";
 import { qwikCity } from "@builder.io/qwik-city/vite";
+import tsconfigPaths from "vite-tsconfig-paths";
 import pkg from "./package.json";
 
 
@@ -33,7 +34,7 @@ export default defineConfig(({ command, mode }): UserConfig => {
     define: {
       "import.meta.env.VITE_API_DOMAIN": JSON.stringify(DOMAIN),
     },
-    plugins: [qwikCity(), qwikVite()],
+    plugins: [qwikCity(), qwikVite(), tsconfigPaths({ root: "." })],
     // This tells Vite which dependencies to pre-build in dev mode.
     optimizeDeps: {
       // Put problematic deps that break bundling here, mostly those with binaries.
