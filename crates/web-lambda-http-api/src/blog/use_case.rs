@@ -237,7 +237,7 @@ impl BlogUseCase {
 
         let encoder = webp::Encoder::from_image(&img).unwrap();
 
-        let webp: webp::WebPMemory = encoder.encode(90f32);
+        let webp: webp::WebPMemory = encoder.encode(85f32);
 
         Ok(bytes::Bytes::from(webp.to_vec()))
     }
