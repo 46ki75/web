@@ -25,6 +25,16 @@ pub enum BlogImageSizeQueryParam {
     Large,
 }
 
+impl Into<u32> for BlogImageSizeQueryParam {
+    fn into(self) -> u32 {
+        match self {
+            BlogImageSizeQueryParam::Small => 500,
+            BlogImageSizeQueryParam::Medium => 750,
+            BlogImageSizeQueryParam::Large => 1000,
+        }
+    }
+}
+
 #[derive(Debug, serde::Deserialize, utoipa::ToSchema)]
 pub struct BlogBlockImageQueryParam {
     pub size: Option<BlogImageSizeQueryParam>,
@@ -283,14 +293,9 @@ pub async fn get_blog_block_image(
         .fetch_block_image_by_id(&block_id)
         .await
         .and_then(|bytes| {
-            state.blog_use_case.convert_to_webp(
-                &bytes,
-                size.map(|size| match size {
-                    BlogImageSizeQueryParam::Small => 500,
-                    BlogImageSizeQueryParam::Medium => 800,
-                    BlogImageSizeQueryParam::Large => 1280,
-                }),
-            )
+            state
+                .blog_use_case
+                .convert_to_webp(&bytes, size.map(|size| size.into()))
         }) {
         Ok(image_bytes) => {
             let content_type = state.blog_use_case.infer_mime_type(&image_bytes);
