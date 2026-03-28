@@ -243,7 +243,7 @@ pub async fn get_blog_og_image(
         .blog_use_case
         .fetch_ogp_image_by_slug(&slug, language.clone())
         .await
-        .and_then(|contents| state.blog_use_case.convert_to_webp(&contents, None))
+        .and_then(|contents| state.blog_use_case.convert_to_webp(&contents, Some(1200)))
     {
         Ok(image_bytes) => {
             let content_type = state.blog_use_case.infer_mime_type(&image_bytes);
