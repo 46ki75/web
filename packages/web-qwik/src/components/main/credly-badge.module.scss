@@ -2,6 +2,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -45,7 +46,7 @@
   color: var(--elm-color-text-secondary, #3e434b);
 }
 
-:local([data-theme="dark"]) .p {
+ ([data-theme="dark"]) .p {
   color: #adb3be;
 }
 

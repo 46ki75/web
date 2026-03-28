@@ -12,7 +12,6 @@
   width: max(30vw, 16rem);
   height: auto;
   aspect-ratio: 1 / 1;
-
   transform: rotateX(75deg) rotateZ(30deg);
   transform-style: preserve-3d;
 }
@@ -55,6 +54,7 @@
 
 .layer-green {
   @extend %layer-base;
+
   --layer-bg: #{rgba(#59b57c, 0.25)};
   --layer-side-right: #{rgba(#59b57c, 0.3)};
   --layer-side-bottom: #{rgba(#59b57c, 0.4)};
@@ -63,6 +63,7 @@
 
 .layer-cyan {
   @extend %layer-base;
+
   --layer-bg: #{rgba(#59a7b5, 0.25)};
   --layer-side-right: #{rgba(#59a7b5, 0.3)};
   --layer-side-bottom: #{rgba(#59a7b5, 0.4)};
@@ -71,6 +72,7 @@
 
 .layer-blue {
   @extend %layer-base;
+
   --layer-bg: #{rgba(#6987b8, 0.25)};
   --layer-side-right: #{rgba(#6987b8, 0.3)};
   --layer-side-bottom: #{rgba(#6987b8, 0.4)};
@@ -79,6 +81,7 @@
 
 .layer-purple {
   @extend %layer-base;
+
   --layer-bg: #{rgba(#9771bd, 0.25)};
   --layer-side-right: #{rgba(#9771bd, 0.3)};
   --layer-side-bottom: #{rgba(#9771bd, 0.4)};
@@ -87,6 +90,7 @@
 
 .layer-pink {
   @extend %layer-base;
+
   --layer-bg: #{rgba(#c9699e, 0.25)};
   --layer-side-right: #{rgba(#c9699e, 0.3)};
   --layer-side-bottom: #{rgba(#c9699e, 0.4)};

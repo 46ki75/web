@@ -3,6 +3,7 @@
     opacity: 0;
     transform: translateX(1rem);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -14,8 +15,7 @@
   padding: 0 0.25rem;
   position: sticky;
   top: 4rem;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden auto;
   height: calc(100vh - 5rem);
   width: 100%;
   max-width: 480px;

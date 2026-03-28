@@ -27,12 +27,15 @@ body {
 ::view-transition-group(routing) {
   overflow: visible;
 }
+
 ::view-transition-image-pair(routing) {
   overflow: visible;
 }
+
 ::view-transition-old(routing) {
   animation: fade-out 200ms ease forwards;
 }
+
 ::view-transition-new(routing) {
   animation: fade-in 200ms ease forwards;
 }
@@ -42,6 +45,7 @@ body {
     opacity: 0;
   }
 }
+
 @keyframes fade-in {
   from {
     opacity: 0;
@@ -52,6 +56,7 @@ body {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
