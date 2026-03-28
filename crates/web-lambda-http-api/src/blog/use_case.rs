@@ -1,3 +1,5 @@
+use image::GenericImageView;
+
 #[derive(Clone)]
 pub struct BlogUseCase {
     pub blog_repository: std::sync::Arc<dyn super::repository::BlogRepository + Send + Sync>,
@@ -194,9 +196,7 @@ impl BlogUseCase {
             .fetch_image_by_url(&ogp_image_s3_signed_url)
             .await?;
 
-        let webp_bytes = self.convert_to_webp(&image_bytes)?;
-
-        Ok(webp_bytes)
+        Ok(image_bytes)
     }
 
     /// Fetches image bynary of the block by its block ID.
@@ -209,15 +209,31 @@ impl BlogUseCase {
             .fetch_image_by_block_id(block_id)
             .await?;
 
-        let webp_bytes = self.convert_to_webp(&image_bytes)?;
-
-        Ok(webp_bytes)
+        Ok(image_bytes)
     }
 
-    pub fn convert_to_webp(&self, image_bytes: &[u8]) -> Result<bytes::Bytes, crate::error::Error> {
+    pub fn convert_to_webp(
+        &self,
+        image_bytes: &[u8],
+        new_width: Option<u32>,
+    ) -> Result<bytes::Bytes, crate::error::Error> {
         let img = image::ImageReader::new(std::io::Cursor::new(image_bytes))
             .with_guessed_format()?
             .decode()?;
+
+        let img = match new_width {
+            Some(new_width) => {
+                let (original_width, original_height) = img.dimensions();
+
+                if original_width >= new_width {
+                    let new_height = original_height * new_width / original_width;
+                    img.resize(new_width, new_height, image::imageops::FilterType::Lanczos3)
+                } else {
+                    img
+                }
+            }
+            None => img,
+        };
 
         let encoder = webp::Encoder::from_image(&img).unwrap();
 

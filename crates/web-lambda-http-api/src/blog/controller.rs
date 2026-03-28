@@ -220,6 +220,7 @@ pub async fn get_blog_og_image(
         .blog_use_case
         .fetch_ogp_image_by_slug(&slug, language.clone())
         .await
+        .and_then(|contents| state.blog_use_case.convert_to_webp(&contents, None))
     {
         Ok(image_bytes) => {
             let content_type = state.blog_use_case.infer_mime_type(&image_bytes);
@@ -260,7 +261,13 @@ pub async fn get_blog_block_image(
     >,
     axum::extract::Path(block_id): axum::extract::Path<String>,
 ) -> Result<axum::response::Response<axum::body::Body>, (axum::http::StatusCode, String)> {
-    let contents = match state.blog_use_case.fetch_block_image_by_id(&block_id).await {
+    // TODO: call `convert_to_webp`
+    let contents = match state
+        .blog_use_case
+        .fetch_block_image_by_id(&block_id)
+        .await
+        .and_then(|bytes| state.blog_use_case.convert_to_webp(&bytes, None))
+    {
         Ok(image_bytes) => {
             let content_type = state.blog_use_case.infer_mime_type(&image_bytes);
 
