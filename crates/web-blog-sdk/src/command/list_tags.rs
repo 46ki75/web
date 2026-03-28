@@ -47,8 +47,8 @@ pub async fn list_tags(
         };
 
         let icon_url = page.icon.and_then(|icon| match icon {
-            Icon::File(file) => Some(file.get_url()),
-            Icon::CustomEmoji(custom_emoji) => Some(custom_emoji.custom_emoji.url),
+            EmojiAndIcon::File(file) => Some(file.get_url()),
+            EmojiAndIcon::CustomEmoji(custom_emoji) => Some(custom_emoji.custom_emoji.url),
             _ => None,
         });
 

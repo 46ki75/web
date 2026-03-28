@@ -54,10 +54,10 @@ strum_macros = "0.27.2"
 base64 = "0.22.1"
 
 # Notion
-jarkup-rs = "0.7.0"
-notion-to-jarkup = "0.13.1"
-notionrs = "0.9.0"
-notionrs_types = "0.7.0"
+jarkup-rs = "0.14.0"
+notion-to-jarkup = "0.20.0"
+notionrs = "0.13.0"
+notionrs_types = "0.11.0"
 
 # OpenAPI
 utoipa = "5.4.0"
@@ -66,6 +66,7 @@ utoipa-swagger-ui = { version = "9.0.2", features = ["axum"] }
 
 # Image
 image = "0.25.9"
+webp = "0.3.1"
 
 # time
 time = { version = "0.3.47", features = ["formatting"] }

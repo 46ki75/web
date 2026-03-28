@@ -2,6 +2,7 @@ use http::header::ACCEPT_LANGUAGE;
 
 // CDN: 1 year, Client: 10 minutes // TODO: ↓ temporary setting (0), adjust later
 static CACHE_VALUE: &str = "public, max-age=0, s-maxage=31536000";
+static IMMUTABLE_CACHE_VALUE: &str = "public, max-age=31536000, s-maxage=31536000, immutable";
 
 #[derive(Debug, serde::Deserialize, utoipa::ToSchema)]
 #[serde(rename_all = "snake_case")]
@@ -14,6 +15,29 @@ pub struct BlogOgImageQueryParam {
 pub enum BlogLanguageQueryParam {
     En,
     Ja,
+}
+
+#[derive(Debug, serde::Deserialize, utoipa::ToSchema)]
+#[serde(rename_all = "snake_case")]
+pub enum BlogImageSizeQueryParam {
+    Small,
+    Medium,
+    Large,
+}
+
+impl Into<u32> for BlogImageSizeQueryParam {
+    fn into(self) -> u32 {
+        match self {
+            BlogImageSizeQueryParam::Small => 500,
+            BlogImageSizeQueryParam::Medium => 800,
+            BlogImageSizeQueryParam::Large => 1200,
+        }
+    }
+}
+
+#[derive(Debug, serde::Deserialize, utoipa::ToSchema)]
+pub struct BlogBlockImageQueryParam {
+    pub size: Option<BlogImageSizeQueryParam>,
 }
 
 #[utoipa::path(
@@ -219,9 +243,10 @@ pub async fn get_blog_og_image(
         .blog_use_case
         .fetch_ogp_image_by_slug(&slug, language.clone())
         .await
+        .and_then(|contents| state.blog_use_case.convert_image(&contents, Some(1200)))
     {
         Ok(image_bytes) => {
-            let content_type = state.blog_use_case.infer_mime_type(&image_bytes);
+            let content_type = state.blog_use_case.infer_image_mime_type(&image_bytes);
 
             let response = axum::response::Response::builder()
                 .header(http::header::CONTENT_TYPE, content_type)
@@ -244,10 +269,10 @@ pub async fn get_blog_og_image(
 
 #[utoipa::path(
     get,
-    path = "/api/v2/blog/{slug}/block-image/{block_id}",
+    path = "/api/v2/blog/block-image/{block_id}",
     params(
-        ("slug" = String, Path, description = "Blog slug"),
         ("block_id" = String, Path, description = "Notion block id"),
+        ("size" = Option<BlogImageSizeQueryParam>, Query, description = "size preset name"),
     ),
     responses(
         (status = 200, description = "Blog Contents", body = Vec<u8>),
@@ -258,15 +283,26 @@ pub async fn get_blog_block_image(
     axum::extract::State(state): axum::extract::State<
         std::sync::Arc<crate::axum_router::AxumAppState>,
     >,
-    axum::extract::Path((_slug, block_id)): axum::extract::Path<(String, String)>,
+    axum::extract::Path(block_id): axum::extract::Path<String>,
+    axum::extract::Query(BlogBlockImageQueryParam { size }): axum::extract::Query<
+        BlogBlockImageQueryParam,
+    >,
 ) -> Result<axum::response::Response<axum::body::Body>, (axum::http::StatusCode, String)> {
-    let contents = match state.blog_use_case.fetch_block_image_by_id(&block_id).await {
+    let contents = match state
+        .blog_use_case
+        .fetch_block_image_by_id(&block_id)
+        .await
+        .and_then(|bytes| {
+            state
+                .blog_use_case
+                .convert_image(&bytes, size.map(|size| size.into()))
+        }) {
         Ok(image_bytes) => {
-            let content_type = state.blog_use_case.infer_mime_type(&image_bytes);
+            let content_type = state.blog_use_case.infer_image_mime_type(&image_bytes);
 
             let response = axum::response::Response::builder()
                 .header(http::header::CONTENT_TYPE, content_type)
-                .header(http::header::CACHE_CONTROL, CACHE_VALUE)
+                .header(http::header::CACHE_CONTROL, IMMUTABLE_CACHE_VALUE)
                 .body(axum::body::Body::from(image_bytes.to_vec()))
                 .map_err(|e| {
                     (

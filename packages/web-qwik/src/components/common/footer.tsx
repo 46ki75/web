@@ -1,7 +1,7 @@
 import { component$, useContext } from "@builder.io/qwik";
 import { version } from "../../../package.json";
-import ImgFavicon from "../../../public/static/brand/favicon.svg?jsx";
-import ImgGitHub from "../../../public/static/image/github.svg?jsx";
+import ImgFavicon from "../../assets/brand/favicon.svg?jsx";
+import ImgGitHub from "../../assets/icons/github.svg?jsx";
 
 import styles from "./footer.module.scss";
 import { ElmInlineText, ElmMdiIcon } from "@elmethis/qwik";

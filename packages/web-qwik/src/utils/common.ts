@@ -4,6 +4,8 @@ import { Language } from "~/types";
 import type { Article, WithContext } from "schema-dts";
 import { DocumentScript } from "@builder.io/qwik-city";
 
+import commonOgpImage from "~/assets/image/ogp.png?url";
+
 export const origin = () => {
   if (isServer) {
     const stageName = process.env.STAGE_NAME;
@@ -39,7 +41,7 @@ export const generateHead = ({
     : `${parsedUrl.origin}/ja${parsedUrl.pathname}`;
 
   if (!ogImage) {
-    ogImage = `${parsedUrl.origin}/static/image/ogp.png`;
+    ogImage = `${parsedUrl.origin}${commonOgpImage}`;
   }
 
   const jsonLd: WithContext<Article> = {

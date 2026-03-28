@@ -1,9 +1,23 @@
 {
   "editor.formatOnSave": true,
-  "stylelint.validate": ["css", "postcss", "scss", "vue"],
+  "stylelint.validate": [
+    "css",
+    "postcss",
+    "scss",
+    "vue"
+  ],
   "files.associations": {
     "Justfile": "makefile"
   },
-  "markdownlint.lintWorkspaceGlobs": ["!pull_request_template.md"],
-  "eslint.workingDirectories": [{ "mode": "auto" }]
+  "markdownlint.lintWorkspaceGlobs": [
+    "!pull_request_template.md"
+  ],
+  "eslint.workingDirectories": [
+    {
+      "mode": "auto"
+    }
+  ],
+  "terminal.integrated.env.linux": {
+    "AWS_PROFILE": "46ki75-web"
+  }
 }

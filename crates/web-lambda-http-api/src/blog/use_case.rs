@@ -1,3 +1,5 @@
+use image::GenericImageView;
+
 #[derive(Clone)]
 pub struct BlogUseCase {
     pub blog_repository: std::sync::Arc<dyn super::repository::BlogRepository + Send + Sync>,
@@ -55,32 +57,12 @@ impl BlogUseCase {
             crate::blog::entity::BlogLanguageEntity::Ja => super::dto::BlogLanguageDto::Ja,
         };
 
-        let components = self
+        let mut components = self
             .blog_repository
             .get_blog_contents(slug, language)
             .await?;
 
-        let mut icons: Vec<String> = vec![];
-        let mut images: Vec<(String, String)> = vec![];
-        let mut files: Vec<String> = vec![];
-
-        Self::extract_files(&components, &mut icons, &mut images, &mut files)?;
-
-        let mut components_string = serde_json::to_string(&components).inspect_err(|_| {
-            tracing::error!("Failed to serialize blog components to JSON string");
-        })?;
-
-        for image in images.iter() {
-            components_string = components_string.replace(
-                &image.0,
-                &format!("/api/v2/blog/{}/block-image/{}", slug, image.1),
-            );
-        }
-
-        let components: Vec<jarkup_rs::Component> = serde_json::from_str(&components_string)
-            .inspect_err(|_| {
-                tracing::error!("Failed to deserialize blog components from JSON string");
-            })?;
+        Self::rewrite_components(&mut components);
 
         Ok(super::entity::BlogContentsEntity {
             meta: blog,
@@ -100,126 +82,129 @@ impl BlogUseCase {
         Ok(tags)
     }
 
-    fn extract_files(
-        components: &Vec<jarkup_rs::Component>,
-        icons: &mut Vec<String>,
-        images: &mut Vec<(String, String)>,
-        files: &mut Vec<String>,
-    ) -> Result<(), crate::error::Error> {
+    fn rewrite_inline_component(_inline_component: &mut jarkup_rs::InlineComponent) {}
+
+    fn rewrite_inline_components(inline_components: &mut Vec<jarkup_rs::InlineComponent>) {
+        for inline_component in inline_components {
+            Self::rewrite_inline_component(inline_component);
+        }
+    }
+
+    fn rewrite_components(components: &mut Vec<jarkup_rs::Component>) {
         for component in components {
             match component {
                 jarkup_rs::Component::InlineComponent(inline_component) => {
-                    if let jarkup_rs::InlineComponent::Icon(icon) = inline_component {
-                        icons.push(icon.props.src.clone());
-                    }
+                    Self::rewrite_inline_component(inline_component);
                 }
                 jarkup_rs::Component::BlockComponent(block_component) => match block_component {
-                    jarkup_rs::BlockComponent::File(file) => {
-                        files.push(file.props.src.clone());
-                    }
                     jarkup_rs::BlockComponent::Image(image) => {
-                        images.push((image.props.src.clone(), image.id.clone().unwrap()));
+                        if let Some(id) = &image.id {
+                            let src_base = format!("/api/v2/blog/block-image/{}", id);
+
+                            (image.props.srcset, image.props.sizes) = if image
+                                .props
+                                .mime_type
+                                .as_ref()
+                                .map(|mime| mime.contains("xml"))
+                                .unwrap_or(false)
+                            {
+                                // If the image is SVG, we don't set srcset and sizes
+                                // because SVG is resolution-independent and can be scaled without loss of quality.
+                                (None, None)
+                            } else {
+                                (
+                                Some(
+                                    format!(
+                                        "{src_base}?size=small 500w, {src_base}?size=medium 800w, {src_base}?size=large 1200w"
+                                    )
+                                ),
+                                Some("(max-width: 800px) 100vw, 800px".to_owned())
+                                )
+                            };
+
+                            image.props.src = src_base;
+                        };
+                    }
+
+                    jarkup_rs::BlockComponent::Fragment(fragment) => {
+                        Self::rewrite_components(&mut fragment.slots.default);
                     }
                     jarkup_rs::BlockComponent::Heading(heading) => {
-                        Self::extract_from_inline_components(
-                            &heading.slots.default,
-                            icons,
-                            images,
-                            files,
-                        )?;
+                        Self::rewrite_inline_components(&mut heading.slots.default);
                     }
                     jarkup_rs::BlockComponent::Paragraph(paragraph) => {
-                        Self::extract_from_inline_components(
-                            &paragraph.slots.default,
-                            icons,
-                            images,
-                            files,
-                        )?;
+                        Self::rewrite_inline_components(&mut paragraph.slots.default);
                     }
                     jarkup_rs::BlockComponent::ListItem(list_item) => {
-                        Self::extract_files(&list_item.slots.default, icons, images, files)?;
+                        Self::rewrite_components(&mut list_item.slots.default);
                     }
                     jarkup_rs::BlockComponent::List(list) => {
-                        Self::extract_files(&list.slots.default, icons, images, files)?;
+                        Self::rewrite_components(&mut list.slots.default);
                     }
                     jarkup_rs::BlockComponent::BlockQuote(block_quote) => {
-                        Self::extract_files(&block_quote.slots.default, icons, images, files)?;
+                        Self::rewrite_components(&mut block_quote.slots.default);
                     }
                     jarkup_rs::BlockComponent::Callout(callout) => {
-                        Self::extract_files(&callout.slots.default, icons, images, files)?;
+                        Self::rewrite_components(&mut callout.slots.default);
                     }
-                    jarkup_rs::BlockComponent::Divider(_divider) => {}
+                    jarkup_rs::BlockComponent::Divider(..) => {}
                     jarkup_rs::BlockComponent::Toggle(toggle) => {
-                        Self::extract_files(&toggle.slots.default, icons, images, files)?;
-                        Self::extract_from_inline_components(
-                            &toggle.slots.summary,
-                            icons,
-                            images,
-                            files,
-                        )?;
+                        Self::rewrite_inline_components(&mut toggle.slots.summary);
+                        Self::rewrite_components(&mut toggle.slots.default);
                     }
-                    jarkup_rs::BlockComponent::Bookmark(_bookmark) => {}
+                    jarkup_rs::BlockComponent::Bookmark(..) => {}
+                    jarkup_rs::BlockComponent::File(..) => {}
                     jarkup_rs::BlockComponent::CodeBlock(code_block) => {
-                        if let Some(slots) = &code_block.slots {
-                            Self::extract_from_inline_components(
-                                &slots.default,
-                                icons,
-                                images,
-                                files,
-                            )?;
+                        if let Some(slots) = &mut code_block.slots {
+                            Self::rewrite_inline_components(&mut slots.default);
                         }
                     }
-                    jarkup_rs::BlockComponent::Katex(_katex) => {}
-                    jarkup_rs::BlockComponent::Mermaid(_mermaid) => {}
+                    jarkup_rs::BlockComponent::Katex(..) => {}
+                    jarkup_rs::BlockComponent::Mermaid(..) => {}
+                    jarkup_rs::BlockComponent::Tab(tab) => {
+                        Self::rewrite_inline_components(&mut tab.slots.labels);
+                        Self::rewrite_components(&mut tab.slots.contents);
+                    }
+                    jarkup_rs::BlockComponent::Tabs(tabs) => {
+                        Self::rewrite_components(&mut tabs.slots.default);
+                    }
                     jarkup_rs::BlockComponent::Table(table) => {
-                        if let Some(header) = &table.slots.header {
-                            Self::extract_files(header, icons, images, files)?;
+                        Self::rewrite_components(&mut table.slots.body);
+                        if let Some(header) = &mut table.slots.header {
+                            Self::rewrite_components(header);
                         }
-                        Self::extract_files(&table.slots.body, icons, images, files)?;
                     }
                     jarkup_rs::BlockComponent::TableRow(table_row) => {
-                        Self::extract_files(&table_row.slots.default, icons, images, files)?;
+                        Self::rewrite_components(&mut table_row.slots.default);
                     }
                     jarkup_rs::BlockComponent::TableCell(table_cell) => {
-                        Self::extract_from_inline_components(
-                            &table_cell.slots.default,
-                            icons,
-                            images,
-                            files,
-                        )?;
+                        Self::rewrite_inline_components(&mut table_cell.slots.default);
                     }
                     jarkup_rs::BlockComponent::ColumnList(column_list) => {
-                        Self::extract_files(&column_list.slots.default, icons, images, files)?;
+                        Self::rewrite_components(&mut column_list.slots.default);
                     }
                     jarkup_rs::BlockComponent::Column(column) => {
-                        Self::extract_files(&column.slots.default, icons, images, files)?;
+                        Self::rewrite_components(&mut column.slots.default);
                     }
-                    jarkup_rs::BlockComponent::Unsupported(_unsupported) => {}
+                    jarkup_rs::BlockComponent::Unsupported(..) => {}
                 },
-            };
-        }
-
-        Ok(())
-    }
-
-    fn extract_from_inline_components(
-        inline_components: &[jarkup_rs::InlineComponent],
-        icons: &mut Vec<String>,
-        _images: &mut Vec<(String, String)>,
-        _files: &mut Vec<String>,
-    ) -> Result<(), crate::error::Error> {
-        for inline in inline_components {
-            if let jarkup_rs::InlineComponent::Icon(icon) = inline {
-                icons.push(icon.props.src.clone());
             }
         }
-        Ok(())
     }
 
-    /// Infers mime-type from bytes.
-    pub fn infer_mime_type(&self, image_bytes: &bytes::Bytes) -> String {
+    /// Infers the MIME type of the image by its binary data.
+    pub fn infer_image_mime_type(&self, image_bytes: &bytes::Bytes) -> String {
         infer::get(&image_bytes)
-            .map(|t| t.to_string())
+            .map(|t| {
+                let mime_type = t.to_string();
+                if mime_type.contains("xml") {
+                    // treat XML-based formats (e.g. SVG)
+                    // as "application/xml" to distinguish from binary formats
+                    "image/svg+xml".to_string()
+                } else {
+                    mime_type
+                }
+            })
             .unwrap_or(String::from("application/octet-stream"))
     }
 
@@ -243,9 +228,7 @@ impl BlogUseCase {
             .fetch_image_by_url(&ogp_image_s3_signed_url)
             .await?;
 
-        let webp_bytes = self.convert_to_webp(&image_bytes)?;
-
-        Ok(webp_bytes)
+        Ok(image_bytes)
     }
 
     /// Fetches image bynary of the block by its block ID.
@@ -258,19 +241,41 @@ impl BlogUseCase {
             .fetch_image_by_block_id(block_id)
             .await?;
 
-        let webp_bytes = self.convert_to_webp(&image_bytes)?;
-
-        Ok(webp_bytes)
+        Ok(image_bytes)
     }
 
-    pub fn convert_to_webp(&self, image_bytes: &[u8]) -> Result<bytes::Bytes, crate::error::Error> {
+    pub fn convert_image(
+        &self,
+        image_bytes: &[u8],
+        new_width: Option<u32>,
+    ) -> Result<bytes::Bytes, crate::error::Error> {
+        let mime_type = self.infer_image_mime_type(&bytes::Bytes::copy_from_slice(image_bytes));
+
+        if mime_type.contains("xml") {
+            return Ok(bytes::Bytes::copy_from_slice(image_bytes));
+        }
+
         let img = image::ImageReader::new(std::io::Cursor::new(image_bytes))
             .with_guessed_format()?
             .decode()?;
 
+        let img = match new_width {
+            Some(new_width) => {
+                let (original_width, original_height) = img.dimensions();
+
+                if original_width >= new_width {
+                    let new_height = original_height * new_width / original_width;
+                    img.resize(new_width, new_height, image::imageops::FilterType::Lanczos3)
+                } else {
+                    img
+                }
+            }
+            None => img,
+        };
+
         let encoder = webp::Encoder::from_image(&img).unwrap();
 
-        let webp: webp::WebPMemory = encoder.encode(90f32);
+        let webp: webp::WebPMemory = encoder.encode(85f32);
 
         Ok(bytes::Bytes::from(webp.to_vec()))
     }

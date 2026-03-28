@@ -31,10 +31,10 @@ pub struct BlogDto {
     pub keywords: Vec<String>,
 
     /// The date and time when the blog was created (ISO 3339)
-    pub created_at: time::UtcDateTime,
+    pub created_at: time::OffsetDateTime,
 
     /// The date and time when the blog was updated (ISO 3339)
-    pub updated_at: time::UtcDateTime,
+    pub updated_at: time::OffsetDateTime,
 }
 
 #[derive(Debug, Clone, serde::Serialize)]

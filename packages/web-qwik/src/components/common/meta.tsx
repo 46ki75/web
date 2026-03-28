@@ -3,7 +3,7 @@ import { component$, PropsOf, Slot } from "@builder.io/qwik";
 import styles from "./meta.module.scss";
 import { ElmBlockImage, ElmBreadcrumb, ElmHeading } from "@elmethis/qwik";
 
-import { Date } from "./date";
+import { DateComponent } from "./date";
 
 export interface MetaProps {
   title: string;
@@ -23,7 +23,7 @@ export const Meta = component$<MetaProps>(
 
         <ElmHeading level={1}>{title}</ElmHeading>
         <div class={styles["date-container"]}>
-          <Date createdAt={createdAt} updatedAt={updatedAt} />
+          <DateComponent createdAt={createdAt} updatedAt={updatedAt} />
         </div>
 
         <Slot />

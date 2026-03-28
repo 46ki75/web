@@ -58,6 +58,7 @@ utoipa-swagger-ui = { workspace = true }
 
 # Image
 image = { workspace = true }
+webp = { workspace = true }
 
 # time
 time = { workspace = true }
@@ -70,4 +71,3 @@ jsonfeed = { workspace = true }
 
 # Regular Expression
 regex = { workspace = true }
-webp = "0.3.1"

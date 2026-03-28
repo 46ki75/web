@@ -106,7 +106,7 @@ resource "aws_cloudfront_cache_policy" "http_api_ogp_image" {
 resource "aws_cloudfront_cache_policy" "http_api_block_image" {
   name = "${terraform.workspace}-46ki75-web-cloudfront-cache_policy-http_api_block_image"
 
-  default_ttl = 0
+  default_ttl = 3600 * 24 * 30 * 12
   min_ttl     = 0
   max_ttl     = 3600 * 24 * 30 * 12
 
@@ -120,7 +120,10 @@ resource "aws_cloudfront_cache_policy" "http_api_block_image" {
     }
 
     query_strings_config {
-      query_string_behavior = "none"
+      query_string_behavior = "whitelist"
+      query_strings {
+        items = ["size"]
+      }
     }
 
     enable_accept_encoding_brotli = true
@@ -296,11 +299,11 @@ resource "aws_cloudfront_distribution" "default" {
 
   dynamic "ordered_cache_behavior" {
     for_each = [
-      "/static/*", 
-      "/assets/*", 
-      "/build/*", 
-      "/favicon.ico", 
-      "/manifest.json", 
+      "/static/*",
+      "/assets/*",
+      "/build/*",
+      "/favicon.ico",
+      "/manifest.json",
       "/q-manifest.json"
     ]
     iterator = path_pattern
@@ -338,7 +341,7 @@ resource "aws_cloudfront_distribution" "default" {
 
   # >>> [Lambda Function URLs] origin
   ordered_cache_behavior {
-    path_pattern = "/api/v2/blog/*/block-image/*"
+    path_pattern = "/api/v2/blog/block-image/*"
     allowed_methods = [
       "GET",
       "HEAD",
