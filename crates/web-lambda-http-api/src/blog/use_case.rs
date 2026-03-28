@@ -99,7 +99,12 @@ impl BlogUseCase {
                 jarkup_rs::Component::BlockComponent(block_component) => match block_component {
                     jarkup_rs::BlockComponent::Image(image) => {
                         if let Some(id) = &image.id {
-                            image.props.src = format!("/api/v2/blog/block-image/{}", id)
+                            let src_base = format!("/api/v2/blog/block-image/{}", id);
+                            image.props.srcset = Some(
+                                format!("{src_base}?size=small 500w, {src_base}?size=medium 800w, {src_base}?size=large 1280w, {src_base} 1920w"
+                            ));
+                            image.props.sizes = Some("(max-width: 800px) 100vw, 800px".to_owned());
+                            image.props.src = src_base;
                         };
                     }
 
