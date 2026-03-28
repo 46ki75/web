@@ -2,29 +2,19 @@
   box-sizing: border-box;
   padding: 0.5rem;
   margin-block-start: 2rem;
-  border: 1px solid rgba(gray, 0.25);
+  border: 1px solid rgb(gray, 0.25);
   border-radius: 0.25rem;
   display: grid;
-  grid-template-columns: 8rem 1fr;
-  grid-template-rows: auto auto auto;
+  grid-template: "icon name" auto "icon content" auto "icon links" auto / 8rem 1fr;
   gap: 0.5rem 1rem;
-  grid-template-areas:
-    "icon name"
-    "icon content"
-    "icon links";
-  background-color: rgba(white, 0.5);
+  background-color: rgb(white, 0.5);
 
   [data-theme="dark"] & {
-    background-color: rgba(black, 0.25);
+    background-color: rgb(black, 0.25);
   }
 
   @media (width < 512px) {
-    grid-template-columns: 5rem 1fr;
-    grid-template-rows: auto auto auto;
-    grid-template-areas:
-      "icon name"
-      "icon content"
-      "links content";
+    grid-template: "icon name" auto "icon content" auto "links content" auto / 5rem 1fr;
   }
 }
 

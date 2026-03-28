@@ -3,6 +3,7 @@
     opacity: 0;
     transform: translateX(1rem);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -15,22 +16,19 @@
   flex-direction: column;
   flex-shrink: 0;
   border-radius: 0.25rem;
-  box-shadow: 0 0 0.125rem rgba(black, 0.2);
+  box-shadow: 0 0 0.125rem rgb(black, 0.2);
   overflow: hidden;
   cursor: pointer;
-
   animation-name: blog-card-fade;
   animation-duration: 400ms;
   animation-fill-mode: both;
   animation-iteration-count: 1;
   animation-delay: var(--delay);
-
   transition: background-color 200ms;
-
-  background-color: rgba(white, 0.5);
+  background-color: rgb(white, 0.5);
 
   [data-theme="dark"] & {
-    background-color: rgba(black, 0.1);
+    background-color: rgb(black, 0.1);
   }
 }
 
@@ -89,6 +87,7 @@
   @container blog-card-list (width >= 640px) {
     overflow: hidden;
     text-overflow: ellipsis;
+
     span {
       white-space: nowrap;
     }
@@ -111,12 +110,11 @@
   align-items: center;
   gap: 0 0.25rem;
   padding: 0 0.5rem;
-  border-top: solid 1px rgba(gray, 0.2);
-
-  background-color: rgba(white, 0.5);
+  border-top: solid 1px rgb(gray, 0.2);
+  background-color: rgb(white, 0.5);
 
   [data-theme="dark"] & {
-    background-color: rgba(black, 0.2);
+    background-color: rgb(black, 0.2);
   }
 }
 

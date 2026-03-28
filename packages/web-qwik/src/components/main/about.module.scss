@@ -2,6 +2,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -15,7 +16,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-
   animation: 400ms ease 200ms 1 normal both running fade;
 
   @media (width < 1024px) {

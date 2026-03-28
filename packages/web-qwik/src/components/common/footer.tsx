@@ -73,18 +73,18 @@ export const Footer = component$(() => {
             <LinkLocale
               lang={languageState.language}
               href="/"
-              class={styles.hiddenMobile}
+              class={styles['hidden-mobile']}
               aria-label="Home"
             >
               <ImgFavicon class={styles.favicon} />
             </LinkLocale>
 
-            <div class={styles.leftInner}>
+            <div class={styles['left-inner']}>
               <ElmInlineText size="0.8rem">
                 Ikuma Yamashita 2022 - {currentYear}
               </ElmInlineText>
             </div>
-            <div class={styles.leftInner}>
+            <div class={styles['left-inner']}>
               <ElmInlineText size="0.8rem">{build}</ElmInlineText>
             </div>
           </div>

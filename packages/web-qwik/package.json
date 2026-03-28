@@ -28,12 +28,13 @@
     "deploy:stg": "STAGE_NAME=stg pnpm run deploy",
     "deploy:prod": "STAGE_NAME=prod pnpm run deploy",
     "postdeploy": "./scripts/invalidate.sh",
+    "stylelint": "stylelint './src/**/*.scss' './src/**/*.css'",
     "generate:openapi": "openapi-typescript http://dev-www.ikuma.cloud/api/v2/openapi.json -o openapi/schema.ts"
   },
   "devDependencies": {
-    "@builder.io/qwik": "^1.19.1",
+    "@builder.io/qwik": "^1.19.2",
     "@builder.io/qwik-city": "^1.19.0",
-    "@elmethis/qwik": "0.0.45",
+    "@elmethis/qwik": "0.0.46",
     "@eslint/js": "^9.37.0",
     "@types/node": "20.19.0",
     "eslint": "^9.37.0",
@@ -48,15 +49,16 @@
     "serverless-http": "^3.2.0",
     "serverless-offline": "^13.3.2",
     "source-map-support": "^0.5.21",
+    "stylelint": "^16.17.0",
+    "stylelint-config-standard-scss": "^16.0.0",
     "typescript": "5.4.5",
     "typescript-eslint": "8.38.0",
     "typescript-plugin-css-modules": "latest",
     "undici": "*",
     "vite": "7.3.1",
-    "vite-tsconfig-paths": "^4.2.1"
+    "vite-tsconfig-paths": "^6.1.1"
   },
   "dependencies": {
-    "@elmethis/vue": "^0.4.1",
     "@mdi/js": "^7.4.47",
     "fuse.js": "^7.1.0",
     "motion": "^12.34.3",
