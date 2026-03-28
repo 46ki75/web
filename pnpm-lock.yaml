@@ -148,8 +148,8 @@ importers:
         specifier: ^1.19.0
         version: 1.19.0(@types/node@20.19.0)(jiti@2.6.1)(less@4.5.1)(rollup@4.59.0)(sass-embedded@1.97.3)(sass@1.97.3)(stylus@0.62.0)(terser@5.44.0)(tsx@4.20.6)(typescript@5.4.5)(yaml@2.8.1)
       '@elmethis/qwik':
-        specifier: 0.0.41
-        version: 0.0.41
+        specifier: 0.0.42
+        version: 0.0.42
       '@eslint/js':
         specifier: ^9.37.0
         version: 9.37.0
@@ -626,8 +626,8 @@ packages:
   '@dual-bundle/import-meta-resolve@4.2.1':
     resolution: {integrity: sha512-id+7YRUgoUX6CgV0DtuhirQWodeeA7Lf4i2x71JS/vtA5pRb/hIGWlw+G6MeXvsM+MXrz0VAydTGElX1rAfgPg==}
 
-  '@elmethis/qwik@0.0.41':
-    resolution: {integrity: sha512-7w5P5sQDvRpUJPwJDqy4r5PB1X0h8NNYMESbHr9baH38nY1481HfxC/0utzhafWHSj2jBotYsB1cktwgrkE+xQ==}
+  '@elmethis/qwik@0.0.42':
+    resolution: {integrity: sha512-SHWqddJsb5OqdXyXTI8aZlEtIDCRIv9BXhDk4WvKj5Vx9kCS2kq3qXiokab6pp81qy9bUsLQABvIRu0aaHQOfA==}
     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
 
   '@elmethis/vue@0.3.1':
@@ -5603,8 +5603,8 @@ packages:
     resolution: {integrity: sha512-q3N5u+1sY9Bu7T4nlXoiRBXWfwSefNGoKeOwekV+gw0cAXQlz2Ww6BLcmBxVDeXBMUDQv6fK5bcNaJLxob3ZQA==}
     hasBin: true
 
-  katex@0.16.43:
-    resolution: {integrity: sha512-K7NL5JtGrFEglipOAjY4UYA69CnTuNmjArxeXF6+bw7h2OGySUPv6QWRjfb1gmutJ4Mw/qLeBqiROOEDULp4nA==}
+  katex@0.16.44:
+    resolution: {integrity: sha512-EkxoDTk8ufHqHlf9QxGwcxeLkWRR3iOuYfRpfORgYfqc8s13bgb+YtRY59NK5ZpRaCwq1kqA6a5lpX8C/eLphQ==}
     hasBin: true
 
   keyv@4.5.4:
@@ -9664,10 +9664,10 @@ snapshots:
 
   '@dual-bundle/import-meta-resolve@4.2.1': {}
 
-  '@elmethis/qwik@0.0.41':
+  '@elmethis/qwik@0.0.42':
     dependencies:
       '@mdi/js': 7.4.47
-      katex: 0.16.43
+      katex: 0.16.44
       lodash-es: 4.17.23
       marked: 17.0.5
       polished: 4.3.1
@@ -15392,7 +15392,7 @@ snapshots:
     dependencies:
       commander: 8.3.0
 
-  katex@0.16.43:
+  katex@0.16.44:
     dependencies:
       commander: 8.3.0
 
