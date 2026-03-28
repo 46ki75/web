@@ -117,14 +117,27 @@ pub fn extract_all_links_from_html(body: &str) -> Vec<String> {
         (&LINK_SELECTOR, "href"),
     ];
 
-    pairs
+    let mut links: Vec<String> = pairs
         .iter()
         .flat_map(|(sel, attr)| {
             html.select(sel)
                 .filter_map(|el| el.value().attr(attr).map(str::to_owned))
                 .collect::<Vec<_>>()
         })
-        .collect()
+        .collect();
+
+    // Extract urls from img srcset
+    for el in html.select(&IMG_SELECTOR) {
+        if let Some(srcset) = el.value().attr("srcset") {
+            for part in srcset.split(',') {
+                if let Some(url) = part.trim().split_whitespace().next() {
+                    links.push(url.to_owned());
+                }
+            }
+        }
+    }
+
+    links
 }
 
 /// Strip a known prefix from `url` and ensure the remainder starts with `/`.
