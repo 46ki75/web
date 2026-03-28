@@ -101,7 +101,7 @@ impl BlogUseCase {
                         if let Some(id) = &image.id {
                             let src_base = format!("/api/v2/blog/block-image/{}", id);
                             image.props.srcset = Some(
-                                format!("{src_base}?size=small 500w, {src_base}?size=medium 750w, {src_base}?size=large 1000w, {src_base} 1920w"
+                                format!("{src_base}?size=small 500w, {src_base}?size=medium 800w, {src_base}?size=large 1200w"
                             ));
                             image.props.sizes = Some("(max-width: 800px) 100vw, 800px".to_owned());
                             image.props.src = src_base;

@@ -29,8 +29,8 @@ impl Into<u32> for BlogImageSizeQueryParam {
     fn into(self) -> u32 {
         match self {
             BlogImageSizeQueryParam::Small => 500,
-            BlogImageSizeQueryParam::Medium => 750,
-            BlogImageSizeQueryParam::Large => 1000,
+            BlogImageSizeQueryParam::Medium => 800,
+            BlogImageSizeQueryParam::Large => 1200,
         }
     }
 }
