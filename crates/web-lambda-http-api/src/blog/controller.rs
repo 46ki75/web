@@ -243,7 +243,7 @@ pub async fn get_blog_og_image(
         .blog_use_case
         .fetch_ogp_image_by_slug(&slug, language.clone())
         .await
-        .and_then(|contents| state.blog_use_case.convert_to_webp(&contents, Some(1200)))
+        .and_then(|contents| state.blog_use_case.convert_image(&contents, Some(1200)))
     {
         Ok(image_bytes) => {
             let content_type = state.blog_use_case.infer_mime_type(&image_bytes);
@@ -295,7 +295,7 @@ pub async fn get_blog_block_image(
         .and_then(|bytes| {
             state
                 .blog_use_case
-                .convert_to_webp(&bytes, size.map(|size| size.into()))
+                .convert_image(&bytes, size.map(|size| size.into()))
         }) {
         Ok(image_bytes) => {
             let content_type = state.blog_use_case.infer_mime_type(&image_bytes);

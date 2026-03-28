@@ -217,7 +217,7 @@ impl BlogUseCase {
         Ok(image_bytes)
     }
 
-    pub fn convert_to_webp(
+    pub fn convert_image(
         &self,
         image_bytes: &[u8],
         new_width: Option<u32>,
