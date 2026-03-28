@@ -52,7 +52,7 @@ pub async fn get_jarkup_by_slug(
         notionrs_client,
         reqwest_client,
         enable_unsupported_block: false,
-        enable_fetch_image_size: true,
+        enable_fetch_image_meta: true,
     };
 
     let components = client.convert_block(&page_id).await?;

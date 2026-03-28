@@ -2173,9 +2173,9 @@ checksum = "92ecc6618181def0457392ccd0ee51198e065e016d1d527a7ac1b6dc7c1f09d2"
 
 [[package]]
 name = "jarkup-rs"
-version = "0.13.0"
+version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a78b26be8a853e1ee515848a2a200c7a06422c7f0e99a94a84e3bc7945d6e500"
+checksum = "ed7e7401acde23a58c75eaba8d30b736b47f7dbb395ceb0a45890d12af496cef"
 dependencies = [
  "serde",
 ]
@@ -2562,13 +2562,14 @@ checksum = "0676bb32a98c1a483ce53e500a81ad9c3d5b3f7c920c28c24e9cb0980d0b5bc8"
 
 [[package]]
 name = "notion-to-jarkup"
-version = "0.19.0"
+version = "0.20.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "929440b629a6433e48b73b9563a929de6f1d59c3e7de13a2441b5e84e760d7ac"
+checksum = "4930cd493bb060909a0498ad4404fa9e5b88ff07a9692086d6e9c035a07d3040"
 dependencies = [
  "futures",
  "html-meta-scraper",
  "image",
+ "infer",
  "jarkup-rs",
  "notionrs",
  "notionrs_types",
