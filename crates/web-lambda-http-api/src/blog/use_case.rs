@@ -100,10 +100,28 @@ impl BlogUseCase {
                     jarkup_rs::BlockComponent::Image(image) => {
                         if let Some(id) = &image.id {
                             let src_base = format!("/api/v2/blog/block-image/{}", id);
-                            image.props.srcset = Some(
-                                format!("{src_base}?size=small 500w, {src_base}?size=medium 800w, {src_base}?size=large 1200w"
-                            ));
-                            image.props.sizes = Some("(max-width: 800px) 100vw, 800px".to_owned());
+
+                            (image.props.srcset, image.props.sizes) = if image
+                                .props
+                                .mime_type
+                                .as_ref()
+                                .map(|mime| mime.contains("xml"))
+                                .unwrap_or(false)
+                            {
+                                // If the image is SVG, we don't set srcset and sizes
+                                // because SVG is resolution-independent and can be scaled without loss of quality.
+                                (None, None)
+                            } else {
+                                (
+                                Some(
+                                    format!(
+                                        "{src_base}?size=small 500w, {src_base}?size=medium 800w, {src_base}?size=large 1200w"
+                                    )
+                                ),
+                                Some("(max-width: 800px) 100vw, 800px".to_owned())
+                                )
+                            };
+
                             image.props.src = src_base;
                         };
                     }
@@ -174,10 +192,19 @@ impl BlogUseCase {
         }
     }
 
-    /// Infers mime-type from bytes.
-    pub fn infer_mime_type(&self, image_bytes: &bytes::Bytes) -> String {
+    /// Infers the MIME type of the image by its binary data.
+    pub fn infer_image_mime_type(&self, image_bytes: &bytes::Bytes) -> String {
         infer::get(&image_bytes)
-            .map(|t| t.to_string())
+            .map(|t| {
+                let mime_type = t.to_string();
+                if mime_type.contains("xml") {
+                    // treat XML-based formats (e.g. SVG)
+                    // as "application/xml" to distinguish from binary formats
+                    "image/svg+xml".to_string()
+                } else {
+                    mime_type
+                }
+            })
             .unwrap_or(String::from("application/octet-stream"))
     }
 
@@ -222,6 +249,12 @@ impl BlogUseCase {
         image_bytes: &[u8],
         new_width: Option<u32>,
     ) -> Result<bytes::Bytes, crate::error::Error> {
+        let mime_type = self.infer_image_mime_type(&bytes::Bytes::copy_from_slice(image_bytes));
+
+        if mime_type.contains("xml") {
+            return Ok(bytes::Bytes::copy_from_slice(image_bytes));
+        }
+
         let img = image::ImageReader::new(std::io::Cursor::new(image_bytes))
             .with_guessed_format()?
             .decode()?;
