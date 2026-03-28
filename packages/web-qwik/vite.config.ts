@@ -28,9 +28,6 @@ export default defineConfig(({ command, mode }): UserConfig => {
   const DOMAIN = stageName === "prod" ? "www.ikuma.cloud" : `${stageName}-www.ikuma.cloud`;
   
   return {
-    resolve: {
-      tsconfigPaths: true
-    },
     define: {
       "import.meta.env.VITE_API_DOMAIN": JSON.stringify(DOMAIN),
     },
