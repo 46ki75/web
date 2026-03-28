@@ -17,6 +17,19 @@ pub enum BlogLanguageQueryParam {
     Ja,
 }
 
+#[derive(Debug, serde::Deserialize, utoipa::ToSchema)]
+#[serde(rename_all = "snake_case")]
+pub enum BlogImageSizeQueryParam {
+    Small,
+    Medium,
+    Large,
+}
+
+#[derive(Debug, serde::Deserialize, utoipa::ToSchema)]
+pub struct BlogBlockImageQueryParam {
+    pub size: Option<BlogImageSizeQueryParam>,
+}
+
 #[utoipa::path(
     get,
     path = "/api/v2/blog",
@@ -249,6 +262,7 @@ pub async fn get_blog_og_image(
     path = "/api/v2/blog/block-image/{block_id}",
     params(
         ("block_id" = String, Path, description = "Notion block id"),
+        ("size" = Option<BlogImageSizeQueryParam>, Query, description = "size preset name"),
     ),
     responses(
         (status = 200, description = "Blog Contents", body = Vec<u8>),
@@ -260,14 +274,24 @@ pub async fn get_blog_block_image(
         std::sync::Arc<crate::axum_router::AxumAppState>,
     >,
     axum::extract::Path(block_id): axum::extract::Path<String>,
+    axum::extract::Query(BlogBlockImageQueryParam { size }): axum::extract::Query<
+        BlogBlockImageQueryParam,
+    >,
 ) -> Result<axum::response::Response<axum::body::Body>, (axum::http::StatusCode, String)> {
-    // TODO: call `convert_to_webp`
     let contents = match state
         .blog_use_case
         .fetch_block_image_by_id(&block_id)
         .await
-        .and_then(|bytes| state.blog_use_case.convert_to_webp(&bytes, None))
-    {
+        .and_then(|bytes| {
+            state.blog_use_case.convert_to_webp(
+                &bytes,
+                size.map(|size| match size {
+                    BlogImageSizeQueryParam::Small => 500,
+                    BlogImageSizeQueryParam::Medium => 800,
+                    BlogImageSizeQueryParam::Large => 1280,
+                }),
+            )
+        }) {
         Ok(image_bytes) => {
             let content_type = state.blog_use_case.infer_mime_type(&image_bytes);
 
