@@ -142,8 +142,8 @@ importers:
         version: 9.0.0
     devDependencies:
       '@builder.io/qwik':
-        specifier: ^1.19.1
-        version: 1.19.1(vite@7.3.1(@types/node@20.19.0)(jiti@2.6.1)(less@4.5.1)(sass-embedded@1.97.3)(sass@1.97.3)(stylus@0.62.0)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1))
+        specifier: ^1.19.2
+        version: 1.19.2(vite@7.3.1(@types/node@20.19.0)(jiti@2.6.1)(less@4.5.1)(sass-embedded@1.97.3)(sass@1.97.3)(stylus@0.62.0)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1))
       '@builder.io/qwik-city':
         specifier: ^1.19.0
         version: 1.19.0(@types/node@20.19.0)(jiti@2.6.1)(less@4.5.1)(rollup@4.59.0)(sass-embedded@1.97.3)(sass@1.97.3)(stylus@0.62.0)(terser@5.44.0)(tsx@4.20.6)(typescript@5.4.5)(yaml@2.8.1)
@@ -565,8 +565,8 @@ packages:
     resolution: {integrity: sha512-TAXSDRYPXVX4cKKmvMReCDyjjGLnzkCLNQvVfcNPsK/9xSZwUR5AZF22c/XSLv6g17QnWHKSfVdZ1idtncl7LQ==}
     engines: {node: '>=16.8.0 <18.0.0 || >=18.11'}
 
-  '@builder.io/qwik@1.19.1':
-    resolution: {integrity: sha512-dHBg96aZu2EuWbt9taPYyneo0jL1swG+GniguzDN31D4+rOXTbJObDIuo4uBkUieOvs6gLYnCvf7AlRl0b3mvg==}
+  '@builder.io/qwik@1.19.2':
+    resolution: {integrity: sha512-aLQIZm3BdX6jStSR6XdXhT9jQo5JN9bxuYJOD8p5IhZxBNgjQaRwIfZkXksgs6RkzdTsSpXo5+G6lkb/jMZQsg==}
     engines: {node: '>=16.8.0 <18.0.0 || >=18.11'}
     hasBin: true
     peerDependencies:
@@ -9603,7 +9603,7 @@ snapshots:
       - typescript
       - yaml
 
-  '@builder.io/qwik@1.19.1(vite@7.3.1(@types/node@20.19.0)(jiti@2.6.1)(less@4.5.1)(sass-embedded@1.97.3)(sass@1.97.3)(stylus@0.62.0)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1))':
+  '@builder.io/qwik@1.19.2(vite@7.3.1(@types/node@20.19.0)(jiti@2.6.1)(less@4.5.1)(sass-embedded@1.97.3)(sass@1.97.3)(stylus@0.62.0)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1))':
     dependencies:
       csstype: 3.2.3
       launch-editor: 2.13.1
