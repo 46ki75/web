@@ -15,6 +15,6 @@ resource "aws_cloudwatch_metric_alarm" "lambda_http" {
   statistic           = "Sum"
   datapoints_to_alarm = 1
   threshold           = 1
-  alarm_actions       = [aws_sns_topic.error.arn]
+  alarm_actions       = [aws_sns_topic.sns_topic["error"].arn]
   treat_missing_data  = "notBreaching"
 }

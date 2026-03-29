@@ -13,3 +13,8 @@ resource "aws_cloudwatch_log_group" "cache_warmer" {
   retention_in_days = 30
 }
 
+resource "aws_cloudwatch_log_group" "lambda_reporter" {
+  name              = "/${terraform.workspace}/46ki75/web/cloudwatch/log_group/lambda_reporter"
+  retention_in_days = 30
+}
+
