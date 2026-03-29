@@ -36,8 +36,8 @@ pub(crate) async fn function_handler(event: LambdaEvent<LogsEvent>) -> Result<()
     };
 
     let message = format!(
-        "An {:?} level message was captured by the subscription filter.",
-        level
+        "| Log Group: {} |\nAn {:?} level message was captured by the subscription filter.",
+        &event.payload.aws_logs.data.log_group, level
     );
 
     let logs = event
