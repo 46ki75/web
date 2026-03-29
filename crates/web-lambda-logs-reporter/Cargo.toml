@@ -1,0 +1,14 @@
+[package]
+name = "web-lambda-logs-reporter"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+aws-config = { workspace = true }
+aws-sdk-sns = { workspace = true }
+aws_lambda_events = { workspace = true, features = ["cloudwatch_logs"] }
+
+lambda_runtime = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tokio = { workspace = true }

@@ -1,0 +1,11 @@
+dev: 
+    STAGE_NAME=dev RUST_LOG=web_lambda_logs_reporter=debug cargo lambda watch --package web-lambda-logs-reporter
+
+build: 
+    cargo lambda build --arm64 --release
+
+deploy  STAGE_NAME: build
+    cargo lambda deploy --binary-name web-lambda-logs-reporter "{{STAGE_NAME}}-46ki75-web-lambda-function-reporter"
+
+test:
+    cargo test --lib

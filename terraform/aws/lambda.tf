@@ -190,7 +190,8 @@ resource "aws_lambda_function" "nitro" {
 
   environment {
     variables = {
-      STAGE_NAME = terraform.workspace
+      STAGE_NAME   = terraform.workspace
+      NODE_OPTIONS = "--disable-warning=ExperimentalWarning"
     }
   }
 }

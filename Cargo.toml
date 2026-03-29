@@ -4,6 +4,7 @@ members = [
     "crates/web-blog-sdk",
     "crates/web-lambda-cache-warmer",
     "crates/web-lambda-http-api",
+    "crates/web-lambda-logs-reporter",
 ]
 
 [workspace.dependencies]
@@ -23,12 +24,14 @@ reqwest = { version = "0.13", default-features = true, features = [
 ] }
 
 # AWS SDK
-aws-sdk-ssm = "1.96.0"
 aws-config = "1.8.8"
+aws-sdk-ssm = "1.96.0"
+aws-sdk-sns = "1.95.0"
 
 # AWS Lambda
 lambda_http = "1.0"
 lambda_runtime = { version = "1.0" }
+aws_lambda_events = { version = "1.1.2" }
 
 # Logging
 tracing = { version = "0.1.41", features = ["attributes"] }
