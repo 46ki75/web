@@ -7,13 +7,18 @@ import { client } from "../../../../../../openapi/client";
 
 const LANGUAGE = "ja";
 
-export const useBlogMeta = routeLoader$(async ({ params, url }) => {
+export const useBlogMeta = routeLoader$(async ({ params, url, error }) => {
   const { data: blogMeta } = await client.GET("/api/v2/blog/{slug}", {
     params: {
       header: { "accept-language": LANGUAGE },
       path: { slug: params.slug },
     },
   });
+
+  if (!blogMeta) {
+    console.error(`Blog post with slug "${params.slug}" not found`);
+    throw error(404, "Blog post not found");
+  }
 
   return { meta: blogMeta!.meta, url: url.toString() };
 });
