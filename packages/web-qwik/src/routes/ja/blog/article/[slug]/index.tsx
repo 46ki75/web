@@ -16,7 +16,7 @@ export const useBlogMeta = routeLoader$(async ({ params, url, error }) => {
   });
 
   if (!blogMeta) {
-    console.error(`Blog post with slug "${params.slug}" not found`);
+    console.info(`Blog post with slug "${params.slug}" not found`);
     throw error(404, "Blog post not found");
   }
 
