@@ -25,14 +25,14 @@ body {
   }
 
   to {
-    transform: translateX(-30px);
+    transform: translateX(-16px);
     opacity: 0;
   }
 }
 
 @keyframes slide-in {
   from {
-    transform: translateX(30px);
+    transform: translateX(16px);
     opacity: 0;
   }
 
