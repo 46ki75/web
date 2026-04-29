@@ -47,5 +47,5 @@ body {
 }
 
 ::view-transition-new(main-content) {
-  animation: 200ms ease-out both slide-in;
+  animation: 200ms ease-out both slide-in 200ms;
 }
