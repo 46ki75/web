@@ -13,3 +13,51 @@ body {
     background-color: #25282e;
   }
 }
+
+@view-transition {
+  navigation: auto;
+}
+
+.routing-transition {
+  width: 100%;
+  margin: 0;
+  view-transition-name: routing;
+}
+
+::view-transition-group(routing) {
+  overflow: visible;
+}
+
+::view-transition-image-pair(routing) {
+  overflow: visible;
+}
+
+::view-transition-old(routing) {
+  animation: fade-out 200ms ease forwards;
+}
+
+::view-transition-new(routing) {
+  animation: fade-in 200ms ease forwards;
+}
+
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}

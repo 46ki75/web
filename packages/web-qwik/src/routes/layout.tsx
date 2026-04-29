@@ -19,8 +19,9 @@ export default component$(() => {
   return (
     <>
       <Header />
-
-      <Slot />
+      <div class="routing-transition">
+        <Slot />
+      </div>
 
       <ElmParallax images={[bgBlue, bgEmerald]} />
 
