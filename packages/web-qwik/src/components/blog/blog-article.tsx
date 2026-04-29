@@ -27,15 +27,19 @@ export interface ArticleProps {
 export const BlogArticle = component$<ArticleProps>(({ slug, language }) => {
   const blogState = useContext(BlogContext);
 
-  const jarkup = useResource$(async ({ track }) => {
+  const jarkup = useResource$(async ({ track, cleanup }) => {
     const trackedSlug = track(() => slug);
     const trackedLang = track(() => language);
+
+    const controller = new AbortController();
+    cleanup(() => controller.abort());
 
     const { data: blogContents } = await client.GET("/api/v2/blog/{slug}", {
       params: {
         path: { slug: trackedSlug! },
         header: { "accept-language": trackedLang },
       },
+      signal: controller.signal,
     });
 
     return blogContents as {
