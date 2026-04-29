@@ -1,0 +1,13 @@
+{
+    "folders": [
+        {
+            "path": ".",
+            "name": "46ki75/web"
+        }
+    ],
+    "settings": {
+        "terminal.integrated.env.linux": {
+            "AWS_PROFILE": "46ki75-web"
+        }
+    }
+}

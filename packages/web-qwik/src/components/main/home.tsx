@@ -11,7 +11,7 @@ export type HomeProps = {
 
 export const Home = component$<HomeProps>(({ language }) => {
   return (
-    <div class={styles["home"]}>
+    <div class={[styles["home"], "main-view-transition"]}>
       <div class={styles["about"]}>
         <About language={language} />
       </div>
