@@ -26,4 +26,15 @@
   @media (width < 512px) {
     padding: 2rem 1rem;
   }
+
+  .signature-container {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+
+    .signature {
+      height: 6rem;
+      width: auto;
+    }
+  }
 }

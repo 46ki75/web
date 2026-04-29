@@ -1,12 +1,14 @@
 import { component$ } from "@builder.io/qwik";
 
-import styles from "./about.module.scss";
+import styles from "./about.module.css";
 
 import en from "./about.en.md?raw";
 import ja from "./about.ja.md?raw";
 import { Language } from "~/types";
 import { ElmInlineText, ElmMarkdown } from "@elmethis/qwik";
 import { FindMeOn } from "./find-me-on";
+
+import Signature from "~/assets/image/signature.webp?url";
 
 export interface AboutProps {
   language: Language;
@@ -37,6 +39,16 @@ export const About = component$<AboutProps>(({ language }) => {
           markdown={translation[language].markdown}
           style={{ "--margin-block": "1rem" }}
         />
+
+        <div class={styles["signature-container"]}>
+          <img
+            class={styles["signature"]}
+            src={Signature}
+            alt="Signature"
+            width={1024}
+            height={512}
+          />
+        </div>
 
         <FindMeOn />
       </div>
