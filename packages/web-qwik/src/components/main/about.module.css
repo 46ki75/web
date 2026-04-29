@@ -11,6 +11,7 @@
 .about {
   box-sizing: border-box;
   padding: 0 8rem;
+  margin-top: 1rem;
   width: 1024px;
   min-height: calc(100vh - 3.5rem);
   display: flex;

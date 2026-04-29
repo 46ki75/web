@@ -14,7 +14,7 @@ body {
   }
 }
 
-.root-view-transition {
+.main-view-transition {
   view-transition-name: main-content;
 }
 
