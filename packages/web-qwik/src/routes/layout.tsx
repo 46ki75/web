@@ -19,7 +19,7 @@ export default component$(() => {
   return (
     <>
       <Header />
-      <div class="routing-transition">
+      <div class="root-view-transition">
         <Slot />
       </div>
 

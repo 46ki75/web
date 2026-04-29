@@ -7,7 +7,7 @@ import {
 import { QwikCityProvider, RouterOutlet } from "@builder.io/qwik-city";
 import { RouterHead } from "./components/router-head/router-head";
 
-import "./global.scss";
+import "./global.css";
 import "@elmethis/qwik/style.css";
 
 import { BlogContext, BlogState } from "./context/blog";
@@ -32,7 +32,7 @@ export default component$(() => {
   useContextProvider(LanguageContext, languageState);
 
   return (
-    <QwikCityProvider viewTransition={false}>
+    <QwikCityProvider viewTransition={true}>
       <head>
         <meta charset="utf-8" />
         {!isDev && (
