@@ -32,7 +32,7 @@ export default component$(() => {
   useContextProvider(LanguageContext, languageState);
 
   return (
-    <QwikCityProvider>
+    <QwikCityProvider viewTransition={false}>
       <head>
         <meta charset="utf-8" />
         {!isDev && (
