@@ -7,9 +7,7 @@
     )
 )]
 pub async fn fetch_web_config(
-    axum::extract::State(state): axum::extract::State<
-        std::sync::Arc<crate::axum_router::AxumAppState>,
-    >,
+    axum::extract::State(state): axum::extract::State<std::sync::Arc<super::router::WebConfigState>>,
 ) -> Result<axum::response::Response<axum::body::Body>, (axum::http::StatusCode, String)> {
     let web_config_use_case = &state.web_config_use_case;
 
