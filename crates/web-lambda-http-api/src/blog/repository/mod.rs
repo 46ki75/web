@@ -45,9 +45,8 @@ pub trait BlogRepository: Send + Sync {
         &self,
     ) -> std::pin::Pin<
         Box<
-            dyn std::future::Future<
-                    Output = Result<Vec<output::BlogTagDto>, crate::error::Error>,
-                > + Send,
+            dyn std::future::Future<Output = Result<Vec<output::BlogTagDto>, crate::error::Error>>
+                + Send,
         >,
     >;
 
@@ -70,6 +69,7 @@ pub trait BlogRepository: Send + Sync {
 pub struct BlogRepositoryImpl {}
 
 impl BlogRepository for BlogRepositoryImpl {
+    #[cfg_attr(not(rust_analyzer), tracing::instrument(skip(self), err))]
     fn list_blogs(
         &self,
         language: input::BlogLanguageDto,
@@ -317,6 +317,7 @@ impl BlogRepository for BlogRepositoryImpl {
         })
     }
 
+    #[cfg_attr(not(rust_analyzer), tracing::instrument(skip(self), err))]
     fn get_blog_contents(
         &self,
         slug: &str,
@@ -395,13 +396,13 @@ impl BlogRepository for BlogRepositoryImpl {
         })
     }
 
+    #[cfg_attr(not(rust_analyzer), tracing::instrument(skip(self), err))]
     fn list_tags(
         &self,
     ) -> std::pin::Pin<
         Box<
-            dyn std::future::Future<
-                    Output = Result<Vec<output::BlogTagDto>, crate::error::Error>,
-                > + Send,
+            dyn std::future::Future<Output = Result<Vec<output::BlogTagDto>, crate::error::Error>>
+                + Send,
         >,
     > {
         Box::pin(async move {
@@ -475,6 +476,7 @@ impl BlogRepository for BlogRepositoryImpl {
         })
     }
 
+    #[cfg_attr(not(rust_analyzer), tracing::instrument(skip(self), err))]
     fn fetch_image_by_url(
         &self,
         url: &str,
@@ -498,6 +500,7 @@ impl BlogRepository for BlogRepositoryImpl {
         })
     }
 
+    #[cfg_attr(not(rust_analyzer), tracing::instrument(skip(self), err))]
     fn fetch_image_by_block_id(
         &self,
         block_id: &str,
