@@ -5,18 +5,44 @@ use notionrs_types::prelude::*;
 pub mod input;
 pub mod output;
 
+/// Errors produced by the blog repository layer.
+///
+/// These describe I/O facts — missing Notion properties, broken API connections,
+/// image fetch failures — not business outcomes.  Business semantics (e.g. "blog
+/// not found") are expressed at the [`crate::blog::use_case`] layer.
+#[derive(Debug, thiserror::Error)]
+pub enum BlogRepositoryError {
+    #[error("property '{0}' not found in Notion page")]
+    PagePropertyNotFound(String),
+
+    #[error("property '{0}' has unexpected schema type")]
+    InvalidSchema(String),
+
+    #[error("Notion record error: {0}")]
+    NotionRecord(String),
+
+    #[error("image fetch error: {0}")]
+    FetchImage(#[from] reqwest::Error),
+
+    #[error("Notion API error: {0}")]
+    NotionApi(#[from] notionrs::Error),
+
+    #[error("notion-to-jarkup error: {0}")]
+    NotionToJarkup(#[from] notion_to_jarkup::error::Error),
+
+    /// Wraps shared infrastructure failures (SSM, environment variables) that
+    /// have no additional business meaning at this layer.
+    #[error(transparent)]
+    Internal(#[from] crate::error::Error),
+}
+
 fn get_property<'a>(
     properties: &'a std::collections::HashMap<String, PageProperty>,
     property_name: &str,
-) -> Result<&'a PageProperty, crate::error::Error> {
-    let result =
-        properties
-            .get(property_name)
-            .ok_or(crate::error::Error::NotionPagePropertyNotFound(
-                property_name.to_owned(),
-            ))?;
-
-    Ok(result)
+) -> Result<&'a PageProperty, BlogRepositoryError> {
+    properties
+        .get(property_name)
+        .ok_or_else(|| BlogRepositoryError::PagePropertyNotFound(property_name.to_owned()))
 }
 
 pub trait BlogRepository: Send + Sync {
@@ -25,8 +51,9 @@ pub trait BlogRepository: Send + Sync {
         language: input::BlogLanguageDto,
     ) -> std::pin::Pin<
         Box<
-            dyn std::future::Future<Output = Result<Vec<output::BlogDto>, crate::error::Error>>
-                + Send,
+            dyn std::future::Future<
+                    Output = Result<Vec<output::BlogDto>, BlogRepositoryError>,
+                > + Send,
         >,
     >;
 
@@ -36,8 +63,9 @@ pub trait BlogRepository: Send + Sync {
         language: input::BlogLanguageDto,
     ) -> std::pin::Pin<
         Box<
-            dyn std::future::Future<Output = Result<Vec<jarkup_rs::Component>, crate::error::Error>>
-                + Send,
+            dyn std::future::Future<
+                    Output = Result<Vec<jarkup_rs::Component>, BlogRepositoryError>,
+                > + Send,
         >,
     >;
 
@@ -45,8 +73,9 @@ pub trait BlogRepository: Send + Sync {
         &self,
     ) -> std::pin::Pin<
         Box<
-            dyn std::future::Future<Output = Result<Vec<output::BlogTagDto>, crate::error::Error>>
-                + Send,
+            dyn std::future::Future<
+                    Output = Result<Vec<output::BlogTagDto>, BlogRepositoryError>,
+                > + Send,
         >,
     >;
 
@@ -54,14 +83,18 @@ pub trait BlogRepository: Send + Sync {
         &self,
         url: &str,
     ) -> std::pin::Pin<
-        Box<dyn std::future::Future<Output = Result<bytes::Bytes, crate::error::Error>> + Send>,
+        Box<
+            dyn std::future::Future<Output = Result<bytes::Bytes, BlogRepositoryError>> + Send,
+        >,
     >;
 
     fn fetch_image_by_block_id(
         &self,
         block_id: &str,
     ) -> std::pin::Pin<
-        Box<dyn std::future::Future<Output = Result<bytes::Bytes, crate::error::Error>> + Send>,
+        Box<
+            dyn std::future::Future<Output = Result<bytes::Bytes, BlogRepositoryError>> + Send,
+        >,
     >;
 }
 
@@ -75,8 +108,9 @@ impl BlogRepository for BlogRepositoryImpl {
         language: input::BlogLanguageDto,
     ) -> std::pin::Pin<
         Box<
-            dyn std::future::Future<Output = Result<Vec<output::BlogDto>, crate::error::Error>>
-                + Send,
+            dyn std::future::Future<
+                    Output = Result<Vec<output::BlogDto>, BlogRepositoryError>,
+                > + Send,
         >,
     > {
         Box::pin(async move {
@@ -116,7 +150,7 @@ impl BlogRepository for BlogRepositoryImpl {
                         .map(|r| r.to_string())
                         .collect::<String>()
                 } else {
-                    return Err(crate::error::Error::NotionInvalidSchema("slug".to_owned()));
+                    return Err(BlogRepositoryError::InvalidSchema("slug".to_owned()));
                 };
 
                 // featured # ---------- #
@@ -125,9 +159,7 @@ impl BlogRepository for BlogRepositoryImpl {
                 let featured = if let PageProperty::Checkbox(featured) = maybe_featured {
                     featured.checkbox
                 } else {
-                    return Err(crate::error::Error::NotionInvalidSchema(
-                        "featured".to_owned(),
-                    ));
+                    return Err(BlogRepositoryError::InvalidSchema("featured".to_owned()));
                 };
 
                 // tag_ids # ---------- #
@@ -140,9 +172,7 @@ impl BlogRepository for BlogRepositoryImpl {
                         .map(|r| r.id.clone())
                         .collect::<Vec<String>>()
                 } else {
-                    return Err(crate::error::Error::NotionInvalidSchema(
-                        "tag_ids".to_owned(),
-                    ));
+                    return Err(BlogRepositoryError::InvalidSchema("tag_ids".to_owned()));
                 };
 
                 // status # ---------- #
@@ -157,9 +187,7 @@ impl BlogRepository for BlogRepositoryImpl {
                         _ => output::BlogStatusDto::Draft,
                     }
                 } else {
-                    return Err(crate::error::Error::NotionInvalidSchema(
-                        "status".to_owned(),
-                    ));
+                    return Err(BlogRepositoryError::InvalidSchema("status".to_owned()));
                 };
 
                 // related blog article # ---------- #
@@ -180,13 +208,15 @@ impl BlogRepository for BlogRepositoryImpl {
                         .relation
                         .first()
                         .map(|relation| relation.id.clone())
-                        .ok_or(crate::error::Error::NotionRecord(format!(
-                            "relation is not set in property '{0}' (page_id: {1})",
-                            blog_article_relation_property_name, page_id
-                        )))?;
+                        .ok_or_else(|| {
+                            BlogRepositoryError::NotionRecord(format!(
+                                "relation is not set in property '{0}' (page_id: {1})",
+                                blog_article_relation_property_name, page_id
+                            ))
+                        })?;
                     article_page_id
                 } else {
-                    return Err(crate::error::Error::NotionInvalidSchema(
+                    return Err(BlogRepositoryError::InvalidSchema(
                         blog_article_relation_property_name.to_owned(),
                     ));
                 };
@@ -207,7 +237,7 @@ impl BlogRepository for BlogRepositoryImpl {
                         .map(|r| r.to_string())
                         .collect::<String>()
                 } else {
-                    return Err(crate::error::Error::NotionInvalidSchema("title".to_owned()));
+                    return Err(BlogRepositoryError::InvalidSchema("title".to_owned()));
                 };
 
                 // // description # ---------- #
@@ -220,9 +250,7 @@ impl BlogRepository for BlogRepositoryImpl {
                         .map(|r| r.to_string())
                         .collect::<String>()
                 } else {
-                    return Err(crate::error::Error::NotionInvalidSchema(
-                        "description".to_owned(),
-                    ));
+                    return Err(BlogRepositoryError::InvalidSchema("description".to_owned()));
                 };
 
                 // // keywords # ---------- #
@@ -238,9 +266,7 @@ impl BlogRepository for BlogRepositoryImpl {
                         .map(|k| k.trim().to_owned())
                         .collect::<Vec<String>>()
                 } else {
-                    return Err(crate::error::Error::NotionInvalidSchema(
-                        "keywords".to_owned(),
-                    ));
+                    return Err(BlogRepositoryError::InvalidSchema("keywords".to_owned()));
                 };
 
                 // // created_at # ---------- #
@@ -258,14 +284,14 @@ impl BlogRepository for BlogRepositoryImpl {
                             }
                             DateOrDateTime::DateTime(offset_date_time) => offset_date_time,
                         })
-                        .ok_or(crate::error::Error::NotionRecord(format!(
-                            "start date is not set in property `created_at` (page_id: {0})",
-                            article_page.id
-                        )))?
+                        .ok_or_else(|| {
+                            BlogRepositoryError::NotionRecord(format!(
+                                "start date is not set in property `created_at` (page_id: {0})",
+                                article_page.id
+                            ))
+                        })?
                 } else {
-                    return Err(crate::error::Error::NotionInvalidSchema(
-                        "created_at".to_owned(),
-                    ));
+                    return Err(BlogRepositoryError::InvalidSchema("created_at".to_owned()));
                 };
 
                 // // updated_at # ---------- #
@@ -283,14 +309,14 @@ impl BlogRepository for BlogRepositoryImpl {
                             }
                             DateOrDateTime::DateTime(offset_date_time) => offset_date_time,
                         })
-                        .ok_or(crate::error::Error::NotionRecord(format!(
-                            "start date is not set in property `updated_at` (page_id: {0})",
-                            article_page.id
-                        )))?
+                        .ok_or_else(|| {
+                            BlogRepositoryError::NotionRecord(format!(
+                                "start date is not set in property `updated_at` (page_id: {0})",
+                                article_page.id
+                            ))
+                        })?
                 } else {
-                    return Err(crate::error::Error::NotionInvalidSchema(
-                        "updated_at".to_owned(),
-                    ));
+                    return Err(BlogRepositoryError::InvalidSchema("updated_at".to_owned()));
                 };
 
                 let ogp_image_s3_signed_url = article_page.cover.map(|cover| cover.get_url());
@@ -324,8 +350,9 @@ impl BlogRepository for BlogRepositoryImpl {
         language: input::BlogLanguageDto,
     ) -> std::pin::Pin<
         Box<
-            dyn std::future::Future<Output = Result<Vec<jarkup_rs::Component>, crate::error::Error>>
-                + Send,
+            dyn std::future::Future<
+                    Output = Result<Vec<jarkup_rs::Component>, BlogRepositoryError>,
+                > + Send,
         >,
     > {
         let slug = slug.to_owned();
@@ -368,20 +395,22 @@ impl BlogRepository for BlogRepositoryImpl {
                                 .relation
                                 .first()
                                 .map(|relation| relation.id.clone())
-                                .ok_or(crate::error::Error::NotionRecord(format!(
-                                    "relation is not set in property '{0}' (page_id: {1})",
-                                    property_name, page.id
-                                )))?;
+                                .ok_or_else(|| {
+                                    BlogRepositoryError::NotionRecord(format!(
+                                        "relation is not set in property '{0}' (page_id: {1})",
+                                        property_name, page.id
+                                    ))
+                                })?;
                             article_page_id
                         } else {
-                            return Err(crate::error::Error::NotionInvalidSchema(
+                            return Err(BlogRepositoryError::InvalidSchema(
                                 property_name.to_owned(),
                             ));
                         };
 
                     Ok(article_page_id)
                 }
-                None => Err(crate::error::Error::NotionRecord("Not Found".to_owned())),
+                None => Err(BlogRepositoryError::NotionRecord("Not Found".to_owned())),
             }?;
 
             let notion_to_jarkup_client =
@@ -401,8 +430,9 @@ impl BlogRepository for BlogRepositoryImpl {
         &self,
     ) -> std::pin::Pin<
         Box<
-            dyn std::future::Future<Output = Result<Vec<output::BlogTagDto>, crate::error::Error>>
-                + Send,
+            dyn std::future::Future<
+                    Output = Result<Vec<output::BlogTagDto>, BlogRepositoryError>,
+                > + Send,
         >,
     > {
         Box::pin(async move {
@@ -436,9 +466,7 @@ impl BlogRepository for BlogRepositoryImpl {
                         .map(|r| r.to_string())
                         .collect::<String>()
                 } else {
-                    return Err(crate::error::Error::NotionInvalidSchema(
-                        "name_en".to_owned(),
-                    ));
+                    return Err(BlogRepositoryError::InvalidSchema("name_en".to_owned()));
                 };
 
                 // name_ja # ---------- #
@@ -451,9 +479,7 @@ impl BlogRepository for BlogRepositoryImpl {
                         .map(|r| r.to_string())
                         .collect::<String>()
                 } else {
-                    return Err(crate::error::Error::NotionInvalidSchema(
-                        "name_ja".to_owned(),
-                    ));
+                    return Err(BlogRepositoryError::InvalidSchema("name_ja".to_owned()));
                 };
 
                 let icon_url = page.icon.and_then(|icon| match icon {
@@ -481,21 +507,15 @@ impl BlogRepository for BlogRepositoryImpl {
         &self,
         url: &str,
     ) -> std::pin::Pin<
-        Box<dyn std::future::Future<Output = Result<bytes::Bytes, crate::error::Error>> + Send>,
+        Box<
+            dyn std::future::Future<Output = Result<bytes::Bytes, BlogRepositoryError>> + Send,
+        >,
     > {
         let url = url.to_owned();
 
         Box::pin(async move {
-            let response = reqwest::get(url).await.map_err(|e| {
-                tracing::error!("An error occurred while fetch image: {}", e);
-                crate::error::Error::FetchImage(e.to_string())
-            })?;
-
-            let bytes = response.bytes().await.map_err(|e| {
-                tracing::error!("An error occurred while fetch image: {}", e);
-                crate::error::Error::FetchImage(e.to_string())
-            })?;
-
+            let response = reqwest::get(url).await?;
+            let bytes = response.bytes().await?;
             Ok(bytes)
         })
     }
@@ -505,7 +525,9 @@ impl BlogRepository for BlogRepositoryImpl {
         &self,
         block_id: &str,
     ) -> std::pin::Pin<
-        Box<dyn std::future::Future<Output = Result<bytes::Bytes, crate::error::Error>> + Send>,
+        Box<
+            dyn std::future::Future<Output = Result<bytes::Bytes, BlogRepositoryError>> + Send,
+        >,
     > {
         let block_id = block_id.to_owned();
 
@@ -520,22 +542,14 @@ impl BlogRepository for BlogRepositoryImpl {
             let url = match response.block {
                 notionrs_types::object::block::Block::Image { image } => image.get_url(),
                 _ => {
-                    return Err(crate::error::Error::NotionInvalidSchema(
+                    return Err(BlogRepositoryError::InvalidSchema(
                         "The requested block is not an Image block.".to_string(),
                     ));
                 }
             };
 
-            let response = reqwest::get(url).await.map_err(|e| {
-                tracing::error!("An error occurred while fetch image: {}", e);
-                crate::error::Error::FetchImage(e.to_string())
-            })?;
-
-            let bytes = response.bytes().await.map_err(|e| {
-                tracing::error!("An error occurred while fetch image: {}", e);
-                crate::error::Error::FetchImage(e.to_string())
-            })?;
-
+            let response = reqwest::get(url).await?;
+            let bytes = response.bytes().await?;
             Ok(bytes)
         })
     }

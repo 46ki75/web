@@ -1,9 +1,18 @@
+/// Errors produced by the web-config repository layer.
+#[derive(Debug, thiserror::Error)]
+pub enum WebConfigRepositoryError {
+    /// Wraps shared infrastructure failures (SSM, environment variables) that
+    /// have no additional business meaning at this layer.
+    #[error(transparent)]
+    Internal(#[from] crate::error::Error),
+}
+
 pub trait WebConfigRepository: Send + Sync {
     fn fetch_parameter(
         &self,
         parameter_name: String,
     ) -> std::pin::Pin<
-        Box<dyn std::future::Future<Output = Result<String, crate::error::Error>> + Send>,
+        Box<dyn std::future::Future<Output = Result<String, WebConfigRepositoryError>> + Send>,
     >;
 }
 
@@ -16,7 +25,7 @@ impl WebConfigRepository for WebConfigRepositoryImpl {
         &self,
         parameter_name: String,
     ) -> std::pin::Pin<
-        Box<dyn std::future::Future<Output = Result<String, crate::error::Error>> + Send>,
+        Box<dyn std::future::Future<Output = Result<String, WebConfigRepositoryError>> + Send>,
     > {
         Box::pin(async move {
             let request =
