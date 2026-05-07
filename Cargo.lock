@@ -2234,6 +2234,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "imagesize"
+version = "0.14.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "09e54e57b4c48b40f7aec75635392b12b3421fa26fe8b4332e63138ed278459c"
+
+[[package]]
 name = "imgref"
 version = "1.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2711,17 +2717,16 @@ checksum = "0676bb32a98c1a483ce53e500a81ad9c3d5b3f7c920c28c24e9cb0980d0b5bc8"
 
 [[package]]
 name = "notion-to-jarkup"
-version = "0.20.0"
+version = "0.29.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4930cd493bb060909a0498ad4404fa9e5b88ff07a9692086d6e9c035a07d3040"
+checksum = "f8d619a39f979a9452a6cbf8d367f3bf9d5723954526a259a12883912ea539b6"
 dependencies = [
  "futures",
  "html-meta-scraper",
- "image",
+ "imagesize",
  "infer",
  "jarkup-rs",
  "notionrs",
- "notionrs_types",
  "reqwest",
  "thiserror 2.0.17",
  "url",
@@ -2729,9 +2734,9 @@ dependencies = [
 
 [[package]]
 name = "notionrs"
-version = "0.13.0"
+version = "0.25.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "011690a0874fca522ac4d5703deb19cbd1a655c90bfeabf358eaa2e5bd916aa0"
+checksum = "feab207a2bdcac11cd513ac3c9d85ea84ed229bd7f87ef9ff07e789dafaf2ca3"
 dependencies = [
  "bytes",
  "futures",
@@ -2748,9 +2753,9 @@ dependencies = [
 
 [[package]]
 name = "notionrs_macro"
-version = "0.2.0"
+version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b72a1968989b4e925e7e56e462301e73daa2e22cb5099a2cb9dc3bbbf670dc8e"
+checksum = "205915f5b0f7bd0cc887ca1c14be2b76f54b7e3cc3ed00cf6acec180b7238165"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -2759,12 +2764,13 @@ dependencies = [
 
 [[package]]
 name = "notionrs_types"
-version = "0.11.0"
+version = "0.18.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f9f706dd474fbced8d43186510d077839c30c77ca8967a9c1c35b314797c8227"
+checksum = "34414cad2d504a8ae1acec1132f1d00203898a3acc00673f857c23ea63bb45f7"
 dependencies = [
  "notionrs_macro",
  "serde",
+ "serde_json",
  "serde_plain",
  "time",
 ]
@@ -3091,9 +3097,9 @@ dependencies = [
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.101"
+version = "1.0.106"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "89ae43fd86e4158d6db51ad8e2b80f313af9cc74f5c0e03ccb87de09998732de"
+checksum = "8fd00f0bb2e90d81d1044c2b32617f68fcb9fa3bb7640c23e9c748e53fb30934"
 dependencies = [
  "unicode-ident",
 ]
@@ -3230,9 +3236,9 @@ dependencies = [
 
 [[package]]
 name = "quote"
-version = "1.0.40"
+version = "1.0.45"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1885c039570dc00dcb4ff087a89e185fd56bae234ddc7f056a945bf36467248d"
+checksum = "41f2619966050689382d2b44f664f4bc593e129785a36d6ee376ddf37259b924"
 dependencies = [
  "proc-macro2",
 ]
@@ -4136,9 +4142,9 @@ checksum = "13c2bddecc57b384dee18652358fb23172facb8a2c51ccc10d74c157bdea3292"
 
 [[package]]
 name = "syn"
-version = "2.0.106"
+version = "2.0.117"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ede7c438028d4436d71104916910f5bb611972c5cfd7f89b8300a8186e6fada6"
+checksum = "e665b8803e7b1d2a727f4023456bbbbe74da67099c585258af0ad9c5013b9b99"
 dependencies = [
  "proc-macro2",
  "quote",
