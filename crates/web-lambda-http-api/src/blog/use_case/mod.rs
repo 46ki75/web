@@ -14,7 +14,7 @@ pub enum BlogUseCaseError {
     #[error("blog '{0}' not found")]
     NotFound(String),
 
-    #[error("OGP cover image is not set for page '{page_id}'")]
+    #[error("OGP cover image ('cover' property) is not set for page '{page_id}'")]
     OgpCoverNotSet { page_id: String },
 
     #[error("XML serialization error: {0}")]
