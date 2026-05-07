@@ -19,7 +19,7 @@ impl WebConfigRepository for WebConfigRepositoryImpl {
     > {
         Box::pin(async move {
             let request =
-                crate::once_cell_cache::ssm_parameter::try_get_ssm_parameter_async(&parameter_name);
+                crate::once_cell_cache::ssm_parameter::try_get_ssm_parameter_async(parameter_name);
 
             let parameter = request.await?;
 

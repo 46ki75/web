@@ -71,3 +71,4 @@ jsonfeed = { workspace = true }
 
 # Regular Expression
 regex = { workspace = true }
+cached = { version = "0.59.0", features = ["async"] }

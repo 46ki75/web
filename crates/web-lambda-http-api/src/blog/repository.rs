@@ -82,7 +82,12 @@ impl BlogRepository for BlogRepositoryImpl {
 
             let filter = Filter::status_equals("status", "Published");
 
-            let blog_master_data_source_id = crate::once_cell_cache::ssm_parameter::blog_master_data_source_id::init_blog_master_data_source_id().await?;
+            let stage_name = crate::stage_name()?;
+            let blog_master_data_source_id =
+                crate::once_cell_cache::ssm_parameter::try_get_ssm_parameter_async(format!(
+                "/{stage_name}/46ki75/web/ssm/parameter/notion/data_source/id/blog-article-master"
+            ))
+                .await?;
 
             let results: Vec<PageResponse> = notionrs_client
                 .query_data_source()
@@ -326,7 +331,12 @@ impl BlogRepository for BlogRepositoryImpl {
             let notionrs_client =
                 crate::once_cell_cache::notionrs_client::init_notionrs_client().await?;
 
-            let blog_master_data_source_id = crate::once_cell_cache::ssm_parameter::blog_master_data_source_id::init_blog_master_data_source_id().await?;
+            let stage_name = crate::stage_name()?;
+            let blog_master_data_source_id =
+                crate::once_cell_cache::ssm_parameter::try_get_ssm_parameter_async(format!(
+                "/{stage_name}/46ki75/web/ssm/parameter/notion/data_source/id/blog-article-master"
+            ))
+                .await?;
 
             let filter = Filter::rich_text_equals("slug", &slug);
 
@@ -395,7 +405,12 @@ impl BlogRepository for BlogRepositoryImpl {
             let notionrs_client =
                 crate::once_cell_cache::notionrs_client::init_notionrs_client().await?;
 
-            let blog_tag_data_source_id = crate::once_cell_cache::ssm_parameter::blog_tag_data_source_id::init_blog_tag_data_source_id().await?;
+            let stage_name = crate::stage_name()?;
+            let blog_tag_data_source_id =
+                crate::once_cell_cache::ssm_parameter::try_get_ssm_parameter_async(format!(
+                    "/{stage_name}/46ki75/web/ssm/parameter/notion/data_source/id/blog-tag"
+                ))
+                .await?;
 
             let pages: Vec<PageResponse> = notionrs_client
                 .query_data_source()
