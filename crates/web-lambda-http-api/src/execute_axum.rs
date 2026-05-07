@@ -3,7 +3,6 @@
 //! This module contains the Axum executor.
 
 /// Execute an Axum app.
-#[tracing::instrument(level = "info")]
 pub async fn execute_axum(
     app: axum::Router,
     event: http::Request<lambda_http::Body>,

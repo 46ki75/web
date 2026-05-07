@@ -9,6 +9,7 @@ pub struct BlogUseCase {
 }
 
 impl BlogUseCase {
+    #[tracing::instrument(skip(self), err)]
     pub async fn list_blogs(
         &self,
         language: input::BlogLanguageEntity,
@@ -28,6 +29,7 @@ impl BlogUseCase {
         Ok(blog_entities)
     }
 
+    #[tracing::instrument(skip(self), err)]
     pub async fn get_blog_by_slug(
         &self,
         slug: &str,
@@ -48,6 +50,7 @@ impl BlogUseCase {
         Ok(blog_dto.into())
     }
 
+    #[tracing::instrument(skip(self), err)]
     pub async fn get_blog_contents(
         &self,
         slug: &str,
@@ -73,9 +76,8 @@ impl BlogUseCase {
         })
     }
 
-    pub async fn list_tags(
-        &self,
-    ) -> Result<Vec<output::BlogTagEntity>, crate::error::Error> {
+    #[tracing::instrument(skip(self), err)]
+    pub async fn list_tags(&self) -> Result<Vec<output::BlogTagEntity>, crate::error::Error> {
         let tag_dtos = self.blog_repository.list_tags().await?;
         let tags = tag_dtos
             .into_iter()
@@ -85,14 +87,17 @@ impl BlogUseCase {
         Ok(tags)
     }
 
+    #[tracing::instrument]
     fn rewrite_inline_component(_inline_component: &mut jarkup_rs::InlineComponent) {}
 
+    #[tracing::instrument]
     fn rewrite_inline_components(inline_components: &mut Vec<jarkup_rs::InlineComponent>) {
         for inline_component in inline_components {
             Self::rewrite_inline_component(inline_component);
         }
     }
 
+    #[tracing::instrument]
     fn rewrite_components(components: &mut Vec<jarkup_rs::Component>) {
         for component in components {
             match component {
@@ -196,6 +201,7 @@ impl BlogUseCase {
     }
 
     /// Infers the MIME type of the image by its binary data.
+    #[tracing::instrument(skip(self))]
     pub fn infer_image_mime_type(&self, image_bytes: &bytes::Bytes) -> String {
         infer::get(&image_bytes)
             .map(|t| {
@@ -212,6 +218,7 @@ impl BlogUseCase {
     }
 
     /// Fetches OGP image binary by its blog page ID.
+    #[tracing::instrument(skip(self))]
     pub async fn fetch_ogp_image_by_slug(
         &self,
         slug: &str,
@@ -235,6 +242,7 @@ impl BlogUseCase {
     }
 
     /// Fetches image bynary of the block by its block ID.
+    #[tracing::instrument(skip(self), err)]
     pub async fn fetch_block_image_by_id(
         &self,
         block_id: &str,
@@ -247,6 +255,7 @@ impl BlogUseCase {
         Ok(image_bytes)
     }
 
+    #[tracing::instrument(skip(self), err)]
     pub fn convert_image(
         &self,
         image_bytes: &[u8],
@@ -283,11 +292,11 @@ impl BlogUseCase {
         Ok(bytes::Bytes::from(webp.to_vec()))
     }
 
+    #[tracing::instrument(skip(self), err)]
     pub async fn generate_sitemap(&self) -> Result<String, crate::error::Error> {
         use strum::IntoEnumIterator;
 
-        let languages: Vec<input::BlogLanguageEntity> =
-            input::BlogLanguageEntity::iter().collect();
+        let languages: Vec<input::BlogLanguageEntity> = input::BlogLanguageEntity::iter().collect();
 
         // collect blogs per language
         let mut blogs_by_lang: std::collections::HashMap<String, Vec<output::BlogEntity>> =
@@ -368,6 +377,7 @@ impl BlogUseCase {
         Ok(format!("{preamble}{sitemap}"))
     }
 
+    #[tracing::instrument(skip(self), err)]
     pub async fn generate_rss(
         &self,
         language: input::BlogLanguageEntity,
@@ -419,6 +429,7 @@ impl BlogUseCase {
         Ok(rss_feed)
     }
 
+    #[tracing::instrument(skip(self), err)]
     pub async fn generate_atom(
         &self,
         language: input::BlogLanguageEntity,
@@ -473,6 +484,7 @@ impl BlogUseCase {
         Ok(feed.to_string())
     }
 
+    #[tracing::instrument(skip(self), err)]
     pub async fn generate_jsonfeed(
         &self,
         language: input::BlogLanguageEntity,
