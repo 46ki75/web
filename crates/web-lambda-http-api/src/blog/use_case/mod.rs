@@ -1,5 +1,8 @@
 use image::GenericImageView;
 
+pub mod input;
+pub mod output;
+
 #[derive(Clone)]
 pub struct BlogUseCase {
     pub blog_repository: std::sync::Arc<dyn super::repository::BlogRepository + Send + Sync>,
@@ -8,19 +11,19 @@ pub struct BlogUseCase {
 impl BlogUseCase {
     pub async fn list_blogs(
         &self,
-        language: super::entity::BlogLanguageEntity,
-    ) -> Result<Vec<super::entity::BlogEntity>, crate::error::Error> {
+        language: input::BlogLanguageEntity,
+    ) -> Result<Vec<output::BlogEntity>, crate::error::Error> {
         let language = match language {
-            crate::blog::entity::BlogLanguageEntity::En => super::dto::BlogLanguageDto::En,
-            crate::blog::entity::BlogLanguageEntity::Ja => super::dto::BlogLanguageDto::Ja,
+            input::BlogLanguageEntity::En => super::repository::input::BlogLanguageDto::En,
+            input::BlogLanguageEntity::Ja => super::repository::input::BlogLanguageDto::Ja,
         };
 
         let blog_dtoes = self.blog_repository.list_blogs(language).await?;
 
         let blog_entities = blog_dtoes
             .into_iter()
-            .map(|dto| super::entity::BlogEntity::from(dto))
-            .collect::<Vec<super::entity::BlogEntity>>();
+            .map(|dto| output::BlogEntity::from(dto))
+            .collect::<Vec<output::BlogEntity>>();
 
         Ok(blog_entities)
     }
@@ -28,11 +31,11 @@ impl BlogUseCase {
     pub async fn get_blog_by_slug(
         &self,
         slug: &str,
-        language: super::entity::BlogLanguageEntity,
-    ) -> Result<super::entity::BlogEntity, crate::error::Error> {
+        language: input::BlogLanguageEntity,
+    ) -> Result<output::BlogEntity, crate::error::Error> {
         let language = match language {
-            crate::blog::entity::BlogLanguageEntity::En => super::dto::BlogLanguageDto::En,
-            crate::blog::entity::BlogLanguageEntity::Ja => super::dto::BlogLanguageDto::Ja,
+            input::BlogLanguageEntity::En => super::repository::input::BlogLanguageDto::En,
+            input::BlogLanguageEntity::Ja => super::repository::input::BlogLanguageDto::Ja,
         };
 
         let blog_dtoes = self.blog_repository.list_blogs(language).await?;
@@ -48,13 +51,13 @@ impl BlogUseCase {
     pub async fn get_blog_contents(
         &self,
         slug: &str,
-        language: super::entity::BlogLanguageEntity,
-    ) -> Result<super::entity::BlogContentsEntity, crate::error::Error> {
+        language: input::BlogLanguageEntity,
+    ) -> Result<output::BlogContentsEntity, crate::error::Error> {
         let blog = self.get_blog_by_slug(slug, language.clone()).await?;
 
         let language = match language {
-            crate::blog::entity::BlogLanguageEntity::En => super::dto::BlogLanguageDto::En,
-            crate::blog::entity::BlogLanguageEntity::Ja => super::dto::BlogLanguageDto::Ja,
+            input::BlogLanguageEntity::En => super::repository::input::BlogLanguageDto::En,
+            input::BlogLanguageEntity::Ja => super::repository::input::BlogLanguageDto::Ja,
         };
 
         let mut components = self
@@ -64,7 +67,7 @@ impl BlogUseCase {
 
         Self::rewrite_components(&mut components);
 
-        Ok(super::entity::BlogContentsEntity {
+        Ok(output::BlogContentsEntity {
             meta: blog,
             components,
         })
@@ -72,12 +75,12 @@ impl BlogUseCase {
 
     pub async fn list_tags(
         &self,
-    ) -> Result<Vec<super::entity::BlogTagEntity>, crate::error::Error> {
+    ) -> Result<Vec<output::BlogTagEntity>, crate::error::Error> {
         let tag_dtos = self.blog_repository.list_tags().await?;
         let tags = tag_dtos
             .into_iter()
-            .map(|tag| super::entity::BlogTagEntity::from(tag))
-            .collect::<Vec<super::entity::BlogTagEntity>>();
+            .map(|tag| output::BlogTagEntity::from(tag))
+            .collect::<Vec<output::BlogTagEntity>>();
 
         Ok(tags)
     }
@@ -212,7 +215,7 @@ impl BlogUseCase {
     pub async fn fetch_ogp_image_by_slug(
         &self,
         slug: &str,
-        language: super::entity::BlogLanguageEntity,
+        language: input::BlogLanguageEntity,
     ) -> Result<bytes::Bytes, crate::error::Error> {
         let blog = self.get_blog_by_slug(slug, language).await?;
 
@@ -283,11 +286,11 @@ impl BlogUseCase {
     pub async fn generate_sitemap(&self) -> Result<String, crate::error::Error> {
         use strum::IntoEnumIterator;
 
-        let languages: Vec<crate::blog::entity::BlogLanguageEntity> =
-            crate::blog::entity::BlogLanguageEntity::iter().collect();
+        let languages: Vec<input::BlogLanguageEntity> =
+            input::BlogLanguageEntity::iter().collect();
 
         // collect blogs per language
-        let mut blogs_by_lang: std::collections::HashMap<String, Vec<super::entity::BlogEntity>> =
+        let mut blogs_by_lang: std::collections::HashMap<String, Vec<output::BlogEntity>> =
             std::collections::HashMap::new();
         for lang in &languages {
             let list = self.list_blogs(lang.clone()).await?;
@@ -296,34 +299,34 @@ impl BlogUseCase {
 
         let domain = crate::domain_name()?;
 
-        let mut urlset: Vec<super::entity::BlogSitemapUrl> = Vec::new();
+        let mut urlset: Vec<output::BlogSitemapUrl> = Vec::new();
 
         for lang in &languages {
             let lang_key = lang.to_string();
             if let Some(blogs) = blogs_by_lang.get(&lang_key) {
                 for blog in blogs {
                     let base_url = match lang {
-                        crate::blog::entity::BlogLanguageEntity::En => format!("https://{domain}"),
+                        input::BlogLanguageEntity::En => format!("https://{domain}"),
                         _ => format!("https://{domain}/{}", lang.to_string()),
                     };
 
                     let loc = format!("{base_url}/blog/article/{slug}", slug = blog.slug);
 
                     // build alternates only when corresponding slug exists in that language
-                    let mut alternates: Vec<super::entity::BlogAlternateLink> = Vec::new();
+                    let mut alternates: Vec<output::BlogAlternateLink> = Vec::new();
                     for alt_lang in &languages {
                         let alt_key = alt_lang.to_string();
                         if let Some(alt_blogs) = blogs_by_lang.get(&alt_key) {
                             if alt_blogs.iter().any(|b| b.slug == blog.slug) {
                                 let alt_base = match alt_lang {
-                                    crate::blog::entity::BlogLanguageEntity::En => {
+                                    input::BlogLanguageEntity::En => {
                                         format!("https://{domain}")
                                     }
                                     _ => format!("https://{domain}/{}", alt_lang.to_string()),
                                 };
                                 let href =
                                     format!("{alt_base}/blog/article/{slug}", slug = blog.slug);
-                                alternates.push(super::entity::BlogAlternateLink {
+                                alternates.push(output::BlogAlternateLink {
                                     rel: "alternate".to_string(),
                                     hreflang: alt_lang.to_string(),
                                     href,
@@ -335,13 +338,13 @@ impl BlogUseCase {
                     // x-default -> point to english canonical
                     let default_href =
                         format!("https://{domain}/blog/article/{slug}", slug = blog.slug);
-                    alternates.push(super::entity::BlogAlternateLink {
+                    alternates.push(output::BlogAlternateLink {
                         rel: "alternate".to_string(),
                         hreflang: "x-default".to_string(),
                         href: default_href,
                     });
 
-                    urlset.push(super::entity::BlogSitemapUrl {
+                    urlset.push(output::BlogSitemapUrl {
                         loc,
                         alternates,
                         ..Default::default()
@@ -352,7 +355,7 @@ impl BlogUseCase {
 
         let preamble = r#"<?xml version="1.0" encoding="UTF-8"?>"#;
 
-        let sitemap_entity = super::entity::BlogSitemapEntity {
+        let sitemap_entity = output::BlogSitemapEntity {
             xmlns_xhtml: Some("http://www.w3.org/1999/xhtml".to_string()),
             urls: urlset,
             ..Default::default()
@@ -367,7 +370,7 @@ impl BlogUseCase {
 
     pub async fn generate_rss(
         &self,
-        language: super::entity::BlogLanguageEntity,
+        language: input::BlogLanguageEntity,
     ) -> Result<String, crate::error::Error> {
         let blogs = self.list_blogs(language.clone()).await?;
 
@@ -379,7 +382,7 @@ impl BlogUseCase {
                 let link = format!(
                     "https://{domain}{language_prefix}/blog/article/{slug}",
                     language_prefix = match language {
-                        crate::blog::entity::BlogLanguageEntity::En => "".to_string(),
+                        input::BlogLanguageEntity::En => "".to_string(),
                         _ => format!("/{}", language.to_string()),
                     },
                     slug = blog.slug
@@ -403,7 +406,7 @@ impl BlogUseCase {
             .link(format!(
                 "https://{domain}{language_prefix}/blog",
                 language_prefix = match language {
-                    crate::blog::entity::BlogLanguageEntity::En => "".to_string(),
+                    input::BlogLanguageEntity::En => "".to_string(),
                     _ => format!("/{}", language.to_string()),
                 }
             ))
@@ -418,7 +421,7 @@ impl BlogUseCase {
 
     pub async fn generate_atom(
         &self,
-        language: super::entity::BlogLanguageEntity,
+        language: input::BlogLanguageEntity,
     ) -> Result<String, crate::error::Error> {
         let domain = crate::domain_name()?;
 
@@ -431,7 +434,7 @@ impl BlogUseCase {
                     "https://{domain}{language_prefix}/blog/article/{}",
                     blog.slug,
                     language_prefix = match language {
-                        crate::blog::entity::BlogLanguageEntity::En => "".to_string(),
+                        input::BlogLanguageEntity::En => "".to_string(),
                         _ => format!("/{}", language.to_string()),
                     }
                 );
@@ -472,7 +475,7 @@ impl BlogUseCase {
 
     pub async fn generate_jsonfeed(
         &self,
-        language: super::entity::BlogLanguageEntity,
+        language: input::BlogLanguageEntity,
     ) -> Result<String, crate::error::Error> {
         let blogs = self.list_blogs(language.clone()).await?;
 
@@ -484,7 +487,7 @@ impl BlogUseCase {
                 let url = format!(
                     "https://{domain}{language_prefix}/blog/article/{slug}",
                     language_prefix = match language {
-                        crate::blog::entity::BlogLanguageEntity::En => "".to_string(),
+                        input::BlogLanguageEntity::En => "".to_string(),
                         _ => format!("/{}", language.to_string()),
                     },
                     slug = blog.slug
@@ -506,7 +509,7 @@ impl BlogUseCase {
             home_page_url: Some(format!(
                 "https://{domain}{language_prefix}/blog",
                 language_prefix = match language {
-                    crate::blog::entity::BlogLanguageEntity::En => "".to_string(),
+                    input::BlogLanguageEntity::En => "".to_string(),
                     _ => format!("/{}", language.to_string()),
                 }
             )),

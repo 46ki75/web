@@ -2,6 +2,9 @@ use futures::TryStreamExt;
 use notionrs::PaginateExt;
 use notionrs_types::prelude::*;
 
+pub mod input;
+pub mod output;
+
 fn get_property<'a>(
     properties: &'a std::collections::HashMap<String, PageProperty>,
     property_name: &str,
@@ -19,10 +22,10 @@ fn get_property<'a>(
 pub trait BlogRepository: Send + Sync {
     fn list_blogs(
         &self,
-        language: super::dto::BlogLanguageDto,
+        language: input::BlogLanguageDto,
     ) -> std::pin::Pin<
         Box<
-            dyn std::future::Future<Output = Result<Vec<super::dto::BlogDto>, crate::error::Error>>
+            dyn std::future::Future<Output = Result<Vec<output::BlogDto>, crate::error::Error>>
                 + Send,
         >,
     >;
@@ -30,7 +33,7 @@ pub trait BlogRepository: Send + Sync {
     fn get_blog_contents(
         &self,
         slug: &str,
-        language: super::dto::BlogLanguageDto,
+        language: input::BlogLanguageDto,
     ) -> std::pin::Pin<
         Box<
             dyn std::future::Future<Output = Result<Vec<jarkup_rs::Component>, crate::error::Error>>
@@ -43,7 +46,7 @@ pub trait BlogRepository: Send + Sync {
     ) -> std::pin::Pin<
         Box<
             dyn std::future::Future<
-                    Output = Result<Vec<super::dto::BlogTagDto>, crate::error::Error>,
+                    Output = Result<Vec<output::BlogTagDto>, crate::error::Error>,
                 > + Send,
         >,
     >;
@@ -69,10 +72,10 @@ pub struct BlogRepositoryImpl {}
 impl BlogRepository for BlogRepositoryImpl {
     fn list_blogs(
         &self,
-        language: super::dto::BlogLanguageDto,
+        language: input::BlogLanguageDto,
     ) -> std::pin::Pin<
         Box<
-            dyn std::future::Future<Output = Result<Vec<super::dto::BlogDto>, crate::error::Error>>
+            dyn std::future::Future<Output = Result<Vec<output::BlogDto>, crate::error::Error>>
                 + Send,
         >,
     > {
@@ -97,7 +100,7 @@ impl BlogRepository for BlogRepositoryImpl {
                 .try_collect()
                 .await?;
 
-            let mut blogs: Vec<super::dto::BlogDto> = vec![];
+            let mut blogs: Vec<output::BlogDto> = vec![];
 
             for result in results {
                 let page_id = result.id;
@@ -147,11 +150,11 @@ impl BlogRepository for BlogRepositoryImpl {
 
                 let status = if let PageProperty::Status(status) = maybe_status {
                     match status.status.name.as_str() {
-                        "Draft" => super::dto::BlogStatusDto::Draft,
-                        "Archived" => super::dto::BlogStatusDto::Archived,
-                        "Private" => super::dto::BlogStatusDto::Private,
-                        "Published" => super::dto::BlogStatusDto::Published,
-                        _ => super::dto::BlogStatusDto::Draft,
+                        "Draft" => output::BlogStatusDto::Draft,
+                        "Archived" => output::BlogStatusDto::Archived,
+                        "Private" => output::BlogStatusDto::Private,
+                        "Published" => output::BlogStatusDto::Published,
+                        _ => output::BlogStatusDto::Draft,
                     }
                 } else {
                     return Err(crate::error::Error::NotionInvalidSchema(
@@ -161,8 +164,8 @@ impl BlogRepository for BlogRepositoryImpl {
 
                 // related blog article # ---------- #
                 let blog_article_relation_property_name = match language {
-                    super::dto::BlogLanguageDto::En => "en",
-                    super::dto::BlogLanguageDto::Ja => "ja",
+                    input::BlogLanguageDto::En => "en",
+                    input::BlogLanguageDto::Ja => "ja",
                 };
 
                 let maybe_blog_article_relation = get_property(
@@ -292,7 +295,7 @@ impl BlogRepository for BlogRepositoryImpl {
 
                 let ogp_image_s3_signed_url = article_page.cover.map(|cover| cover.get_url());
 
-                let blog = super::dto::BlogDto {
+                let blog = output::BlogDto {
                     page_id,
                     notion_url,
                     ogp_image_s3_signed_url,
@@ -317,7 +320,7 @@ impl BlogRepository for BlogRepositoryImpl {
     fn get_blog_contents(
         &self,
         slug: &str,
-        language: super::dto::BlogLanguageDto,
+        language: input::BlogLanguageDto,
     ) -> std::pin::Pin<
         Box<
             dyn std::future::Future<Output = Result<Vec<jarkup_rs::Component>, crate::error::Error>>
@@ -352,8 +355,8 @@ impl BlogRepository for BlogRepositoryImpl {
             let page_id = match pages.first() {
                 Some(page) => {
                     let property_name = match language {
-                        super::dto::BlogLanguageDto::En => "article_en",
-                        super::dto::BlogLanguageDto::Ja => "article_ja",
+                        input::BlogLanguageDto::En => "article_en",
+                        input::BlogLanguageDto::Ja => "article_ja",
                     };
 
                     let maybe_relation = get_property(&page.properties, property_name)?;
@@ -397,7 +400,7 @@ impl BlogRepository for BlogRepositoryImpl {
     ) -> std::pin::Pin<
         Box<
             dyn std::future::Future<
-                    Output = Result<Vec<super::dto::BlogTagDto>, crate::error::Error>,
+                    Output = Result<Vec<output::BlogTagDto>, crate::error::Error>,
                 > + Send,
         >,
     > {
@@ -419,7 +422,7 @@ impl BlogRepository for BlogRepositoryImpl {
                 .try_collect()
                 .await?;
 
-            let mut tags: Vec<super::dto::BlogTagDto> = vec![];
+            let mut tags: Vec<output::BlogTagDto> = vec![];
 
             for page in pages {
                 // name_en # ---------- #
@@ -458,7 +461,7 @@ impl BlogRepository for BlogRepositoryImpl {
                     _ => None,
                 });
 
-                let tag = super::dto::BlogTagDto {
+                let tag = output::BlogTagDto {
                     id: page.id,
                     name_en,
                     name_ja,

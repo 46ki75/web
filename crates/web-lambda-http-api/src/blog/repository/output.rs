@@ -46,12 +46,6 @@ pub enum BlogStatusDto {
 }
 
 #[derive(Debug, Clone)]
-pub enum BlogLanguageDto {
-    En,
-    Ja,
-}
-
-#[derive(Debug, Clone)]
 pub struct BlogTagDto {
     pub id: String,
     pub name_en: String,

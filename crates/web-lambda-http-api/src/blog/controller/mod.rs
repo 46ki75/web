@@ -1,44 +1,11 @@
 use http::header::ACCEPT_LANGUAGE;
 
+pub mod request;
+pub mod response;
+
 // CDN: 1 year, Client: 10 minutes // TODO: ↓ temporary setting (0), adjust later
 static CACHE_VALUE: &str = "public, max-age=0, s-maxage=31536000";
 static IMMUTABLE_CACHE_VALUE: &str = "public, max-age=31536000, s-maxage=31536000, immutable";
-
-#[derive(Debug, serde::Deserialize, utoipa::ToSchema)]
-#[serde(rename_all = "snake_case")]
-pub struct BlogOgImageQueryParam {
-    pub lang: Option<BlogLanguageQueryParam>,
-}
-
-#[derive(Debug, serde::Deserialize, utoipa::ToSchema)]
-#[serde(rename_all = "snake_case")]
-pub enum BlogLanguageQueryParam {
-    En,
-    Ja,
-}
-
-#[derive(Debug, serde::Deserialize, utoipa::ToSchema)]
-#[serde(rename_all = "snake_case")]
-pub enum BlogImageSizeQueryParam {
-    Small,
-    Medium,
-    Large,
-}
-
-impl Into<u32> for BlogImageSizeQueryParam {
-    fn into(self) -> u32 {
-        match self {
-            BlogImageSizeQueryParam::Small => 500,
-            BlogImageSizeQueryParam::Medium => 800,
-            BlogImageSizeQueryParam::Large => 1200,
-        }
-    }
-}
-
-#[derive(Debug, serde::Deserialize, utoipa::ToSchema)]
-pub struct BlogBlockImageQueryParam {
-    pub size: Option<BlogImageSizeQueryParam>,
-}
 
 #[utoipa::path(
     get,
@@ -47,7 +14,7 @@ pub struct BlogBlockImageQueryParam {
          ("accept-language" = String , Header),
     ),
     responses(
-        (status = 200, description = "Blogs", body = Vec<super::response::BlogResponse>),
+        (status = 200, description = "Blogs", body = Vec<response::BlogResponse>),
         (status = 400, description = "Bad request", body = String)
     )
 )]
@@ -59,17 +26,17 @@ pub async fn list_blogs(
         .get(ACCEPT_LANGUAGE)
         .and_then(|accept_language| accept_language.to_str().ok())
         .map(|accept_language| match accept_language {
-            "ja" => super::entity::BlogLanguageEntity::Ja,
-            _ => super::entity::BlogLanguageEntity::En,
+            "ja" => super::use_case::input::BlogLanguageEntity::Ja,
+            _ => super::use_case::input::BlogLanguageEntity::En,
         })
-        .unwrap_or(super::entity::BlogLanguageEntity::En);
+        .unwrap_or(super::use_case::input::BlogLanguageEntity::En);
 
     let blogs = match state.blog_use_case.list_blogs(language).await {
         Ok(blog_entities) => {
             let response = blog_entities
                 .into_iter()
-                .map(|b| super::response::BlogResponse::from(b))
-                .collect::<Vec<super::response::BlogResponse>>();
+                .map(|b| response::BlogResponse::from(b))
+                .collect::<Vec<response::BlogResponse>>();
 
             let json = match serde_json::to_string(&response) {
                 Ok(j) => j,
@@ -108,7 +75,7 @@ pub async fn list_blogs(
         ("accept-language" = String, Header),
     ),
     responses(
-        (status = 200, description = "Blog Contents", body = super::response::BlogContentsResponse),
+        (status = 200, description = "Blog Contents", body = response::BlogContentsResponse),
         (status = 400, description = "Bad request", body = String)
     ),
 )]
@@ -121,14 +88,14 @@ pub async fn get_blog_contents(
         .get(ACCEPT_LANGUAGE)
         .and_then(|accept_language| accept_language.to_str().ok())
         .map(|accept_language| match accept_language {
-            "ja" => super::entity::BlogLanguageEntity::Ja,
-            _ => super::entity::BlogLanguageEntity::En,
+            "ja" => super::use_case::input::BlogLanguageEntity::Ja,
+            _ => super::use_case::input::BlogLanguageEntity::En,
         })
-        .unwrap_or(super::entity::BlogLanguageEntity::En);
+        .unwrap_or(super::use_case::input::BlogLanguageEntity::En);
 
     let contents = match state.blog_use_case.get_blog_contents(&slug, language).await {
         Ok(entity) => {
-            let blog_content_response = super::response::BlogContentsResponse::from(entity);
+            let blog_content_response = response::BlogContentsResponse::from(entity);
 
             let json = match serde_json::to_string(&blog_content_response) {
                 Ok(j) => j,
@@ -163,7 +130,7 @@ pub async fn get_blog_contents(
     get,
     path = "/api/v2/blog/tag",
     responses(
-        (status = 200, description = "Blog tags", body = Vec<super::response::BlogTagResponse>),
+        (status = 200, description = "Blog tags", body = Vec<response::BlogTagResponse>),
         (status = 400, description = "Bad request", body = String)
     ),
 )]
@@ -174,8 +141,8 @@ pub async fn list_tags(
         Ok(tag_entities) => {
             let response = tag_entities
                 .into_iter()
-                .map(|t| super::response::BlogTagResponse::from(t))
-                .collect::<Vec<super::response::BlogTagResponse>>();
+                .map(|t| response::BlogTagResponse::from(t))
+                .collect::<Vec<response::BlogTagResponse>>();
 
             let json = match serde_json::to_string(&response) {
                 Ok(j) => j,
@@ -220,16 +187,16 @@ pub async fn list_tags(
 pub async fn get_blog_og_image(
     axum::extract::State(state): axum::extract::State<std::sync::Arc<super::router::BlogState>>,
     axum::extract::Path(slug): axum::extract::Path<String>,
-    axum::extract::Query(BlogOgImageQueryParam { lang }): axum::extract::Query<
-        BlogOgImageQueryParam,
+    axum::extract::Query(request::BlogOgImageQueryParam { lang }): axum::extract::Query<
+        request::BlogOgImageQueryParam,
     >,
 ) -> Result<axum::response::Response<axum::body::Body>, (axum::http::StatusCode, String)> {
     let language = lang
         .map(|query_lang| match query_lang {
-            BlogLanguageQueryParam::Ja => super::entity::BlogLanguageEntity::Ja,
-            BlogLanguageQueryParam::En => super::entity::BlogLanguageEntity::En,
+            request::BlogLanguageQueryParam::Ja => super::use_case::input::BlogLanguageEntity::Ja,
+            request::BlogLanguageQueryParam::En => super::use_case::input::BlogLanguageEntity::En,
         })
-        .unwrap_or(super::entity::BlogLanguageEntity::En);
+        .unwrap_or(super::use_case::input::BlogLanguageEntity::En);
 
     let contents = match state
         .blog_use_case
@@ -264,7 +231,7 @@ pub async fn get_blog_og_image(
     path = "/api/v2/blog/block-image/{block_id}",
     params(
         ("block_id" = String, Path, description = "Notion block id"),
-        ("size" = Option<BlogImageSizeQueryParam>, Query, description = "size preset name"),
+        ("size" = Option<request::BlogImageSizeQueryParam>, Query, description = "size preset name"),
     ),
     responses(
         (status = 200, description = "Blog Contents", body = Vec<u8>),
@@ -274,8 +241,8 @@ pub async fn get_blog_og_image(
 pub async fn get_blog_block_image(
     axum::extract::State(state): axum::extract::State<std::sync::Arc<super::router::BlogState>>,
     axum::extract::Path(block_id): axum::extract::Path<String>,
-    axum::extract::Query(BlogBlockImageQueryParam { size }): axum::extract::Query<
-        BlogBlockImageQueryParam,
+    axum::extract::Query(request::BlogBlockImageQueryParam { size }): axum::extract::Query<
+        request::BlogBlockImageQueryParam,
     >,
 ) -> Result<axum::response::Response<axum::body::Body>, (axum::http::StatusCode, String)> {
     let contents = match state
@@ -352,8 +319,8 @@ pub async fn get_blog_rss_feed(
     axum::extract::Path(language): axum::extract::Path<String>,
 ) -> Result<axum::response::Response<axum::body::Body>, (axum::http::StatusCode, String)> {
     let language = match language.as_str() {
-        "ja" => super::entity::BlogLanguageEntity::Ja,
-        _ => super::entity::BlogLanguageEntity::En,
+        "ja" => super::use_case::input::BlogLanguageEntity::Ja,
+        _ => super::use_case::input::BlogLanguageEntity::En,
     };
 
     let rss_feed = match state.blog_use_case.generate_rss(language).await {
@@ -389,8 +356,8 @@ pub async fn get_blog_atom_feed(
     axum::extract::Path(language): axum::extract::Path<String>,
 ) -> Result<axum::response::Response<axum::body::Body>, (axum::http::StatusCode, String)> {
     let language = match language.as_str() {
-        "ja" => super::entity::BlogLanguageEntity::Ja,
-        _ => super::entity::BlogLanguageEntity::En,
+        "ja" => super::use_case::input::BlogLanguageEntity::Ja,
+        _ => super::use_case::input::BlogLanguageEntity::En,
     };
 
     let atom_feed = match state.blog_use_case.generate_atom(language).await {
@@ -426,8 +393,8 @@ pub async fn get_blog_json_feed(
     axum::extract::Path(language): axum::extract::Path<String>,
 ) -> Result<axum::response::Response<axum::body::Body>, (axum::http::StatusCode, String)> {
     let language = match language.as_str() {
-        "ja" => super::entity::BlogLanguageEntity::Ja,
-        _ => super::entity::BlogLanguageEntity::En,
+        "ja" => super::use_case::input::BlogLanguageEntity::Ja,
+        _ => super::use_case::input::BlogLanguageEntity::En,
     };
 
     let json_feed = match state.blog_use_case.generate_jsonfeed(language).await {

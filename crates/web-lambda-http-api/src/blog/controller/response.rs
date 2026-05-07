@@ -16,7 +16,7 @@ pub struct BlogResponse {
     pub tag_ids: Vec<String>,
 
     /// The status of the blog
-    pub status: BlogStatusresponse,
+    pub status: BlogStatusResponse,
 
     /// The title of the blog
     pub title: String,
@@ -34,15 +34,15 @@ pub struct BlogResponse {
     pub updated_at: String,
 }
 
-impl From<super::entity::BlogEntity> for BlogResponse {
-    fn from(value: super::entity::BlogEntity) -> Self {
+impl From<crate::blog::use_case::output::BlogEntity> for BlogResponse {
+    fn from(value: crate::blog::use_case::output::BlogEntity) -> Self {
         BlogResponse {
             page_id: value.page_id,
             notion_url: value.notion_url,
             slug: value.slug,
             featured: value.featured,
             tag_ids: value.tag_ids,
-            status: BlogStatusresponse::from(value.status),
+            status: BlogStatusResponse::from(value.status),
             title: value.title,
             description: value.description,
             keywords: value.keywords,
@@ -59,20 +59,20 @@ impl From<super::entity::BlogEntity> for BlogResponse {
 }
 
 #[derive(Debug, Clone, serde::Serialize, utoipa::ToSchema)]
-pub enum BlogStatusresponse {
+pub enum BlogStatusResponse {
     Draft,
     Archived,
     Private,
     Published,
 }
 
-impl From<super::entity::BlogStatusEntity> for BlogStatusresponse {
-    fn from(value: super::entity::BlogStatusEntity) -> Self {
+impl From<crate::blog::use_case::output::BlogStatusEntity> for BlogStatusResponse {
+    fn from(value: crate::blog::use_case::output::BlogStatusEntity) -> Self {
         match value {
-            super::entity::BlogStatusEntity::Draft => BlogStatusresponse::Draft,
-            super::entity::BlogStatusEntity::Archived => BlogStatusresponse::Archived,
-            super::entity::BlogStatusEntity::Private => BlogStatusresponse::Private,
-            super::entity::BlogStatusEntity::Published => BlogStatusresponse::Published,
+            crate::blog::use_case::output::BlogStatusEntity::Draft => BlogStatusResponse::Draft,
+            crate::blog::use_case::output::BlogStatusEntity::Archived => BlogStatusResponse::Archived,
+            crate::blog::use_case::output::BlogStatusEntity::Private => BlogStatusResponse::Private,
+            crate::blog::use_case::output::BlogStatusEntity::Published => BlogStatusResponse::Published,
         }
     }
 }
@@ -83,8 +83,8 @@ pub struct BlogContentsResponse {
     pub components: Vec<serde_json::Value>,
 }
 
-impl From<super::entity::BlogContentsEntity> for BlogContentsResponse {
-    fn from(value: super::entity::BlogContentsEntity) -> Self {
+impl From<crate::blog::use_case::output::BlogContentsEntity> for BlogContentsResponse {
+    fn from(value: crate::blog::use_case::output::BlogContentsEntity) -> Self {
         BlogContentsResponse {
             meta: BlogResponse::from(value.meta),
             components: value
@@ -104,8 +104,8 @@ pub struct BlogTagResponse {
     pub icon_url: Option<String>,
 }
 
-impl From<super::entity::BlogTagEntity> for BlogTagResponse {
-    fn from(value: super::entity::BlogTagEntity) -> Self {
+impl From<crate::blog::use_case::output::BlogTagEntity> for BlogTagResponse {
+    fn from(value: crate::blog::use_case::output::BlogTagEntity) -> Self {
         BlogTagResponse {
             id: value.id,
             name_en: value.name_en,

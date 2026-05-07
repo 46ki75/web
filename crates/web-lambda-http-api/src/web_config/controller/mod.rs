@@ -1,8 +1,10 @@
+pub mod response;
+
 #[utoipa::path(
     get,
     path = "/api/v2/web-config",
     responses(
-        (status = 200, description = "WebConfig", body = super::response::WebConfigResponse),
+        (status = 200, description = "WebConfig", body = response::WebConfigResponse),
         (status = 400, description = "Bad request", body = String)
     )
 )]
@@ -21,7 +23,7 @@ pub async fn fetch_web_config(
         .await
         .map_err(|e| e.as_client_response())?;
 
-    let config = super::response::WebConfigResponse {
+    let config = response::WebConfigResponse {
         rum_identity_pool_id,
         rum_app_monitor_id,
     };

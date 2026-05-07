@@ -1,6 +1,3 @@
-use core::fmt;
-use strum_macros::EnumIter;
-
 #[derive(Debug, Clone)]
 pub struct BlogEntity {
     /// Notion page ID
@@ -40,8 +37,8 @@ pub struct BlogEntity {
     pub updated_at: time::OffsetDateTime,
 }
 
-impl From<super::dto::BlogDto> for BlogEntity {
-    fn from(dto: super::dto::BlogDto) -> Self {
+impl From<crate::blog::repository::output::BlogDto> for BlogEntity {
+    fn from(dto: crate::blog::repository::output::BlogDto) -> Self {
         BlogEntity {
             page_id: dto.page_id,
             notion_url: dto.notion_url,
@@ -67,37 +64,13 @@ pub enum BlogStatusEntity {
     Published,
 }
 
-impl From<super::dto::BlogStatusDto> for BlogStatusEntity {
-    fn from(value: super::dto::BlogStatusDto) -> Self {
+impl From<crate::blog::repository::output::BlogStatusDto> for BlogStatusEntity {
+    fn from(value: crate::blog::repository::output::BlogStatusDto) -> Self {
         match value {
-            super::dto::BlogStatusDto::Draft => BlogStatusEntity::Draft,
-            super::dto::BlogStatusDto::Archived => BlogStatusEntity::Archived,
-            super::dto::BlogStatusDto::Private => BlogStatusEntity::Private,
-            super::dto::BlogStatusDto::Published => BlogStatusEntity::Published,
-        }
-    }
-}
-
-#[derive(Debug, Clone, EnumIter)]
-pub enum BlogLanguageEntity {
-    En,
-    Ja,
-}
-
-impl From<super::dto::BlogLanguageDto> for BlogLanguageEntity {
-    fn from(value: super::dto::BlogLanguageDto) -> Self {
-        match value {
-            super::dto::BlogLanguageDto::En => BlogLanguageEntity::En,
-            super::dto::BlogLanguageDto::Ja => BlogLanguageEntity::Ja,
-        }
-    }
-}
-
-impl fmt::Display for BlogLanguageEntity {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            BlogLanguageEntity::En => write!(f, "en"),
-            BlogLanguageEntity::Ja => write!(f, "ja"),
+            crate::blog::repository::output::BlogStatusDto::Draft => BlogStatusEntity::Draft,
+            crate::blog::repository::output::BlogStatusDto::Archived => BlogStatusEntity::Archived,
+            crate::blog::repository::output::BlogStatusDto::Private => BlogStatusEntity::Private,
+            crate::blog::repository::output::BlogStatusDto::Published => BlogStatusEntity::Published,
         }
     }
 }
@@ -116,8 +89,8 @@ pub struct BlogTagEntity {
     pub icon_url: Option<String>,
 }
 
-impl From<super::dto::BlogTagDto> for BlogTagEntity {
-    fn from(value: super::dto::BlogTagDto) -> Self {
+impl From<crate::blog::repository::output::BlogTagDto> for BlogTagEntity {
+    fn from(value: crate::blog::repository::output::BlogTagDto) -> Self {
         BlogTagEntity {
             id: value.id,
             name_en: value.name_en,
