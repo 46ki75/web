@@ -52,9 +52,7 @@ pub struct BlogBlockImageQueryParam {
     )
 )]
 pub async fn list_blogs(
-    axum::extract::State(state): axum::extract::State<
-        std::sync::Arc<crate::axum_router::AxumAppState>,
-    >,
+    axum::extract::State(state): axum::extract::State<std::sync::Arc<super::router::BlogState>>,
     headers: http::header::HeaderMap,
 ) -> Result<axum::response::Response<axum::body::Body>, (axum::http::StatusCode, String)> {
     let language = headers
@@ -115,9 +113,7 @@ pub async fn list_blogs(
     ),
 )]
 pub async fn get_blog_contents(
-    axum::extract::State(state): axum::extract::State<
-        std::sync::Arc<crate::axum_router::AxumAppState>,
-    >,
+    axum::extract::State(state): axum::extract::State<std::sync::Arc<super::router::BlogState>>,
     axum::extract::Path(slug): axum::extract::Path<String>,
     headers: http::header::HeaderMap,
 ) -> Result<axum::response::Response<axum::body::Body>, (axum::http::StatusCode, String)> {
@@ -172,9 +168,7 @@ pub async fn get_blog_contents(
     ),
 )]
 pub async fn list_tags(
-    axum::extract::State(state): axum::extract::State<
-        std::sync::Arc<crate::axum_router::AxumAppState>,
-    >,
+    axum::extract::State(state): axum::extract::State<std::sync::Arc<super::router::BlogState>>,
 ) -> Result<axum::response::Response<axum::body::Body>, (axum::http::StatusCode, String)> {
     let tags = match state.blog_use_case.list_tags().await {
         Ok(tag_entities) => {
@@ -224,9 +218,7 @@ pub async fn list_tags(
     ),
 )]
 pub async fn get_blog_og_image(
-    axum::extract::State(state): axum::extract::State<
-        std::sync::Arc<crate::axum_router::AxumAppState>,
-    >,
+    axum::extract::State(state): axum::extract::State<std::sync::Arc<super::router::BlogState>>,
     axum::extract::Path(slug): axum::extract::Path<String>,
     axum::extract::Query(BlogOgImageQueryParam { lang }): axum::extract::Query<
         BlogOgImageQueryParam,
@@ -280,9 +272,7 @@ pub async fn get_blog_og_image(
     ),
 )]
 pub async fn get_blog_block_image(
-    axum::extract::State(state): axum::extract::State<
-        std::sync::Arc<crate::axum_router::AxumAppState>,
-    >,
+    axum::extract::State(state): axum::extract::State<std::sync::Arc<super::router::BlogState>>,
     axum::extract::Path(block_id): axum::extract::Path<String>,
     axum::extract::Query(BlogBlockImageQueryParam { size }): axum::extract::Query<
         BlogBlockImageQueryParam,
@@ -327,9 +317,7 @@ pub async fn get_blog_block_image(
     ),
 )]
 pub async fn get_blog_sitemap(
-    axum::extract::State(state): axum::extract::State<
-        std::sync::Arc<crate::axum_router::AxumAppState>,
-    >,
+    axum::extract::State(state): axum::extract::State<std::sync::Arc<super::router::BlogState>>,
 ) -> Result<axum::response::Response<axum::body::Body>, (axum::http::StatusCode, String)> {
     let sitemap = match state.blog_use_case.generate_sitemap().await {
         Ok(sitemap_xml) => {
@@ -360,9 +348,7 @@ pub async fn get_blog_sitemap(
     ),
 )]
 pub async fn get_blog_rss_feed(
-    axum::extract::State(state): axum::extract::State<
-        std::sync::Arc<crate::axum_router::AxumAppState>,
-    >,
+    axum::extract::State(state): axum::extract::State<std::sync::Arc<super::router::BlogState>>,
     axum::extract::Path(language): axum::extract::Path<String>,
 ) -> Result<axum::response::Response<axum::body::Body>, (axum::http::StatusCode, String)> {
     let language = match language.as_str() {
@@ -399,9 +385,7 @@ pub async fn get_blog_rss_feed(
     ),
 )]
 pub async fn get_blog_atom_feed(
-    axum::extract::State(state): axum::extract::State<
-        std::sync::Arc<crate::axum_router::AxumAppState>,
-    >,
+    axum::extract::State(state): axum::extract::State<std::sync::Arc<super::router::BlogState>>,
     axum::extract::Path(language): axum::extract::Path<String>,
 ) -> Result<axum::response::Response<axum::body::Body>, (axum::http::StatusCode, String)> {
     let language = match language.as_str() {
@@ -438,9 +422,7 @@ pub async fn get_blog_atom_feed(
     ),
 )]
 pub async fn get_blog_json_feed(
-    axum::extract::State(state): axum::extract::State<
-        std::sync::Arc<crate::axum_router::AxumAppState>,
-    >,
+    axum::extract::State(state): axum::extract::State<std::sync::Arc<super::router::BlogState>>,
     axum::extract::Path(language): axum::extract::Path<String>,
 ) -> Result<axum::response::Response<axum::body::Body>, (axum::http::StatusCode, String)> {
     let language = match language.as_str() {
