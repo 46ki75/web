@@ -11,6 +11,7 @@ pub trait WebConfigRepository: Send + Sync {
 pub struct WebConfigRepositoryImpl {}
 
 impl WebConfigRepository for WebConfigRepositoryImpl {
+    #[cfg_attr(not(rust_analyzer), tracing::instrument(skip(self), err))]
     fn fetch_parameter(
         &self,
         parameter_name: String,
