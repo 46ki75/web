@@ -3,6 +3,44 @@ use image::GenericImageView;
 pub mod input;
 pub mod output;
 
+/// Errors produced by the blog use-case layer.
+///
+/// Semantic outcomes — a blog not being found, an OGP cover not being configured —
+/// are expressed as first-class variants so the controller can map them to the
+/// correct HTTP status codes.  Genuinely opaque failures (XML serialisation,
+/// image processing, I/O) propagate transparently.
+#[derive(Debug, thiserror::Error)]
+pub enum BlogUseCaseError {
+    #[error("blog '{0}' not found")]
+    NotFound(String),
+
+    #[error("OGP cover image ('cover' property) is not set for page '{page_id}'")]
+    OgpCoverNotSet { page_id: String },
+
+    #[error("XML serialization error: {0}")]
+    SerializeXml(#[from] quick_xml::SeError),
+
+    #[error("image conversion error: {0}")]
+    ImageConversion(#[from] image::ImageError),
+
+    #[error("IO error: {0}")]
+    Io(#[from] std::io::Error),
+
+    #[error("JSON serialization error: {0}")]
+    SerdeJson(#[from] serde_json::Error),
+
+    #[error("time error: {0}")]
+    Time(#[from] time::Error),
+
+    /// Wraps shared infrastructure failures (environment variables) that have
+    /// no additional business meaning at this layer.
+    #[error(transparent)]
+    Internal(#[from] crate::error::Error),
+
+    #[error(transparent)]
+    Repository(#[from] super::repository::BlogRepositoryError),
+}
+
 #[derive(Clone)]
 pub struct BlogUseCase {
     pub blog_repository: std::sync::Arc<dyn super::repository::BlogRepository + Send + Sync>,
@@ -13,7 +51,7 @@ impl BlogUseCase {
     pub async fn list_blogs(
         &self,
         language: input::BlogLanguageEntity,
-    ) -> Result<Vec<output::BlogEntity>, crate::error::Error> {
+    ) -> Result<Vec<output::BlogEntity>, BlogUseCaseError> {
         let language = match language {
             input::BlogLanguageEntity::En => super::repository::input::BlogLanguageDto::En,
             input::BlogLanguageEntity::Ja => super::repository::input::BlogLanguageDto::Ja,
@@ -34,7 +72,7 @@ impl BlogUseCase {
         &self,
         slug: &str,
         language: input::BlogLanguageEntity,
-    ) -> Result<output::BlogEntity, crate::error::Error> {
+    ) -> Result<output::BlogEntity, BlogUseCaseError> {
         let language = match language {
             input::BlogLanguageEntity::En => super::repository::input::BlogLanguageDto::En,
             input::BlogLanguageEntity::Ja => super::repository::input::BlogLanguageDto::Ja,
@@ -45,7 +83,7 @@ impl BlogUseCase {
         let blog_dto = blog_dtoes
             .into_iter()
             .find(|blog| blog.slug == slug)
-            .ok_or(crate::error::Error::NotionBlogNotFound(slug.to_owned()))?;
+            .ok_or_else(|| BlogUseCaseError::NotFound(slug.to_owned()))?;
 
         Ok(blog_dto.into())
     }
@@ -55,7 +93,7 @@ impl BlogUseCase {
         &self,
         slug: &str,
         language: input::BlogLanguageEntity,
-    ) -> Result<output::BlogContentsEntity, crate::error::Error> {
+    ) -> Result<output::BlogContentsEntity, BlogUseCaseError> {
         let blog = self.get_blog_by_slug(slug, language.clone()).await?;
 
         let language = match language {
@@ -77,7 +115,7 @@ impl BlogUseCase {
     }
 
     #[tracing::instrument(skip(self), err)]
-    pub async fn list_tags(&self) -> Result<Vec<output::BlogTagEntity>, crate::error::Error> {
+    pub async fn list_tags(&self) -> Result<Vec<output::BlogTagEntity>, BlogUseCaseError> {
         let tag_dtos = self.blog_repository.list_tags().await?;
         let tags = tag_dtos
             .into_iter()
@@ -223,14 +261,13 @@ impl BlogUseCase {
         &self,
         slug: &str,
         language: input::BlogLanguageEntity,
-    ) -> Result<bytes::Bytes, crate::error::Error> {
+    ) -> Result<bytes::Bytes, BlogUseCaseError> {
         let blog = self.get_blog_by_slug(slug, language).await?;
 
         let ogp_image_s3_signed_url =
             blog.ogp_image_s3_signed_url
-                .ok_or(crate::error::Error::NotionPagePropertyNotSet {
+                .ok_or_else(|| BlogUseCaseError::OgpCoverNotSet {
                     page_id: blog.page_id,
-                    property: "cover".to_owned(),
                 })?;
 
         let image_bytes = self
@@ -241,12 +278,12 @@ impl BlogUseCase {
         Ok(image_bytes)
     }
 
-    /// Fetches image bynary of the block by its block ID.
+    /// Fetches image binary of the block by its block ID.
     #[tracing::instrument(skip(self), err)]
     pub async fn fetch_block_image_by_id(
         &self,
         block_id: &str,
-    ) -> Result<bytes::Bytes, crate::error::Error> {
+    ) -> Result<bytes::Bytes, BlogUseCaseError> {
         let image_bytes = self
             .blog_repository
             .fetch_image_by_block_id(block_id)
@@ -260,7 +297,7 @@ impl BlogUseCase {
         &self,
         image_bytes: &[u8],
         new_width: Option<u32>,
-    ) -> Result<bytes::Bytes, crate::error::Error> {
+    ) -> Result<bytes::Bytes, BlogUseCaseError> {
         let mime_type = self.infer_image_mime_type(&bytes::Bytes::copy_from_slice(image_bytes));
 
         if mime_type.contains("xml") {
@@ -293,7 +330,7 @@ impl BlogUseCase {
     }
 
     #[tracing::instrument(skip(self), err)]
-    pub async fn generate_sitemap(&self) -> Result<String, crate::error::Error> {
+    pub async fn generate_sitemap(&self) -> Result<String, BlogUseCaseError> {
         use strum::IntoEnumIterator;
 
         let languages: Vec<input::BlogLanguageEntity> = input::BlogLanguageEntity::iter().collect();
@@ -381,7 +418,7 @@ impl BlogUseCase {
     pub async fn generate_rss(
         &self,
         language: input::BlogLanguageEntity,
-    ) -> Result<String, crate::error::Error> {
+    ) -> Result<String, BlogUseCaseError> {
         let blogs = self.list_blogs(language.clone()).await?;
 
         let domain = crate::domain_name()?;
@@ -433,7 +470,7 @@ impl BlogUseCase {
     pub async fn generate_atom(
         &self,
         language: input::BlogLanguageEntity,
-    ) -> Result<String, crate::error::Error> {
+    ) -> Result<String, BlogUseCaseError> {
         let domain = crate::domain_name()?;
 
         let blogs = self.list_blogs(language.clone()).await?;
@@ -488,7 +525,7 @@ impl BlogUseCase {
     pub async fn generate_jsonfeed(
         &self,
         language: input::BlogLanguageEntity,
-    ) -> Result<String, crate::error::Error> {
+    ) -> Result<String, BlogUseCaseError> {
         let blogs = self.list_blogs(language.clone()).await?;
 
         let domain = crate::domain_name()?;
