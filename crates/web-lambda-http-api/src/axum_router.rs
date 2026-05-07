@@ -33,8 +33,8 @@ pub async fn init_router() -> Result<&'static axum::Router, crate::error::Error>
 
             let customized_api = ApiDoc::openapi()
                 .merge_from(auto_generated_api)
-                .merge_from(blog_open_api.to_owned())
-                .merge_from(web_config_open_api.to_owned());
+                .merge_from(blog_open_api)
+                .merge_from(web_config_open_api);
 
             let app = router
                 .merge(
