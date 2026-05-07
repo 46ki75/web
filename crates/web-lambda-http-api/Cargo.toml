@@ -44,6 +44,7 @@ bytes = { workspace = true }
 infer = { workspace = true }
 strum = { workspace = true }
 strum_macros = { workspace = true }
+cached = { workspace = true, features = ["async"] }
 
 # Notion
 jarkup-rs = { workspace = true }
@@ -71,4 +72,3 @@ jsonfeed = { workspace = true }
 
 # Regular Expression
 regex = { workspace = true }
-cached = { workspace = true, features = ["async"] }
