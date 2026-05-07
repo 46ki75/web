@@ -3,12 +3,6 @@
 use utoipa::OpenApi;
 use utoipa_axum::{router::OpenApiRouter, routes};
 
-#[derive(Clone)]
-pub struct AxumAppState {
-    pub blog_use_case: std::sync::Arc<crate::blog::use_case::BlogUseCase>,
-    pub web_config_use_case: std::sync::Arc<crate::web_config::use_case::WebConfigUseCase>,
-}
-
 #[derive(OpenApi)]
 #[openapi(
     info(
@@ -29,43 +23,26 @@ static ROUTER: tokio::sync::OnceCell<axum::Router> = tokio::sync::OnceCell::cons
 pub async fn init_router() -> Result<&'static axum::Router, crate::error::Error> {
     ROUTER
         .get_or_try_init(|| async {
-            let blog_repository = crate::blog::repository::BlogRepositoryImpl {};
-            let blog_use_case = crate::blog::use_case::BlogUseCase {
-                blog_repository: std::sync::Arc::new(blog_repository),
-            };
-
-            let web_config_repository = crate::web_config::repository::WebConfigRepositoryImpl {};
-            let web_config_use_case = crate::web_config::use_case::WebConfigUseCase {
-                web_config_repository: std::sync::Arc::new(web_config_repository),
-            };
-
-            let app_state = std::sync::Arc::new(AxumAppState {
-                blog_use_case: std::sync::Arc::new(blog_use_case),
-                web_config_use_case: std::sync::Arc::new(web_config_use_case),
-            });
+            let (blog_router, blog_open_api) = crate::blog::router::init_blog_router().await?;
+            let (web_config_router, web_config_open_api) =
+                crate::web_config::router::init_web_config_router().await?;
 
             let (router, auto_generated_api) = OpenApiRouter::new()
                 .routes(routes!(handle_health_check))
-                .routes(routes!(crate::blog::controller::list_blogs))
-                .routes(routes!(crate::blog::controller::get_blog_contents))
-                .routes(routes!(crate::blog::controller::list_tags))
-                .routes(routes!(crate::blog::controller::get_blog_og_image))
-                .routes(routes!(crate::blog::controller::get_blog_block_image))
-                .routes(routes!(crate::blog::controller::get_blog_sitemap))
-                .routes(routes!(crate::blog::controller::get_blog_rss_feed))
-                .routes(routes!(crate::blog::controller::get_blog_atom_feed))
-                .routes(routes!(crate::blog::controller::get_blog_json_feed))
-                .routes(routes!(crate::web_config::controller::fetch_web_config))
-                .with_state(app_state)
                 .split_for_parts();
 
-            let customized_api = ApiDoc::openapi().merge_from(auto_generated_api);
+            let customized_api = ApiDoc::openapi()
+                .merge_from(auto_generated_api)
+                .merge_from(blog_open_api.to_owned())
+                .merge_from(web_config_open_api.to_owned());
 
             let app = router
                 .merge(
                     utoipa_swagger_ui::SwaggerUi::new("/api/v2/swagger-ui")
                         .url("/api/v2/openapi.json", customized_api),
                 )
+                .merge(blog_router.to_owned())
+                .merge(web_config_router.to_owned())
                 .layer(
                     tower_http::compression::CompressionLayer::new()
                         .deflate(true)

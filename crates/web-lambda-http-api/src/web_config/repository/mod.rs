@@ -11,6 +11,7 @@ pub trait WebConfigRepository: Send + Sync {
 pub struct WebConfigRepositoryImpl {}
 
 impl WebConfigRepository for WebConfigRepositoryImpl {
+    #[cfg_attr(not(rust_analyzer), tracing::instrument(skip(self), err))]
     fn fetch_parameter(
         &self,
         parameter_name: String,
@@ -19,7 +20,7 @@ impl WebConfigRepository for WebConfigRepositoryImpl {
     > {
         Box::pin(async move {
             let request =
-                crate::once_cell_cache::ssm_parameter::try_get_ssm_parameter_async(&parameter_name);
+                crate::once_cell_cache::ssm_parameter::try_get_ssm_parameter_async(parameter_name);
 
             let parameter = request.await?;
 

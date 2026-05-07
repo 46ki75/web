@@ -1,10 +1,5 @@
 use tokio::sync::OnceCell;
 
-pub mod blog_master_data_source_id;
-pub mod blog_tag_data_source_id;
-pub mod notion_api_key;
-pub mod talks_data_source_id;
-
 static SSM_CLIENT: OnceCell<aws_sdk_ssm::Client> = OnceCell::const_new();
 
 async fn init_ssm_client() -> &'static aws_sdk_ssm::Client {
@@ -19,14 +14,15 @@ async fn init_ssm_client() -> &'static aws_sdk_ssm::Client {
         .await
 }
 
+#[cached::proc_macro::cached(result = true)]
 pub async fn try_get_ssm_parameter_async(
-    parameter_name: &str,
+    parameter_name: String,
 ) -> Result<String, crate::error::Error> {
     let ssm_client = init_ssm_client().await;
 
     let parameter = ssm_client
         .get_parameter()
-        .name(parameter_name)
+        .name(&parameter_name)
         .with_decryption(true)
         .send()
         .await
