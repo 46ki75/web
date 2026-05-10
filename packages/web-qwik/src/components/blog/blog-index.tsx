@@ -1,6 +1,6 @@
 import { $, component$, useContext } from "@builder.io/qwik";
 
-import styles from "./blog-index.module.scss";
+import styles from "./blog-index.module.css";
 import { BlogContext } from "~/context/blog";
 import { Language } from "~/types";
 import { BlogCard } from "./blog-card";
