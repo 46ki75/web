@@ -1,6 +1,7 @@
 import {
   $,
   component$,
+  isServer,
   noSerialize,
   NoSerialize,
   useContext,
@@ -135,11 +136,22 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
     });
   });
 
+  const handleSearchKeywordChangeTimer = useSignal<number | null>(null);
+
   const handleSearchKeywordChange = $((value: string) => {
     searchKeyword.value = value;
-    safeStartViewTransition(async () => {
-      executeSearch();
-    });
+
+    if (!isServer) {
+      if (handleSearchKeywordChangeTimer.value != null) {
+        window.clearTimeout(handleSearchKeywordChangeTimer.value);
+      }
+
+      handleSearchKeywordChangeTimer.value = window.setTimeout(() => {
+        safeStartViewTransition(async () => {
+          executeSearch();
+        });
+      }, 300);
+    }
   });
 
   return (
