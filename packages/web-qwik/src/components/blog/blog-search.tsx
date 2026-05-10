@@ -270,9 +270,10 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
           ref={blogSearchResultContainerRef}
           class={styles["blog-search-result"]}
         >
-          {(searchResults.value.length > 0
-            ? searchResults.value
-            : blogState.blogMeta[language]
+          {(searchKeyword.value.trim() === "" &&
+          blogState.selectedTagIds.length === 0
+            ? blogState.blogMeta[language]
+            : searchResults.value
           ).map((blog) => (
             <BlogCard
               key={blog.slug}
