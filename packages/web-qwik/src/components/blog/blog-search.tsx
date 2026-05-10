@@ -6,6 +6,7 @@ import {
   NoSerialize,
   useContext,
   useSignal,
+  useVisibleTask$,
 } from "@builder.io/qwik";
 
 import styles from "./blog-search.module.css";
@@ -27,7 +28,7 @@ import { mdiTagRemove } from "@mdi/js";
 import { Meta } from "../common/meta";
 import { useNavigate } from "@builder.io/qwik-city";
 
-import { delay } from "es-toolkit";
+import autoAnimate from "@formkit/auto-animate";
 
 export type BlogSearchProps = {
   language: Language;
@@ -49,6 +50,37 @@ const translations = {
 };
 
 export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
+  const selectedTagPoolRef = useSignal<HTMLDivElement>();
+  const selectedTagPoolAnimateController = useSignal<NoSerialize<
+    ReturnType<typeof autoAnimate>
+  > | null>(null);
+  const blogSearchResultContainerRef = useSignal<HTMLDivElement>();
+  const blogSearchResultContainerAnimateController = useSignal<NoSerialize<
+    ReturnType<typeof autoAnimate>
+  > | null>(null);
+  // eslint-disable-next-line qwik/no-use-visible-task
+  useVisibleTask$(({ cleanup }) => {
+    if (selectedTagPoolRef.value != null) {
+      selectedTagPoolAnimateController.value = noSerialize(
+        autoAnimate(selectedTagPoolRef.value),
+      );
+    }
+    if (blogSearchResultContainerRef.value != null) {
+      blogSearchResultContainerAnimateController.value = noSerialize(
+        autoAnimate(blogSearchResultContainerRef.value),
+      );
+    }
+
+    cleanup(() => {
+      if (selectedTagPoolAnimateController.value != null) {
+        selectedTagPoolAnimateController.value.disable();
+      }
+      if (blogSearchResultContainerAnimateController.value != null) {
+        blogSearchResultContainerAnimateController.value.disable();
+      }
+    });
+  });
+
   const nav = useNavigate();
   const blogState = useContext(BlogContext);
 
@@ -95,46 +127,23 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
     }
   });
 
-  const handleViewTransitionError = $((error: any) => {
-    if (error.name !== "AbortError") throw error;
-  });
-
-  const safeStartViewTransition = $(async (callback: () => Promise<void>) => {
-    if (document.startViewTransition) {
-      const vt = document.startViewTransition(async () => {
-        await callback();
-        await delay(0);
-      });
-      vt.ready.catch(handleViewTransitionError);
-      vt.finished.catch(handleViewTransitionError);
-    } else {
-      await callback();
-    }
-  });
-
   const handleTagAdd = $((tagId: string) => {
     if (!blogState.selectedTagIds.includes(tagId)) {
-      safeStartViewTransition(async () => {
-        blogState.selectedTagIds = [...blogState.selectedTagIds, tagId];
-        executeSearch();
-      });
+      blogState.selectedTagIds = [...blogState.selectedTagIds, tagId];
+      executeSearch();
     }
   });
 
   const handleTagRemove = $((tagId: string) => {
-    safeStartViewTransition(async () => {
-      blogState.selectedTagIds = blogState.selectedTagIds.filter(
-        (id) => id !== tagId,
-      );
-      executeSearch();
-    });
+    blogState.selectedTagIds = blogState.selectedTagIds.filter(
+      (id) => id !== tagId,
+    );
+    executeSearch();
   });
 
   const handleTagReset = $(() => {
-    safeStartViewTransition(async () => {
-      blogState.selectedTagIds = [];
-      executeSearch();
-    });
+    blogState.selectedTagIds = [];
+    executeSearch();
   });
 
   const handleSearchKeywordChangeTimer = useSignal<number | null>(null);
@@ -148,9 +157,7 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
       }
 
       handleSearchKeywordChangeTimer.value = window.setTimeout(() => {
-        safeStartViewTransition(async () => {
-          executeSearch();
-        });
+        executeSearch();
       }, 300);
     }
   });
@@ -217,6 +224,7 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
 
         <ElmCollapse isOpen={blogState.selectedTagIds.length > 0}>
           <div
+            ref={selectedTagPoolRef}
             class={[
               styles["tag-pool"],
               {
@@ -258,7 +266,10 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
           {translations[language].searchResults}
         </ElmHeading>
 
-        <div class={styles["blog-search-result"]}>
+        <div
+          ref={blogSearchResultContainerRef}
+          class={styles["blog-search-result"]}
+        >
           {(searchResults.value.length > 0
             ? searchResults.value
             : blogState.blogMeta[language]
