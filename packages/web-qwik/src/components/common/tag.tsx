@@ -1,6 +1,6 @@
 import { component$, CSSProperties } from "@builder.io/qwik";
 
-import styles from "./tag.module.scss";
+import styles from "./tag.module.css";
 import { ElmInlineIcon, ElmInlineText } from "@elmethis/qwik";
 
 export interface TagProps {
