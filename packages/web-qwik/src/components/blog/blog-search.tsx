@@ -5,7 +5,6 @@ import {
   NoSerialize,
   useContext,
   useSignal,
-  useTask$,
 } from "@builder.io/qwik";
 
 import styles from "./blog-search.module.css";
@@ -57,12 +56,10 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
     Fuse<(typeof blogState.blogMeta)[Language][number]>
   > | null>(null);
 
-  useTask$(({ track }) => {
-    const trackedLanguage = track(() => language);
-
+  const executeSearch = $(() => {
     if (fuseInstance.value == null) {
       fuseInstance.value = noSerialize(
-        new Fuse(blogState.blogMeta[trackedLanguage], {
+        new Fuse(blogState.blogMeta[language], {
           keys: [
             { name: "title", weight: 0.7 },
             { name: "description", weight: 0.3 },
@@ -72,9 +69,7 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
         }),
       );
     }
-  });
 
-  const executeSearch = $(() => {
     if (fuseInstance.value != null) {
       const fuseSearchResults =
         searchKeyword.value.trim() === ""
@@ -98,7 +93,7 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
     }
   });
 
-  const handleTagAdd = $(async (tagId: string) => {
+  const handleTagAdd = $((tagId: string) => {
     if (!blogState.selectedTagIds.includes(tagId)) {
       document.startViewTransition(async () => {
         blogState.selectedTagIds = [...blogState.selectedTagIds, tagId];
