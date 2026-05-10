@@ -4,46 +4,8 @@ body {
   font-family: sans-serif;
   transition: background-color 200ms;
   background-color: #f2f2f2;
-  animation-name: body-fade;
-  animation-duration: 1000ms;
-  animation-fill-mode: both;
-  animation-iteration-count: 1;
 
   [data-theme="dark"] & {
     background-color: #25282e;
   }
-}
-
-.main-view-transition {
-  view-transition-name: main-content;
-}
-
-@keyframes layout-out {
-  from {
-    opacity: 1;
-  }
-
-  to {
-    opacity: 0;
-  }
-}
-
-@keyframes layout-in {
-  from {
-    transform: translateX(16px);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-::view-transition-old(main-content) {
-  animation: 200ms ease-in-out forwards layout-out;
-}
-
-::view-transition-new(main-content) {
-  animation: 200ms ease-in-out forwards layout-in;
 }
