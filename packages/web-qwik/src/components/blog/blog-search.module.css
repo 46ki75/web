@@ -1,10 +1,9 @@
 .tag-pool {
   box-sizing: border-box;
-  margin-block: 2rem;
+  margin-block: 1rem;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.5rem;
   user-select: none;
 
   &.empty {

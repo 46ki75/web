@@ -255,7 +255,7 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
           </div>
         </ElmCollapse>
 
-        <div style={{ marginBlock: "2rem" }}>
+        <div style={{ marginBlock: "1rem" }}>
           <ElmButton onClick$={handleTagReset} block>
             <ElmMdiIcon d={mdiTagRemove} />
             <ElmInlineText>{translations[language].resetTags}</ElmInlineText>
