@@ -98,18 +98,24 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
 
   const handleTagAdd = $((tagId: string) => {
     if (!blogState.selectedTagIds.includes(tagId)) {
-      blogState.selectedTagIds = [...blogState.selectedTagIds, tagId];
+      document.startViewTransition(() => {
+        blogState.selectedTagIds = [...blogState.selectedTagIds, tagId];
+      });
     }
   });
 
   const handleTagRemove = $((tagId: string) => {
-    blogState.selectedTagIds = blogState.selectedTagIds.filter(
-      (id) => id !== tagId,
-    );
+    document.startViewTransition(() => {
+      blogState.selectedTagIds = blogState.selectedTagIds.filter(
+        (id) => id !== tagId,
+      );
+    });
   });
 
   const handleTagReset = $(() => {
-    blogState.selectedTagIds = [];
+    document.startViewTransition(() => {
+      blogState.selectedTagIds = [];
+    });
   });
 
   return (
@@ -185,6 +191,7 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
                 <Tag
                   name={language === "en" ? tag.name_en : tag.name_ja}
                   src={tag.icon_url!}
+                  style={{ viewTransitionName: `bookmark-search-${tag.id}` }}
                 />
               </span>
             );
