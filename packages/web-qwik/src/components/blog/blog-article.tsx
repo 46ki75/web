@@ -16,7 +16,7 @@ import { useNavigate } from "@builder.io/qwik-city";
 import { BlogContext } from "~/context/blog";
 import { Tag } from "../common/tag";
 
-import styles from "./blog-article.module.scss";
+import styles from "./blog-article.module.css";
 import { Language } from "~/types";
 
 export interface ArticleProps {
