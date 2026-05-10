@@ -153,7 +153,14 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
 
       <div class={styles["blog-search"]}>
         <div style={{ marginBlock: "2rem" }}>
-          <ElmTextField value={searchKeyword} label="Keyword" icon="search" />
+          <ElmTextField
+            value={searchKeyword.value}
+            onValueChange$={(value) => {
+              searchKeyword.value = value;
+            }}
+            label="Keyword"
+            icon="search"
+          />
         </div>
 
         <ElmHeading level={2}>{translations[language].tags}</ElmHeading>
