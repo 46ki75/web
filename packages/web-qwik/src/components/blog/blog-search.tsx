@@ -93,37 +93,49 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
     }
   });
 
+  const handleViewTransitionError = $((error: any) => {
+    if (error.name !== "AbortError") throw error;
+  });
+
   const handleTagAdd = $((tagId: string) => {
     if (!blogState.selectedTagIds.includes(tagId)) {
-      document.startViewTransition(async () => {
+      const vt = document.startViewTransition(async () => {
         blogState.selectedTagIds = [...blogState.selectedTagIds, tagId];
         await delay(0);
       });
+      vt.ready.catch(handleViewTransitionError);
+      vt.finished.catch(handleViewTransitionError);
     }
   });
 
   const handleTagRemove = $((tagId: string) => {
-    document.startViewTransition(async () => {
+    const vt = document.startViewTransition(async () => {
       blogState.selectedTagIds = blogState.selectedTagIds.filter(
         (id) => id !== tagId,
       );
       await delay(0);
     });
+    vt.ready.catch(handleViewTransitionError);
+    vt.finished.catch(handleViewTransitionError);
   });
 
   const handleTagReset = $(() => {
-    document.startViewTransition(async () => {
+    const vt = document.startViewTransition(async () => {
       blogState.selectedTagIds = [];
       await delay(0);
     });
+    vt.ready.catch(handleViewTransitionError);
+    vt.finished.catch(handleViewTransitionError);
   });
 
   const handleSearchKeywordChange = $((value: string) => {
-    document.startViewTransition(async () => {
+    const vt = document.startViewTransition(async () => {
       searchKeyword.value = value;
       executeSearch();
       await delay(0);
     });
+    vt.ready.catch(handleViewTransitionError);
+    vt.finished.catch(handleViewTransitionError);
   });
 
   return (
