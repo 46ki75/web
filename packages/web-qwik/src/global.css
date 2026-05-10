@@ -18,19 +18,17 @@ body {
   view-transition-name: main-content;
 }
 
-@keyframes slide-out {
+@keyframes layout-out {
   from {
-    transform: translateX(0);
     opacity: 1;
   }
 
   to {
-    transform: translateX(-16px);
     opacity: 0;
   }
 }
 
-@keyframes slide-in {
+@keyframes layout-in {
   from {
     transform: translateX(16px);
     opacity: 0;
@@ -43,9 +41,9 @@ body {
 }
 
 ::view-transition-old(main-content) {
-  animation: 200ms ease-in both slide-out;
+  animation: 200ms ease-in-out forwards layout-out;
 }
 
 ::view-transition-new(main-content) {
-  animation: 200ms ease-out both slide-in 200ms;
+  animation: 200ms ease-in-out forwards layout-in;
 }
