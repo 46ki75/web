@@ -1,6 +1,8 @@
 {
   "ignores": [
     ".github/pull_request_template.md",
-    "packages/web-qwik/src/components/main/*"
+    "packages/web-qwik/src/components/main/*",
+    ".agents/**/*",
+    ".claude/**/*"
   ]
 }
