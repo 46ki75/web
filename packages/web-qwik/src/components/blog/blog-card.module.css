@@ -16,7 +16,7 @@
   flex-direction: column;
   flex-shrink: 0;
   border-radius: 0.25rem;
-  box-shadow: 0 0 0.125rem rgb(black, 0.2);
+  box-shadow: 0 0 0.125rem oklch(from black l c h / 20%);
   overflow: hidden;
   cursor: pointer;
   animation-name: blog-card-fade;
@@ -25,10 +25,10 @@
   animation-iteration-count: 1;
   animation-delay: var(--delay);
   transition: background-color 200ms;
-  background-color: rgb(white, 0.5);
+  background-color: oklch(from white l c h / 50%);
 
   [data-theme="dark"] & {
-    background-color: rgb(black, 0.1);
+    background-color: oklch(from black l c h / 10%);
   }
 }
 
@@ -44,13 +44,13 @@
   &:hover {
     opacity: 0.9;
     transform: translateX(-1px) translateY(-1px);
-    background-color: rgba(#aebed9, 0.15);
+    background-color: oklch(from #aebed9 l c h / 15%);
   }
 
   &:active {
     opacity: 0.7;
     transform: translateX(1px) translateY(1px);
-    background-color: rgba(#a0d4b4, 0.15);
+    background-color: oklch(from #a0d4b4 l c h / 15%);
   }
 
   @container blog-card-list (width >= 640px) {
@@ -110,11 +110,11 @@
   align-items: center;
   gap: 0 0.25rem;
   padding: 0 0.5rem;
-  border-top: solid 1px rgb(gray, 0.2);
-  background-color: rgb(white, 0.5);
+  border-top: solid 1px oklch(from gray l c h / 20%);
+  background-color: oklch(from white l c h / 50%);
 
   [data-theme="dark"] & {
-    background-color: rgb(black, 0.2);
+    background-color: oklch(from black l c h / 20%);
   }
 }
 
@@ -126,6 +126,6 @@
   cursor: pointer;
 
   &:hover {
-    background-color: rgba(#59a7b5, 0.1);
+    background-color: oklch(from #59a7b5 l c h / 10%);
   }
 }

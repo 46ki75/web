@@ -1,6 +1,6 @@
 import { $, component$, useContext } from "@builder.io/qwik";
 
-import styles from "./blog-card.module.scss";
+import styles from "./blog-card.module.css";
 
 import { paths } from "../../../openapi/schema";
 import { Link, useNavigate } from "@builder.io/qwik-city";
