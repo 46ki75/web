@@ -8,7 +8,7 @@ import {
   useTask$,
 } from "@builder.io/qwik";
 
-import styles from "./blog-search.module.scss";
+import styles from "./blog-search.module.css";
 import { BlogContext } from "~/context/blog";
 
 import Fuse from "fuse.js";
