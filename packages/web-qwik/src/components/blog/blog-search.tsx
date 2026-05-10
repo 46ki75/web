@@ -59,13 +59,11 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
   > | null>(null);
 
   useTask$(({ track }) => {
-    track(() => searchKeyword.value);
-    track(() => language);
-    track(() => blogState.selectedTagIds);
+    const trackedLanguage = track(() => language);
 
     if (fuseInstance.value == null) {
       fuseInstance.value = noSerialize(
-        new Fuse(blogState.blogMeta[language], {
+        new Fuse(blogState.blogMeta[trackedLanguage], {
           keys: [
             { name: "title", weight: 0.7 },
             { name: "description", weight: 0.3 },
@@ -75,7 +73,9 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
         }),
       );
     }
+  });
 
+  const executeSearch = $(() => {
     if (fuseInstance.value != null) {
       const fuseSearchResults =
         searchKeyword.value.trim() === ""
@@ -93,32 +93,18 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
           ),
         ) ?? [];
 
-      if (!isServer) {
-        document.startViewTransition(() => {
-          searchResults.value = results;
-          delay(0);
-        });
-      } else {
-        searchResults.value = results;
-      }
+      searchResults.value = results;
     } else {
-      if (!isServer) {
-        document.startViewTransition(() => {
-          searchResults.value = [];
-          delay(0);
-        });
-      } else {
-        searchResults.value = [];
-      }
+      searchResults.value = [];
     }
   });
 
   const handleTagAdd = $(async (tagId: string) => {
     if (!blogState.selectedTagIds.includes(tagId)) {
-      document.startViewTransition(() => {
+      document.startViewTransition(async () => {
         blogState.selectedTagIds = [...blogState.selectedTagIds, tagId];
+        await delay(0);
       });
-      await delay(0);
     }
   });
 
@@ -134,6 +120,14 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
   const handleTagReset = $(() => {
     document.startViewTransition(async () => {
       blogState.selectedTagIds = [];
+      await delay(0);
+    });
+  });
+
+  const handleSearchKeywordChange = $((value: string) => {
+    document.startViewTransition(async () => {
+      searchKeyword.value = value;
+      executeSearch();
       await delay(0);
     });
   });
@@ -170,9 +164,7 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
         <div style={{ marginBlock: "2rem" }}>
           <ElmTextField
             value={searchKeyword.value}
-            onValueChange$={(value) => {
-              searchKeyword.value = value;
-            }}
+            onValueChange$={handleSearchKeywordChange}
             label="Keyword"
             icon="search"
           />
