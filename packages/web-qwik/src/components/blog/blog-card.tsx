@@ -34,7 +34,12 @@ export const BlogCard = component$<BlogCardProps>(
     return (
       <div
         key={blog.page_id}
-        class={styles["blog-card"]}
+        class={[
+          styles["blog-card"],
+          {
+            [styles["animation-enabled"]]: delay > 0,
+          },
+        ]}
         style={{
           "--delay": `${delay}ms`,
           ...style,

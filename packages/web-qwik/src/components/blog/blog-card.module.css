@@ -19,13 +19,15 @@
   box-shadow: 0 0 0.125rem oklch(from black l c h / 20%);
   overflow: hidden;
   cursor: pointer;
-  animation-name: blog-card-fade;
-  animation-duration: 400ms;
-  animation-fill-mode: both;
-  animation-iteration-count: 1;
-  animation-delay: var(--delay);
   transition: background-color 200ms;
   background-color: oklch(from white l c h / 50%);
+
+  &.animation-enabled {
+    animation-duration: 400ms;
+    animation-fill-mode: both;
+    animation-iteration-count: 1;
+    animation-delay: var(--delay);
+  }
 
   [data-theme="dark"] & {
     background-color: oklch(from black l c h / 10%);
