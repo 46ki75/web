@@ -1,7 +1,6 @@
 import {
   $,
   component$,
-  isServer,
   noSerialize,
   NoSerialize,
   useContext,
