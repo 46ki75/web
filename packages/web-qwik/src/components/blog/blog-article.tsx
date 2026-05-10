@@ -61,7 +61,12 @@ export const BlogArticle = component$<ArticleProps>(({ slug, language }) => {
         value={jarkup}
         onPending={() => <ElmBlockFallback height={"calc(100vh - 8rem)"} />}
         onResolved={(data) => (
-          <div class={styles["blog-article"]}>
+          <div
+            class={styles["blog-article"]}
+            style={{
+              viewTransitionName: `blog-article-${language}-${slug}`,
+            }}
+          >
             <Meta
               title={data.meta.title}
               createdAt={data.meta.created_at}
