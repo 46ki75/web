@@ -223,7 +223,7 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
           {(searchResults.value.length > 0
             ? searchResults.value
             : blogState.blogMeta[language]
-          ).map((blog, index) => (
+          ).map((blog) => (
             <BlogCard
               key={blog.slug}
               blog={blog}
@@ -231,7 +231,9 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
                 blog.tag_ids?.includes(tag.id),
               )}
               language={language}
-              delay={(index + 1) * 100}
+              style={{
+                viewTransitionName: `blog-search-blog-card-${blog.page_id}`,
+              }}
             />
           ))}
         </div>
