@@ -26,6 +26,8 @@ import { mdiTagRemove } from "@mdi/js";
 import { Meta } from "../common/meta";
 import { useNavigate } from "@builder.io/qwik-city";
 
+import { delay } from "es-toolkit";
+
 export type BlogSearchProps = {
   language: Language;
 };
@@ -96,25 +98,28 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
     }
   });
 
-  const handleTagAdd = $((tagId: string) => {
+  const handleTagAdd = $(async (tagId: string) => {
     if (!blogState.selectedTagIds.includes(tagId)) {
       document.startViewTransition(() => {
         blogState.selectedTagIds = [...blogState.selectedTagIds, tagId];
       });
+      await delay(0);
     }
   });
 
   const handleTagRemove = $((tagId: string) => {
-    document.startViewTransition(() => {
+    document.startViewTransition(async () => {
       blogState.selectedTagIds = blogState.selectedTagIds.filter(
         (id) => id !== tagId,
       );
+      await delay(0);
     });
   });
 
   const handleTagReset = $(() => {
-    document.startViewTransition(() => {
+    document.startViewTransition(async () => {
       blogState.selectedTagIds = [];
+      await delay(0);
     });
   });
 
@@ -163,6 +168,9 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
               <Tag
                 name={language === "en" ? tag.name_en : tag.name_ja}
                 src={tag.icon_url!}
+                style={{
+                  viewTransitionName: `blog-search-tag-pool-${tag.id}`,
+                }}
               />
             </span>
           ))}
@@ -191,7 +199,9 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
                 <Tag
                   name={language === "en" ? tag.name_en : tag.name_ja}
                   src={tag.icon_url!}
-                  style={{ viewTransitionName: `bookmark-search-${tag.id}` }}
+                  style={{
+                    viewTransitionName: `blog-search-tag-selected-${tag.id}`,
+                  }}
                 />
               </span>
             );
