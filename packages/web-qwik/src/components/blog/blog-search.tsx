@@ -98,6 +98,8 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
           searchResults.value = results;
           delay(0);
         });
+      } else {
+        searchResults.value = results;
       }
     } else {
       if (!isServer) {
@@ -105,6 +107,8 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
           searchResults.value = [];
           delay(0);
         });
+      } else {
+        searchResults.value = [];
       }
     }
   });
