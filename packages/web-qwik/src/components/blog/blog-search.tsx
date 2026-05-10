@@ -1,6 +1,7 @@
 import {
   $,
   component$,
+  isServer,
   noSerialize,
   NoSerialize,
   useContext,
@@ -92,9 +93,19 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
           ),
         ) ?? [];
 
-      searchResults.value = results;
+      if (!isServer) {
+        document.startViewTransition(() => {
+          searchResults.value = results;
+          delay(0);
+        });
+      }
     } else {
-      searchResults.value = [];
+      if (!isServer) {
+        document.startViewTransition(() => {
+          searchResults.value = [];
+          delay(0);
+        });
+      }
     }
   });
 
