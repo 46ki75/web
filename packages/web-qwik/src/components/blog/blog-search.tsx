@@ -136,8 +136,8 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
   });
 
   const handleSearchKeywordChange = $((value: string) => {
+    searchKeyword.value = value;
     safeStartViewTransition(async () => {
-      searchKeyword.value = value;
       executeSearch();
     });
   });
