@@ -1,6 +1,6 @@
 import { component$, Slot } from "@builder.io/qwik";
 
-import styles from "./blog-main.module.scss";
+import styles from "./blog-main.module.css";
 import { BlogAuthor } from "./blog-author";
 import type { Language } from "~/types";
 

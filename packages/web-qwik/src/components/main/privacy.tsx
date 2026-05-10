@@ -28,7 +28,7 @@ export const Privacy = component$<PrivacyProps>(({ language }) => {
   const nav = useNavigate();
 
   return (
-    <div class="main-view-transition">
+    <div>
       <MainContainer>
         <Meta
           title={translation[language].title}

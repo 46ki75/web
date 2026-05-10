@@ -1,6 +1,6 @@
 import { $, component$, useContext } from "@builder.io/qwik";
 
-import styles from "./blog-index.module.scss";
+import styles from "./blog-index.module.css";
 import { BlogContext } from "~/context/blog";
 import { Language } from "~/types";
 import { BlogCard } from "./blog-card";
@@ -51,20 +51,31 @@ export const BlogIndex = component$<BlogIndexProps>(({ language }) => {
         ]}
       />
 
-      <div style={{ "--margin-block": "2rem" }}>
+      <div class={styles["blog-index-content"]}>
         <ElmParagraph>{translations[language].description}</ElmParagraph>
-      </div>
 
-      <ElmHeading
-        level={2}
-        text={translations[language].featured}
-        style={{ "--margin-block": "2rem" }}
-      />
+        <ElmHeading level={2} text={translations[language].featured} />
 
-      <div class={styles["blog-card-list"]}>
-        {blogState.blogMeta[language]
-          .filter(({ featured }) => featured)
-          .map((blog, index) => (
+        <div class={styles["blog-card-list"]}>
+          {blogState.blogMeta[language]
+            .filter(({ featured }) => featured)
+            .map((blog, index) => (
+              <BlogCard
+                key={blog.page_id}
+                blog={blog}
+                tags={blogState.tags?.filter((tag) =>
+                  blog.tag_ids?.includes(tag.id),
+                )}
+                language={language}
+                delay={(index + 1) * 100}
+              ></BlogCard>
+            ))}
+        </div>
+
+        <ElmHeading level={2} text={translations[language].recent} />
+
+        <div class={styles["blog-card-list"]}>
+          {blogState.blogMeta[language].slice(0, 3).map((blog, index) => (
             <BlogCard
               key={blog.page_id}
               blog={blog}
@@ -75,26 +86,7 @@ export const BlogIndex = component$<BlogIndexProps>(({ language }) => {
               delay={(index + 1) * 100}
             ></BlogCard>
           ))}
-      </div>
-
-      <ElmHeading
-        level={2}
-        text={translations[language].recent}
-        style={{ "--margin-block": "2rem" }}
-      />
-
-      <div class={styles["blog-card-list"]}>
-        {blogState.blogMeta[language].slice(0, 3).map((blog, index) => (
-          <BlogCard
-            key={blog.page_id}
-            blog={blog}
-            tags={blogState.tags?.filter((tag) =>
-              blog.tag_ids?.includes(tag.id),
-            )}
-            language={language}
-            delay={(index + 1) * 100}
-          ></BlogCard>
-        ))}
+        </div>
       </div>
     </div>
   );

@@ -20,7 +20,13 @@ export default component$(() => {
     <>
       <Header />
 
-      <Slot />
+      <div
+        style={{
+          viewTransitionName: "main-content",
+        }}
+      >
+        <Slot />
+      </div>
 
       <ElmParallax images={[bgBlue, bgEmerald]} />
 

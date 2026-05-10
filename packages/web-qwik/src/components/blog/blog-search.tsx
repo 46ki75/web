@@ -1,19 +1,20 @@
 import {
   $,
   component$,
+  isServer,
   noSerialize,
   NoSerialize,
   useContext,
   useSignal,
-  useTask$,
 } from "@builder.io/qwik";
 
-import styles from "./blog-search.module.scss";
+import styles from "./blog-search.module.css";
 import { BlogContext } from "~/context/blog";
 
 import Fuse from "fuse.js";
 import {
   ElmButton,
+  ElmCollapse,
   ElmHeading,
   ElmInlineText,
   ElmMdiIcon,
@@ -25,6 +26,8 @@ import { Tag } from "../common/tag";
 import { mdiTagRemove } from "@mdi/js";
 import { Meta } from "../common/meta";
 import { useNavigate } from "@builder.io/qwik-city";
+
+import { delay } from "es-toolkit";
 
 export type BlogSearchProps = {
   language: Language;
@@ -55,11 +58,7 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
     Fuse<(typeof blogState.blogMeta)[Language][number]>
   > | null>(null);
 
-  useTask$(({ track }) => {
-    track(() => searchKeyword.value);
-    track(() => language);
-    track(() => blogState.selectedTagIds);
-
+  const executeSearch = $(() => {
     if (fuseInstance.value == null) {
       fuseInstance.value = noSerialize(
         new Fuse(blogState.blogMeta[language], {
@@ -96,20 +95,64 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
     }
   });
 
+  const handleViewTransitionError = $((error: any) => {
+    if (error.name !== "AbortError") throw error;
+  });
+
+  const safeStartViewTransition = $(async (callback: () => Promise<void>) => {
+    if (document.startViewTransition) {
+      const vt = document.startViewTransition(async () => {
+        await callback();
+        await delay(0);
+      });
+      vt.ready.catch(handleViewTransitionError);
+      vt.finished.catch(handleViewTransitionError);
+    } else {
+      await callback();
+    }
+  });
+
   const handleTagAdd = $((tagId: string) => {
     if (!blogState.selectedTagIds.includes(tagId)) {
-      blogState.selectedTagIds = [...blogState.selectedTagIds, tagId];
+      safeStartViewTransition(async () => {
+        blogState.selectedTagIds = [...blogState.selectedTagIds, tagId];
+        executeSearch();
+      });
     }
   });
 
   const handleTagRemove = $((tagId: string) => {
-    blogState.selectedTagIds = blogState.selectedTagIds.filter(
-      (id) => id !== tagId,
-    );
+    safeStartViewTransition(async () => {
+      blogState.selectedTagIds = blogState.selectedTagIds.filter(
+        (id) => id !== tagId,
+      );
+      executeSearch();
+    });
   });
 
   const handleTagReset = $(() => {
-    blogState.selectedTagIds = [];
+    safeStartViewTransition(async () => {
+      blogState.selectedTagIds = [];
+      executeSearch();
+    });
+  });
+
+  const handleSearchKeywordChangeTimer = useSignal<number | null>(null);
+
+  const handleSearchKeywordChange = $((value: string) => {
+    searchKeyword.value = value;
+
+    if (!isServer) {
+      if (handleSearchKeywordChangeTimer.value != null) {
+        window.clearTimeout(handleSearchKeywordChangeTimer.value);
+      }
+
+      handleSearchKeywordChangeTimer.value = window.setTimeout(() => {
+        safeStartViewTransition(async () => {
+          executeSearch();
+        });
+      }, 300);
+    }
   });
 
   return (
@@ -142,7 +185,12 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
 
       <div class={styles["blog-search"]}>
         <div style={{ marginBlock: "2rem" }}>
-          <ElmTextField value={searchKeyword} label="Keyword" icon="search" />
+          <ElmTextField
+            value={searchKeyword.value}
+            onValueChange$={handleSearchKeywordChange}
+            label="Keyword"
+            icon="search"
+          />
         </div>
 
         <ElmHeading level={2}>{translations[language].tags}</ElmHeading>
@@ -157,6 +205,9 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
               <Tag
                 name={language === "en" ? tag.name_en : tag.name_ja}
                 src={tag.icon_url!}
+                style={{
+                  viewTransitionName: `blog-search-tag-pool-${tag.id}`,
+                }}
               />
             </span>
           ))}
@@ -164,32 +215,37 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
 
         <ElmHeading level={2}>{translations[language].selectedTags}</ElmHeading>
 
-        <div
-          class={[
-            styles["tag-pool"],
-            {
-              [styles["empty"]]: blogState.selectedTagIds.length === 0,
-            },
-          ]}
-        >
-          {blogState.selectedTagIds.map((tagId) => {
-            const tag = blogState.tags.find((t) => t.id === tagId);
-            if (tag == null) return null;
+        <ElmCollapse isOpen={blogState.selectedTagIds.length > 0}>
+          <div
+            class={[
+              styles["tag-pool"],
+              {
+                [styles["empty"]]: blogState.selectedTagIds.length === 0,
+              },
+            ]}
+          >
+            {blogState.selectedTagIds.map((tagId) => {
+              const tag = blogState.tags.find((t) => t.id === tagId);
+              if (tag == null) return null;
 
-            return (
-              <span
-                key={tag.id}
-                class={[styles["tag-wrapper"], styles["remove"]]}
-                onClick$={() => handleTagRemove(tag.id)}
-              >
-                <Tag
-                  name={language === "en" ? tag.name_en : tag.name_ja}
-                  src={tag.icon_url!}
-                />
-              </span>
-            );
-          })}
-        </div>
+              return (
+                <span
+                  key={tag.id}
+                  class={[styles["tag-wrapper"], styles["remove"]]}
+                  onClick$={() => handleTagRemove(tag.id)}
+                >
+                  <Tag
+                    name={language === "en" ? tag.name_en : tag.name_ja}
+                    src={tag.icon_url!}
+                    style={{
+                      viewTransitionName: `blog-search-tag-selected-${tag.id}`,
+                    }}
+                  />
+                </span>
+              );
+            })}
+          </div>
+        </ElmCollapse>
 
         <div style={{ marginBlock: "2rem" }}>
           <ElmButton onClick$={handleTagReset} block>
@@ -206,7 +262,7 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
           {(searchResults.value.length > 0
             ? searchResults.value
             : blogState.blogMeta[language]
-          ).map((blog, index) => (
+          ).map((blog) => (
             <BlogCard
               key={blog.slug}
               blog={blog}
@@ -214,7 +270,9 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
                 blog.tag_ids?.includes(tag.id),
               )}
               language={language}
-              delay={(index + 1) * 100}
+              style={{
+                viewTransitionName: `blog-search-blog-card-${blog.page_id}`,
+              }}
             />
           ))}
         </div>

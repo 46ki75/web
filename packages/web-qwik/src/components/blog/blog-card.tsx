@@ -1,6 +1,6 @@
-import { $, component$, useContext } from "@builder.io/qwik";
+import { $, component$, CSSProperties, useContext } from "@builder.io/qwik";
 
-import styles from "./blog-card.module.scss";
+import styles from "./blog-card.module.css";
 
 import { paths } from "../../../openapi/schema";
 import { Link, useNavigate } from "@builder.io/qwik-city";
@@ -11,6 +11,7 @@ import { DateComponent } from "../common/date";
 import { BlogContext } from "~/context/blog";
 
 export interface BlogCardProps {
+  style?: CSSProperties;
   blog: paths["/api/v2/blog/{slug}"]["get"]["responses"]["200"]["content"]["application/json"]["meta"];
   tags: paths["/api/v2/blog/tag"]["get"]["responses"]["200"]["content"]["application/json"];
   language: Language;
@@ -18,7 +19,7 @@ export interface BlogCardProps {
 }
 
 export const BlogCard = component$<BlogCardProps>(
-  ({ blog, tags, language, delay = 0 }) => {
+  ({ blog, tags, language, delay = 0, style }) => {
     const blogState = useContext(BlogContext);
 
     const nav = useNavigate();
@@ -33,9 +34,15 @@ export const BlogCard = component$<BlogCardProps>(
     return (
       <div
         key={blog.page_id}
-        class={styles["blog-card"]}
+        class={[
+          styles["blog-card"],
+          {
+            [styles["animation-enabled"]]: delay > 0,
+          },
+        ]}
         style={{
           "--delay": `${delay}ms`,
+          ...style,
         }}
       >
         <Link

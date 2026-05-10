@@ -16,7 +16,7 @@ import { useNavigate } from "@builder.io/qwik-city";
 import { BlogContext } from "~/context/blog";
 import { Tag } from "../common/tag";
 
-import styles from "./blog-article.module.scss";
+import styles from "./blog-article.module.css";
 import { Language } from "~/types";
 
 export interface ArticleProps {
@@ -59,9 +59,21 @@ export const BlogArticle = component$<ArticleProps>(({ slug, language }) => {
     <article>
       <Resource
         value={jarkup}
-        onPending={() => <ElmBlockFallback height={"calc(100vh - 8rem)"} />}
+        onPending={() => (
+          <ElmBlockFallback
+            height={"calc(100vh - 8rem)"}
+            style={{
+              viewTransitionName: `blog-article-pending-${language}-${slug}`,
+            }}
+          />
+        )}
         onResolved={(data) => (
-          <div class={styles["blog-article"]}>
+          <div
+            class={styles["blog-article"]}
+            style={{
+              viewTransitionName: `blog-article-resolved-${language}-${slug}`,
+            }}
+          >
             <Meta
               title={data.meta.title}
               createdAt={data.meta.created_at}

@@ -1,4 +1,4 @@
-@keyframes fade-in {
+@keyframes blog-article-fade-in {
   from {
     opacity: 0;
   }
@@ -9,7 +9,7 @@
 }
 
 .blog-article {
-  animation: 800ms ease 0ms 1 normal both running fade-in;
+  animation: blog-article-fade-in 200ms;
 }
 
 .tag-container {
