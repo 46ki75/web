@@ -59,12 +59,19 @@ export const BlogArticle = component$<ArticleProps>(({ slug, language }) => {
     <article>
       <Resource
         value={jarkup}
-        onPending={() => <ElmBlockFallback height={"calc(100vh - 8rem)"} />}
+        onPending={() => (
+          <ElmBlockFallback
+            height={"calc(100vh - 8rem)"}
+            style={{
+              viewTransitionName: `blog-article-pending-${language}-${slug}`,
+            }}
+          />
+        )}
         onResolved={(data) => (
           <div
             class={styles["blog-article"]}
             style={{
-              viewTransitionName: `blog-article-${language}-${slug}`,
+              viewTransitionName: `blog-article-resolved-${language}-${slug}`,
             }}
           >
             <Meta
