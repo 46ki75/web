@@ -14,6 +14,7 @@ import { BlogContext } from "~/context/blog";
 import Fuse from "fuse.js";
 import {
   ElmButton,
+  ElmCollapse,
   ElmHeading,
   ElmInlineText,
   ElmMdiIcon,
@@ -214,35 +215,37 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
 
         <ElmHeading level={2}>{translations[language].selectedTags}</ElmHeading>
 
-        <div
-          class={[
-            styles["tag-pool"],
-            {
-              [styles["empty"]]: blogState.selectedTagIds.length === 0,
-            },
-          ]}
-        >
-          {blogState.selectedTagIds.map((tagId) => {
-            const tag = blogState.tags.find((t) => t.id === tagId);
-            if (tag == null) return null;
+        <ElmCollapse isOpen={blogState.selectedTagIds.length > 0}>
+          <div
+            class={[
+              styles["tag-pool"],
+              {
+                [styles["empty"]]: blogState.selectedTagIds.length === 0,
+              },
+            ]}
+          >
+            {blogState.selectedTagIds.map((tagId) => {
+              const tag = blogState.tags.find((t) => t.id === tagId);
+              if (tag == null) return null;
 
-            return (
-              <span
-                key={tag.id}
-                class={[styles["tag-wrapper"], styles["remove"]]}
-                onClick$={() => handleTagRemove(tag.id)}
-              >
-                <Tag
-                  name={language === "en" ? tag.name_en : tag.name_ja}
-                  src={tag.icon_url!}
-                  style={{
-                    viewTransitionName: `blog-search-tag-selected-${tag.id}`,
-                  }}
-                />
-              </span>
-            );
-          })}
-        </div>
+              return (
+                <span
+                  key={tag.id}
+                  class={[styles["tag-wrapper"], styles["remove"]]}
+                  onClick$={() => handleTagRemove(tag.id)}
+                >
+                  <Tag
+                    name={language === "en" ? tag.name_en : tag.name_ja}
+                    src={tag.icon_url!}
+                    style={{
+                      viewTransitionName: `blog-search-tag-selected-${tag.id}`,
+                    }}
+                  />
+                </span>
+              );
+            })}
+          </div>
+        </ElmCollapse>
 
         <div style={{ marginBlock: "2rem" }}>
           <ElmButton onClick$={handleTagReset} block>
