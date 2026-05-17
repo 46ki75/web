@@ -1,9 +1,9 @@
-import { $, component$, CSSProperties, useContext } from "@builder.io/qwik";
+import { $, component$, CSSProperties, useContext } from "@qwik.dev/core";
 
 import styles from "./blog-card.module.css";
 
 import { paths } from "../../../openapi/schema";
-import { Link, useNavigate } from "@builder.io/qwik-city";
+import { Link, useNavigate } from "@qwik.dev/router";
 import { Language } from "~/types";
 import { ElmInlineText } from "@elmethis/qwik";
 import { Tag } from "../common/tag";

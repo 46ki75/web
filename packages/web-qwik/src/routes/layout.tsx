@@ -1,5 +1,5 @@
-import { component$, Slot } from "@builder.io/qwik";
-import { RequestHandler } from "@builder.io/qwik-city";
+import { component$, Slot } from "@qwik.dev/core";
+import { RequestHandler } from "@qwik.dev/router";
 import { ElmPageTop, ElmParallax } from "@elmethis/qwik";
 import { Footer } from "~/components/common/footer";
 import { Header } from "~/components/common/header";

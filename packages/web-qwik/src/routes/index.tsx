@@ -1,5 +1,5 @@
-import { component$ } from "@builder.io/qwik";
-import { routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
+import { component$ } from "@qwik.dev/core";
+import { routeLoader$, type DocumentHead } from "@qwik.dev/router";
 import { Home } from "~/components/main/home";
 import { siteConfig } from "~/meta/site-config";
 import { generateHead } from "~/utils/common";

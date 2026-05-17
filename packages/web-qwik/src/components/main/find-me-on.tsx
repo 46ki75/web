@@ -1,4 +1,4 @@
-import { component$ } from "@builder.io/qwik";
+import { component$ } from "@qwik.dev/core";
 import { ElmInlineText } from "@elmethis/qwik";
 
 import GitHubIcon from "../../assets/icons/github.svg?jsx";

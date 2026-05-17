@@ -6,8 +6,9 @@ import {
   NoSerialize,
   useContext,
   useSignal,
+  useTask$,
   useVisibleTask$,
-} from "@builder.io/qwik";
+} from "@qwik.dev/core";
 
 import styles from "./blog-search.module.css";
 import { BlogContext } from "~/context/blog";
@@ -26,7 +27,7 @@ import { BlogCard } from "./blog-card";
 import { Tag } from "../common/tag";
 import { mdiTagRemove } from "@mdi/js";
 import { Meta } from "../common/meta";
-import { useNavigate } from "@builder.io/qwik-city";
+import { useNavigate } from "@qwik.dev/router";
 
 import autoAnimate from "@formkit/auto-animate";
 
@@ -148,18 +149,24 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
 
   const handleSearchKeywordChangeTimer = useSignal<number | null>(null);
 
-  const handleSearchKeywordChange = $((value: string) => {
-    searchKeyword.value = value;
+  useTask$(({ track, cleanup }) => {
+    track(() => searchKeyword.value);
 
-    if (!isServer) {
+    if (isServer) return;
+
+    if (handleSearchKeywordChangeTimer.value != null) {
+      window.clearTimeout(handleSearchKeywordChangeTimer.value);
+    }
+
+    handleSearchKeywordChangeTimer.value = window.setTimeout(() => {
+      executeSearch();
+    }, 300);
+
+    cleanup(() => {
       if (handleSearchKeywordChangeTimer.value != null) {
         window.clearTimeout(handleSearchKeywordChangeTimer.value);
       }
-
-      handleSearchKeywordChangeTimer.value = window.setTimeout(() => {
-        executeSearch();
-      }, 300);
-    }
+    });
   });
 
   return (
@@ -192,12 +199,7 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
 
       <div class={styles["blog-search"]}>
         <div style={{ marginBlock: "2rem" }}>
-          <ElmTextField
-            value={searchKeyword.value}
-            onValueChange$={handleSearchKeywordChange}
-            label="Keyword"
-            icon="search"
-          />
+          <ElmTextField value={searchKeyword} label="Keyword" />
         </div>
 
         <ElmHeading level={2}>{translations[language].tags}</ElmHeading>

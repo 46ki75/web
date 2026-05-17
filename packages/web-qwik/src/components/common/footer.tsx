@@ -1,4 +1,4 @@
-import { component$, useContext } from "@builder.io/qwik";
+import { component$, useContext } from "@qwik.dev/core";
 import { version } from "../../../package.json";
 import ImgFavicon from "../../assets/brand/favicon.svg?jsx";
 import ImgGitHub from "../../assets/icons/github.svg?jsx";

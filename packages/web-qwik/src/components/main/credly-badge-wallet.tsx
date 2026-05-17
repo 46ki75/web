@@ -1,5 +1,5 @@
-import { Resource, component$, useResource$ } from "@builder.io/qwik";
-import { server$ } from "@builder.io/qwik-city";
+import { Suspense, component$, useAsync$ } from "@qwik.dev/core";
+import { server$ } from "@qwik.dev/router";
 import { ElmHeading, ElmMarkdown, ElmRectangleWave } from "@elmethis/qwik";
 import { Language } from "~/types";
 import { CredlyBadge } from "./credly-badge";
@@ -51,9 +51,7 @@ const fetchBadges = server$(async () => {
 
 export const CredlyBadgeWallet = component$<CredlyBadgeWalletProps>(
   ({ language }) => {
-    const badgesResource = useResource$<any[]>(() => {
-      return fetchBadges();
-    });
+    const badges = useAsync$<any[]>(() => fetchBadges());
 
     return (
       <div class={styles["badge-wallet"]}>
@@ -64,17 +62,18 @@ export const CredlyBadgeWallet = component$<CredlyBadgeWalletProps>(
         <ElmMarkdown markdown={translation[language].credly} />
 
         <div class={styles["badge-container"]}>
-          <Resource
-            value={badgesResource}
-            onPending={() => (
+          <Suspense
+            fallback={
               <div class={styles["badge-container-fallback"]}>
                 <ElmRectangleWave />
               </div>
-            )}
-            onRejected={() => <div>Failed to load badges.</div>}
-            onResolved={(badges) => (
+            }
+          >
+            {badges.error ? (
+              <div>Failed to load badges.</div>
+            ) : (
               <>
-                {badges.map((badge: any, index) => (
+                {badges.value.map((badge: any, index) => (
                   <CredlyBadge
                     key={badge.id}
                     src={badge.badge_template.image_url}
@@ -88,7 +87,7 @@ export const CredlyBadgeWallet = component$<CredlyBadgeWalletProps>(
                 ))}
               </>
             )}
-          />
+          </Suspense>
         </div>
       </div>
     );

@@ -1,4 +1,4 @@
-import { component$, PropsOf, Slot } from "@builder.io/qwik";
+import { component$, PropsOf, Slot } from "@qwik.dev/core";
 
 import styles from "./meta.module.scss";
 import { ElmBlockImage, ElmBreadcrumb, ElmHeading } from "@elmethis/qwik";

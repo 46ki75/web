@@ -1,4 +1,4 @@
-import { RequestHandler } from "@builder.io/qwik-city";
+import { RequestHandler } from "@qwik.dev/router";
 import { SitemapIndexStream, streamToPromise } from "sitemap";
 
 export const onGet: RequestHandler = async (ev) => {

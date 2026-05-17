@@ -1,11 +1,11 @@
-import { $, component$, useContext, useVisibleTask$ } from "@builder.io/qwik";
+import { $, component$, useContext, useVisibleTask$ } from "@qwik.dev/core";
 
 import styles from "./language.module.scss";
 
 import { LanguageContext, languageMap } from "~/context/language";
 import { ElmInlineText, ElmMdiIcon } from "@elmethis/qwik";
 import { mdiTranslate } from "@mdi/js";
-import { useLocation, useNavigate } from "@builder.io/qwik-city";
+import { useLocation, useNavigate } from "@qwik.dev/router";
 import { Language as LanguageType } from "~/types";
 
 export type LanguageProps = object;

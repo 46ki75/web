@@ -1,4 +1,4 @@
-import { component$ } from "@builder.io/qwik";
+import { component$ } from "@qwik.dev/core";
 import { ElmInlineText, ElmMdiIcon } from "@elmethis/qwik";
 import { mdiCertificateOutline, mdiAlertCircleOutline } from "@mdi/js";
 import styles from "./credly-badge.module.scss";

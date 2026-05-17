@@ -1,4 +1,4 @@
-import { component$, Slot, useContext, useTask$ } from "@builder.io/qwik";
+import { component$, Slot, useContext, useTask$ } from "@qwik.dev/core";
 
 import styles from "./blog-layout.module.scss";
 

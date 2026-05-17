@@ -3,9 +3,10 @@
  * When building, the adapter config is used which loads this file and extends it.
  */
 import { defineConfig, type UserConfig, loadEnv } from "vite";
-import { qwikVite } from "@builder.io/qwik/optimizer";
-import { qwikCity } from "@builder.io/qwik-city/vite";
+import { qwikVite } from "@qwik.dev/core/optimizer";
+import { qwikRouter } from "@qwik.dev/router/vite";
 import tsconfigPaths from "vite-tsconfig-paths";
+import { fileURLToPath } from "node:url";
 import pkg from "./package.json";
 
 
@@ -31,7 +32,17 @@ export default defineConfig(({ command, mode }): UserConfig => {
     define: {
       "import.meta.env.VITE_API_DOMAIN": JSON.stringify(DOMAIN),
     },
-    plugins: [qwikCity(), qwikVite(), tsconfigPaths({ root: "." })],
+    plugins: [qwikRouter(), qwikVite(), tsconfigPaths({ root: "." })],
+    resolve: {
+      // pkce-challenge's `exports` field lacks a `default`/`import` condition,
+      // which trips Vite's resolver when it walks dead-code dynamic imports
+      // inside @elmethis/qwik's MCP client. Alias to a local stub.
+      alias: {
+        "pkce-challenge": fileURLToPath(
+          new URL("./src/stubs/pkce-challenge.ts", import.meta.url),
+        ),
+      },
+    },
     // This tells Vite which dependencies to pre-build in dev mode.
     optimizeDeps: {
       // Put problematic deps that break bundling here, mostly those with binaries.

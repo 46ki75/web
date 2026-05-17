@@ -1,5 +1,5 @@
-import { routeLoader$ } from "@builder.io/qwik-city";
-import { component$ } from "@builder.io/qwik";
+import { routeLoader$ } from "@qwik.dev/router";
+import { component$ } from "@qwik.dev/core";
 
 export const useRedirect = routeLoader$(({ redirect }) => {
   throw redirect(308, "/ja");

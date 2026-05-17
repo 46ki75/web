@@ -1,4 +1,4 @@
-import { component$ } from "@builder.io/qwik";
+import { component$ } from "@qwik.dev/core";
 
 import styles from "./blog-author.module.scss";
 import { Language } from "~/types";

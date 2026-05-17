@@ -1,6 +1,6 @@
-import { component$ } from "@builder.io/qwik";
+import { component$ } from "@qwik.dev/core";
 
-import { DocumentHead, routeLoader$, useLocation } from "@builder.io/qwik-city";
+import { DocumentHead, routeLoader$, useLocation } from "@qwik.dev/router";
 import { BlogArticle } from "~/components/blog/blog-article";
 import { generateBlogMeta } from "~/utils/blog/seo";
 import { client } from "../../../../../../openapi/client";

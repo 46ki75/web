@@ -1,8 +1,8 @@
-import { $, component$, useContext } from "@builder.io/qwik";
+import { $, component$, useContext } from "@qwik.dev/core";
 
 import styles from "./blog-side.module.scss";
 
-import { Link, useNavigate } from "@builder.io/qwik-city";
+import { Link, useNavigate } from "@qwik.dev/router";
 import { BlogContext } from "~/context/blog";
 import { Language } from "~/types";
 import { BlogCard } from "./blog-card";

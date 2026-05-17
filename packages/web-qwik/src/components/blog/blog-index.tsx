@@ -1,11 +1,11 @@
-import { $, component$, useContext } from "@builder.io/qwik";
+import { $, component$, useContext } from "@qwik.dev/core";
 
 import styles from "./blog-index.module.css";
 import { BlogContext } from "~/context/blog";
 import { Language } from "~/types";
 import { BlogCard } from "./blog-card";
 import { Meta } from "../common/meta";
-import { useNavigate } from "@builder.io/qwik-city";
+import { useNavigate } from "@qwik.dev/router";
 import { ElmHeading, ElmParagraph } from "@elmethis/qwik";
 
 export interface BlogIndexProps {
