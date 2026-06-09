@@ -72,7 +72,7 @@ export const Language = component$<LanguageProps>(() => {
       <ElmMdiIcon d={mdiTranslate} color="#a4863e" />
       <div class={styles["language-container"]}>
         <span class={styles["language-label"]}>
-          <ElmInlineText text="Language" />
+          <ElmInlineText>Language</ElmInlineText>
         </span>
         <span class={styles["language-name"]}>
           <ElmInlineText>{languageMap[languageState.language]}</ElmInlineText>
