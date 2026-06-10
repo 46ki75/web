@@ -7,7 +7,7 @@ import { client } from "../../../../../../openapi/client";
 
 const LANGUAGE = "ja";
 
-export const useBlogMeta = routeLoader$(async ({ params, url, error }) => {
+export const useBlogMeta = routeLoader$(async ({ params, error }) => {
   const { data: blogMeta } = await client.GET("/api/v2/blog/{slug}", {
     params: {
       header: { "accept-language": LANGUAGE },
@@ -20,15 +20,21 @@ export const useBlogMeta = routeLoader$(async ({ params, url, error }) => {
     throw error(404, "Blog post not found");
   }
 
-  return { meta: blogMeta!.meta, url: url.toString() };
+  return { meta: blogMeta!.meta };
 });
 
-export const head: DocumentHead = ({ resolveValue }) => {
+export const head: DocumentHead = ({ url, resolveValue }) => {
   const blogMeta = resolveValue(useBlogMeta);
 
+  // During client-side navigation the head can re-resolve before the route
+  // loader state is populated; render no head until the data arrives.
+  if (!blogMeta) {
+    return {};
+  }
+
   return generateBlogMeta({
-    url: blogMeta!.url,
-    blogMeta: blogMeta!.meta,
+    url: url.toString(),
+    blogMeta: blogMeta.meta,
     language: LANGUAGE,
   });
 };

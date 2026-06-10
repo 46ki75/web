@@ -1,5 +1,5 @@
 import { component$ } from "@qwik.dev/core";
-import { DocumentHead, routeLoader$ } from "@qwik.dev/router";
+import { DocumentHead } from "@qwik.dev/router";
 import { Privacy } from "~/components/main/privacy";
 import { generateHead } from "~/utils/common";
 
@@ -7,13 +7,9 @@ export default component$(() => {
   return <Privacy language="en" />;
 });
 
-export const useUrl = routeLoader$(({ url }) => url.toString());
-
-export const head: DocumentHead = ({ resolveValue }) => {
-  const url = resolveValue(useUrl);
-
+export const head: DocumentHead = ({ url }) => {
   const headBase = generateHead({
-    url,
+    url: url.toString(),
     title: "Privacy Policy",
     ogType: "profile",
     description: "Personal blog and portfolio",

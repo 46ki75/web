@@ -61,7 +61,9 @@ export default defineConfig(({ command, mode }): UserConfig => {
     plugins: [
       imageJsxVirtualResolveWorkaround(),
       qwikRouter(),
-      qwikVite(),
+      // `useAsync$` + `<Suspense>` (blog-article, credly-badge-wallet) are
+      // experimental in v2 and must be enabled explicitly
+      qwikVite({ experimental: ["suspense"] }),
       tsconfigPaths({ root: "." }),
     ],
     resolve: {
