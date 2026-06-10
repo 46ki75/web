@@ -13,11 +13,11 @@ export const DateComponent = component$<DateProps>(
   ({ createdAt, updatedAt }) => {
     return (
       <div class={styles.date}>
-        <ElmMdiIcon d={mdiCalendarEdit} color="#a17c5b" size="1rem" />
+        <ElmMdiIcon class={styles.icon} d={mdiCalendarEdit} size="1rem" />
         <ElmInlineText size="0.85rem">
           {createdAt.substring(0, 10)}
         </ElmInlineText>
-        <ElmMdiIcon d={mdiCalendarClock} color="#a17c5b" size="1rem" />
+        <ElmMdiIcon class={styles.icon} d={mdiCalendarClock} size="1rem" />
         <ElmInlineText size="0.85rem">
           {updatedAt.substring(0, 10)}
         </ElmInlineText>
