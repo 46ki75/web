@@ -2,7 +2,7 @@
  * This is the base config for vite.
  * When building, the adapter config is used which loads this file and extends it.
  */
-import { defineConfig, type UserConfig, loadEnv } from "vite";
+import { defineConfig, type UserConfig, type Plugin, loadEnv } from "vite";
 import { qwikVite } from "@qwik.dev/core/optimizer";
 import { qwikRouter } from "@qwik.dev/router/vite";
 import tsconfigPaths from "vite-tsconfig-paths";
@@ -21,6 +21,32 @@ const { dependencies = {}, devDependencies = {} } = pkg as any as {
 errorOnDuplicatesPkgDeps(devDependencies, dependencies);
 
 /**
+ * Workaround for @qwik.dev/router 2.0.0-beta.37 (see 46ki75/qwik-webp-jsx-repro):
+ * the `qwik-router-image-jsx` plugin expands `image.ext?jsx` imports into
+ * `virtual:<path>.qwik.jsx` modules, but its resolveId returns null when asked
+ * to re-resolve those virtual ids, so the client environment's import-analysis
+ * fails with "Failed to resolve import ... Does the file exist?". Claiming the
+ * ids as-is lets the router plugin's load/transform hooks handle them.
+ * Remove once fixed upstream.
+ */
+function imageJsxVirtualResolveWorkaround(): Plugin {
+  return {
+    name: "workaround-qwik-image-jsx-virtual-resolve",
+    resolveId: {
+      order: "pre",
+      handler(id) {
+        if (
+          id.startsWith("virtual:") &&
+          id.split("?")[0].endsWith(".qwik.jsx")
+        ) {
+          return id;
+        }
+      },
+    },
+  };
+}
+
+/**
  * Note that Vite normally starts from `index.html` but the qwikCity plugin makes start at `src/entry.ssr.tsx` instead.
  */
 export default defineConfig(({ command, mode }): UserConfig => {
@@ -32,7 +58,12 @@ export default defineConfig(({ command, mode }): UserConfig => {
     define: {
       "import.meta.env.VITE_API_DOMAIN": JSON.stringify(DOMAIN),
     },
-    plugins: [qwikRouter(), qwikVite(), tsconfigPaths({ root: "." })],
+    plugins: [
+      imageJsxVirtualResolveWorkaround(),
+      qwikRouter(),
+      qwikVite(),
+      tsconfigPaths({ root: "." }),
+    ],
     resolve: {
       // pkce-challenge's `exports` field lacks a `default`/`import` condition,
       // which trips Vite's resolver when it walks dead-code dynamic imports
