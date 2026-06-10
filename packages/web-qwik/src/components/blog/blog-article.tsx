@@ -1,10 +1,4 @@
-import {
-  $,
-  component$,
-  Suspense,
-  useAsync$,
-  useContext,
-} from "@qwik.dev/core";
+import { $, component$, useAsync$, useContext } from "@qwik.dev/core";
 import type { Component } from "jarkup-ts";
 
 import { ElmBlockFallback, ElmJarkup } from "@elmethis/qwik";
@@ -56,16 +50,14 @@ export const BlogArticle = component$<ArticleProps>(({ slug, language }) => {
 
   return (
     <article>
-      <Suspense
-        fallback={
-          <ElmBlockFallback
-            height={"calc(100vh - 8rem)"}
-            style={{
-              viewTransitionName: `blog-article-pending-${language}-${slug}`,
-            }}
-          />
-        }
-      >
+      {jarkup.loading ? (
+        <ElmBlockFallback
+          height={"calc(100vh - 8rem)"}
+          style={{
+            viewTransitionName: `blog-article-pending-${language}-${slug}`,
+          }}
+        />
+      ) : (
         <div
           class={styles["blog-article"]}
           style={{
@@ -121,7 +113,7 @@ export const BlogArticle = component$<ArticleProps>(({ slug, language }) => {
           </Meta>
           <ElmJarkup jsonComponents={jarkup.value.components} />
         </div>
-      </Suspense>
+      )}
     </article>
   );
 });
