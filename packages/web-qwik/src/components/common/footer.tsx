@@ -1,10 +1,13 @@
 import { component$, useContext } from "@qwik.dev/core";
 import { version } from "../../../package.json";
-import ImgFavicon from "../../assets/brand/favicon.svg?jsx";
+
+import LightLogo from "../../assets/brand/logo-light.svg?url";
+import DarkLogo from "../../assets/brand/logo-dark.svg?url";
+
 import ImgGitHub from "../../assets/icons/github.svg?jsx";
 
 import styles from "./footer.module.css";
-import { ElmInlineText, ElmMdiIcon } from "@elmethis/qwik";
+import { ElmInlineText, ElmMdiIcon, useElmethisTheme } from "@elmethis/qwik";
 import { LinkLocale } from "./link-locale";
 import { mdiLinkVariant, mdiOpenInNew, mdiSitemap } from "@mdi/js";
 import { LanguageContext } from "~/context/language";
@@ -15,6 +18,8 @@ export const Footer = component$(() => {
   const currentYear = new Date().getFullYear();
   const dateBuildMeta = new Date().toISOString().slice(0, 10).replace(/-/g, "");
   const build = `v${version}+${dateBuildMeta}`;
+
+  const { isDarkTheme } = useElmethisTheme();
 
   return (
     <footer class={styles.footer}>
@@ -73,18 +78,23 @@ export const Footer = component$(() => {
             <LinkLocale
               lang={languageState.language}
               href="/"
-              class={styles['hidden-mobile']}
+              class={styles["hidden-mobile"]}
               aria-label="Home"
             >
-              <ImgFavicon class={styles.favicon} />
+              <img
+                height={24}
+                width={24}
+                src={isDarkTheme.value ? DarkLogo : LightLogo}
+                alt="Logo"
+              />
             </LinkLocale>
 
-            <div class={styles['left-inner']}>
+            <div class={styles["left-inner"]}>
               <ElmInlineText size="0.8rem">
                 Ikuma Yamashita 2022 - {currentYear}
               </ElmInlineText>
             </div>
-            <div class={styles['left-inner']}>
+            <div class={styles["left-inner"]}>
               <ElmInlineText size="0.8rem">{build}</ElmInlineText>
             </div>
           </div>
