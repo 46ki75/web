@@ -140,7 +140,8 @@
   width: 1.5rem;
   transition: opacity 200ms;
   cursor: pointer;
-  color: light-dark(#555b67, #b0b5be);
+  color: var(--elmethis-color-neutral);
+  fill: currentcolor;
 
   &:hover {
     opacity: 0.6;
