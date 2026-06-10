@@ -140,11 +140,7 @@
   width: 1.5rem;
   transition: opacity 200ms;
   cursor: pointer;
-  fill: #555b67;
-
-  [data-theme="dark"] & {
-    fill: #b0b5be;
-  }
+  color: light-dark(#555b67, #b0b5be);
 
   &:hover {
     opacity: 0.6;
