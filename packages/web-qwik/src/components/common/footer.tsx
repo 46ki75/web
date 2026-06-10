@@ -23,11 +23,11 @@ export const Footer = component$(() => {
 
   return (
     <footer class={styles.footer}>
-      <div class={styles.container}>
-        <div class={styles.sitelinks}>
+      <div class={styles["footer-container"]}>
+        <div class={styles["footer-sitelinks"]}>
           <div style={{ marginBottom: "0.5em" }}>
             <span
-              class={styles.heading}
+              class={styles["footer-heading"]}
               style={{ fontSize: "1em", fontWeight: "bold" }}
             >
               <ElmInlineText>SITE</ElmInlineText>
@@ -36,7 +36,7 @@ export const Footer = component$(() => {
 
           <LinkLocale
             lang={languageState.language}
-            class={styles.sitelink}
+            class={styles["footer-sitelink"]}
             href="/about"
           >
             <ElmMdiIcon d={mdiLinkVariant} color="#6987b8" />
@@ -45,7 +45,7 @@ export const Footer = component$(() => {
 
           <LinkLocale
             lang={languageState.language}
-            class={styles.sitelink}
+            class={styles["footer-sitelink"]}
             href="/privacy"
           >
             <ElmMdiIcon d={mdiLinkVariant} color="#6987b8" />
@@ -54,7 +54,7 @@ export const Footer = component$(() => {
 
           <LinkLocale
             lang={languageState.language}
-            class={styles.sitelink}
+            class={styles["footer-sitelink"]}
             href="/blog"
           >
             <ElmMdiIcon d={mdiLinkVariant} color="#6987b8" />
@@ -62,7 +62,7 @@ export const Footer = component$(() => {
           </LinkLocale>
 
           <a
-            class={styles.sitelink}
+            class={styles["footer-sitelink"]}
             href="https://speakerdeck.com/ikuma"
             target="_blank"
             rel="noopener noreferrer"
@@ -72,13 +72,13 @@ export const Footer = component$(() => {
           </a>
         </div>
 
-        <hr class={styles.hr} />
-        <div class={styles.bottom}>
-          <div class={styles.left}>
+        <hr class={styles["footer-divider"]} />
+        <div class={styles["footer-bottom"]}>
+          <div class={styles["footer-bottom-left"]}>
             <LinkLocale
               lang={languageState.language}
               href="/"
-              class={styles["hidden-mobile"]}
+              class={styles["footer-logo"]}
               aria-label="Home"
             >
               <img
@@ -89,19 +89,19 @@ export const Footer = component$(() => {
               />
             </LinkLocale>
 
-            <div class={styles["left-inner"]}>
+            <div class={styles["footer-meta"]}>
               <ElmInlineText size="0.8rem">
                 Ikuma Yamashita 2022 - {currentYear}
               </ElmInlineText>
             </div>
-            <div class={styles["left-inner"]}>
+            <div class={styles["footer-meta"]}>
               <ElmInlineText size="0.8rem">{build}</ElmInlineText>
             </div>
           </div>
 
-          <div class={styles.right}>
+          <div class={styles["footer-bottom-right"]}>
             <a
-              class={styles.icon}
+              class={styles["footer-icon"]}
               rel="noopener noreferrer"
               href="/sitemap-index.xml"
               target="_blank"
@@ -111,13 +111,13 @@ export const Footer = component$(() => {
             </a>
 
             <a
-              class={styles.icon}
+              class={styles["footer-icon"]}
               rel="noopener noreferrer"
               href="https://github.com/46ki75/web"
               target="_blank"
               aria-label="Source code on GitHub"
             >
-              <ImgGitHub class={styles.icon} />
+              <ImgGitHub class={styles["footer-icon"]} />
             </a>
           </div>
         </div>
