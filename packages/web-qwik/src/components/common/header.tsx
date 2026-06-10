@@ -1,6 +1,6 @@
 import { component$, useContext } from "@qwik.dev/core";
 
-import styles from "./header.module.scss";
+import styles from "./header.module.css";
 
 import Favicon from "../../assets/brand/logo.svg?jsx";
 import { ElmInlineText, ElmMdiIcon, ElmToggleTheme } from "@elmethis/qwik";

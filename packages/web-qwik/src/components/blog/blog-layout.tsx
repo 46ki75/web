@@ -1,6 +1,6 @@
 import { component$, Slot, useContext, useTask$ } from "@qwik.dev/core";
 
-import styles from "./blog-layout.module.scss";
+import styles from "./blog-layout.module.css";
 
 import { BlogSide } from "~/components/blog/blog-side";
 import { BlogMain } from "~/components/blog/blog-main";

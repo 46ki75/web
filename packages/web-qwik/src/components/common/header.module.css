@@ -10,7 +10,7 @@
   justify-content: space-between;
   align-items: center;
   backdrop-filter: blur(1px);
-  box-shadow: 0 0 0.125rem rgb(black, 0.2);
+  box-shadow: 0 0 0.125rem oklch(from black l c h / 20%);
   background-color: var(--elmethis-color-surface-sunken);
 }
 

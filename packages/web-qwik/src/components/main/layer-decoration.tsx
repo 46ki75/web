@@ -1,6 +1,6 @@
 import { component$ } from "@qwik.dev/core";
 
-import styles from "./layer-decoration.module.scss";
+import styles from "./layer-decoration.module.css";
 
 export type LayerDecorationProps = object;
 

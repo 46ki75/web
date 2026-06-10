@@ -7,7 +7,7 @@ import PixivIcon from "../../assets/icons/pixiv.svg?jsx";
 import LinkedInIcon from "../../assets/icons/linkedin.svg?jsx";
 import EmailIcon from "../../assets/icons/email.svg?jsx";
 
-import styles from "./find-me-on.module.scss";
+import styles from "./find-me-on.module.css";
 
 const links = [
   {

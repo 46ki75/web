@@ -1,6 +1,6 @@
 import { $, component$, useContext } from "@qwik.dev/core";
 
-import styles from "./blog-side.module.scss";
+import styles from "./blog-side.module.css";
 
 import { Link, useNavigate } from "@qwik.dev/router";
 import { BlogContext } from "~/context/blog";

@@ -1,6 +1,6 @@
 import { component$ } from "@qwik.dev/core";
 
-import styles from "./date.module.scss";
+import styles from "./date.module.css";
 import { ElmInlineText, ElmMdiIcon } from "@elmethis/qwik";
 import { mdiCalendarClock, mdiCalendarEdit } from "@mdi/js";
 

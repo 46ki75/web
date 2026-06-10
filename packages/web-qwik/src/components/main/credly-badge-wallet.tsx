@@ -4,7 +4,7 @@ import { ElmHeading, ElmMarkdown, ElmRectangleWave } from "@elmethis/qwik";
 import { Language } from "~/types";
 import { CredlyBadge } from "./credly-badge";
 
-import styles from "./credly-badge-wallet.module.scss";
+import styles from "./credly-badge-wallet.module.css";
 
 export interface CredlyBadgeWalletProps {
   language: Language;

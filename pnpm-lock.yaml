@@ -177,9 +177,6 @@ importers:
       prettier:
         specifier: 3.6.2
         version: 3.6.2
-      sass-embedded:
-        specifier: ^1.97.3
-        version: 1.97.3
       schema-dts:
         specifier: ^1.1.5
         version: 1.1.5
@@ -14136,7 +14133,8 @@ snapshots:
 
   colorette@1.4.0: {}
 
-  colorjs.io@0.5.2: {}
+  colorjs.io@0.5.2:
+    optional: true
 
   combined-stream@1.0.8:
     dependencies:
@@ -18859,6 +18857,7 @@ snapshots:
       sass-embedded-unknown-all: 1.97.3
       sass-embedded-win32-arm64: 1.97.3
       sass-embedded-win32-x64: 1.97.3
+    optional: true
 
   sass@1.93.2:
     dependencies:
@@ -19666,8 +19665,10 @@ snapshots:
   sync-child-process@1.0.2:
     dependencies:
       sync-message-port: 1.2.0
+    optional: true
 
-  sync-message-port@1.2.0: {}
+  sync-message-port@1.2.0:
+    optional: true
 
   system-architecture@0.1.0: {}
 
@@ -20214,7 +20215,8 @@ snapshots:
     dependencies:
       builtins: 1.0.3
 
-  varint@6.0.0: {}
+  varint@6.0.0:
+    optional: true
 
   vary@1.1.2: {}
 

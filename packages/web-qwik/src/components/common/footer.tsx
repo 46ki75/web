@@ -3,7 +3,7 @@ import { version } from "../../../package.json";
 import ImgFavicon from "../../assets/brand/favicon.svg?jsx";
 import ImgGitHub from "../../assets/icons/github.svg?jsx";
 
-import styles from "./footer.module.scss";
+import styles from "./footer.module.css";
 import { ElmInlineText, ElmMdiIcon } from "@elmethis/qwik";
 import { LinkLocale } from "./link-locale";
 import { mdiLinkVariant, mdiOpenInNew, mdiSitemap } from "@mdi/js";
