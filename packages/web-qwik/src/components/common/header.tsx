@@ -2,8 +2,15 @@ import { component$, useContext } from "@qwik.dev/core";
 
 import styles from "./header.module.css";
 
-import Favicon from "../../assets/brand/logo.svg?jsx";
-import { ElmInlineText, ElmMdiIcon, ElmToggleTheme } from "@elmethis/qwik";
+import LightLogo from "../../assets/brand/logo-light-label.svg?url";
+import DarkLogo from "../../assets/brand/logo-dark-label.svg?url";
+
+import {
+  ElmInlineText,
+  ElmMdiIcon,
+  ElmToggleTheme,
+  useElmethisTheme,
+} from "@elmethis/qwik";
 import { Language } from "./language";
 import { LinkLocale } from "./link-locale";
 import {
@@ -17,6 +24,8 @@ import { LanguageContext } from "~/context/language";
 export const Header = component$(() => {
   const languageState = useContext(LanguageContext);
 
+  const { isDarkTheme } = useElmethisTheme();
+
   return (
     <header class={styles.header}>
       <div class={styles["header-left"]}>
@@ -26,7 +35,12 @@ export const Header = component$(() => {
           lang={languageState.language}
           aria-label="To Home"
         >
-          <Favicon style={{ height: "1.5rem", width: "min-content" }} />
+          <img
+            height={40}
+            width={160}
+            src={isDarkTheme.value ? DarkLogo : LightLogo}
+            alt="Logo"
+          />
         </LinkLocale>
       </div>
 
