@@ -1,7 +1,14 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: sans-serif;
+  font-family: "DM Sans", "Zen Kaku Gothic New", sans-serif;
   transition: background-color 200ms;
   background-color: var(--elmethis-color-surface-base);
+}
+
+code,
+kbd,
+pre,
+samp {
+  font-family: "DM Mono", monospace;
 }
