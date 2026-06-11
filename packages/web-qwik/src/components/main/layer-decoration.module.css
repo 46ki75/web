@@ -1,6 +1,6 @@
 .fixed {
   position: fixed;
-  top: 50%;
+  top: 50svh;
   right: 0;
   transform: translateX(35%) translateY(-50%);
   opacity: 0.8;
@@ -11,7 +11,7 @@
 
 .canvas {
   display: block;
-  width: 100vmax;
-  height: 100vmax;
+  width: 100svmax;
+  height: 100svmax;
   opacity: 0.5;
 }
