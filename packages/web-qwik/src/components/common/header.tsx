@@ -46,7 +46,7 @@ export const Header = component$(() => {
 
       <div class={styles["header-center"]}>
         <LinkLocale href="/" class={styles.link} lang={languageState.language}>
-          <ElmMdiIcon d={mdiHome} />
+          <ElmMdiIcon class={styles["header-center-icon"]} d={mdiHome} />
           <ElmInlineText>Home</ElmInlineText>
         </LinkLocale>
 
@@ -57,7 +57,10 @@ export const Header = component$(() => {
           class={styles.link}
           lang={languageState.language}
         >
-          <ElmMdiIcon d={mdiNotebookMultiple} />
+          <ElmMdiIcon
+            class={styles["header-center-icon"]}
+            d={mdiNotebookMultiple}
+          />
           <ElmInlineText>Blog</ElmInlineText>
         </LinkLocale>
 
@@ -69,9 +72,12 @@ export const Header = component$(() => {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <ElmMdiIcon d={mdiAccountVoice} />
+          <ElmMdiIcon
+            class={styles["header-center-icon"]}
+            d={mdiAccountVoice}
+          />
           <ElmInlineText>Speaker Deck</ElmInlineText>
-          <ElmMdiIcon d={mdiOpenInNew} />
+          <ElmMdiIcon class={styles["header-center-icon"]} d={mdiOpenInNew} />
         </a>
       </div>
 

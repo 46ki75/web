@@ -23,6 +23,10 @@
   flex-direction: column;
   gap: 0.5rem;
 
+  .icon {
+    color: var(--elmethis-color-primary-weak);
+  }
+
   @media (width < 1320px) {
     height: 100%;
     max-width: 100%;
