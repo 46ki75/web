@@ -139,8 +139,8 @@ importers:
         version: 9.0.0
     devDependencies:
       '@elmethis/qwik':
-        specifier: 1.0.0-alpha.19
-        version: 1.0.0-alpha.19(@qwik.dev/core@2.0.0-beta.37(prettier@3.6.2)(vite@7.3.2(@types/node@20.19.0)(jiti@2.6.1)(less@4.5.1)(lightningcss@1.32.0)(sass-embedded@1.97.3)(sass@1.97.3)(stylus@0.62.0)(terser@5.44.0)(tsx@4.20.6)(yaml@2.9.0)))
+        specifier: 1.0.0-alpha.23
+        version: 1.0.0-alpha.23(@qwik.dev/core@2.0.0-beta.37(prettier@3.6.2)(vite@7.3.2(@types/node@20.19.0)(jiti@2.6.1)(less@4.5.1)(lightningcss@1.32.0)(sass-embedded@1.97.3)(sass@1.97.3)(stylus@0.62.0)(terser@5.44.0)(tsx@4.20.6)(yaml@2.9.0)))
       '@eslint/js':
         specifier: ^9.37.0
         version: 9.37.0
@@ -649,8 +649,8 @@ packages:
       '@a2ui/web_core': '>=0.10.0'
       zod: ^3
 
-  '@elmethis/qwik@1.0.0-alpha.19':
-    resolution: {integrity: sha512-GLg4NFywEiLWTvZqixCICIk/s29PTL1lDTDFqhiFUZxUbpW+nrhKHG9qLtMBYlF2yeaBKKKeM/pNrTv7cPl2xg==}
+  '@elmethis/qwik@1.0.0-alpha.23':
+    resolution: {integrity: sha512-oxhRIOopsxpDIxae+DtKYZfA8LdUUfIQn5mI0ERcEQrfDobEqrvsQBUTqnec1Fu0xpZkd1ZEh47fI9y8AggZDg==}
     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
     peerDependencies:
       '@qwik.dev/core': '>=2.0.0-beta.31'
@@ -10335,7 +10335,7 @@ snapshots:
       zod: 3.25.76
       zod-to-json-schema: 3.25.2(zod@3.25.76)
 
-  '@elmethis/qwik@1.0.0-alpha.19(@qwik.dev/core@2.0.0-beta.37(prettier@3.6.2)(vite@7.3.2(@types/node@20.19.0)(jiti@2.6.1)(less@4.5.1)(lightningcss@1.32.0)(sass-embedded@1.97.3)(sass@1.97.3)(stylus@0.62.0)(terser@5.44.0)(tsx@4.20.6)(yaml@2.9.0)))':
+  '@elmethis/qwik@1.0.0-alpha.23(@qwik.dev/core@2.0.0-beta.37(prettier@3.6.2)(vite@7.3.2(@types/node@20.19.0)(jiti@2.6.1)(less@4.5.1)(lightningcss@1.32.0)(sass-embedded@1.97.3)(sass@1.97.3)(stylus@0.62.0)(terser@5.44.0)(tsx@4.20.6)(yaml@2.9.0)))':
     dependencies:
       '@46ki75/ikuma-theme': 0.0.10
       '@a2ui/web_core': 0.10.0
