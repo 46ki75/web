@@ -5,10 +5,12 @@ import styles from "./about.module.css";
 import en from "./about.en.md?raw";
 import ja from "./about.ja.md?raw";
 import { Language } from "~/types";
-import { ElmInlineText, ElmMarkdown } from "@elmethis/qwik";
+import { ElmInlineText, ElmMarkdown, ElmMdiIcon } from "@elmethis/qwik";
 import { FindMeOn } from "./find-me-on";
 
 import Signature from "~/assets/image/signature.webp?url";
+import { mdiChevronRight } from "@mdi/js";
+import { LinkLocale } from "../common/link-locale";
 
 export interface AboutProps {
   language: Language;
@@ -39,6 +41,17 @@ export const About = component$<AboutProps>(({ language }) => {
           markdown={translation[language].markdown}
           style={{ "--margin-block": "1rem" }}
         />
+
+        <LinkLocale
+          lang={language}
+          href="/blog"
+          class={styles["blog-link-container"]}
+        >
+          <div class={styles["blog-link-container-inner"]}>
+            <span class={styles["blog-link-text"]}>Read the blog</span>
+            <ElmMdiIcon d={mdiChevronRight} class={styles["blog-link-icon"]} />
+          </div>
+        </LinkLocale>
 
         <div class={styles["signature-container"]}>
           <img

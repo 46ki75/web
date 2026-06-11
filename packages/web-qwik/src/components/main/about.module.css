@@ -28,6 +28,38 @@
     padding: 2rem 1rem;
   }
 
+  .blog-link-container {
+    all: unset;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+
+    .blog-link-container-inner {
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.25rem;
+      margin-block: 2rem;
+      display: flex;
+      gap: 0.25rem;
+      justify-content: flex-end;
+      align-items: center;
+      user-select: none;
+      cursor: pointer;
+      transition: background-color 200ms ease-in-out;
+
+      &:hover {
+        background-color: oklch(from var(--elmethis-color-primary) l c h / 20%);
+      }
+
+      .blog-link-icon {
+        color: var(--elmethis-color-primary);
+      }
+
+      .blog-link-text {
+        color: var(--elmethis-color-primary);
+      }
+    }
+  }
+
   .signature-container {
     width: 100%;
     display: flex;
