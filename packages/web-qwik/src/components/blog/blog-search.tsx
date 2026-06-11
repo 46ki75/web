@@ -18,7 +18,6 @@ import {
   ElmButton,
   ElmCollapse,
   ElmHeading,
-  ElmInlineText,
   ElmMdiIcon,
   ElmTextField,
 } from "@elmethis/qwik";
@@ -259,8 +258,8 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
 
         <div style={{ marginBlock: "1rem" }}>
           <ElmButton onClick$={handleTagReset} block>
-            <ElmMdiIcon d={mdiTagRemove} />
-            <ElmInlineText>{translations[language].resetTags}</ElmInlineText>
+            <ElmMdiIcon class={styles.icon} d={mdiTagRemove} />
+            {translations[language].resetTags}
           </ElmButton>
         </div>
 
