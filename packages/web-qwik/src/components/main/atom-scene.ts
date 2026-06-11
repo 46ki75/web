@@ -57,6 +57,40 @@ export function createAtomScene(canvas: HTMLCanvasElement): () => void {
   rim.position.set(-4, -1, -3);
   scene.add(rim);
 
+  // --- environment map: gives the glass nucleons something to reflect/refract.
+  // A warm-to-dark equirectangular gradient with a soft highlight, run through
+  // PMREM so MeshPhysicalMaterial can sample it for specular + transmission.
+  function makeGlassEnv(): THREE.Texture {
+    const W = 512;
+    const H = 256;
+    const c = document.createElement("canvas");
+    c.width = W;
+    c.height = H;
+    const ctx = c.getContext("2d")!;
+    const g = ctx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0.0, "#fff3e0"); // warm sky
+    g.addColorStop(0.45, "#caa877");
+    g.addColorStop(1.0, "#2a2620"); // dark floor
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, W, H);
+    // a bright soft spot for a crisp specular highlight
+    const hl = ctx.createRadialGradient(W * 0.66, H * 0.3, 0, W * 0.66, H * 0.3, H * 0.5);
+    hl.addColorStop(0.0, "rgba(255,255,255,0.9)");
+    hl.addColorStop(1.0, "rgba(255,255,255,0)");
+    ctx.fillStyle = hl;
+    ctx.fillRect(0, 0, W, H);
+    const equi = new THREE.CanvasTexture(c);
+    equi.mapping = THREE.EquirectangularReflectionMapping;
+    equi.colorSpace = THREE.SRGBColorSpace;
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    const env = pmrem.fromEquirectangular(equi).texture;
+    equi.dispose();
+    pmrem.dispose();
+    return env;
+  }
+  const glassEnv = makeGlassEnv();
+  scene.environment = glassEnv;
+
   const root = new THREE.Group();
   scene.add(root);
 
@@ -83,19 +117,39 @@ export function createAtomScene(canvas: HTMLCanvasElement): () => void {
   root.add(nucleusGroup);
 
   const NUCLEON_GEO = new THREE.SphereGeometry(1, 20, 20);
-  const protonMat = new THREE.MeshStandardMaterial({
-    color: COL.proton,
-    roughness: 0.42,
-    metalness: 0.15,
+  // Glass nucleons: clear surface, color comes from light attenuating through
+  // the glass body (warm gold protons, cool slate neutrons).
+  const protonMat = new THREE.MeshPhysicalMaterial({
+    color: 0xffffff,
+    metalness: 0,
+    roughness: 0.12,
+    transmission: 1,
+    thickness: 0.6,
+    ior: 1.45,
+    attenuationColor: COL.proton,
+    attenuationDistance: 0.5,
+    clearcoat: 1,
+    clearcoatRoughness: 0.12,
     emissive: COL.proton,
-    emissiveIntensity: 0.18,
+    emissiveIntensity: 0.04,
+    envMapIntensity: 1.1,
+    transparent: true,
   });
-  const neutronMat = new THREE.MeshStandardMaterial({
-    color: COL.neutron,
-    roughness: 0.5,
-    metalness: 0.1,
+  const neutronMat = new THREE.MeshPhysicalMaterial({
+    color: 0xffffff,
+    metalness: 0,
+    roughness: 0.16,
+    transmission: 1,
+    thickness: 0.6,
+    ior: 1.45,
+    attenuationColor: COL.neutron,
+    attenuationDistance: 0.5,
+    clearcoat: 1,
+    clearcoatRoughness: 0.16,
     emissive: COL.neutron,
-    emissiveIntensity: 0.06,
+    emissiveIntensity: 0.03,
+    envMapIntensity: 1.0,
+    transparent: true,
   });
 
   const nucleusGlow = new THREE.Sprite(
@@ -377,6 +431,7 @@ export function createAtomScene(canvas: HTMLCanvasElement): () => void {
     NUCLEON_GEO.dispose();
     protonMat.dispose();
     neutronMat.dispose();
+    glassEnv.dispose();
     renderer.dispose();
   };
 }
