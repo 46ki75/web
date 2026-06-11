@@ -19,6 +19,10 @@
   align-items: center;
   animation: 400ms ease 200ms 1 normal both running fade;
 
+  .strong {
+    color: var(--elmethis-color-primary);
+  }
+
   @media (width < 1024px) {
     width: 100%;
     padding: 0 2rem;
