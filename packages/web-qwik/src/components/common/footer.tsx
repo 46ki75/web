@@ -24,7 +24,7 @@ export const Footer = component$(() => {
   return (
     <footer class={styles.footer}>
       <div class={styles["footer-container"]}>
-        <div class={styles["footer-sitelinks"]}>
+        <div class={styles["footer-sitelink-container"]}>
           <div style={{ marginBottom: "0.5em" }}>
             <span
               class={styles["footer-heading"]}
@@ -39,7 +39,7 @@ export const Footer = component$(() => {
             class={styles["footer-sitelink"]}
             href="/about"
           >
-            <ElmMdiIcon d={mdiLinkVariant} color="#6987b8" />
+            <ElmMdiIcon d={mdiLinkVariant} class={styles["footer-link-icon"]} />
             <ElmInlineText>About</ElmInlineText>
           </LinkLocale>
 
@@ -48,7 +48,7 @@ export const Footer = component$(() => {
             class={styles["footer-sitelink"]}
             href="/privacy"
           >
-            <ElmMdiIcon d={mdiLinkVariant} color="#6987b8" />
+            <ElmMdiIcon d={mdiLinkVariant} class={styles["footer-link-icon"]} />
             <ElmInlineText>Privacy Policy</ElmInlineText>
           </LinkLocale>
 
@@ -57,7 +57,7 @@ export const Footer = component$(() => {
             class={styles["footer-sitelink"]}
             href="/blog"
           >
-            <ElmMdiIcon d={mdiLinkVariant} color="#6987b8" />
+            <ElmMdiIcon d={mdiLinkVariant} class={styles["footer-link-icon"]} />
             <ElmInlineText>Blogs</ElmInlineText>
           </LinkLocale>
 
@@ -67,7 +67,7 @@ export const Footer = component$(() => {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <ElmMdiIcon d={mdiOpenInNew} color="#6987b8" />
+            <ElmMdiIcon d={mdiOpenInNew} class={styles["footer-link-icon"]} />
             <ElmInlineText>Speaker Deck</ElmInlineText>
           </a>
         </div>
