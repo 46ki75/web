@@ -1,3 +1,9 @@
+:root {
+  -webkit-tap-highlight-color: oklch(
+    from var(--elmethis-color-primary) l c h / 20%
+  );
+}
+
 body {
   margin: 0;
   padding: 0;
