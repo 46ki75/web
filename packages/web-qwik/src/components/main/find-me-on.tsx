@@ -1,4 +1,4 @@
-import { component$ } from "@builder.io/qwik";
+import { component$ } from "@qwik.dev/core";
 import { ElmInlineText } from "@elmethis/qwik";
 
 import GitHubIcon from "../../assets/icons/github.svg?jsx";
@@ -7,7 +7,7 @@ import PixivIcon from "../../assets/icons/pixiv.svg?jsx";
 import LinkedInIcon from "../../assets/icons/linkedin.svg?jsx";
 import EmailIcon from "../../assets/icons/email.svg?jsx";
 
-import styles from "./find-me-on.module.scss";
+import styles from "./find-me-on.module.css";
 
 const links = [
   {

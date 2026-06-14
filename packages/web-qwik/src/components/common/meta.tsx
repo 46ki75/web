@@ -1,6 +1,6 @@
-import { component$, PropsOf, Slot } from "@builder.io/qwik";
+import { component$, PropsOf, Slot } from "@qwik.dev/core";
 
-import styles from "./meta.module.scss";
+import styles from "./meta.module.css";
 import { ElmBlockImage, ElmBreadcrumb, ElmHeading } from "@elmethis/qwik";
 
 import { DateComponent } from "./date";

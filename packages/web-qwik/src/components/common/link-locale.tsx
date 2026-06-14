@@ -1,5 +1,5 @@
-import { component$, PropsOf, Slot, useContext } from "@builder.io/qwik";
-import { Link } from "@builder.io/qwik-city";
+import { component$, PropsOf, Slot, useContext } from "@qwik.dev/core";
+import { Link } from "@qwik.dev/router";
 import { LanguageContext } from "~/context/language";
 
 export type LinkLocaleProps = PropsOf<typeof Link>;

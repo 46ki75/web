@@ -22,7 +22,7 @@
 
   &:hover {
     opacity: 0.8;
-    background-color: rgba(#6987b8, 0.1);
+    background-color: oklch(from #6987b8 l c h / 10%);
     filter: grayscale(0%);
   }
 }

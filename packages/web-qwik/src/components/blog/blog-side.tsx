@@ -1,12 +1,12 @@
-import { $, component$, useContext } from "@builder.io/qwik";
+import { $, component$, useContext } from "@qwik.dev/core";
 
-import styles from "./blog-side.module.scss";
+import styles from "./blog-side.module.css";
 
-import { Link, useNavigate } from "@builder.io/qwik-city";
+import { Link, useNavigate } from "@qwik.dev/router";
 import { BlogContext } from "~/context/blog";
 import { Language } from "~/types";
 import { BlogCard } from "./blog-card";
-import { ElmButton, ElmInlineText, ElmMdiIcon } from "@elmethis/qwik";
+import { ElmButton, ElmMdiIcon } from "@elmethis/qwik";
 import { mdiBookSearch } from "@mdi/js";
 
 export type BlogSideProps = {
@@ -29,10 +29,8 @@ export const BlogSide = component$<BlogSideProps>(({ language }) => {
           nav(language === "en" ? "/blog/search" : `/${language}/blog/search`),
         )}
       >
-        <ElmMdiIcon d={mdiBookSearch} />
-        <ElmInlineText>
-          {language === "en" ? "Search Blogs" : "記事を検索"}
-        </ElmInlineText>
+        <ElmMdiIcon class={styles.icon} d={mdiBookSearch} />
+        {language === "en" ? "Search Blogs" : "記事を検索"}
       </ElmButton>
 
       {blogState.blogMeta[language]?.map((blog, index) => (

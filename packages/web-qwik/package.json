@@ -32,20 +32,20 @@
     "generate:openapi": "openapi-typescript http://dev-www.ikuma.cloud/api/v2/openapi.json -o openapi/schema.ts"
   },
   "devDependencies": {
-    "@builder.io/qwik": "^1.19.2",
-    "@builder.io/qwik-city": "^1.19.0",
-    "@elmethis/qwik": "0.0.79",
+    "@elmethis/qwik": "1.0.0-alpha.23",
     "@eslint/js": "^9.37.0",
     "@formkit/auto-animate": "^0.9.0",
+    "@qwik.dev/core": "2.0.0-beta.37",
+    "@qwik.dev/router": "2.0.0-beta.37",
     "@types/node": "20.19.0",
+    "@types/three": "^0.184.1",
     "es-toolkit": "^1.46.1",
     "eslint": "^9.37.0",
-    "eslint-plugin-qwik": "^1.19.0",
+    "eslint-plugin-qwik": "2.0.0-beta.37",
     "globals": "16.4.0",
     "jarkup-ts": "^0.5.0",
     "openapi-typescript": "^7.9.1",
     "prettier": "3.6.2",
-    "sass-embedded": "^1.97.3",
     "schema-dts": "^1.1.5",
     "serverless": "^3.38.0",
     "serverless-http": "^3.2.0",
@@ -65,6 +65,7 @@
     "fuse.js": "^7.1.0",
     "motion": "^12.34.3",
     "openapi-fetch": "^0.14.1",
-    "sitemap": "^9.0.0"
+    "sitemap": "^9.0.0",
+    "three": "^0.184.0"
   }
 }

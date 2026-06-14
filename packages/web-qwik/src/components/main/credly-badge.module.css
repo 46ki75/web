@@ -46,7 +46,7 @@
   color: var(--elm-color-text-secondary, #3e434b);
 }
 
- ([data-theme="dark"]) .p {
+[data-theme="dark"] .p {
   color: #adb3be;
 }
 

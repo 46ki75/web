@@ -1,6 +1,6 @@
-import { component$, Slot } from "@builder.io/qwik";
+import { component$, Slot } from "@qwik.dev/core";
 
-import styles from "./main-container.module.scss";
+import styles from "./main-container.module.css";
 
 export const MainContainer = component$(() => {
   return (

@@ -1,4 +1,4 @@
-import { RequestHandler } from "@builder.io/qwik-city";
+import { RequestHandler } from "@qwik.dev/router";
 import { SitemapStream, streamToPromise } from "sitemap";
 import { Readable } from "stream";
 

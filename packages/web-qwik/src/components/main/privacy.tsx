@@ -1,4 +1,4 @@
-import { $, component$ } from "@builder.io/qwik";
+import { $, component$ } from "@qwik.dev/core";
 
 import en from "./privacy.en.md?raw";
 import ja from "./privacy.ja.md?raw";
@@ -7,7 +7,7 @@ import { ElmMarkdown } from "@elmethis/qwik";
 import { MainContainer } from "../common/main-container";
 import { Meta } from "../common/meta";
 import { Language } from "~/types";
-import { useNavigate } from "@builder.io/qwik-city";
+import { useNavigate } from "@qwik.dev/router";
 
 const translation: Record<Language, { title: string; markdown: string }> = {
   en: {

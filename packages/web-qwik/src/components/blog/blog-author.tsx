@@ -1,6 +1,6 @@
-import { component$ } from "@builder.io/qwik";
+import { component$ } from "@qwik.dev/core";
 
-import styles from "./blog-author.module.scss";
+import styles from "./blog-author.module.css";
 import { Language } from "~/types";
 
 import ImgProfileIcon from "../../assets/icons/profile-icon.webp?jsx";

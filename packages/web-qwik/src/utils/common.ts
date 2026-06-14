@@ -1,8 +1,8 @@
-import { isServer } from "@builder.io/qwik";
+import { isServer } from "@qwik.dev/core";
 import { siteConfig } from "~/meta/site-config";
 import { Language } from "~/types";
 import type { Article, WithContext } from "schema-dts";
-import { DocumentScript } from "@builder.io/qwik-city";
+import { DocumentScript } from "@qwik.dev/router";
 
 import commonOgpImage from "~/assets/image/ogp.png?url";
 

@@ -2,15 +2,15 @@
   box-sizing: border-box;
   padding: 0.5rem;
   margin-block-start: 2rem;
-  border: 1px solid rgb(gray, 0.25);
+  border: 1px solid oklch(from gray l c h / 25%);
   border-radius: 0.25rem;
   display: grid;
   grid-template: "icon name" auto "icon content" auto "icon links" auto / 8rem 1fr;
   gap: 0.5rem 1rem;
-  background-color: rgb(white, 0.5);
+  background-color: oklch(from white l c h / 50%);
 
   [data-theme="dark"] & {
-    background-color: rgb(black, 0.25);
+    background-color: oklch(from black l c h / 25%);
   }
 
   @media (width < 512px) {

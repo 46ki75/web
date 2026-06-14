@@ -10,12 +10,8 @@
   justify-content: space-between;
   align-items: center;
   backdrop-filter: blur(1px);
-  box-shadow: 0 0 0.125rem rgb(black, 0.2);
-  background-color: rgb(white, 0.3);
-
-  [data-theme="dark"] & {
-    background-color: rgb(black, 0.3);
-  }
+  box-shadow: 0 0 0.125rem oklch(from black l c h / 20%);
+  background-color: var(--elmethis-color-surface-sunken);
 }
 
 .link {
@@ -44,6 +40,10 @@
   align-items: center;
   gap: 0.75rem;
   user-select: none;
+
+  .header-center-icon {
+    color: var(--elmethis-color-primary-weak);
+  }
 
   @media (width < 800px) {
     display: none;

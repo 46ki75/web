@@ -1,0 +1,17 @@
+.fixed {
+  position: fixed;
+  top: 50svh;
+  right: 0;
+  transform: translateX(35%) translateY(-50%);
+  opacity: 0.8;
+  user-select: none;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.canvas {
+  display: block;
+  width: 100svmax;
+  height: 100svmax;
+  opacity: 0.5;
+}

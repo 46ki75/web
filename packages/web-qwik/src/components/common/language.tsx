@@ -1,11 +1,11 @@
-import { $, component$, useContext, useVisibleTask$ } from "@builder.io/qwik";
+import { $, component$, useContext, useVisibleTask$ } from "@qwik.dev/core";
 
-import styles from "./language.module.scss";
+import styles from "./language.module.css";
 
 import { LanguageContext, languageMap } from "~/context/language";
 import { ElmInlineText, ElmMdiIcon } from "@elmethis/qwik";
 import { mdiTranslate } from "@mdi/js";
-import { useLocation, useNavigate } from "@builder.io/qwik-city";
+import { useLocation, useNavigate } from "@qwik.dev/router";
 import { Language as LanguageType } from "~/types";
 
 export type LanguageProps = object;
@@ -72,7 +72,7 @@ export const Language = component$<LanguageProps>(() => {
       <ElmMdiIcon d={mdiTranslate} color="#a4863e" />
       <div class={styles["language-container"]}>
         <span class={styles["language-label"]}>
-          <ElmInlineText text="Language" />
+          <ElmInlineText>Language</ElmInlineText>
         </span>
         <span class={styles["language-name"]}>
           <ElmInlineText>{languageMap[languageState.language]}</ElmInlineText>

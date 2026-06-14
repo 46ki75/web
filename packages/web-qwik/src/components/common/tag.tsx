@@ -1,4 +1,4 @@
-import { component$, CSSProperties } from "@builder.io/qwik";
+import { component$, CSSProperties } from "@qwik.dev/core";
 
 import styles from "./tag.module.css";
 import { ElmInlineIcon, ElmInlineText } from "@elmethis/qwik";

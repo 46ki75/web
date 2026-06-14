@@ -20,17 +20,13 @@
   overflow: hidden;
   cursor: pointer;
   transition: background-color 200ms;
-  background-color: oklch(from white l c h / 50%);
+  background-color: var(--elmethis-color-surface-raised);
 
   &.animation-enabled {
     animation-duration: 400ms;
     animation-fill-mode: both;
     animation-iteration-count: 1;
     animation-delay: var(--delay);
-  }
-
-  [data-theme="dark"] & {
-    background-color: oklch(from black l c h / 10%);
   }
 }
 
@@ -46,13 +42,13 @@
   &:hover {
     opacity: 0.9;
     transform: translateX(-1px) translateY(-1px);
-    background-color: oklch(from #aebed9 l c h / 15%);
+    background-color: var(--elmethis-color-surface-base);
   }
 
   &:active {
     opacity: 0.7;
     transform: translateX(1px) translateY(1px);
-    background-color: oklch(from #a0d4b4 l c h / 15%);
+    background-color: var(--elmethis-color-surface-sunken);
   }
 
   @container blog-card-list (width >= 640px) {
@@ -112,12 +108,8 @@
   align-items: center;
   gap: 0 0.25rem;
   padding: 0 0.5rem;
-  border-top: solid 1px oklch(from gray l c h / 20%);
-  background-color: oklch(from white l c h / 50%);
-
-  [data-theme="dark"] & {
-    background-color: oklch(from black l c h / 20%);
-  }
+  border-top: solid 1px var(--elmethis-color-primary-weak);
+  background-color: var(--elmethis-color-surface-base);
 }
 
 .tag {
@@ -128,6 +120,6 @@
   cursor: pointer;
 
   &:hover {
-    background-color: oklch(from #59a7b5 l c h / 10%);
+    background-color: var(--elmethis-color-primary-hover);
   }
 }

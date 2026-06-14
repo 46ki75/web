@@ -1,6 +1,6 @@
-import { component$ } from "@builder.io/qwik";
+import { component$ } from "@qwik.dev/core";
 
-import styles from "./home.module.scss";
+import styles from "./home.module.css";
 import { LayerDecoration } from "./layer-decoration";
 import type { Language } from "~/types";
 import { About } from "./about";
