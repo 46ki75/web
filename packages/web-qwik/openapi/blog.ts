@@ -28,7 +28,7 @@ const getJson = async <T>(
 
 /** Published blog index for a language (caller sorts as needed). */
 export const getBlogList = (language: BlogLanguage, signal?: AbortSignal) =>
-  getJson<BlogResponse[]>(`/cache/blog/list/${language}.json`, signal);
+  getJson<BlogResponse[]>(`/cache/v2/blog/list/${language}.json`, signal);
 
 /** Full rendered contents (meta + jarkup components) for a slug. */
 export const getBlogContents = (
@@ -37,14 +37,14 @@ export const getBlogContents = (
   signal?: AbortSignal,
 ) =>
   getJson<BlogContentsResponse>(
-    `/cache/blog/contents/${slug}/${language}.json`,
+    `/cache/v2/blog/contents/${slug}/${language}.json`,
     signal,
   );
 
 /** Language-agnostic tag list. */
 export const getBlogTags = (signal?: AbortSignal) =>
-  getJson<BlogTagResponse[]>(`/cache/blog/tags.json`, signal);
+  getJson<BlogTagResponse[]>(`/cache/v2/blog/tags.json`, signal);
 
 /** Path to a blog's materialized OGP cover image. */
 export const ogImageUrl = (slug: string, language: BlogLanguage) =>
-  `/cache/blog/${slug}/og-image/${language}`;
+  `/cache/v2/blog/${slug}/og-image/${language}`;

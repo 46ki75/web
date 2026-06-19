@@ -188,13 +188,13 @@ impl S3BlogStorage {
 /// flip CloudFront to an S3 origin without changing keys):
 ///
 /// ```text
-/// cache/blog/list/{en|ja}.json
-/// cache/blog/contents/{slug}/{en|ja}.json
-/// cache/blog/tags.json
-/// cache/blog/{slug}/og-image/{en|ja}
-/// cache/blog/block-image/{block_id}/{default|small|medium|large}
-/// cache/blog/feed/{rss|atom|json-feed}/{en|ja}.{xml|json}
-/// cache/blog/sitemap.xml
+/// cache/v2/blog/list/{en|ja}.json
+/// cache/v2/blog/contents/{slug}/{en|ja}.json
+/// cache/v2/blog/tags.json
+/// cache/v2/blog/{slug}/og-image/{en|ja}
+/// cache/v2/blog/block-image/{block_id}/{default|small|medium|large}
+/// cache/v2/blog/feed/{rss|atom|json-feed}/{en|ja}.{xml|json}
+/// cache/v2/blog/sitemap.xml
 /// ```
 #[cfg_attr(not(rust_analyzer), tracing::instrument(err))]
 pub async fn rebuild_cache() -> Result<RebuildSummary, PublisherError> {
@@ -212,7 +212,7 @@ pub async fn rebuild_cache() -> Result<RebuildSummary, PublisherError> {
         let blogs = use_case.list_blogs(language.clone()).await?;
         let list: Vec<BlogResponse> = blogs.iter().cloned().map(BlogResponse::from).collect();
         storage
-            .put_json(&format!("cache/blog/list/{lang}.json"), &list)
+            .put_json(&format!("cache/v2/blog/list/{lang}.json"), &list)
             .await?;
         summary.objects_written += 1;
         summary.blogs = list.len();
@@ -231,7 +231,7 @@ pub async fn rebuild_cache() -> Result<RebuildSummary, PublisherError> {
             let response = BlogContentsResponse::from(contents);
             storage
                 .put_json(
-                    &format!("cache/blog/contents/{}/{lang}.json", blog.slug),
+                    &format!("cache/v2/blog/contents/{}/{lang}.json", blog.slug),
                     &response,
                 )
                 .await?;
@@ -258,21 +258,21 @@ pub async fn rebuild_cache() -> Result<RebuildSummary, PublisherError> {
         // feeds # ---------- #
         storage
             .put_text(
-                &format!("cache/blog/feed/rss/{lang}.xml"),
+                &format!("cache/v2/blog/feed/rss/{lang}.xml"),
                 use_case.generate_rss(language.clone()).await?,
                 "application/xml",
             )
             .await?;
         storage
             .put_text(
-                &format!("cache/blog/feed/atom/{lang}.xml"),
+                &format!("cache/v2/blog/feed/atom/{lang}.xml"),
                 use_case.generate_atom(language.clone()).await?,
                 "application/xml",
             )
             .await?;
         storage
             .put_text(
-                &format!("cache/blog/feed/json-feed/{lang}.json"),
+                &format!("cache/v2/blog/feed/json-feed/{lang}.json"),
                 use_case.generate_jsonfeed(language.clone()).await?,
                 "application/json",
             )
@@ -288,14 +288,14 @@ pub async fn rebuild_cache() -> Result<RebuildSummary, PublisherError> {
         .into_iter()
         .map(BlogTagResponse::from)
         .collect();
-    storage.put_json("cache/blog/tags.json", &tags).await?;
+    storage.put_json("cache/v2/blog/tags.json", &tags).await?;
     summary.tags = tags.len();
     summary.objects_written += 1;
 
     // sitemap # ---------- #
     storage
         .put_text(
-            "cache/blog/sitemap.xml",
+            "cache/v2/blog/sitemap.xml",
             use_case.generate_sitemap().await?,
             "application/xml",
         )
@@ -426,7 +426,7 @@ async fn materialize_block_images(
                 }
             };
             let content_type = use_case.infer_image_mime_type(&converted);
-            let key = format!("cache/blog/block-image/{}/{}", image.block_id, variant);
+            let key = format!("cache/v2/blog/block-image/{}/{}", image.block_id, variant);
             if let Err(e) = storage
                 .put(&key, converted.to_vec(), &content_type, CACHE_CONTROL_IMMUTABLE)
                 .await
@@ -466,7 +466,7 @@ async fn materialize_og_image(
         }
     };
     let content_type = use_case.infer_image_mime_type(&converted);
-    let key = format!("cache/blog/{slug}/og-image/{lang}");
+    let key = format!("cache/v2/blog/{slug}/og-image/{lang}");
     if let Err(e) = storage
         .put(&key, converted.to_vec(), &content_type, CACHE_CONTROL_DYNAMIC)
         .await
@@ -477,7 +477,7 @@ async fn materialize_og_image(
     1
 }
 
-/// Issues a targeted CloudFront invalidation (`/cache/blog/*`) so a freshly
+/// Issues a targeted CloudFront invalidation (`/cache/v2/blog/*`) so a freshly
 /// published rebuild goes live without a manual `/*` invalidation.
 ///
 /// The distribution id is injected by Terraform via the `CLOUDFRONT_DISTRIBUTION_ID`
@@ -504,7 +504,7 @@ async fn invalidate_cdn() -> Result<String, PublisherError> {
 
     let paths = aws_sdk_cloudfront::types::Paths::builder()
         .quantity(1)
-        .items("/cache/blog/*")
+        .items("/cache/v2/blog/*")
         .build()
         .map_err(|e| PublisherError::CloudFront {
             trace: e.to_string(),
@@ -530,6 +530,6 @@ async fn invalidate_cdn() -> Result<String, PublisherError> {
 
     let invalidation_id = output.invalidation.map(|i| i.id).unwrap_or_default();
 
-    tracing::info!(invalidation_id, "created CloudFront invalidation for /cache/blog/*");
+    tracing::info!(invalidation_id, "created CloudFront invalidation for /cache/v2/blog/*");
     Ok(invalidation_id)
 }

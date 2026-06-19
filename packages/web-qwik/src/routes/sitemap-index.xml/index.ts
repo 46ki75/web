@@ -14,7 +14,7 @@ export const onGet: RequestHandler = async (ev) => {
 
   const smis = new SitemapIndexStream();
   smis.write({ url: `https://${DOMAIN}/sitemap.xml` });
-  smis.write({ url: `https://${DOMAIN}/cache/blog/sitemap.xml` });
+  smis.write({ url: `https://${DOMAIN}/cache/v2/blog/sitemap.xml` });
   smis.end();
 
   const xml = await streamToPromise(smis);

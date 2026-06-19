@@ -32,23 +32,23 @@ The two rules that matter:
 
 The `blog_publisher` Lambda renders the current Notion state into static objects
 in the blog-cache bucket (`{stage}-46ki75-web-s3-bucket-blog-cache`). Object
-keys mirror the public `/cache/blog/...` URLs exactly:
+keys mirror the public `/cache/v2/blog/...` URLs exactly:
 
 ```text
-cache/blog/list/{en|ja}.json                                  # index per language
-cache/blog/contents/{slug}/{en|ja}.json                       # rendered article (jarkup)
-cache/blog/tags.json                                          # language-agnostic tag list
-cache/blog/{slug}/og-image/{en|ja}                            # OGP cover (WebP, 1200w)
-cache/blog/block-image/{block_id}/{default|small|medium|large} # in-article images
-cache/blog/feed/{rss|atom|json-feed}/{en|ja}.{xml|json}       # feeds
-cache/blog/sitemap.xml                                        # blog sitemap
+cache/v2/blog/list/{en|ja}.json                                  # index per language
+cache/v2/blog/contents/{slug}/{en|ja}.json                       # rendered article (jarkup)
+cache/v2/blog/tags.json                                          # language-agnostic tag list
+cache/v2/blog/{slug}/og-image/{en|ja}                            # OGP cover (WebP, 1200w)
+cache/v2/blog/block-image/{block_id}/{default|small|medium|large} # in-article images
+cache/v2/blog/feed/{rss|atom|json-feed}/{en|ja}.{xml|json}       # feeds
+cache/v2/blog/sitemap.xml                                        # blog sitemap
 ```
 
 Notes:
 
 - The language is baked into the **path**, not an `Accept-Language` header or a
   `?lang=` query — every object is independently cacheable.
-- Rendered article JSON embeds image `src`/`srcset` as `/cache/blog/block-image/{id}/{size}`,
+- Rendered article JSON embeds image `src`/`srcset` as `/cache/v2/blog/block-image/{id}/{size}`,
   so the browser fetches them directly from the static origin.
 - Raster images expose `default|small|medium|large`; SVGs are
   resolution-independent and expose only `default`.
@@ -62,19 +62,19 @@ Set at publish time, passed through by the `s3` cache policy:
 | indices, contents, tags, feeds, sitemap, OGP covers | `public, max-age=0, s-maxage=31536000` (browser revalidates; CDN holds, invalidated on publish) |
 | block images                                        | `public, max-age=31536000, s-maxage=31536000, immutable`                                        |
 
-Each publish issues a CloudFront invalidation for `/cache/blog/*`.
+Each publish issues a CloudFront invalidation for `/cache/v2/blog/*`.
 
 ## Lambda blog API (`/api/v2/blog/*`)
 
 The Lambda still exposes the original header/query-based blog API under
 `/api/v2/blog/*` (e.g. `GET /api/v2/blog` with `Accept-Language`). It is **not**
-on the read path — the frontend reads `/cache/blog/*` directly — but it is kept
+on the read path — the frontend reads `/cache/v2/blog/*` directly — but it is kept
 because:
 
 - it is the source of the OpenAPI spec the frontend generates TypeScript types
   from, and
-- it serves as a fallback that reads the same materialized `cache/blog/...`
+- it serves as a fallback that reads the same materialized `cache/v2/blog/...`
   objects.
 
-These contract paths are deliberately distinct from the `/cache/blog/...` object
+These contract paths are deliberately distinct from the `/cache/v2/blog/...` object
 keys.

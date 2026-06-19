@@ -150,7 +150,7 @@ pub async fn list_blogs(
     let lang = lang_from_headers(&headers);
     serve_cached(
         &state,
-        &format!("cache/blog/list/{lang}.json"),
+        &format!("cache/v2/blog/list/{lang}.json"),
         "application/json",
         true,
     )
@@ -180,7 +180,7 @@ pub async fn get_blog_contents(
     let lang = lang_from_headers(&headers);
     serve_cached(
         &state,
-        &format!("cache/blog/contents/{slug}/{lang}.json"),
+        &format!("cache/v2/blog/contents/{slug}/{lang}.json"),
         "application/json",
         true,
     )
@@ -200,7 +200,7 @@ pub async fn get_blog_contents(
 pub async fn list_tags(
     axum::extract::State(state): axum::extract::State<std::sync::Arc<super::router::BlogState>>,
 ) -> Result<axum::response::Response<axum::body::Body>, BlogControllerError> {
-    serve_cached(&state, "cache/blog/tags.json", "application/json", false).await
+    serve_cached(&state, "cache/v2/blog/tags.json", "application/json", false).await
 }
 
 #[utoipa::path(
@@ -231,7 +231,7 @@ pub async fn get_blog_og_image(
     };
     serve_cached_image(
         &state,
-        &format!("cache/blog/{slug}/og-image/{lang}"),
+        &format!("cache/v2/blog/{slug}/og-image/{lang}"),
         CACHE_VALUE,
     )
     .await
@@ -266,7 +266,7 @@ pub async fn get_blog_block_image(
     };
     serve_cached_image(
         &state,
-        &format!("cache/blog/block-image/{block_id}/{variant}"),
+        &format!("cache/v2/blog/block-image/{block_id}/{variant}"),
         IMMUTABLE_CACHE_VALUE,
     )
     .await
@@ -285,7 +285,7 @@ pub async fn get_blog_block_image(
 pub async fn get_blog_sitemap(
     axum::extract::State(state): axum::extract::State<std::sync::Arc<super::router::BlogState>>,
 ) -> Result<axum::response::Response<axum::body::Body>, BlogControllerError> {
-    serve_cached(&state, "cache/blog/sitemap.xml", "application/xml", false).await
+    serve_cached(&state, "cache/v2/blog/sitemap.xml", "application/xml", false).await
 }
 
 #[utoipa::path(
@@ -305,7 +305,7 @@ pub async fn get_blog_rss_feed(
     let lang = lang_from_path(&language);
     serve_cached(
         &state,
-        &format!("cache/blog/feed/rss/{lang}.xml"),
+        &format!("cache/v2/blog/feed/rss/{lang}.xml"),
         "application/xml",
         false,
     )
@@ -329,7 +329,7 @@ pub async fn get_blog_atom_feed(
     let lang = lang_from_path(&language);
     serve_cached(
         &state,
-        &format!("cache/blog/feed/atom/{lang}.xml"),
+        &format!("cache/v2/blog/feed/atom/{lang}.xml"),
         "application/xml",
         false,
     )
@@ -353,7 +353,7 @@ pub async fn get_blog_json_feed(
     let lang = lang_from_path(&language);
     serve_cached(
         &state,
-        &format!("cache/blog/feed/json-feed/{lang}.json"),
+        &format!("cache/v2/blog/feed/json-feed/{lang}.json"),
         "application/json",
         false,
     )
