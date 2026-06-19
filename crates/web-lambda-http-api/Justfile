@@ -12,3 +12,13 @@ build:
 
 deploy STAGE_NAME:	build
 	cargo lambda deploy --binary-name web-lambda-http-api "{{STAGE_NAME}}-46ki75-web-lambda-function-http_api"
+
+deploy-publisher STAGE_NAME:	build
+	cargo lambda deploy --binary-name web-lambda-blog-publisher "{{STAGE_NAME}}-46ki75-web-lambda-function-blog_publisher"
+
+# The publisher converts every blog image, so a full rebuild can take several
+# minutes. Match the CLI read timeout to the Lambda timeout (15 min) so a single
+# synchronous invoke waits for completion instead of timing out and retrying the
+# (idempotent) rebuild.
+invoke-publisher STAGE_NAME:
+	aws lambda invoke --function-name "{{STAGE_NAME}}-46ki75-web-lambda-function-blog_publisher" --cli-binary-format raw-in-base64-out --cli-read-timeout 900 --payload '{}' /dev/stdout

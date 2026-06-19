@@ -22,10 +22,13 @@ reqwest = { workspace = true }
 
 # AWS SDK
 aws-sdk-ssm = { workspace = true }
+aws-sdk-s3 = { workspace = true }
+aws-sdk-cloudfront = { workspace = true }
 aws-config = { workspace = true }
 
 # AWS Lambda
 lambda_http = { workspace = true }
+lambda_runtime = { workspace = true }
 
 # Logging
 tracing = { workspace = true }

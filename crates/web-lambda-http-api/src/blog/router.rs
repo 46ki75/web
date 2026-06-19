@@ -2,20 +2,22 @@
 
 use utoipa_axum::{router::OpenApiRouter, routes};
 
+/// Shared state for the blog read path.
+///
+/// The read path serves only pre-materialized objects from the blog cache
+/// bucket — it makes no Notion calls. The (slow) Notion transform happens at
+/// publish time in [`crate::blog::publisher`].
 #[derive(Clone)]
 pub struct BlogState {
-    pub blog_use_case: std::sync::Arc<crate::blog::use_case::BlogUseCase>,
+    pub storage: std::sync::Arc<crate::blog::publisher::S3BlogStorage>,
 }
 
 pub async fn init_blog_router(
 ) -> Result<(axum::Router, utoipa::openapi::OpenApi), crate::error::Error> {
-    let blog_repository = crate::blog::repository::BlogRepositoryImpl {};
-    let blog_use_case = crate::blog::use_case::BlogUseCase {
-        blog_repository: std::sync::Arc::new(blog_repository),
-    };
+    let storage = crate::blog::publisher::S3BlogStorage::new().await?;
 
     let blog_state = std::sync::Arc::new(BlogState {
-        blog_use_case: std::sync::Arc::new(blog_use_case),
+        storage: std::sync::Arc::new(storage),
     });
 
     let (router, auto_generated_api) = OpenApiRouter::new()

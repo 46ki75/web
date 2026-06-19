@@ -76,3 +76,8 @@ resource "aws_s3_bucket" "athena" {
 resource "aws_s3_bucket" "analyze" {
   bucket = "${terraform.workspace}-46ki75-web-s3-bucket-analyze"
 }
+
+# Materialized blog cache (write side: blog_publisher lambda; read side: CloudFront/S3).
+resource "aws_s3_bucket" "blog_cache" {
+  bucket = "${terraform.workspace}-46ki75-web-s3-bucket-blog-cache"
+}

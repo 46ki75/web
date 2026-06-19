@@ -27,6 +27,8 @@ reqwest = { version = "0.13", default-features = true, features = [
 aws-config = "1.8.8"
 aws-sdk-ssm = "1.96.0"
 aws-sdk-sns = "1.95.0"
+aws-sdk-s3 = "1"
+aws-sdk-cloudfront = "1"
 
 # AWS Lambda
 lambda_http = "1.0"
