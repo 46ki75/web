@@ -9,12 +9,12 @@ is dynamic (Lambda) or a pre-rendered static object (S3).
 
 CloudFront behaviors are matched in order; the first matching path pattern wins.
 
-| Path pattern                                                   | Origin          | Backend                          | Cache policy | Basic auth\* |
-| -------------------------------------------------------------- | --------------- | -------------------------------- | ------------ | ------------ |
-| `/api/*`                                                       | `api-backend`   | Lambda — `web-lambda-http-api`   | `http_api`   | no           |
-| `/cache/*`                                                     | `s3-blog`       | S3 — blog cache bucket           | `s3`         | no           |
-| `/static/*`, `/assets/*`, `/build/*`, `/favicon.ico`, `/manifest.json`, `/q-manifest.json` | `s3-web` | S3 — frontend assets | `s3` | yes |
-| _(default)_                                                    | `nitro-backend` | Lambda — Qwik SSR (nitro)        | `nitro`      | yes          |
+| Path pattern                                                                               | Origin          | Backend                        | Cache policy | Basic auth\* |
+| ------------------------------------------------------------------------------------------ | --------------- | ------------------------------ | ------------ | ------------ |
+| `/api/*`                                                                                   | `api-backend`   | Lambda — `web-lambda-http-api` | `http_api`   | no           |
+| `/cache/*`                                                                                 | `s3-blog`       | S3 — blog cache bucket         | `s3`         | no           |
+| `/static/*`, `/assets/*`, `/build/*`, `/favicon.ico`, `/manifest.json`, `/q-manifest.json` | `s3-web`        | S3 — frontend assets           | `s3`         | yes          |
+| _(default)_                                                                                | `nitro-backend` | Lambda — Qwik SSR (nitro)      | `nitro`      | yes          |
 
 \* Basic auth is a CloudFront viewer-request function applied only to the HTML
 and frontend-asset behaviors on non-`prod` stages. `/api/*` and `/cache/*` are
@@ -57,10 +57,10 @@ Notes:
 
 Set at publish time, passed through by the `s3` cache policy:
 
-| Objects                                  | `Cache-Control`                                              |
-| ---------------------------------------- | ----------------------------------------------------------- |
+| Objects                                             | `Cache-Control`                                                                                 |
+| --------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
 | indices, contents, tags, feeds, sitemap, OGP covers | `public, max-age=0, s-maxage=31536000` (browser revalidates; CDN holds, invalidated on publish) |
-| block images                             | `public, max-age=31536000, s-maxage=31536000, immutable`    |
+| block images                                        | `public, max-age=31536000, s-maxage=31536000, immutable`                                        |
 
 Each publish issues a CloudFront invalidation for `/cache/blog/*`.
 
