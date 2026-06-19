@@ -293,10 +293,12 @@ resource "aws_cloudfront_distribution" "default" {
 
   # >>> [S3 blog cache] origin
   # The blog is pre-rendered to S3 (JSON, feeds, sitemap, OGP + block images)
-  # by the blog_publisher lambda. Public URLs map 1:1 to the object keys, so the
-  # CDN serves them straight from S3 with no Lambda hop. Must precede `/api/*`.
+  # by the blog_publisher lambda under the `/cache/blog/*` key space. The `/cache/*`
+  # namespace is reserved for this S3 static origin, keeping it cleanly separate
+  # from the `/api/*` Lambda origin. Public URLs map 1:1 to the object keys, so the
+  # CDN serves them straight from S3 with no Lambda hop.
   ordered_cache_behavior {
-    path_pattern = "/api/v2/blog/*"
+    path_pattern = "/cache/*"
     allowed_methods = [
       "GET",
       "HEAD",

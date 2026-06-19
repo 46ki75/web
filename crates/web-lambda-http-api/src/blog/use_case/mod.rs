@@ -145,7 +145,7 @@ impl BlogUseCase {
                 jarkup_rs::Component::BlockComponent(block_component) => match block_component {
                     jarkup_rs::BlockComponent::Image(image) => {
                         if let Some(id) = &image.id {
-                            let src_base = format!("/api/v2/blog/block-image/{}", id);
+                            let src_base = format!("/cache/blog/block-image/{}", id);
 
                             // Path-based variants (…/{size}) so the URLs map 1:1 to
                             // the materialized S3 keys and can be served straight from
