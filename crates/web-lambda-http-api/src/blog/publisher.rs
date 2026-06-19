@@ -15,6 +15,15 @@ use crate::blog::repository::BlogRepositoryImpl;
 use crate::blog::use_case::input::BlogLanguageEntity;
 use crate::blog::use_case::BlogUseCase;
 
+/// `Cache-Control` for mutable objects (JSON indices, feeds, OGP covers): the
+/// browser revalidates, the CDN holds it for a year and is invalidated on each
+/// publish.
+const CACHE_CONTROL_DYNAMIC: &str = "public, max-age=0, s-maxage=31536000";
+
+/// `Cache-Control` for immutable, content-addressed objects (block images).
+const CACHE_CONTROL_IMMUTABLE: &str =
+    "public, max-age=31536000, s-maxage=31536000, immutable";
+
 #[derive(Debug, thiserror::Error)]
 pub enum PublisherError {
     #[error(transparent)]
@@ -126,13 +135,20 @@ impl S3BlogStorage {
     }
 
     #[cfg_attr(not(rust_analyzer), tracing::instrument(skip(self, body), err))]
-    async fn put(&self, key: &str, body: Vec<u8>, content_type: &str) -> Result<(), PublisherError> {
+    async fn put(
+        &self,
+        key: &str,
+        body: Vec<u8>,
+        content_type: &str,
+        cache_control: &str,
+    ) -> Result<(), PublisherError> {
         self.client
             .put_object()
             .bucket(&self.bucket)
             .key(key)
             .body(body.into())
             .content_type(content_type)
+            .cache_control(cache_control)
             .send()
             .await
             .map_err(|e| PublisherError::S3 {
@@ -150,7 +166,8 @@ impl S3BlogStorage {
         value: &T,
     ) -> Result<(), PublisherError> {
         let body = serde_json::to_vec(value)?;
-        self.put(key, body, "application/json").await
+        self.put(key, body, "application/json", CACHE_CONTROL_DYNAMIC)
+            .await
     }
 
     /// Writes a pre-rendered text body (XML/JSON) with the given content type.
@@ -160,7 +177,8 @@ impl S3BlogStorage {
         body: String,
         content_type: &str,
     ) -> Result<(), PublisherError> {
-        self.put(key, body.into_bytes(), content_type).await
+        self.put(key, body.into_bytes(), content_type, CACHE_CONTROL_DYNAMIC)
+            .await
     }
 }
 
@@ -409,7 +427,10 @@ async fn materialize_block_images(
             };
             let content_type = use_case.infer_image_mime_type(&converted);
             let key = format!("api/v2/blog/block-image/{}/{}", image.block_id, variant);
-            if let Err(e) = storage.put(&key, converted.to_vec(), &content_type).await {
+            if let Err(e) = storage
+                .put(&key, converted.to_vec(), &content_type, CACHE_CONTROL_IMMUTABLE)
+                .await
+            {
                 tracing::warn!(key, error = %e, "skipping block image variant: put failed");
                 continue;
             }
@@ -446,7 +467,10 @@ async fn materialize_og_image(
     };
     let content_type = use_case.infer_image_mime_type(&converted);
     let key = format!("api/v2/blog/{slug}/og-image/{lang}");
-    if let Err(e) = storage.put(&key, converted.to_vec(), &content_type).await {
+    if let Err(e) = storage
+        .put(&key, converted.to_vec(), &content_type, CACHE_CONTROL_DYNAMIC)
+        .await
+    {
         tracing::warn!(key, error = %e, "skipping og image: put failed");
         return 0;
     }

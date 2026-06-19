@@ -1,5 +1,6 @@
 import type { BlogMeta, Language } from "~/types";
 import { generateHead, origin } from "../common";
+import { ogImageUrl } from "../../../openapi/blog";
 
 export const generateBlogMeta = ({
   url,
@@ -15,7 +16,7 @@ export const generateBlogMeta = ({
     title: blogMeta.title,
     description: blogMeta.description,
     ogType: "article",
-    ogImage: `${origin()}/api/v2/blog/${blogMeta.slug}/og-image?lang=${language}`,
+    ogImage: `${origin()}${ogImageUrl(blogMeta.slug, language)}`,
     language,
   });
 };

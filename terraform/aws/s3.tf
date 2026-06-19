@@ -81,3 +81,39 @@ resource "aws_s3_bucket" "analyze" {
 resource "aws_s3_bucket" "blog_cache" {
   bucket = "${terraform.workspace}-46ki75-web-s3-bucket-blog-cache"
 }
+
+resource "aws_s3_bucket_policy" "blog_cache" {
+  bucket = aws_s3_bucket.blog_cache.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid       = "AllowCloudFrontGetObject"
+        Effect    = "Allow"
+        Principal = { Service = "cloudfront.amazonaws.com" }
+        Action    = ["s3:GetObject"]
+        Resource  = "${aws_s3_bucket.blog_cache.arn}/*"
+        Condition = {
+          StringEquals = {
+            "AWS:SourceArn" = "${aws_cloudfront_distribution.default.arn}"
+          }
+        }
+      },
+      {
+        Sid       = "AllowCloudFrontListBucketForPrefixOnly"
+        Effect    = "Allow"
+        Principal = { Service = "cloudfront.amazonaws.com" }
+        Action    = ["s3:ListBucket"]
+        Resource  = "${aws_s3_bucket.blog_cache.arn}"
+        Condition = {
+          StringEquals = {
+            "AWS:SourceArn" = "${aws_cloudfront_distribution.default.arn}"
+          }
+          StringLike = {
+            "s3:prefix" = ["*"]
+          }
+        }
+      }
+    ]
+  })
+}

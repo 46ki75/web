@@ -4,7 +4,7 @@ import styles from "./blog-layout.module.css";
 
 import { BlogSide } from "~/components/blog/blog-side";
 import { BlogMain } from "~/components/blog/blog-main";
-import { client } from "../../../openapi/client";
+import { getBlogList, getBlogTags } from "../../../openapi/blog";
 import { BlogContext } from "~/context/blog";
 import type { Language } from "~/types";
 
@@ -17,11 +17,7 @@ export const BlogLayout = component$<BlogLayoutProps>(({ language }) => {
 
   useTask$(async () => {
     if (blogState.blogMeta[language].length === 0) {
-      const { data: blogMeta } = await client.GET("/api/v2/blog", {
-        params: {
-          header: { "accept-language": language },
-        },
-      });
+      const blogMeta = await getBlogList(language);
 
       if (blogMeta != null) {
         blogState.blogMeta[language] = blogMeta.sort((a, b) =>
@@ -31,7 +27,7 @@ export const BlogLayout = component$<BlogLayoutProps>(({ language }) => {
     }
 
     if (blogState.tags.length === 0) {
-      const { data: blogTags } = await client.GET("/api/v2/blog/tag", {});
+      const blogTags = await getBlogTags();
 
       if (blogTags != null) {
         blogState.tags = blogTags;

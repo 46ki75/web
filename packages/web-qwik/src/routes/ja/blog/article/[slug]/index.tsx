@@ -3,17 +3,12 @@ import { component$ } from "@qwik.dev/core";
 import { DocumentHead, routeLoader$, useLocation } from "@qwik.dev/router";
 import { BlogArticle } from "~/components/blog/blog-article";
 import { generateBlogMeta } from "~/utils/blog/seo";
-import { client } from "../../../../../../openapi/client";
+import { getBlogContents } from "../../../../../../openapi/blog";
 
 const LANGUAGE = "ja";
 
 export const useBlogMeta = routeLoader$(async ({ params, error }) => {
-  const { data: blogMeta } = await client.GET("/api/v2/blog/{slug}", {
-    params: {
-      header: { "accept-language": LANGUAGE },
-      path: { slug: params.slug },
-    },
-  });
+  const blogMeta = await getBlogContents(params.slug, LANGUAGE);
 
   if (!blogMeta) {
     console.info(`Blog post with slug "${params.slug}" not found`);
