@@ -2,7 +2,6 @@
 resolver = "3"
 members = [
     "crates/web-blog-sdk",
-    "crates/web-lambda-cache-warmer",
     "crates/web-lambda-http-api",
     "crates/web-lambda-logs-reporter",
 ]
