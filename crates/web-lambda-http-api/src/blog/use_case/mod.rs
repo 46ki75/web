@@ -145,8 +145,11 @@ impl BlogUseCase {
                 jarkup_rs::Component::BlockComponent(block_component) => match block_component {
                     jarkup_rs::BlockComponent::Image(image) => {
                         if let Some(id) = &image.id {
-                            let src_base = format!("/api/v2/blog/block-image/{}", id);
+                            let src_base = format!("/cache/v2/blog/block-image/{}", id);
 
+                            // Path-based variants (…/{size}) so the URLs map 1:1 to
+                            // the materialized S3 keys and can be served straight from
+                            // the CDN's S3 origin without query-string rewriting.
                             (image.props.srcset, image.props.sizes) = if image
                                 .props
                                 .mime_type
@@ -161,14 +164,14 @@ impl BlogUseCase {
                                 (
                                 Some(
                                     format!(
-                                        "{src_base}?size=small 500w, {src_base}?size=medium 800w, {src_base}?size=large 1200w"
+                                        "{src_base}/small 500w, {src_base}/medium 800w, {src_base}/large 1200w"
                                     )
                                 ),
                                 Some("(max-width: 800px) 100vw, 800px".to_owned())
                                 )
                             };
 
-                            image.props.src = src_base;
+                            image.props.src = format!("{src_base}/default");
                         };
                     }
 

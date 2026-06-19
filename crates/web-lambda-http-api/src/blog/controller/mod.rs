@@ -17,8 +17,11 @@ pub enum BlogControllerError {
     #[error(transparent)]
     UseCase(#[from] super::use_case::BlogUseCaseError),
 
-    #[error("response serialization error: {0}")]
-    Serialization(#[from] serde_json::Error),
+    #[error("blog cache object not found: {0}")]
+    NotFound(String),
+
+    #[error("blog cache storage error: {0}")]
+    Storage(#[from] super::publisher::PublisherError),
 
     #[error("response build error: {0}")]
     ResponseBuild(#[from] http::Error),
@@ -50,13 +53,81 @@ impl axum::response::IntoResponse for BlogControllerError {
                 | BlogUseCaseError::Time(_)
                 | BlogUseCaseError::Internal(_) => StatusCode::INTERNAL_SERVER_ERROR,
             },
-            Self::Serialization(_) | Self::ResponseBuild(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            Self::NotFound(_) => StatusCode::NOT_FOUND,
+            Self::Storage(_) | Self::ResponseBuild(_) => StatusCode::INTERNAL_SERVER_ERROR,
         };
 
         tracing::error!(error = ?self, "request failed");
         let body = serde_json::json!({ "error": self.to_string() });
         (status, axum::Json(body)).into_response()
     }
+}
+
+/// Selects the cache language suffix (`en`/`ja`) from the `Accept-Language` header.
+fn lang_from_headers(headers: &http::header::HeaderMap) -> &'static str {
+    match headers
+        .get(ACCEPT_LANGUAGE)
+        .and_then(|accept_language| accept_language.to_str().ok())
+    {
+        Some("ja") => "ja",
+        _ => "en",
+    }
+}
+
+/// Selects the cache language suffix (`en`/`ja`) from a path parameter.
+fn lang_from_path(language: &str) -> &'static str {
+    match language {
+        "ja" => "ja",
+        _ => "en",
+    }
+}
+
+/// Streams a pre-materialized object from the blog cache bucket.
+///
+/// This is the read side of the read-through cache: the slow Notion transform
+/// happened at publish time, so reads are a single S3 GET with no upstream call.
+async fn serve_cached(
+    state: &super::router::BlogState,
+    key: &str,
+    content_type: &str,
+    vary_accept_language: bool,
+) -> Result<axum::response::Response<axum::body::Body>, BlogControllerError> {
+    let bytes = state
+        .storage
+        .get(key)
+        .await?
+        .ok_or_else(|| BlogControllerError::NotFound(key.to_owned()))?;
+
+    let mut builder = axum::response::Response::builder()
+        .header(http::header::CONTENT_TYPE, content_type)
+        .header(http::header::CACHE_CONTROL, CACHE_VALUE);
+
+    if vary_accept_language {
+        builder = builder.header(http::header::VARY, "Accept-Language");
+    }
+
+    Ok(builder.body(axum::body::Body::from(bytes))?)
+}
+
+/// Streams a pre-materialized image from the blog cache bucket, echoing the
+/// `Content-Type` stored at publish time (WebP for raster, SVG for vector).
+async fn serve_cached_image(
+    state: &super::router::BlogState,
+    key: &str,
+    cache_value: &str,
+) -> Result<axum::response::Response<axum::body::Body>, BlogControllerError> {
+    let (bytes, content_type) = state
+        .storage
+        .get_object(key)
+        .await?
+        .ok_or_else(|| BlogControllerError::NotFound(key.to_owned()))?;
+
+    let content_type = content_type.unwrap_or_else(|| "application/octet-stream".to_owned());
+
+    Ok(axum::response::Response::builder()
+        .header(http::header::CONTENT_TYPE, content_type)
+        .header(http::header::CACHE_CONTROL, cache_value)
+        .body(axum::body::Body::from(bytes))?)
 }
 
 #[utoipa::path(
@@ -76,31 +147,14 @@ pub async fn list_blogs(
     axum::extract::State(state): axum::extract::State<std::sync::Arc<super::router::BlogState>>,
     headers: http::header::HeaderMap,
 ) -> Result<axum::response::Response<axum::body::Body>, BlogControllerError> {
-    let language = headers
-        .get(ACCEPT_LANGUAGE)
-        .and_then(|accept_language| accept_language.to_str().ok())
-        .map(|accept_language| match accept_language {
-            "ja" => super::use_case::input::BlogLanguageEntity::Ja,
-            _ => super::use_case::input::BlogLanguageEntity::En,
-        })
-        .unwrap_or(super::use_case::input::BlogLanguageEntity::En);
-
-    let blog_entities = state.blog_use_case.list_blogs(language).await?;
-
-    let response_body = blog_entities
-        .into_iter()
-        .map(response::BlogResponse::from)
-        .collect::<Vec<response::BlogResponse>>();
-
-    let json = serde_json::to_string(&response_body)?;
-
-    let response = axum::response::Response::builder()
-        .header(http::header::CONTENT_TYPE, "application/json")
-        .header(http::header::VARY, "Accept-Language")
-        .header(http::header::CACHE_CONTROL, CACHE_VALUE)
-        .body(axum::body::Body::from(json))?;
-
-    Ok(response)
+    let lang = lang_from_headers(&headers);
+    serve_cached(
+        &state,
+        &format!("cache/v2/blog/list/{lang}.json"),
+        "application/json",
+        true,
+    )
+    .await
 }
 
 #[utoipa::path(
@@ -123,28 +177,14 @@ pub async fn get_blog_contents(
     axum::extract::Path(slug): axum::extract::Path<String>,
     headers: http::header::HeaderMap,
 ) -> Result<axum::response::Response<axum::body::Body>, BlogControllerError> {
-    let language = headers
-        .get(ACCEPT_LANGUAGE)
-        .and_then(|accept_language| accept_language.to_str().ok())
-        .map(|accept_language| match accept_language {
-            "ja" => super::use_case::input::BlogLanguageEntity::Ja,
-            _ => super::use_case::input::BlogLanguageEntity::En,
-        })
-        .unwrap_or(super::use_case::input::BlogLanguageEntity::En);
-
-    let entity = state.blog_use_case.get_blog_contents(&slug, language).await?;
-
-    let blog_content_response = response::BlogContentsResponse::from(entity);
-
-    let json = serde_json::to_string(&blog_content_response)?;
-
-    let response = axum::response::Response::builder()
-        .header(http::header::CONTENT_TYPE, "application/json")
-        .header(http::header::VARY, "Accept-Language")
-        .header(http::header::CACHE_CONTROL, CACHE_VALUE)
-        .body(axum::body::Body::from(json))?;
-
-    Ok(response)
+    let lang = lang_from_headers(&headers);
+    serve_cached(
+        &state,
+        &format!("cache/v2/blog/article/{slug}/contents/{lang}.json"),
+        "application/json",
+        true,
+    )
+    .await
 }
 
 #[utoipa::path(
@@ -160,21 +200,7 @@ pub async fn get_blog_contents(
 pub async fn list_tags(
     axum::extract::State(state): axum::extract::State<std::sync::Arc<super::router::BlogState>>,
 ) -> Result<axum::response::Response<axum::body::Body>, BlogControllerError> {
-    let tag_entities = state.blog_use_case.list_tags().await?;
-
-    let response_body = tag_entities
-        .into_iter()
-        .map(response::BlogTagResponse::from)
-        .collect::<Vec<response::BlogTagResponse>>();
-
-    let json = serde_json::to_string(&response_body)?;
-
-    let response = axum::response::Response::builder()
-        .header(http::header::CONTENT_TYPE, "application/json")
-        .header(http::header::CACHE_CONTROL, CACHE_VALUE)
-        .body(axum::body::Body::from(json))?;
-
-    Ok(response)
+    serve_cached(&state, "cache/v2/blog/tags.json", "application/json", false).await
 }
 
 #[utoipa::path(
@@ -199,27 +225,16 @@ pub async fn get_blog_og_image(
         request::BlogOgImageQueryParam,
     >,
 ) -> Result<axum::response::Response<axum::body::Body>, BlogControllerError> {
-    let language = lang
-        .map(|query_lang| match query_lang {
-            request::BlogLanguageQueryParam::Ja => super::use_case::input::BlogLanguageEntity::Ja,
-            request::BlogLanguageQueryParam::En => super::use_case::input::BlogLanguageEntity::En,
-        })
-        .unwrap_or(super::use_case::input::BlogLanguageEntity::En);
-
-    let image_bytes = state
-        .blog_use_case
-        .fetch_ogp_image_by_slug(&slug, language.clone())
-        .await
-        .and_then(|contents| state.blog_use_case.convert_image(&contents, Some(1200)))?;
-
-    let content_type = state.blog_use_case.infer_image_mime_type(&image_bytes);
-
-    let response = axum::response::Response::builder()
-        .header(http::header::CONTENT_TYPE, content_type)
-        .header(http::header::CACHE_CONTROL, CACHE_VALUE)
-        .body(axum::body::Body::from(image_bytes.to_vec()))?;
-
-    Ok(response)
+    let lang = match lang {
+        Some(request::BlogLanguageQueryParam::Ja) => "ja",
+        _ => "en",
+    };
+    serve_cached_image(
+        &state,
+        &format!("cache/v2/blog/article/{slug}/og-image/{lang}"),
+        CACHE_VALUE,
+    )
+    .await
 }
 
 #[utoipa::path(
@@ -243,24 +258,18 @@ pub async fn get_blog_block_image(
         request::BlogBlockImageQueryParam,
     >,
 ) -> Result<axum::response::Response<axum::body::Body>, BlogControllerError> {
-    let image_bytes = state
-        .blog_use_case
-        .fetch_block_image_by_id(&block_id)
-        .await
-        .and_then(|bytes| {
-            state
-                .blog_use_case
-                .convert_image(&bytes, size.map(|size| size.into()))
-        })?;
-
-    let content_type = state.blog_use_case.infer_image_mime_type(&image_bytes);
-
-    let response = axum::response::Response::builder()
-        .header(http::header::CONTENT_TYPE, content_type)
-        .header(http::header::CACHE_CONTROL, IMMUTABLE_CACHE_VALUE)
-        .body(axum::body::Body::from(image_bytes.to_vec()))?;
-
-    Ok(response)
+    let variant = match size {
+        Some(request::BlogImageSizeQueryParam::Small) => "small",
+        Some(request::BlogImageSizeQueryParam::Medium) => "medium",
+        Some(request::BlogImageSizeQueryParam::Large) => "large",
+        None => "default",
+    };
+    serve_cached_image(
+        &state,
+        &format!("cache/v2/blog/block-image/{block_id}/{variant}"),
+        IMMUTABLE_CACHE_VALUE,
+    )
+    .await
 }
 
 #[utoipa::path(
@@ -276,14 +285,7 @@ pub async fn get_blog_block_image(
 pub async fn get_blog_sitemap(
     axum::extract::State(state): axum::extract::State<std::sync::Arc<super::router::BlogState>>,
 ) -> Result<axum::response::Response<axum::body::Body>, BlogControllerError> {
-    let sitemap_xml = state.blog_use_case.generate_sitemap().await?;
-
-    let response = axum::response::Response::builder()
-        .header(http::header::CONTENT_TYPE, "application/xml")
-        .header(http::header::CACHE_CONTROL, CACHE_VALUE)
-        .body(axum::body::Body::from(sitemap_xml))?;
-
-    Ok(response)
+    serve_cached(&state, "cache/v2/blog/sitemap.xml", "application/xml", false).await
 }
 
 #[utoipa::path(
@@ -300,19 +302,14 @@ pub async fn get_blog_rss_feed(
     axum::extract::State(state): axum::extract::State<std::sync::Arc<super::router::BlogState>>,
     axum::extract::Path(language): axum::extract::Path<String>,
 ) -> Result<axum::response::Response<axum::body::Body>, BlogControllerError> {
-    let language = match language.as_str() {
-        "ja" => super::use_case::input::BlogLanguageEntity::Ja,
-        _ => super::use_case::input::BlogLanguageEntity::En,
-    };
-
-    let rss_feed = state.blog_use_case.generate_rss(language).await?;
-
-    let response = axum::response::Response::builder()
-        .header(http::header::CONTENT_TYPE, "application/xml")
-        .header(http::header::CACHE_CONTROL, CACHE_VALUE)
-        .body(axum::body::Body::from(rss_feed))?;
-
-    Ok(response)
+    let lang = lang_from_path(&language);
+    serve_cached(
+        &state,
+        &format!("cache/v2/blog/feed/rss/{lang}.xml"),
+        "application/xml",
+        false,
+    )
+    .await
 }
 
 #[utoipa::path(
@@ -329,19 +326,14 @@ pub async fn get_blog_atom_feed(
     axum::extract::State(state): axum::extract::State<std::sync::Arc<super::router::BlogState>>,
     axum::extract::Path(language): axum::extract::Path<String>,
 ) -> Result<axum::response::Response<axum::body::Body>, BlogControllerError> {
-    let language = match language.as_str() {
-        "ja" => super::use_case::input::BlogLanguageEntity::Ja,
-        _ => super::use_case::input::BlogLanguageEntity::En,
-    };
-
-    let atom_feed = state.blog_use_case.generate_atom(language).await?;
-
-    let response = axum::response::Response::builder()
-        .header(http::header::CONTENT_TYPE, "application/xml")
-        .header(http::header::CACHE_CONTROL, CACHE_VALUE)
-        .body(axum::body::Body::from(atom_feed))?;
-
-    Ok(response)
+    let lang = lang_from_path(&language);
+    serve_cached(
+        &state,
+        &format!("cache/v2/blog/feed/atom/{lang}.xml"),
+        "application/xml",
+        false,
+    )
+    .await
 }
 
 #[utoipa::path(
@@ -358,17 +350,12 @@ pub async fn get_blog_json_feed(
     axum::extract::State(state): axum::extract::State<std::sync::Arc<super::router::BlogState>>,
     axum::extract::Path(language): axum::extract::Path<String>,
 ) -> Result<axum::response::Response<axum::body::Body>, BlogControllerError> {
-    let language = match language.as_str() {
-        "ja" => super::use_case::input::BlogLanguageEntity::Ja,
-        _ => super::use_case::input::BlogLanguageEntity::En,
-    };
-
-    let json_feed = state.blog_use_case.generate_jsonfeed(language).await?;
-
-    let response = axum::response::Response::builder()
-        .header(http::header::CONTENT_TYPE, "application/json")
-        .header(http::header::CACHE_CONTROL, CACHE_VALUE)
-        .body(axum::body::Body::from(json_feed))?;
-
-    Ok(response)
+    let lang = lang_from_path(&language);
+    serve_cached(
+        &state,
+        &format!("cache/v2/blog/feed/json-feed/{lang}.json"),
+        "application/json",
+        false,
+    )
+    .await
 }

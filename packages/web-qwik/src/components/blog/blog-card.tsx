@@ -3,6 +3,7 @@ import { $, component$, CSSProperties, useContext } from "@qwik.dev/core";
 import styles from "./blog-card.module.css";
 
 import { paths } from "../../../openapi/schema";
+import { ogImageUrl } from "../../../openapi/blog";
 import { Link, useNavigate } from "@qwik.dev/router";
 import { Language } from "~/types";
 import { ElmInlineText } from "@elmethis/qwik";
@@ -57,7 +58,7 @@ export const BlogCard = component$<BlogCardProps>(
           <div class={styles["blog-card-link"]}>
             <img
               class={styles["blog-card-image"]}
-              src={`/api/v2/blog/${blog.slug}/og-image?lang=${language}`}
+              src={ogImageUrl(blog.slug, language)}
               alt={blog.title}
               width={1140}
               height={600}

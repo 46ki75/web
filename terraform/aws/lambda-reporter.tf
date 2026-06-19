@@ -79,9 +79,9 @@ resource "aws_lambda_alias" "reporter" {
 
 resource "aws_lambda_permission" "allow_cloudwatch_logs" {
   for_each = {
-    "lambda_http"  = aws_cloudwatch_log_group.lambda_http.arn
-    "lambda_nitro" = aws_cloudwatch_log_group.lambda_nitro.arn
-    "cache_warmer" = aws_cloudwatch_log_group.cache_warmer.arn
+    "lambda_http"    = aws_cloudwatch_log_group.lambda_http.arn
+    "lambda_nitro"   = aws_cloudwatch_log_group.lambda_nitro.arn
+    "blog_publisher" = aws_cloudwatch_log_group.blog_publisher.arn
   }
 
   statement_id   = "AllowExecutionFromCloudWatchLogs_${each.key}"

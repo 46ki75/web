@@ -3,8 +3,8 @@ import type { Component } from "jarkup-ts";
 
 import { ElmBlockFallback, ElmJarkup } from "@elmethis/qwik";
 
-import { paths } from "../../../openapi/schema";
-import { client } from "../../../openapi/client";
+import type { BlogResponse } from "../../../openapi/blog";
+import { getBlogContents, ogImageUrl } from "../../../openapi/blog";
 import { Meta } from "../common/meta";
 import { useNavigate } from "@qwik.dev/router";
 import { BlogContext } from "~/context/blog";
@@ -14,7 +14,7 @@ import styles from "./blog-article.module.css";
 import { Language } from "~/types";
 
 type BlogContents = {
-  meta: paths["/api/v2/blog/{slug}"]["get"]["responses"]["200"]["content"]["application/json"]["meta"];
+  meta: BlogResponse;
   components: Component[];
 };
 
@@ -30,13 +30,11 @@ export const BlogArticle = component$<ArticleProps>(({ slug, language }) => {
     const trackedSlug = track(() => slug);
     const trackedLang = track(() => language);
 
-    const { data: blogContents } = await client.GET("/api/v2/blog/{slug}", {
-      params: {
-        path: { slug: trackedSlug! },
-        header: { "accept-language": trackedLang },
-      },
-      signal: abortSignal,
-    });
+    const blogContents = await getBlogContents(
+      trackedSlug!,
+      trackedLang,
+      abortSignal,
+    );
 
     return blogContents as BlogContents;
   });
@@ -68,7 +66,7 @@ export const BlogArticle = component$<ArticleProps>(({ slug, language }) => {
             title={jarkup.value.meta.title}
             createdAt={jarkup.value.meta.created_at}
             updatedAt={jarkup.value.meta.updated_at}
-            image={`/api/v2/blog/${slug}/og-image?lang=${language}`}
+            image={ogImageUrl(slug, language)}
             links={[
               {
                 text: "Home",

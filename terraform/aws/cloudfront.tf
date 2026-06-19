@@ -14,6 +14,14 @@ resource "aws_cloudfront_origin_access_control" "http_api" {
   signing_protocol                  = "sigv4"
 }
 
+resource "aws_cloudfront_origin_access_control" "blog_cache" {
+  name                              = "${terraform.workspace}-46ki75-web-cloudfront-oac-blog_cache"
+  description                       = "Blog cache S3 OAC"
+  origin_access_control_origin_type = "s3"
+  signing_behavior                  = "always"
+  signing_protocol                  = "sigv4"
+}
+
 resource "aws_cloudfront_origin_access_control" "nitro" {
   name                              = "${terraform.workspace}-46ki75-web-cloudfront-oac-nitro"
   description                       = "Lambda Nitro OAC"
@@ -68,62 +76,6 @@ resource "aws_cloudfront_cache_policy" "http_api" {
 
     query_strings_config {
       query_string_behavior = "none"
-    }
-
-    enable_accept_encoding_brotli = true
-    enable_accept_encoding_gzip   = true
-  }
-}
-
-resource "aws_cloudfront_cache_policy" "http_api_ogp_image" {
-  name = "${terraform.workspace}-46ki75-web-cloudfront-cache_policy-http_api_ogp_image"
-
-  default_ttl = 0
-  min_ttl     = 0
-  max_ttl     = 3600 * 24 * 30 * 12
-
-  parameters_in_cache_key_and_forwarded_to_origin {
-    cookies_config {
-      cookie_behavior = "none"
-    }
-
-    headers_config {
-      header_behavior = "none"
-    }
-
-    query_strings_config {
-      query_string_behavior = "whitelist"
-      query_strings {
-        items = ["lang"]
-      }
-    }
-
-    enable_accept_encoding_brotli = true
-    enable_accept_encoding_gzip   = true
-  }
-}
-
-resource "aws_cloudfront_cache_policy" "http_api_block_image" {
-  name = "${terraform.workspace}-46ki75-web-cloudfront-cache_policy-http_api_block_image"
-
-  default_ttl = 3600 * 24 * 30 * 12
-  min_ttl     = 0
-  max_ttl     = 3600 * 24 * 30 * 12
-
-  parameters_in_cache_key_and_forwarded_to_origin {
-    cookies_config {
-      cookie_behavior = "none"
-    }
-
-    headers_config {
-      header_behavior = "none"
-    }
-
-    query_strings_config {
-      query_string_behavior = "whitelist"
-      query_strings {
-        items = ["size"]
-      }
     }
 
     enable_accept_encoding_brotli = true
@@ -339,44 +291,38 @@ resource "aws_cloudfront_distribution" "default" {
   }
   # # <<< [S3 web] origin
 
+  # >>> [S3 blog cache] origin
+  # The blog is pre-rendered to S3 (JSON, feeds, sitemap, OGP + block images)
+  # by the blog_publisher lambda under the `/cache/v2/blog/*` key space. The `/cache/*`
+  # namespace is reserved for this S3 static origin, keeping it cleanly separate
+  # from the `/api/*` Lambda origin. Public URLs map 1:1 to the object keys, so the
+  # CDN serves them straight from S3 with no Lambda hop.
+  ordered_cache_behavior {
+    path_pattern = "/cache/*"
+    allowed_methods = [
+      "GET",
+      "HEAD",
+      "OPTIONS",
+    ]
+    cached_methods         = ["GET", "HEAD"]
+    viewer_protocol_policy = "redirect-to-https"
+    target_origin_id       = "s3-blog"
+
+    cache_policy_id            = aws_cloudfront_cache_policy.s3.id
+    origin_request_policy_id   = aws_cloudfront_origin_request_policy.all_viewer.id
+    response_headers_policy_id = aws_cloudfront_response_headers_policy.security.id
+
+    compress = true
+  }
+  # <<< [S3 blog cache] origin
+
+  origin {
+    domain_name              = aws_s3_bucket.blog_cache.bucket_regional_domain_name
+    origin_id                = "s3-blog"
+    origin_access_control_id = aws_cloudfront_origin_access_control.blog_cache.id
+  }
+
   # >>> [Lambda Function URLs] origin
-  ordered_cache_behavior {
-    path_pattern = "/api/v2/blog/block-image/*"
-    allowed_methods = [
-      "GET",
-      "HEAD",
-      "OPTIONS",
-    ]
-    cached_methods         = ["GET", "HEAD"]
-    viewer_protocol_policy = "redirect-to-https"
-    target_origin_id       = "api-backend"
-
-    cache_policy_id            = aws_cloudfront_cache_policy.http_api_block_image.id
-    origin_request_policy_id   = aws_cloudfront_origin_request_policy.all_viewer.id
-    response_headers_policy_id = aws_cloudfront_response_headers_policy.security.id
-
-    compress = true
-  }
-
-  ordered_cache_behavior {
-
-    path_pattern = "/api/v2/blog/*/og-image"
-    allowed_methods = [
-      "GET",
-      "HEAD",
-      "OPTIONS",
-    ]
-    cached_methods         = ["GET", "HEAD"]
-    viewer_protocol_policy = "redirect-to-https"
-    target_origin_id       = "api-backend"
-
-    cache_policy_id            = aws_cloudfront_cache_policy.http_api_ogp_image.id
-    origin_request_policy_id   = aws_cloudfront_origin_request_policy.all_viewer.id
-    response_headers_policy_id = aws_cloudfront_response_headers_policy.security.id
-
-    compress = true
-  }
-
   ordered_cache_behavior {
     path_pattern = "/api/*"
     allowed_methods = [

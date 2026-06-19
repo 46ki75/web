@@ -40,6 +40,17 @@ resource "aws_iam_policy" "lambda_policy_http_api" {
           "ssm:GetParameter"
         ],
         "Resource" : "*"
+      },
+      {
+        "Effect" : "Allow",
+        "Action" : [
+          "s3:GetObject",
+          "s3:ListBucket"
+        ],
+        "Resource" : [
+          aws_s3_bucket.blog_cache.arn,
+          "${aws_s3_bucket.blog_cache.arn}/*"
+        ]
       }
     ]
   })
