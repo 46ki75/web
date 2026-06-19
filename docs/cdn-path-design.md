@@ -67,7 +67,38 @@ Set at publish time, passed through by the `s3` cache policy:
 | indices, contents, tags, feeds, sitemap, OGP covers | `public, max-age=0, s-maxage=31536000` (browser revalidates; CDN holds, invalidated on publish) |
 | block images                                        | `public, max-age=31536000, s-maxage=31536000, immutable`                                        |
 
-Each publish issues a CloudFront invalidation for `/cache/v2/blog/*`.
+Each publish issues a CloudFront invalidation for only the paths it changed
+(see below).
+
+## Incremental publishing
+
+The `blog_publisher` runs incrementally. It lists blogs from Notion (slug +
+`updated_at`) and diffs each against a manifest of what was last published:
+
+```text
+internal/blog-publisher/manifest.json   # language -> (slug -> published updated_at)
+```
+
+The manifest lives in the blog-cache bucket but **outside** the `cache/` prefix,
+so no CloudFront behavior routes to it and it is never publicly served.
+
+Per (slug, language):
+
+- **added / updated** — no manifest entry, or `updated_at` differs → rebuild that
+  article's contents + block images + OGP cover.
+- **unchanged** — same `updated_at` → skipped entirely (no Notion content fetch,
+  no image conversion).
+- **removed** — gone from Notion → its article objects are pruned. (Block-image
+  variants it referenced are immutable/content-addressed and left as harmless
+  orphans, since their ids aren't known without the old content.)
+
+The version is the **manual `updated_at` Notion date property**, not the system
+`last_edited_time`: a post republishes only when you bump `updated_at`, which
+keeps release control in the author's hands. Collection objects (list, feeds,
+tags, sitemap) are regenerated only when something changed, and the CloudFront
+invalidation is targeted at exactly the paths touched (`/cache/v2/blog/article/{slug}/*`
+plus any affected collection paths). A run where nothing changed writes nothing
+and invalidates nothing.
 
 ## Lambda blog API (`/api/v2/blog/*`)
 

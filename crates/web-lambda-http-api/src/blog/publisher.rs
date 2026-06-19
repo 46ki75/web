@@ -13,6 +13,7 @@ use std::sync::Arc;
 use crate::blog::controller::response::{BlogContentsResponse, BlogResponse, BlogTagResponse};
 use crate::blog::repository::BlogRepositoryImpl;
 use crate::blog::use_case::input::BlogLanguageEntity;
+use crate::blog::use_case::output::BlogEntity;
 use crate::blog::use_case::BlogUseCase;
 
 /// `Cache-Control` for mutable objects (JSON indices, feeds, OGP covers): the
@@ -23,6 +24,14 @@ const CACHE_CONTROL_DYNAMIC: &str = "public, max-age=0, s-maxage=31536000";
 /// `Cache-Control` for immutable, content-addressed objects (block images).
 const CACHE_CONTROL_IMMUTABLE: &str =
     "public, max-age=31536000, s-maxage=31536000, immutable";
+
+/// Internal object tracking the published `updated_at` per (language, slug).
+///
+/// Stored in the blog-cache bucket but *outside* the `cache/` prefix, so no
+/// CloudFront behavior routes to it and it is never publicly served. The
+/// incremental publisher diffs live Notion `updated_at` values against this to
+/// decide what to (re)build, skip, or prune.
+const MANIFEST_KEY: &str = "internal/blog-publisher/manifest.json";
 
 #[derive(Debug, thiserror::Error)]
 pub enum PublisherError {
@@ -44,25 +53,46 @@ pub enum PublisherError {
     Internal(#[from] crate::error::Error),
 }
 
-/// Summary of a rebuild run, returned to the invoker for observability.
+/// Summary of an incremental rebuild run, returned to the invoker and emitted
+/// to logs for observability.
 #[derive(Debug, Default, serde::Serialize)]
 pub struct RebuildSummary {
-    /// Number of languages rebuilt.
+    /// Languages scanned.
     pub languages: usize,
-    /// Number of blogs found in the (last) language index.
-    pub blogs: usize,
-    /// Number of per-slug content objects written (across all languages).
-    pub contents: usize,
-    /// Number of tags written.
-    pub tags: usize,
-    /// Number of OGP image objects written (one per slug/language with a cover).
-    pub og_images: usize,
-    /// Number of block-image variant objects written (across all contents).
-    pub block_images: usize,
-    /// Total number of S3 objects written.
+    /// (slug, language) pairs scanned across all languages.
+    pub blogs_scanned: usize,
+    /// Newly published entries, formatted as `"{lang}/{slug}"`.
+    pub added: Vec<String>,
+    /// Republished entries whose `updated_at` changed, as `"{lang}/{slug}"`.
+    pub updated: Vec<String>,
+    /// Entries skipped because their `updated_at` was unchanged.
+    pub unchanged: usize,
+    /// Entries pruned because the slug disappeared from Notion, as `"{lang}/{slug}"`.
+    pub removed: Vec<String>,
+    /// S3 objects written this run.
     pub objects_written: usize,
-    /// CloudFront invalidation id created after the rebuild.
+    /// S3 objects deleted this run (pruned article objects).
+    pub objects_pruned: usize,
+    /// Block-image variant objects (re)written.
+    pub block_images: usize,
+    /// OGP cover objects (re)written.
+    pub og_images: usize,
+    /// Whether collection objects (list/feeds/tags/sitemap) were regenerated.
+    pub collection_regenerated: bool,
+    /// CloudFront paths invalidated (empty when nothing changed).
+    pub invalidated_paths: Vec<String>,
+    /// CloudFront invalidation id (`None` when nothing changed).
     pub invalidation_id: Option<String>,
+}
+
+/// Published-state manifest: `language -> (slug -> published updated_at)`.
+///
+/// `BTreeMap` keeps the serialized form stable (deterministic key order) so the
+/// stored object only changes when the tracked versions actually change.
+#[derive(Debug, Default, serde::Serialize, serde::Deserialize)]
+struct Manifest {
+    #[serde(default)]
+    blogs: std::collections::BTreeMap<String, std::collections::BTreeMap<String, String>>,
 }
 
 /// A block-image reference discovered while walking rendered content.
@@ -180,12 +210,64 @@ impl S3BlogStorage {
         self.put(key, body.into_bytes(), content_type, CACHE_CONTROL_DYNAMIC)
             .await
     }
+
+    /// Deletes an object. Succeeds even when the key is already absent (S3
+    /// `DeleteObject` is idempotent), so pruning never fails on a missing key.
+    #[cfg_attr(not(rust_analyzer), tracing::instrument(skip(self), err))]
+    pub async fn delete(&self, key: &str) -> Result<(), PublisherError> {
+        self.client
+            .delete_object()
+            .bucket(&self.bucket)
+            .key(key)
+            .send()
+            .await
+            .map_err(|e| PublisherError::S3 {
+                key: key.to_owned(),
+                trace: aws_sdk_s3::error::DisplayErrorContext(&e).to_string(),
+            })?;
+        tracing::debug!(key, "deleted object from blog cache");
+        Ok(())
+    }
+
+    /// Loads the publish manifest, returning an empty one when it is absent or
+    /// unreadable. An empty manifest forces a full rebuild — the safe default.
+    async fn load_manifest(&self) -> Manifest {
+        match self.get(MANIFEST_KEY).await {
+            Ok(Some(bytes)) => serde_json::from_slice(&bytes).unwrap_or_else(|e| {
+                tracing::warn!(error = %e, "manifest unparseable; treating as empty (full rebuild)");
+                Manifest::default()
+            }),
+            Ok(None) => Manifest::default(),
+            Err(e) => {
+                tracing::warn!(error = %e, "manifest read failed; treating as empty (full rebuild)");
+                Manifest::default()
+            }
+        }
+    }
+
+    /// Persists the publish manifest.
+    async fn save_manifest(&self, manifest: &Manifest) -> Result<(), PublisherError> {
+        self.put_json(MANIFEST_KEY, manifest).await
+    }
 }
 
-/// Rebuilds the entire blog cache from the current Notion state.
+/// Incrementally rebuilds the blog cache from the current Notion state.
 ///
-/// Object layout (keys mirror the eventual public URL paths so a later phase can
-/// flip CloudFront to an S3 origin without changing keys):
+/// The publisher lists blogs from Notion (slug + `updated_at` version), diffs
+/// each against the [`Manifest`] of what was last published, and only does work
+/// for what changed:
+///
+/// * **added / updated** (no manifest entry, or a different `updated_at`) →
+///   rebuild that article's content + block images + OGP cover;
+/// * **unchanged** (same `updated_at`) → skip entirely (no Notion content fetch,
+///   no image conversion);
+/// * **removed** (gone from Notion) → prune that article's objects.
+///
+/// Collection objects (list / feeds / tags / sitemap) are regenerated only when
+/// something changed, and the CDN invalidation is targeted at exactly the paths
+/// touched. A run where nothing changed writes nothing and invalidates nothing.
+///
+/// Object layout:
 ///
 /// ```text
 /// cache/v2/blog/list/{en|ja}.json
@@ -204,58 +286,95 @@ pub async fn rebuild_cache() -> Result<RebuildSummary, PublisherError> {
     let storage = S3BlogStorage::new().await?;
 
     let mut summary = RebuildSummary::default();
+    let mut manifest = storage.load_manifest().await;
+
+    // Slugs whose article objects changed (added/updated/removed). Article paths
+    // are language-agnostic, so one entry covers both languages for invalidation.
+    let mut changed_slugs: std::collections::BTreeSet<String> = Default::default();
+    // Languages whose blog set/metadata changed → drives list/feed regeneration.
+    let mut changed_langs: std::collections::BTreeSet<String> = Default::default();
+    // Each language's live blog list, reused when regenerating the index below.
+    let mut blogs_by_lang: std::collections::BTreeMap<String, Vec<BlogEntity>> = Default::default();
 
     for language in [BlogLanguageEntity::En, BlogLanguageEntity::Ja] {
         let lang = language.to_string();
+        summary.languages += 1;
 
-        // list (index) # ---------- #
         let blogs = use_case.list_blogs(language.clone()).await?;
+        summary.blogs_scanned += blogs.len();
+
+        let published = manifest.blogs.entry(lang.clone()).or_default();
+        let live_slugs: std::collections::BTreeSet<String> =
+            blogs.iter().map(|b| b.slug.clone()).collect();
+
+        for blog in &blogs {
+            let version = version_of(blog);
+
+            match published.get(&blog.slug) {
+                Some(prev) if *prev == version => {
+                    summary.unchanged += 1;
+                    tracing::debug!(slug = %blog.slug, %lang, "unchanged; skipping");
+                    continue;
+                }
+                Some(_) => {
+                    tracing::info!(slug = %blog.slug, %lang, "updated_at changed; republishing");
+                    summary.updated.push(format!("{lang}/{}", blog.slug));
+                }
+                None => {
+                    tracing::info!(slug = %blog.slug, %lang, "new blog; publishing");
+                    summary.added.push(format!("{lang}/{}", blog.slug));
+                }
+            }
+
+            let written = rebuild_article(&use_case, &storage, blog, language.clone(), &lang).await?;
+            summary.objects_written += written.objects;
+            summary.block_images += written.block_images;
+            summary.og_images += written.og_images;
+
+            published.insert(blog.slug.clone(), version);
+            changed_slugs.insert(blog.slug.clone());
+            changed_langs.insert(lang.clone());
+        }
+
+        // Prune slugs that vanished from Notion. (Block-image variants they
+        // referenced are content-addressed and immutable; without the old
+        // content we can't know their ids, so they're left as harmless orphans.)
+        let removed: Vec<String> = published
+            .keys()
+            .filter(|slug| !live_slugs.contains(*slug))
+            .cloned()
+            .collect();
+        for slug in removed {
+            tracing::info!(%slug, %lang, "removed from Notion; pruning article objects");
+            summary.objects_pruned += prune_article(&storage, &slug, &lang).await;
+            summary.removed.push(format!("{lang}/{slug}"));
+            published.remove(&slug);
+            changed_slugs.insert(slug.clone());
+            changed_langs.insert(lang.clone());
+        }
+
+        blogs_by_lang.insert(lang, blogs);
+    }
+
+    // Nothing changed → leave the cache and manifest untouched.
+    if changed_slugs.is_empty() {
+        tracing::info!(?summary, "blog cache already up to date; nothing to publish");
+        return Ok(summary);
+    }
+
+    // Collection objects depend on the blog set/metadata; regenerate the index
+    // and feeds for each changed language.
+    for language in [BlogLanguageEntity::En, BlogLanguageEntity::Ja] {
+        let lang = language.to_string();
+        if !changed_langs.contains(&lang) {
+            continue;
+        }
+
+        let blogs = &blogs_by_lang[&lang];
         let list: Vec<BlogResponse> = blogs.iter().cloned().map(BlogResponse::from).collect();
         storage
             .put_json(&format!("cache/v2/blog/list/{lang}.json"), &list)
             .await?;
-        summary.objects_written += 1;
-        summary.blogs = list.len();
-
-        // contents (one per slug) # ---------- #
-        for blog in &blogs {
-            let contents = use_case
-                .get_blog_contents(&blog.slug, language.clone())
-                .await?;
-
-            // Collect block-image references before the entity is consumed by
-            // the response conversion below.
-            let mut refs = Vec::new();
-            collect_block_image_refs(&contents.components, &mut refs);
-
-            let response = BlogContentsResponse::from(contents);
-            storage
-                .put_json(
-                    &format!("cache/v2/blog/article/{}/contents/{lang}.json", blog.slug),
-                    &response,
-                )
-                .await?;
-            summary.objects_written += 1;
-            summary.contents += 1;
-
-            // Materialize every block-image variant this content links to.
-            let written = materialize_block_images(&use_case, &storage, &refs).await;
-            summary.objects_written += written;
-            summary.block_images += written;
-        }
-
-        // og images (one per slug with a cover) # ---------- #
-        for blog in &blogs {
-            let Some(cover_url) = blog.ogp_image_s3_signed_url.as_deref() else {
-                continue;
-            };
-            let written =
-                materialize_og_image(&use_case, &storage, &blog.slug, &lang, cover_url).await;
-            summary.objects_written += written;
-            summary.og_images += written;
-        }
-
-        // feeds # ---------- #
         storage
             .put_text(
                 &format!("cache/v2/blog/feed/rss/{lang}.xml"),
@@ -277,11 +396,10 @@ pub async fn rebuild_cache() -> Result<RebuildSummary, PublisherError> {
                 "application/json",
             )
             .await?;
-        summary.objects_written += 3;
-        summary.languages += 1;
+        summary.objects_written += 4;
     }
 
-    // tags (language-agnostic) # ---------- #
+    // tags + sitemap span all languages, so regenerate them on any change.
     let tags: Vec<BlogTagResponse> = use_case
         .list_tags()
         .await?
@@ -289,10 +407,6 @@ pub async fn rebuild_cache() -> Result<RebuildSummary, PublisherError> {
         .map(BlogTagResponse::from)
         .collect();
     storage.put_json("cache/v2/blog/tags.json", &tags).await?;
-    summary.tags = tags.len();
-    summary.objects_written += 1;
-
-    // sitemap # ---------- #
     storage
         .put_text(
             "cache/v2/blog/sitemap.xml",
@@ -300,13 +414,102 @@ pub async fn rebuild_cache() -> Result<RebuildSummary, PublisherError> {
             "application/xml",
         )
         .await?;
-    summary.objects_written += 1;
+    summary.objects_written += 2;
+    summary.collection_regenerated = true;
 
-    // invalidate the CDN so the freshly published rebuild goes live # ---------- #
-    summary.invalidation_id = Some(invalidate_cdn().await?);
+    // Record the new published versions before invalidating.
+    storage.save_manifest(&manifest).await?;
+
+    // Targeted invalidation of only the paths this run touched.
+    let mut paths: Vec<String> = changed_slugs
+        .iter()
+        .map(|slug| format!("/cache/v2/blog/article/{slug}/*"))
+        .collect();
+    for lang in &changed_langs {
+        paths.push(format!("/cache/v2/blog/list/{lang}.json"));
+    }
+    paths.push("/cache/v2/blog/feed/*".to_owned());
+    paths.push("/cache/v2/blog/tags.json".to_owned());
+    paths.push("/cache/v2/blog/sitemap.xml".to_owned());
+
+    summary.invalidation_id = Some(invalidate_cdn(&paths).await?);
+    summary.invalidated_paths = paths;
 
     tracing::info!(?summary, "blog cache rebuild complete");
     Ok(summary)
+}
+
+/// Objects (re)written while rebuilding a single article.
+struct ArticleWrite {
+    /// Total objects written (contents + block images + OGP cover).
+    objects: usize,
+    /// Block-image variant objects written.
+    block_images: usize,
+    /// OGP cover objects written (0 or 1).
+    og_images: usize,
+}
+
+/// (Re)builds one article: rendered contents JSON, every block-image variant it
+/// links to, and its OGP cover. Image failures are non-fatal (logged + skipped).
+async fn rebuild_article(
+    use_case: &BlogUseCase,
+    storage: &S3BlogStorage,
+    blog: &BlogEntity,
+    language: BlogLanguageEntity,
+    lang: &str,
+) -> Result<ArticleWrite, PublisherError> {
+    let contents = use_case.get_blog_contents(&blog.slug, language).await?;
+
+    // Collect block-image references before the entity is consumed below.
+    let mut refs = Vec::new();
+    collect_block_image_refs(&contents.components, &mut refs);
+
+    let response = BlogContentsResponse::from(contents);
+    storage
+        .put_json(
+            &format!("cache/v2/blog/article/{}/contents/{lang}.json", blog.slug),
+            &response,
+        )
+        .await?;
+
+    let block_images = materialize_block_images(use_case, storage, &refs).await;
+
+    let og_images = match blog.ogp_image_s3_signed_url.as_deref() {
+        Some(cover_url) => {
+            materialize_og_image(use_case, storage, &blog.slug, lang, cover_url).await
+        }
+        None => 0,
+    };
+
+    Ok(ArticleWrite {
+        objects: 1 + block_images + og_images,
+        block_images,
+        og_images,
+    })
+}
+
+/// Deletes a removed article's per-language objects. Returns the number deleted.
+async fn prune_article(storage: &S3BlogStorage, slug: &str, lang: &str) -> usize {
+    let keys = [
+        format!("cache/v2/blog/article/{slug}/contents/{lang}.json"),
+        format!("cache/v2/blog/article/{slug}/og-image/{lang}"),
+    ];
+    let mut pruned = 0;
+    for key in keys {
+        match storage.delete(&key).await {
+            Ok(()) => pruned += 1,
+            Err(e) => tracing::warn!(key, error = %e, "failed to prune article object"),
+        }
+    }
+    pruned
+}
+
+/// The version a blog is tracked by: its manual Notion `updated_at`, as RFC3339.
+/// Bumping `updated_at` in Notion is what marks a post ready to (re)publish.
+fn version_of(blog: &BlogEntity) -> String {
+    blog.updated_at
+        .format(&time::format_description::well_known::Rfc3339)
+        .unwrap_or_else(|_| blog.updated_at.unix_timestamp().to_string())
 }
 
 /// Recursively collects block-image references from rendered content so the
@@ -477,14 +680,14 @@ async fn materialize_og_image(
     1
 }
 
-/// Issues a targeted CloudFront invalidation (`/cache/v2/blog/*`) so a freshly
-/// published rebuild goes live without a manual `/*` invalidation.
+/// Issues a CloudFront invalidation for the given paths so a freshly published
+/// rebuild goes live. Callers pass only the paths that actually changed.
 ///
 /// The distribution id is injected by Terraform via the `CLOUDFRONT_DISTRIBUTION_ID`
 /// environment variable. The invalidation is created asynchronously by CloudFront;
 /// this returns as soon as the request is accepted.
 #[cfg_attr(not(rust_analyzer), tracing::instrument(err))]
-async fn invalidate_cdn() -> Result<String, PublisherError> {
+async fn invalidate_cdn(paths: &[String]) -> Result<String, PublisherError> {
     let distribution_id = std::env::var("CLOUDFRONT_DISTRIBUTION_ID").map_err(|_| {
         crate::error::Error::EnvironmentVariableNotFound {
             variable_name: "CLOUDFRONT_DISTRIBUTION_ID".to_owned(),
@@ -502,9 +705,11 @@ async fn invalidate_cdn() -> Result<String, PublisherError> {
             .unwrap_or(0)
     );
 
-    let paths = aws_sdk_cloudfront::types::Paths::builder()
-        .quantity(1)
-        .items("/cache/v2/blog/*")
+    let mut paths_builder = aws_sdk_cloudfront::types::Paths::builder().quantity(paths.len() as i32);
+    for path in paths {
+        paths_builder = paths_builder.items(path);
+    }
+    let paths_obj = paths_builder
         .build()
         .map_err(|e| PublisherError::CloudFront {
             trace: e.to_string(),
@@ -512,7 +717,7 @@ async fn invalidate_cdn() -> Result<String, PublisherError> {
 
     let batch = aws_sdk_cloudfront::types::InvalidationBatch::builder()
         .caller_reference(caller_reference)
-        .paths(paths)
+        .paths(paths_obj)
         .build()
         .map_err(|e| PublisherError::CloudFront {
             trace: e.to_string(),
@@ -530,6 +735,6 @@ async fn invalidate_cdn() -> Result<String, PublisherError> {
 
     let invalidation_id = output.invalidation.map(|i| i.id).unwrap_or_default();
 
-    tracing::info!(invalidation_id, "created CloudFront invalidation for /cache/v2/blog/*");
+    tracing::info!(invalidation_id, count = paths.len(), "created CloudFront invalidation");
     Ok(invalidation_id)
 }
