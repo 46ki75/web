@@ -37,7 +37,7 @@ export const getBlogContents = (
   signal?: AbortSignal,
 ) =>
   getJson<BlogContentsResponse>(
-    `/cache/v2/blog/contents/${slug}/${language}.json`,
+    `/cache/v2/blog/article/${slug}/contents/${language}.json`,
     signal,
   );
 
@@ -47,4 +47,4 @@ export const getBlogTags = (signal?: AbortSignal) =>
 
 /** Path to a blog's materialized OGP cover image. */
 export const ogImageUrl = (slug: string, language: BlogLanguage) =>
-  `/cache/v2/blog/${slug}/og-image/${language}`;
+  `/cache/v2/blog/article/${slug}/og-image/${language}`;

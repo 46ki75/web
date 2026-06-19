@@ -189,12 +189,12 @@ impl S3BlogStorage {
 ///
 /// ```text
 /// cache/v2/blog/list/{en|ja}.json
-/// cache/v2/blog/contents/{slug}/{en|ja}.json
 /// cache/v2/blog/tags.json
-/// cache/v2/blog/{slug}/og-image/{en|ja}
-/// cache/v2/blog/block-image/{block_id}/{default|small|medium|large}
 /// cache/v2/blog/feed/{rss|atom|json-feed}/{en|ja}.{xml|json}
 /// cache/v2/blog/sitemap.xml
+/// cache/v2/blog/article/{slug}/contents/{en|ja}.json
+/// cache/v2/blog/article/{slug}/og-image/{en|ja}
+/// cache/v2/blog/block-image/{block_id}/{default|small|medium|large}
 /// ```
 #[cfg_attr(not(rust_analyzer), tracing::instrument(err))]
 pub async fn rebuild_cache() -> Result<RebuildSummary, PublisherError> {
@@ -231,7 +231,7 @@ pub async fn rebuild_cache() -> Result<RebuildSummary, PublisherError> {
             let response = BlogContentsResponse::from(contents);
             storage
                 .put_json(
-                    &format!("cache/v2/blog/contents/{}/{lang}.json", blog.slug),
+                    &format!("cache/v2/blog/article/{}/contents/{lang}.json", blog.slug),
                     &response,
                 )
                 .await?;
@@ -466,7 +466,7 @@ async fn materialize_og_image(
         }
     };
     let content_type = use_case.infer_image_mime_type(&converted);
-    let key = format!("cache/v2/blog/{slug}/og-image/{lang}");
+    let key = format!("cache/v2/blog/article/{slug}/og-image/{lang}");
     if let Err(e) = storage
         .put(&key, converted.to_vec(), &content_type, CACHE_CONTROL_DYNAMIC)
         .await

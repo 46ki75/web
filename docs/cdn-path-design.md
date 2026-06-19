@@ -35,13 +35,18 @@ in the blog-cache bucket (`{stage}-46ki75-web-s3-bucket-blog-cache`). Object
 keys mirror the public `/cache/v2/blog/...` URLs exactly:
 
 ```text
-cache/v2/blog/list/{en|ja}.json                                  # index per language
-cache/v2/blog/contents/{slug}/{en|ja}.json                       # rendered article (jarkup)
-cache/v2/blog/tags.json                                          # language-agnostic tag list
-cache/v2/blog/{slug}/og-image/{en|ja}                            # OGP cover (WebP, 1200w)
-cache/v2/blog/block-image/{block_id}/{default|small|medium|large} # in-article images
-cache/v2/blog/feed/{rss|atom|json-feed}/{en|ja}.{xml|json}       # feeds
-cache/v2/blog/sitemap.xml                                        # blog sitemap
+# collection-level
+cache/v2/blog/list/{en|ja}.json                                    # index per language
+cache/v2/blog/tags.json                                            # language-agnostic tag list
+cache/v2/blog/feed/{rss|atom|json-feed}/{en|ja}.{xml|json}         # feeds
+cache/v2/blog/sitemap.xml                                          # blog sitemap
+
+# per-article (everything for one post under article/{slug}/)
+cache/v2/blog/article/{slug}/contents/{en|ja}.json                 # rendered article (jarkup)
+cache/v2/blog/article/{slug}/og-image/{en|ja}                      # OGP cover (WebP, 1200w)
+
+# global, content-addressed (block ids are unique; shared across articles)
+cache/v2/blog/block-image/{block_id}/{default|small|medium|large}  # in-article images
 ```
 
 Notes:

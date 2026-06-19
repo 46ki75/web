@@ -180,7 +180,7 @@ pub async fn get_blog_contents(
     let lang = lang_from_headers(&headers);
     serve_cached(
         &state,
-        &format!("cache/v2/blog/contents/{slug}/{lang}.json"),
+        &format!("cache/v2/blog/article/{slug}/contents/{lang}.json"),
         "application/json",
         true,
     )
@@ -231,7 +231,7 @@ pub async fn get_blog_og_image(
     };
     serve_cached_image(
         &state,
-        &format!("cache/v2/blog/{slug}/og-image/{lang}"),
+        &format!("cache/v2/blog/article/{slug}/og-image/{lang}"),
         CACHE_VALUE,
     )
     .await
