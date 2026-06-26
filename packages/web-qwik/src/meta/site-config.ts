@@ -1,10 +1,10 @@
 export const siteConfig = {
   en: {
-    siteName: "SrcJar",
+    siteName: "FineNight",
     description: "Personal blog and portfolio",
   },
   ja: {
-    siteName: "SrcJar",
+    siteName: "FineNight",
     description: "個人ブログとポートフォリオ",
   },
 };
