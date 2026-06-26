@@ -61,7 +61,7 @@ export const generateHead = ({
     meta: [
       {
         name: "og:site_name",
-        content: "SrcJar",
+        content: "FineNight",
       },
       {
         name: "og:type",
