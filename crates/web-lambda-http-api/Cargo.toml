@@ -2,14 +2,12 @@
 name = "web-lambda-http-api"
 version = "0.1.0"
 edition = "2021"
+rust-version = "1.88"
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(rust_analyzer)'] }
 
 [dependencies]
-# WORKSPACE
-web-blog-sdk = { path = "../web-blog-sdk" }
-
 # HTTP
 http = { workspace = true }
 
@@ -53,8 +51,8 @@ strum_macros = { workspace = true }
 cached = { workspace = true, features = ["async"] }
 
 # Notion
-jarkup-rs = { workspace = true }
-notion-to-jarkup = { workspace = true }
+n2a2ui = { workspace = true }
+n2a2ui-a2ui = { workspace = true }
 notionrs = { workspace = true }
 notionrs_types = { workspace = true }
 

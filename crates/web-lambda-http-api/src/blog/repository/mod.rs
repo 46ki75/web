@@ -27,8 +27,8 @@ pub enum BlogRepositoryError {
     #[error("Notion API error: {0}")]
     NotionApi(#[from] notionrs::Error),
 
-    #[error("notion-to-jarkup error: {0}")]
-    NotionToJarkup(#[from] notion_to_jarkup::error::Error),
+    #[error("Notion block conversion error: {0}")]
+    BlockConversion(#[from] n2a2ui::error::Error),
 
     /// Wraps shared infrastructure failures (SSM, environment variables) that
     /// have no additional business meaning at this layer.
@@ -51,9 +51,8 @@ pub trait BlogRepository: Send + Sync {
         language: input::BlogLanguageDto,
     ) -> std::pin::Pin<
         Box<
-            dyn std::future::Future<
-                    Output = Result<Vec<output::BlogDto>, BlogRepositoryError>,
-                > + Send,
+            dyn std::future::Future<Output = Result<Vec<output::BlogDto>, BlogRepositoryError>>
+                + Send,
         >,
     >;
 
@@ -64,7 +63,7 @@ pub trait BlogRepository: Send + Sync {
     ) -> std::pin::Pin<
         Box<
             dyn std::future::Future<
-                    Output = Result<Vec<jarkup_rs::Component>, BlogRepositoryError>,
+                    Output = Result<n2a2ui_a2ui::v0_9::Surface, BlogRepositoryError>,
                 > + Send,
         >,
     >;
@@ -73,9 +72,8 @@ pub trait BlogRepository: Send + Sync {
         &self,
     ) -> std::pin::Pin<
         Box<
-            dyn std::future::Future<
-                    Output = Result<Vec<output::BlogTagDto>, BlogRepositoryError>,
-                > + Send,
+            dyn std::future::Future<Output = Result<Vec<output::BlogTagDto>, BlogRepositoryError>>
+                + Send,
         >,
     >;
 
@@ -83,18 +81,14 @@ pub trait BlogRepository: Send + Sync {
         &self,
         url: &str,
     ) -> std::pin::Pin<
-        Box<
-            dyn std::future::Future<Output = Result<bytes::Bytes, BlogRepositoryError>> + Send,
-        >,
+        Box<dyn std::future::Future<Output = Result<bytes::Bytes, BlogRepositoryError>> + Send>,
     >;
 
     fn fetch_image_by_block_id(
         &self,
         block_id: &str,
     ) -> std::pin::Pin<
-        Box<
-            dyn std::future::Future<Output = Result<bytes::Bytes, BlogRepositoryError>> + Send,
-        >,
+        Box<dyn std::future::Future<Output = Result<bytes::Bytes, BlogRepositoryError>> + Send>,
     >;
 }
 
@@ -108,9 +102,8 @@ impl BlogRepository for BlogRepositoryImpl {
         language: input::BlogLanguageDto,
     ) -> std::pin::Pin<
         Box<
-            dyn std::future::Future<
-                    Output = Result<Vec<output::BlogDto>, BlogRepositoryError>,
-                > + Send,
+            dyn std::future::Future<Output = Result<Vec<output::BlogDto>, BlogRepositoryError>>
+                + Send,
         >,
     > {
         Box::pin(async move {
@@ -351,7 +344,7 @@ impl BlogRepository for BlogRepositoryImpl {
     ) -> std::pin::Pin<
         Box<
             dyn std::future::Future<
-                    Output = Result<Vec<jarkup_rs::Component>, BlogRepositoryError>,
+                    Output = Result<n2a2ui_a2ui::v0_9::Surface, BlogRepositoryError>,
                 > + Send,
         >,
     > {
@@ -389,39 +382,32 @@ impl BlogRepository for BlogRepositoryImpl {
 
                     let maybe_relation = get_property(&page.properties, property_name)?;
 
-                    let article_page_id =
-                        if let PageProperty::Relation(blog_article_relation) = maybe_relation {
-                            let article_page_id = blog_article_relation
-                                .relation
-                                .first()
-                                .map(|relation| relation.id.clone())
-                                .ok_or_else(|| {
-                                    BlogRepositoryError::NotionRecord(format!(
-                                        "relation is not set in property '{0}' (page_id: {1})",
-                                        property_name, page.id
-                                    ))
-                                })?;
-                            article_page_id
-                        } else {
-                            return Err(BlogRepositoryError::InvalidSchema(
-                                property_name.to_owned(),
-                            ));
-                        };
+                    let article_page_id = if let PageProperty::Relation(blog_article_relation) =
+                        maybe_relation
+                    {
+                        let article_page_id = blog_article_relation
+                            .relation
+                            .first()
+                            .map(|relation| relation.id.clone())
+                            .ok_or_else(|| {
+                                BlogRepositoryError::NotionRecord(format!(
+                                    "relation is not set in property '{0}' (page_id: {1})",
+                                    property_name, page.id
+                                ))
+                            })?;
+                        article_page_id
+                    } else {
+                        return Err(BlogRepositoryError::InvalidSchema(property_name.to_owned()));
+                    };
 
                     Ok(article_page_id)
                 }
                 None => Err(BlogRepositoryError::NotionRecord("Not Found".to_owned())),
             }?;
 
-            let notion_to_jarkup_client =
-                crate::once_cell_cache::notion_to_jarkup_client::init_notion_to_jarkup_client()
-                    .await?;
+            let client = crate::once_cell_cache::n2a2ui_client::init_n2a2ui_client().await?;
 
-            let components = notion_to_jarkup_client
-                .convert_block(&page_id.clone())
-                .await?;
-
-            Ok(components)
+            Ok(client.convert_block(&page_id).await?)
         })
     }
 
@@ -430,9 +416,8 @@ impl BlogRepository for BlogRepositoryImpl {
         &self,
     ) -> std::pin::Pin<
         Box<
-            dyn std::future::Future<
-                    Output = Result<Vec<output::BlogTagDto>, BlogRepositoryError>,
-                > + Send,
+            dyn std::future::Future<Output = Result<Vec<output::BlogTagDto>, BlogRepositoryError>>
+                + Send,
         >,
     > {
         Box::pin(async move {
@@ -507,9 +492,7 @@ impl BlogRepository for BlogRepositoryImpl {
         &self,
         url: &str,
     ) -> std::pin::Pin<
-        Box<
-            dyn std::future::Future<Output = Result<bytes::Bytes, BlogRepositoryError>> + Send,
-        >,
+        Box<dyn std::future::Future<Output = Result<bytes::Bytes, BlogRepositoryError>> + Send>,
     > {
         let url = url.to_owned();
 
@@ -525,9 +508,7 @@ impl BlogRepository for BlogRepositoryImpl {
         &self,
         block_id: &str,
     ) -> std::pin::Pin<
-        Box<
-            dyn std::future::Future<Output = Result<bytes::Bytes, BlogRepositoryError>> + Send,
-        >,
+        Box<dyn std::future::Future<Output = Result<bytes::Bytes, BlogRepositoryError>> + Send>,
     > {
         let block_id = block_id.to_owned();
 

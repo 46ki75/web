@@ -70,7 +70,9 @@ impl From<crate::blog::repository::output::BlogStatusDto> for BlogStatusEntity {
             crate::blog::repository::output::BlogStatusDto::Draft => BlogStatusEntity::Draft,
             crate::blog::repository::output::BlogStatusDto::Archived => BlogStatusEntity::Archived,
             crate::blog::repository::output::BlogStatusDto::Private => BlogStatusEntity::Private,
-            crate::blog::repository::output::BlogStatusDto::Published => BlogStatusEntity::Published,
+            crate::blog::repository::output::BlogStatusDto::Published => {
+                BlogStatusEntity::Published
+            }
         }
     }
 }
@@ -78,7 +80,7 @@ impl From<crate::blog::repository::output::BlogStatusDto> for BlogStatusEntity {
 #[derive(Debug, Clone)]
 pub struct BlogContentsEntity {
     pub meta: BlogEntity,
-    pub components: Vec<jarkup_rs::Component>,
+    pub surface: n2a2ui_a2ui::v0_9::Surface,
 }
 
 #[derive(Debug, Clone)]

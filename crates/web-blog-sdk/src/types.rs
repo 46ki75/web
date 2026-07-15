@@ -60,8 +60,8 @@ pub struct Tag {
 }
 
 #[derive(Debug, Clone)]
-pub struct JarkupResult {
-    pub components: Vec<jarkup_rs::Component>,
+pub struct A2uiResult {
+    pub surface: n2a2ui_a2ui::v0_9::Surface,
     pub icons: Vec<String>,
     pub images: Vec<String>,
     pub files: Vec<String>,

@@ -101,16 +101,14 @@ impl BlogUseCase {
             input::BlogLanguageEntity::Ja => super::repository::input::BlogLanguageDto::Ja,
         };
 
-        let mut components = self
+        let surface = self
             .blog_repository
             .get_blog_contents(slug, language)
             .await?;
 
-        Self::rewrite_components(&mut components);
-
         Ok(output::BlogContentsEntity {
             meta: blog,
-            components,
+            surface,
         })
     }
 
@@ -123,122 +121,6 @@ impl BlogUseCase {
             .collect::<Vec<output::BlogTagEntity>>();
 
         Ok(tags)
-    }
-
-    #[tracing::instrument]
-    fn rewrite_inline_component(_inline_component: &mut jarkup_rs::InlineComponent) {}
-
-    #[tracing::instrument]
-    fn rewrite_inline_components(inline_components: &mut Vec<jarkup_rs::InlineComponent>) {
-        for inline_component in inline_components {
-            Self::rewrite_inline_component(inline_component);
-        }
-    }
-
-    #[tracing::instrument]
-    fn rewrite_components(components: &mut Vec<jarkup_rs::Component>) {
-        for component in components {
-            match component {
-                jarkup_rs::Component::InlineComponent(inline_component) => {
-                    Self::rewrite_inline_component(inline_component);
-                }
-                jarkup_rs::Component::BlockComponent(block_component) => match block_component {
-                    jarkup_rs::BlockComponent::Image(image) => {
-                        if let Some(id) = &image.id {
-                            let src_base = format!("/cache/v2/blog/block-image/{}", id);
-
-                            // Path-based variants (…/{size}) so the URLs map 1:1 to
-                            // the materialized S3 keys and can be served straight from
-                            // the CDN's S3 origin without query-string rewriting.
-                            (image.props.srcset, image.props.sizes) = if image
-                                .props
-                                .mime_type
-                                .as_ref()
-                                .map(|mime| mime.contains("xml"))
-                                .unwrap_or(false)
-                            {
-                                // If the image is SVG, we don't set srcset and sizes
-                                // because SVG is resolution-independent and can be scaled without loss of quality.
-                                (None, None)
-                            } else {
-                                (
-                                Some(
-                                    format!(
-                                        "{src_base}/small 500w, {src_base}/medium 800w, {src_base}/large 1200w"
-                                    )
-                                ),
-                                Some("(max-width: 800px) 100vw, 800px".to_owned())
-                                )
-                            };
-
-                            image.props.src = format!("{src_base}/default");
-                        };
-                    }
-
-                    jarkup_rs::BlockComponent::Fragment(fragment) => {
-                        Self::rewrite_components(&mut fragment.slots.default);
-                    }
-                    jarkup_rs::BlockComponent::Heading(heading) => {
-                        Self::rewrite_inline_components(&mut heading.slots.default);
-                    }
-                    jarkup_rs::BlockComponent::Paragraph(paragraph) => {
-                        Self::rewrite_inline_components(&mut paragraph.slots.default);
-                    }
-                    jarkup_rs::BlockComponent::ListItem(list_item) => {
-                        Self::rewrite_components(&mut list_item.slots.default);
-                    }
-                    jarkup_rs::BlockComponent::List(list) => {
-                        Self::rewrite_components(&mut list.slots.default);
-                    }
-                    jarkup_rs::BlockComponent::BlockQuote(block_quote) => {
-                        Self::rewrite_components(&mut block_quote.slots.default);
-                    }
-                    jarkup_rs::BlockComponent::Callout(callout) => {
-                        Self::rewrite_components(&mut callout.slots.default);
-                    }
-                    jarkup_rs::BlockComponent::Divider(..) => {}
-                    jarkup_rs::BlockComponent::Toggle(toggle) => {
-                        Self::rewrite_inline_components(&mut toggle.slots.summary);
-                        Self::rewrite_components(&mut toggle.slots.default);
-                    }
-                    jarkup_rs::BlockComponent::Bookmark(..) => {}
-                    jarkup_rs::BlockComponent::File(..) => {}
-                    jarkup_rs::BlockComponent::CodeBlock(code_block) => {
-                        if let Some(slots) = &mut code_block.slots {
-                            Self::rewrite_inline_components(&mut slots.default);
-                        }
-                    }
-                    jarkup_rs::BlockComponent::Katex(..) => {}
-                    jarkup_rs::BlockComponent::Mermaid(..) => {}
-                    jarkup_rs::BlockComponent::Tab(tab) => {
-                        Self::rewrite_inline_components(&mut tab.slots.labels);
-                        Self::rewrite_components(&mut tab.slots.contents);
-                    }
-                    jarkup_rs::BlockComponent::Tabs(tabs) => {
-                        Self::rewrite_components(&mut tabs.slots.default);
-                    }
-                    jarkup_rs::BlockComponent::Table(table) => {
-                        Self::rewrite_components(&mut table.slots.body);
-                        if let Some(header) = &mut table.slots.header {
-                            Self::rewrite_components(header);
-                        }
-                    }
-                    jarkup_rs::BlockComponent::TableRow(table_row) => {
-                        Self::rewrite_components(&mut table_row.slots.default);
-                    }
-                    jarkup_rs::BlockComponent::TableCell(table_cell) => {
-                        Self::rewrite_inline_components(&mut table_cell.slots.default);
-                    }
-                    jarkup_rs::BlockComponent::ColumnList(column_list) => {
-                        Self::rewrite_components(&mut column_list.slots.default);
-                    }
-                    jarkup_rs::BlockComponent::Column(column) => {
-                        Self::rewrite_components(&mut column.slots.default);
-                    }
-                    jarkup_rs::BlockComponent::Unsupported(..) => {}
-                },
-            }
-        }
     }
 
     /// Infers the MIME type of the image by its binary data.

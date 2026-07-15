@@ -70,9 +70,13 @@ impl From<crate::blog::use_case::output::BlogStatusEntity> for BlogStatusRespons
     fn from(value: crate::blog::use_case::output::BlogStatusEntity) -> Self {
         match value {
             crate::blog::use_case::output::BlogStatusEntity::Draft => BlogStatusResponse::Draft,
-            crate::blog::use_case::output::BlogStatusEntity::Archived => BlogStatusResponse::Archived,
+            crate::blog::use_case::output::BlogStatusEntity::Archived => {
+                BlogStatusResponse::Archived
+            }
             crate::blog::use_case::output::BlogStatusEntity::Private => BlogStatusResponse::Private,
-            crate::blog::use_case::output::BlogStatusEntity::Published => BlogStatusResponse::Published,
+            crate::blog::use_case::output::BlogStatusEntity::Published => {
+                BlogStatusResponse::Published
+            }
         }
     }
 }
@@ -80,18 +84,14 @@ impl From<crate::blog::use_case::output::BlogStatusEntity> for BlogStatusRespons
 #[derive(Debug, Clone, serde::Serialize, utoipa::ToSchema)]
 pub struct BlogContentsResponse {
     pub meta: BlogResponse,
-    pub components: Vec<serde_json::Value>,
+    pub surface: serde_json::Value,
 }
 
 impl From<crate::blog::use_case::output::BlogContentsEntity> for BlogContentsResponse {
     fn from(value: crate::blog::use_case::output::BlogContentsEntity) -> Self {
         BlogContentsResponse {
             meta: BlogResponse::from(value.meta),
-            components: value
-                .components
-                .into_iter()
-                .map(|e| serde_json::to_value(&e).unwrap())
-                .collect::<Vec<serde_json::Value>>(),
+            surface: serde_json::to_value(value.surface).expect("A2UI surface is serializable"),
         }
     }
 }
