@@ -1,7 +1,6 @@
 import { $, component$, useAsync$, useContext } from "@qwik.dev/core";
-import type { Component } from "jarkup-ts";
 
-import { ElmBlockFallback, ElmJarkup } from "@elmethis/qwik";
+import { ElmA2ui, ElmBlockFallback, notionBlockCatalog } from "@elmethis/qwik";
 
 import type { BlogResponse } from "../../../openapi/blog";
 import { getBlogContents, ogImageUrl } from "../../../openapi/blog";
@@ -15,7 +14,34 @@ import { Language } from "~/types";
 
 type BlogContents = {
   meta: BlogResponse;
-  components: Component[];
+  surface: unknown;
+};
+
+const NOTION_BLOCK_CATALOG_ID =
+  "https://46ki75.github.io/elmethis/a2ui/v0_9/notion_block_catalog.json";
+
+const surfaceToMessages = (raw: unknown, surfaceId: string): object[] => {
+  if (!raw || typeof raw !== "object") return [];
+  const surface = raw as {
+    components?: Record<string, { id: string; component: string }>;
+  };
+
+  return [
+    {
+      version: "v0.9",
+      createSurface: {
+        surfaceId,
+        catalogId: NOTION_BLOCK_CATALOG_ID,
+      },
+    },
+    {
+      version: "v0.9",
+      updateComponents: {
+        surfaceId,
+        components: Object.values(surface.components ?? {}),
+      },
+    },
+  ];
 };
 
 export interface ArticleProps {
@@ -26,7 +52,7 @@ export interface ArticleProps {
 export const BlogArticle = component$<ArticleProps>(({ slug, language }) => {
   const blogState = useContext(BlogContext);
 
-  const jarkup = useAsync$<BlogContents>(async ({ track, abortSignal }) => {
+  const contents = useAsync$<BlogContents>(async ({ track, abortSignal }) => {
     const trackedSlug = track(() => slug);
     const trackedLang = track(() => language);
 
@@ -48,7 +74,7 @@ export const BlogArticle = component$<ArticleProps>(({ slug, language }) => {
 
   return (
     <article>
-      {jarkup.loading ? (
+      {contents.loading ? (
         <ElmBlockFallback
           height={"calc(100vh - 8rem)"}
           style={{
@@ -63,9 +89,9 @@ export const BlogArticle = component$<ArticleProps>(({ slug, language }) => {
           }}
         >
           <Meta
-            title={jarkup.value.meta.title}
-            createdAt={jarkup.value.meta.created_at}
-            updatedAt={jarkup.value.meta.updated_at}
+            title={contents.value.meta.title}
+            createdAt={contents.value.meta.created_at}
+            updatedAt={contents.value.meta.updated_at}
             image={ogImageUrl(slug, language)}
             links={[
               {
@@ -93,7 +119,7 @@ export const BlogArticle = component$<ArticleProps>(({ slug, language }) => {
             ]}
           >
             <div class={styles["tag-container"]}>
-              {jarkup.value.meta.tag_ids
+              {contents.value.meta.tag_ids
                 .flatMap((id) => blogState.tags.find((t) => t.id === id))
                 .map((tag) => (
                   <span
@@ -109,7 +135,13 @@ export const BlogArticle = component$<ArticleProps>(({ slug, language }) => {
                 ))}
             </div>
           </Meta>
-          <ElmJarkup jsonComponents={jarkup.value.components} />
+          <ElmA2ui
+            catalog={notionBlockCatalog}
+            messages={surfaceToMessages(
+              contents.value.surface,
+              `blog-${language}-${slug}`,
+            )}
+          />
         </div>
       )}
     </article>

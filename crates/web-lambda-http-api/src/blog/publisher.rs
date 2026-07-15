@@ -22,8 +22,7 @@ use crate::blog::use_case::BlogUseCase;
 const CACHE_CONTROL_DYNAMIC: &str = "public, max-age=0, s-maxage=31536000";
 
 /// `Cache-Control` for immutable, content-addressed objects (block images).
-const CACHE_CONTROL_IMMUTABLE: &str =
-    "public, max-age=31536000, s-maxage=31536000, immutable";
+const CACHE_CONTROL_IMMUTABLE: &str = "public, max-age=31536000, s-maxage=31536000, immutable";
 
 /// Internal object tracking the published `updated_at` per (language, slug).
 ///
@@ -31,7 +30,7 @@ const CACHE_CONTROL_IMMUTABLE: &str =
 /// CloudFront behavior routes to it and it is never publicly served. The
 /// incremental publisher diffs live Notion `updated_at` values against this to
 /// decide what to (re)build, skip, or prune.
-const MANIFEST_KEY: &str = "internal/blog-publisher/manifest.json";
+const MANIFEST_KEY: &str = "internal/blog-publisher/manifest-v3.json";
 
 #[derive(Debug, thiserror::Error)]
 pub enum PublisherError {
@@ -95,12 +94,16 @@ struct Manifest {
     blogs: std::collections::BTreeMap<String, std::collections::BTreeMap<String, String>>,
 }
 
-/// A block-image reference discovered while walking rendered content.
+/// A block-image reference discovered in an A2UI surface.
 struct BlockImageRef {
-    /// Notion block id (the `image.id` from the rendered component).
+    /// Notion block id (the A2UI component id).
     block_id: String,
-    /// Whether the source is an SVG (resolution-independent → single variant).
-    is_svg: bool,
+}
+
+/// Published variants grouped by Notion block id.
+struct MaterializedBlockImages {
+    written: usize,
+    variants: std::collections::BTreeMap<String, std::collections::BTreeSet<String>>,
 }
 
 /// S3-backed storage for the materialized blog cache.
@@ -144,10 +147,14 @@ impl S3BlogStorage {
         {
             Ok(output) => {
                 let content_type = output.content_type().map(|s| s.to_owned());
-                let data = output.body.collect().await.map_err(|e| PublisherError::S3 {
-                    key: key.to_owned(),
-                    trace: e.to_string(),
-                })?;
+                let data = output
+                    .body
+                    .collect()
+                    .await
+                    .map_err(|e| PublisherError::S3 {
+                        key: key.to_owned(),
+                        trace: e.to_string(),
+                    })?;
                 Ok(Some((data.into_bytes(), content_type)))
             }
             Err(e) => {
@@ -270,13 +277,13 @@ impl S3BlogStorage {
 /// Object layout:
 ///
 /// ```text
-/// cache/v2/blog/list/{en|ja}.json
-/// cache/v2/blog/tags.json
-/// cache/v2/blog/feed/{rss|atom|json-feed}/{en|ja}.{xml|json}
-/// cache/v2/blog/sitemap.xml
-/// cache/v2/blog/article/{slug}/contents/{en|ja}.json
-/// cache/v2/blog/article/{slug}/og-image/{en|ja}
-/// cache/v2/blog/block-image/{block_id}/{default|small|medium|large}
+/// cache/v3/blog/list/{en|ja}.json
+/// cache/v3/blog/tags.json
+/// cache/v3/blog/feed/{rss|atom|json-feed}/{en|ja}.{xml|json}
+/// cache/v3/blog/sitemap.xml
+/// cache/v3/blog/article/{slug}/contents/{en|ja}.json
+/// cache/v3/blog/article/{slug}/og-image/{en|ja}
+/// cache/v3/blog/block-image/{block_id}/{default|small|medium|large}
 /// ```
 #[cfg_attr(not(rust_analyzer), tracing::instrument(err))]
 pub async fn rebuild_cache() -> Result<RebuildSummary, PublisherError> {
@@ -326,7 +333,8 @@ pub async fn rebuild_cache() -> Result<RebuildSummary, PublisherError> {
                 }
             }
 
-            let written = rebuild_article(&use_case, &storage, blog, language.clone(), &lang).await?;
+            let written =
+                rebuild_article(&use_case, &storage, blog, language.clone(), &lang).await?;
             summary.objects_written += written.objects;
             summary.block_images += written.block_images;
             summary.og_images += written.og_images;
@@ -358,7 +366,10 @@ pub async fn rebuild_cache() -> Result<RebuildSummary, PublisherError> {
 
     // Nothing changed → leave the cache and manifest untouched.
     if changed_slugs.is_empty() {
-        tracing::info!(?summary, "blog cache already up to date; nothing to publish");
+        tracing::info!(
+            ?summary,
+            "blog cache already up to date; nothing to publish"
+        );
         return Ok(summary);
     }
 
@@ -373,25 +384,25 @@ pub async fn rebuild_cache() -> Result<RebuildSummary, PublisherError> {
         let blogs = &blogs_by_lang[&lang];
         let list: Vec<BlogResponse> = blogs.iter().cloned().map(BlogResponse::from).collect();
         storage
-            .put_json(&format!("cache/v2/blog/list/{lang}.json"), &list)
+            .put_json(&format!("cache/v3/blog/list/{lang}.json"), &list)
             .await?;
         storage
             .put_text(
-                &format!("cache/v2/blog/feed/rss/{lang}.xml"),
+                &format!("cache/v3/blog/feed/rss/{lang}.xml"),
                 use_case.generate_rss(language.clone()).await?,
                 "application/xml",
             )
             .await?;
         storage
             .put_text(
-                &format!("cache/v2/blog/feed/atom/{lang}.xml"),
+                &format!("cache/v3/blog/feed/atom/{lang}.xml"),
                 use_case.generate_atom(language.clone()).await?,
                 "application/xml",
             )
             .await?;
         storage
             .put_text(
-                &format!("cache/v2/blog/feed/json-feed/{lang}.json"),
+                &format!("cache/v3/blog/feed/json-feed/{lang}.json"),
                 use_case.generate_jsonfeed(language.clone()).await?,
                 "application/json",
             )
@@ -406,10 +417,10 @@ pub async fn rebuild_cache() -> Result<RebuildSummary, PublisherError> {
         .into_iter()
         .map(BlogTagResponse::from)
         .collect();
-    storage.put_json("cache/v2/blog/tags.json", &tags).await?;
+    storage.put_json("cache/v3/blog/tags.json", &tags).await?;
     storage
         .put_text(
-            "cache/v2/blog/sitemap.xml",
+            "cache/v3/blog/sitemap.xml",
             use_case.generate_sitemap().await?,
             "application/xml",
         )
@@ -423,14 +434,14 @@ pub async fn rebuild_cache() -> Result<RebuildSummary, PublisherError> {
     // Targeted invalidation of only the paths this run touched.
     let mut paths: Vec<String> = changed_slugs
         .iter()
-        .map(|slug| format!("/cache/v2/blog/article/{slug}/*"))
+        .map(|slug| format!("/cache/v3/blog/article/{slug}/*"))
         .collect();
     for lang in &changed_langs {
-        paths.push(format!("/cache/v2/blog/list/{lang}.json"));
+        paths.push(format!("/cache/v3/blog/list/{lang}.json"));
     }
-    paths.push("/cache/v2/blog/feed/*".to_owned());
-    paths.push("/cache/v2/blog/tags.json".to_owned());
-    paths.push("/cache/v2/blog/sitemap.xml".to_owned());
+    paths.push("/cache/v3/blog/feed/*".to_owned());
+    paths.push("/cache/v3/blog/tags.json".to_owned());
+    paths.push("/cache/v3/blog/sitemap.xml".to_owned());
 
     summary.invalidation_id = Some(invalidate_cdn(&paths).await?);
     summary.invalidated_paths = paths;
@@ -458,21 +469,22 @@ async fn rebuild_article(
     language: BlogLanguageEntity,
     lang: &str,
 ) -> Result<ArticleWrite, PublisherError> {
-    let contents = use_case.get_blog_contents(&blog.slug, language).await?;
+    let mut contents = use_case.get_blog_contents(&blog.slug, language).await?;
 
-    // Collect block-image references before the entity is consumed below.
+    // Materialize images before serializing so the A2UI surface only advertises
+    // variants that exist in the cache.
     let mut refs = Vec::new();
-    collect_block_image_refs(&contents.components, &mut refs);
+    collect_block_image_refs(&contents.surface, &mut refs);
+    let block_images = materialize_block_images(use_case, storage, &refs).await;
+    rewrite_block_images(&mut contents.surface, &block_images.variants);
 
     let response = BlogContentsResponse::from(contents);
     storage
         .put_json(
-            &format!("cache/v2/blog/article/{}/contents/{lang}.json", blog.slug),
+            &format!("cache/v3/blog/article/{}/contents/{lang}.json", blog.slug),
             &response,
         )
         .await?;
-
-    let block_images = materialize_block_images(use_case, storage, &refs).await;
 
     let og_images = match blog.ogp_image_s3_signed_url.as_deref() {
         Some(cover_url) => {
@@ -482,8 +494,8 @@ async fn rebuild_article(
     };
 
     Ok(ArticleWrite {
-        objects: 1 + block_images + og_images,
-        block_images,
+        objects: 1 + block_images.written + og_images,
+        block_images: block_images.written,
         og_images,
     })
 }
@@ -491,8 +503,8 @@ async fn rebuild_article(
 /// Deletes a removed article's per-language objects. Returns the number deleted.
 async fn prune_article(storage: &S3BlogStorage, slug: &str, lang: &str) -> usize {
     let keys = [
-        format!("cache/v2/blog/article/{slug}/contents/{lang}.json"),
-        format!("cache/v2/blog/article/{slug}/og-image/{lang}"),
+        format!("cache/v3/blog/article/{slug}/contents/{lang}.json"),
+        format!("cache/v3/blog/article/{slug}/og-image/{lang}"),
     ];
     let mut pruned = 0;
     for key in keys {
@@ -512,72 +524,46 @@ fn version_of(blog: &BlogEntity) -> String {
         .unwrap_or_else(|_| blog.updated_at.unix_timestamp().to_string())
 }
 
-/// Recursively collects block-image references from rendered content so the
-/// publisher can materialize exactly the variants the content links to.
-///
-/// Mirrors the container recursion in [`BlogUseCase::rewrite_components`];
-/// images only ever appear as block components, so inline slots are skipped.
-fn collect_block_image_refs(components: &[jarkup_rs::Component], out: &mut Vec<BlockImageRef>) {
-    for component in components {
-        let jarkup_rs::Component::BlockComponent(block) = component else {
+/// Collects every block-image component from the surface's flat component map.
+fn collect_block_image_refs(surface: &n2a2ui_a2ui::v0_9::Surface, out: &mut Vec<BlockImageRef>) {
+    for component in surface.components.values() {
+        if let n2a2ui_a2ui::v0_9::Component::BlockImage(image) = component {
+            out.push(BlockImageRef {
+                block_id: image.id.clone(),
+            });
+        }
+    }
+}
+
+/// Rewrites published image URLs to the immutable variants materialized above.
+fn rewrite_block_images(
+    surface: &mut n2a2ui_a2ui::v0_9::Surface,
+    variants_by_block: &std::collections::BTreeMap<String, std::collections::BTreeSet<String>>,
+) {
+    for component in surface.components.values_mut() {
+        let n2a2ui_a2ui::v0_9::Component::BlockImage(image) = component else {
             continue;
         };
-        match block {
-            jarkup_rs::BlockComponent::Image(image) => {
-                if let Some(id) = &image.id {
-                    let is_svg = image
-                        .props
-                        .mime_type
-                        .as_ref()
-                        .map(|mime| mime.contains("xml"))
-                        .unwrap_or(false);
-                    out.push(BlockImageRef {
-                        block_id: id.clone(),
-                        is_svg,
-                    });
-                }
-            }
-            jarkup_rs::BlockComponent::Fragment(fragment) => {
-                collect_block_image_refs(&fragment.slots.default, out)
-            }
-            jarkup_rs::BlockComponent::ListItem(list_item) => {
-                collect_block_image_refs(&list_item.slots.default, out)
-            }
-            jarkup_rs::BlockComponent::List(list) => {
-                collect_block_image_refs(&list.slots.default, out)
-            }
-            jarkup_rs::BlockComponent::BlockQuote(block_quote) => {
-                collect_block_image_refs(&block_quote.slots.default, out)
-            }
-            jarkup_rs::BlockComponent::Callout(callout) => {
-                collect_block_image_refs(&callout.slots.default, out)
-            }
-            jarkup_rs::BlockComponent::Toggle(toggle) => {
-                collect_block_image_refs(&toggle.slots.default, out)
-            }
-            jarkup_rs::BlockComponent::Tab(tab) => {
-                collect_block_image_refs(&tab.slots.contents, out)
-            }
-            jarkup_rs::BlockComponent::Tabs(tabs) => {
-                collect_block_image_refs(&tabs.slots.default, out)
-            }
-            jarkup_rs::BlockComponent::Table(table) => {
-                collect_block_image_refs(&table.slots.body, out);
-                if let Some(header) = &table.slots.header {
-                    collect_block_image_refs(header, out);
-                }
-            }
-            jarkup_rs::BlockComponent::TableRow(table_row) => {
-                collect_block_image_refs(&table_row.slots.default, out)
-            }
-            jarkup_rs::BlockComponent::ColumnList(column_list) => {
-                collect_block_image_refs(&column_list.slots.default, out)
-            }
-            jarkup_rs::BlockComponent::Column(column) => {
-                collect_block_image_refs(&column.slots.default, out)
-            }
-            _ => {}
+
+        let Some(variants) = variants_by_block.get(&image.id) else {
+            continue;
+        };
+        if !variants.contains("default") {
+            continue;
         }
+
+        let src_base = format!("/cache/v3/blog/block-image/{}", image.id);
+        image.src = format!("{src_base}/default");
+        let srcset = [("small", 500), ("medium", 800), ("large", 1200)]
+            .into_iter()
+            .filter(|(variant, _)| variants.contains(*variant))
+            .map(|(variant, width)| format!("{src_base}/{variant} {width}w"))
+            .collect::<Vec<_>>();
+        image.srcset = (!srcset.is_empty()).then(|| srcset.join(", "));
+        image.sizes = image
+            .srcset
+            .as_ref()
+            .map(|_| "(max-width: 800px) 100vw, 800px".to_owned());
     }
 }
 
@@ -590,8 +576,11 @@ async fn materialize_block_images(
     use_case: &BlogUseCase,
     storage: &S3BlogStorage,
     refs: &[BlockImageRef],
-) -> usize {
-    let mut written = 0;
+) -> MaterializedBlockImages {
+    let mut result = MaterializedBlockImages {
+        written: 0,
+        variants: Default::default(),
+    };
     let mut seen = std::collections::HashSet::new();
 
     for image in refs {
@@ -607,9 +596,9 @@ async fn materialize_block_images(
             }
         };
 
-        // SVG is resolution-independent, so the rendered content links only the
-        // base (`default`) variant; raster images expose the full srcset set.
-        let variants: &[(&str, Option<u32>)] = if image.is_svg {
+        // SVG is resolution-independent, so it only needs the base variant.
+        let is_svg = use_case.infer_image_mime_type(&source).contains("xml");
+        let variants: &[(&str, Option<u32>)] = if is_svg {
             &[("default", None)]
         } else {
             &[
@@ -629,19 +618,29 @@ async fn materialize_block_images(
                 }
             };
             let content_type = use_case.infer_image_mime_type(&converted);
-            let key = format!("cache/v2/blog/block-image/{}/{}", image.block_id, variant);
+            let key = format!("cache/v3/blog/block-image/{}/{}", image.block_id, variant);
             if let Err(e) = storage
-                .put(&key, converted.to_vec(), &content_type, CACHE_CONTROL_IMMUTABLE)
+                .put(
+                    &key,
+                    converted.to_vec(),
+                    &content_type,
+                    CACHE_CONTROL_IMMUTABLE,
+                )
                 .await
             {
                 tracing::warn!(key, error = %e, "skipping block image variant: put failed");
                 continue;
             }
-            written += 1;
+            result.written += 1;
+            result
+                .variants
+                .entry(image.block_id.clone())
+                .or_default()
+                .insert(variant.to_owned());
         }
     }
 
-    written
+    result
 }
 
 /// Fetches, converts and writes a blog's OGP cover image. Non-fatal: a failure
@@ -669,9 +668,14 @@ async fn materialize_og_image(
         }
     };
     let content_type = use_case.infer_image_mime_type(&converted);
-    let key = format!("cache/v2/blog/article/{slug}/og-image/{lang}");
+    let key = format!("cache/v3/blog/article/{slug}/og-image/{lang}");
     if let Err(e) = storage
-        .put(&key, converted.to_vec(), &content_type, CACHE_CONTROL_DYNAMIC)
+        .put(
+            &key,
+            converted.to_vec(),
+            &content_type,
+            CACHE_CONTROL_DYNAMIC,
+        )
         .await
     {
         tracing::warn!(key, error = %e, "skipping og image: put failed");
@@ -705,7 +709,8 @@ async fn invalidate_cdn(paths: &[String]) -> Result<String, PublisherError> {
             .unwrap_or(0)
     );
 
-    let mut paths_builder = aws_sdk_cloudfront::types::Paths::builder().quantity(paths.len() as i32);
+    let mut paths_builder =
+        aws_sdk_cloudfront::types::Paths::builder().quantity(paths.len() as i32);
     for path in paths {
         paths_builder = paths_builder.items(path);
     }
@@ -735,6 +740,10 @@ async fn invalidate_cdn(paths: &[String]) -> Result<String, PublisherError> {
 
     let invalidation_id = output.invalidation.map(|i| i.id).unwrap_or_default();
 
-    tracing::info!(invalidation_id, count = paths.len(), "created CloudFront invalidation");
+    tracing::info!(
+        invalidation_id,
+        count = paths.len(),
+        "created CloudFront invalidation"
+    );
     Ok(invalidation_id)
 }

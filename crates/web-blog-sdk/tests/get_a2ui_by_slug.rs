@@ -1,5 +1,5 @@
 #[tokio::test]
-async fn get_jarkup_by_slug() {
+async fn get_a2ui_by_slug() {
     dotenvy::dotenv().unwrap();
 
     let notion_api_key = std::env::var("NOTION_API_KEY").unwrap();
@@ -9,7 +9,7 @@ async fn get_jarkup_by_slug() {
     let notionrs_client = notionrs::Client::new(notion_api_key);
     let reqwest_client = reqwest::Client::new();
 
-    let jarkup = web_blog_sdk::command::get_jarkup_by_slug::get_jarkup_by_slug(
+    let a2ui = web_blog_sdk::command::get_a2ui_by_slug::get_a2ui_by_slug(
         notionrs_client,
         reqwest_client,
         &data_source_id,
@@ -19,5 +19,5 @@ async fn get_jarkup_by_slug() {
     .await
     .unwrap();
 
-    println!("{:#?}", jarkup);
+    println!("{:#?}", a2ui);
 }

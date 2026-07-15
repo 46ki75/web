@@ -29,16 +29,16 @@ pub enum BlogControllerError {
 
 impl axum::response::IntoResponse for BlogControllerError {
     fn into_response(self) -> axum::response::Response {
-        use axum::http::StatusCode;
         use super::repository::BlogRepositoryError;
         use super::use_case::BlogUseCaseError;
+        use axum::http::StatusCode;
 
         let status = match &self {
             Self::UseCase(e) => match e {
                 BlogUseCaseError::NotFound(_) => StatusCode::NOT_FOUND,
                 BlogUseCaseError::OgpCoverNotSet { .. } => StatusCode::BAD_REQUEST,
                 BlogUseCaseError::Repository(r) => match r {
-                    BlogRepositoryError::NotionToJarkup(_) => StatusCode::BAD_REQUEST,
+                    BlogRepositoryError::BlockConversion(_) => StatusCode::BAD_GATEWAY,
                     BlogRepositoryError::PagePropertyNotFound(_) => StatusCode::BAD_REQUEST,
                     BlogRepositoryError::InvalidSchema(_) => StatusCode::BAD_REQUEST,
                     BlogRepositoryError::NotionRecord(_) => StatusCode::BAD_REQUEST,
@@ -150,7 +150,7 @@ pub async fn list_blogs(
     let lang = lang_from_headers(&headers);
     serve_cached(
         &state,
-        &format!("cache/v2/blog/list/{lang}.json"),
+        &format!("cache/v3/blog/list/{lang}.json"),
         "application/json",
         true,
     )
@@ -180,7 +180,7 @@ pub async fn get_blog_contents(
     let lang = lang_from_headers(&headers);
     serve_cached(
         &state,
-        &format!("cache/v2/blog/article/{slug}/contents/{lang}.json"),
+        &format!("cache/v3/blog/article/{slug}/contents/{lang}.json"),
         "application/json",
         true,
     )
@@ -200,7 +200,7 @@ pub async fn get_blog_contents(
 pub async fn list_tags(
     axum::extract::State(state): axum::extract::State<std::sync::Arc<super::router::BlogState>>,
 ) -> Result<axum::response::Response<axum::body::Body>, BlogControllerError> {
-    serve_cached(&state, "cache/v2/blog/tags.json", "application/json", false).await
+    serve_cached(&state, "cache/v3/blog/tags.json", "application/json", false).await
 }
 
 #[utoipa::path(
@@ -231,7 +231,7 @@ pub async fn get_blog_og_image(
     };
     serve_cached_image(
         &state,
-        &format!("cache/v2/blog/article/{slug}/og-image/{lang}"),
+        &format!("cache/v3/blog/article/{slug}/og-image/{lang}"),
         CACHE_VALUE,
     )
     .await
@@ -266,7 +266,7 @@ pub async fn get_blog_block_image(
     };
     serve_cached_image(
         &state,
-        &format!("cache/v2/blog/block-image/{block_id}/{variant}"),
+        &format!("cache/v3/blog/block-image/{block_id}/{variant}"),
         IMMUTABLE_CACHE_VALUE,
     )
     .await
@@ -285,7 +285,13 @@ pub async fn get_blog_block_image(
 pub async fn get_blog_sitemap(
     axum::extract::State(state): axum::extract::State<std::sync::Arc<super::router::BlogState>>,
 ) -> Result<axum::response::Response<axum::body::Body>, BlogControllerError> {
-    serve_cached(&state, "cache/v2/blog/sitemap.xml", "application/xml", false).await
+    serve_cached(
+        &state,
+        "cache/v3/blog/sitemap.xml",
+        "application/xml",
+        false,
+    )
+    .await
 }
 
 #[utoipa::path(
@@ -305,7 +311,7 @@ pub async fn get_blog_rss_feed(
     let lang = lang_from_path(&language);
     serve_cached(
         &state,
-        &format!("cache/v2/blog/feed/rss/{lang}.xml"),
+        &format!("cache/v3/blog/feed/rss/{lang}.xml"),
         "application/xml",
         false,
     )
@@ -329,7 +335,7 @@ pub async fn get_blog_atom_feed(
     let lang = lang_from_path(&language);
     serve_cached(
         &state,
-        &format!("cache/v2/blog/feed/atom/{lang}.xml"),
+        &format!("cache/v3/blog/feed/atom/{lang}.xml"),
         "application/xml",
         false,
     )
@@ -353,7 +359,7 @@ pub async fn get_blog_json_feed(
     let lang = lang_from_path(&language);
     serve_cached(
         &state,
-        &format!("cache/v2/blog/feed/json-feed/{lang}.json"),
+        &format!("cache/v3/blog/feed/json-feed/{lang}.json"),
         "application/json",
         false,
     )

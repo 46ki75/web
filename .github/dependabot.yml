@@ -31,7 +31,7 @@ updates:
         patterns:
           - "notionrs"
           - "notionrs*"
-          - "notion-to-jarkup"
+          - "n2a2ui*"
       aws-sdk:
         patterns:
           - "aws-config"

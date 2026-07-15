@@ -32,28 +32,28 @@ The two rules that matter:
 
 The `blog_publisher` Lambda renders the current Notion state into static objects
 in the blog-cache bucket (`{stage}-46ki75-web-s3-bucket-blog-cache`). Object
-keys mirror the public `/cache/v2/blog/...` URLs exactly:
+keys mirror the public `/cache/v3/blog/...` URLs exactly:
 
 ```text
 # collection-level
-cache/v2/blog/list/{en|ja}.json                                    # index per language
-cache/v2/blog/tags.json                                            # language-agnostic tag list
-cache/v2/blog/feed/{rss|atom|json-feed}/{en|ja}.{xml|json}         # feeds
-cache/v2/blog/sitemap.xml                                          # blog sitemap
+cache/v3/blog/list/{en|ja}.json                                    # index per language
+cache/v3/blog/tags.json                                            # language-agnostic tag list
+cache/v3/blog/feed/{rss|atom|json-feed}/{en|ja}.{xml|json}         # feeds
+cache/v3/blog/sitemap.xml                                          # blog sitemap
 
 # per-article (everything for one post under article/{slug}/)
-cache/v2/blog/article/{slug}/contents/{en|ja}.json                 # rendered article (jarkup)
-cache/v2/blog/article/{slug}/og-image/{en|ja}                      # OGP cover (WebP, 1200w)
+cache/v3/blog/article/{slug}/contents/{en|ja}.json                 # rendered article (A2UI surface)
+cache/v3/blog/article/{slug}/og-image/{en|ja}                      # OGP cover (WebP, 1200w)
 
 # global, content-addressed (block ids are unique; shared across articles)
-cache/v2/blog/block-image/{block_id}/{default|small|medium|large}  # in-article images
+cache/v3/blog/block-image/{block_id}/{default|small|medium|large}  # in-article images
 ```
 
 Notes:
 
 - The language is baked into the **path**, not an `Accept-Language` header or a
   `?lang=` query — every object is independently cacheable.
-- Rendered article JSON embeds image `src`/`srcset` as `/cache/v2/blog/block-image/{id}/{size}`,
+- Rendered article JSON embeds image `src`/`srcset` as `/cache/v3/blog/block-image/{id}/{size}`,
   so the browser fetches them directly from the static origin.
 - Raster images expose `default|small|medium|large`; SVGs are
   resolution-independent and expose only `default`.
@@ -76,7 +76,7 @@ The `blog_publisher` runs incrementally. It lists blogs from Notion (slug +
 `updated_at`) and diffs each against a manifest of what was last published:
 
 ```text
-internal/blog-publisher/manifest.json   # language -> (slug -> published updated_at)
+internal/blog-publisher/manifest-v3.json   # language -> (slug -> published updated_at)
 ```
 
 The manifest lives in the blog-cache bucket but **outside** the `cache/` prefix,
@@ -96,7 +96,7 @@ The version is the **manual `updated_at` Notion date property**, not the system
 `last_edited_time`: a post republishes only when you bump `updated_at`, which
 keeps release control in the author's hands. Collection objects (list, feeds,
 tags, sitemap) are regenerated only when something changed, and the CloudFront
-invalidation is targeted at exactly the paths touched (`/cache/v2/blog/article/{slug}/*`
+invalidation is targeted at exactly the paths touched (`/cache/v3/blog/article/{slug}/*`
 plus any affected collection paths). A run where nothing changed writes nothing
 and invalidates nothing.
 
@@ -104,13 +104,13 @@ and invalidates nothing.
 
 The Lambda still exposes the original header/query-based blog API under
 `/api/v2/blog/*` (e.g. `GET /api/v2/blog` with `Accept-Language`). It is **not**
-on the read path — the frontend reads `/cache/v2/blog/*` directly — but it is kept
+on the read path — the frontend reads `/cache/v3/blog/*` directly — but it is kept
 because:
 
 - it is the source of the OpenAPI spec the frontend generates TypeScript types
   from, and
-- it serves as a fallback that reads the same materialized `cache/v2/blog/...`
+- it serves as a fallback that reads the same materialized `cache/v3/blog/...`
   objects.
 
-These contract paths are deliberately distinct from the `/cache/v2/blog/...` object
+These contract paths are deliberately distinct from the `/cache/v3/blog/...` object
 keys.

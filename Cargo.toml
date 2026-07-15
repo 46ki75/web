@@ -59,10 +59,10 @@ base64 = "0.22.1"
 cached = { version = "0.59.0" }
 
 # Notion
-jarkup-rs = "0.14.0"
-notion-to-jarkup = "0.29.0"
-notionrs = "0.25.0"
-notionrs_types = "0.18.0"
+n2a2ui = "0.4.0"
+n2a2ui-a2ui = "0.3.0"
+notionrs = "0.28.0"
+notionrs_types = "0.21.0"
 
 # OpenAPI
 utoipa = "5.4.0"

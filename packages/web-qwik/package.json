@@ -32,7 +32,7 @@
     "generate:openapi": "openapi-typescript http://dev-www.ikuma.cloud/api/v2/openapi.json -o openapi/schema.ts"
   },
   "devDependencies": {
-    "@elmethis/qwik": "1.0.0-alpha.23",
+    "@elmethis/qwik": "1.0.0-alpha.42",
     "@eslint/js": "^9.37.0",
     "@formkit/auto-animate": "^0.9.0",
     "@qwik.dev/core": "2.0.0-beta.37",
@@ -43,7 +43,6 @@
     "eslint": "^9.37.0",
     "eslint-plugin-qwik": "2.0.0-beta.37",
     "globals": "16.4.0",
-    "jarkup-ts": "^0.5.0",
     "openapi-typescript": "^7.9.1",
     "prettier": "3.6.2",
     "schema-dts": "^1.1.5",
