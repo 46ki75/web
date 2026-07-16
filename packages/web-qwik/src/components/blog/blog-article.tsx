@@ -1,4 +1,10 @@
-import { $, component$, useAsync$, useContext } from "@qwik.dev/core";
+import {
+  $,
+  component$,
+  noSerialize,
+  useAsync$,
+  useContext,
+} from "@qwik.dev/core";
 
 import { ElmA2ui, ElmBlockFallback, notionBlockCatalog } from "@elmethis/qwik";
 
@@ -136,7 +142,7 @@ export const BlogArticle = component$<ArticleProps>(({ slug, language }) => {
             </div>
           </Meta>
           <ElmA2ui
-            catalog={notionBlockCatalog}
+            catalog={noSerialize(notionBlockCatalog)}
             messages={surfaceToMessages(
               contents.value.surface,
               `blog-${language}-${slug}`,
