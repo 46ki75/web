@@ -53,7 +53,7 @@
     "vitest": "4.1.10"
   },
   "dependencies": {
-    "@elmethis/solid": "0.3.1",
+    "@elmethis/solid": "0.3.2",
     "@mdi/js": "^7.4.47",
     "@solid-primitives/i18n": "2.2.1",
     "@solidjs/meta": "0.29.4",
