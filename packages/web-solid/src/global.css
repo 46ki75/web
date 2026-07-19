@@ -18,3 +18,42 @@ pre,
 samp {
   font-family: "DM Mono", monospace;
 }
+
+::view-transition-group(root) {
+  animation-duration: 180ms;
+}
+
+::view-transition-group(main-content) {
+  animation-duration: 280ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+::view-transition-old(main-content) {
+  animation: 140ms ease-in both route-content-out;
+}
+
+::view-transition-new(main-content) {
+  animation: 280ms cubic-bezier(0.22, 1, 0.36, 1) both route-content-in;
+}
+
+@keyframes route-content-out {
+  to {
+    opacity: 0;
+    transform: translateY(-0.375rem);
+  }
+}
+
+@keyframes route-content-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.625rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: 0.01ms !important;
+  }
+}
