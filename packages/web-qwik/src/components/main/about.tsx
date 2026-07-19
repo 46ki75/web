@@ -1,40 +1,24 @@
-import { component$ } from "@qwik.dev/core";
-
 import styles from "./about.module.css";
 
-import { Language } from "~/types";
-import { ElmInlineText, ElmMdiIcon, ElmParagraph } from "@elmethis/qwik";
+import { ElmInlineText, ElmMdiIcon, ElmParagraph } from "@elmethis/solid";
 import { FindMeOn } from "./find-me-on";
 
 import Signature from "~/assets/image/signature.webp?url";
 import { mdiChevronRight } from "@mdi/js";
 import { LinkLocale } from "../common/link-locale";
+import { useI18n } from "~/i18n/context";
 
-export interface AboutProps {
-  language: Language;
-}
+export function About() {
+  const { locale, t } = useI18n();
 
-const translation: Record<
-  Language,
-  {
-    title: string;
-  }
-> = {
-  en: { title: "Greetings." },
-  ja: { title: "皆様、こんにちは。" },
-};
-
-export const About = component$<AboutProps>(({ language }) => {
   return (
     <div class={styles["about"]}>
       <div>
         <h1>
-          <ElmInlineText size="2.125rem">
-            {translation[language].title}
-          </ElmInlineText>
+          <ElmInlineText size="2.125rem">{t("about.greeting")}</ElmInlineText>
         </h1>
 
-        {language === "en" ? (
+        {locale() === "en" ? (
           <>
             <ElmParagraph>I'm Ikuma Yamashita (山下 生真).</ElmParagraph>
             <ElmParagraph>
@@ -52,9 +36,9 @@ export const About = component$<AboutProps>(({ language }) => {
             <ElmParagraph>
               On the frontend, I went from Angular to React to Vue.js, and now I
               am drawn to{" "}
-              <strong class={styles["strong"]}>Qwik / Qwik City</strong>. This
-              site is also built with Qwik City. Besides technical posts, I also
-              casually update the blog with illustrations and other
+              <strong class={styles["strong"]}>SolidJS / SolidStart</strong>.
+              This site is also built with SolidStart. Besides technical posts,
+              I also casually update the blog with illustrations and other
               miscellaneous topics.
             </ElmParagraph>
             <ElmParagraph>I am currently based in Tokyo.</ElmParagraph>
@@ -76,21 +60,16 @@ export const About = component$<AboutProps>(({ language }) => {
             </ElmParagraph>
             <ElmParagraph>
               フロントエンドはAngular→React→Vue.jsを経て、いまは{" "}
-              <strong class={styles["strong"]}>Qwik / Qwik City</strong>{" "}
-              に魅力を感じ、このサイトもQwik
-              Cityで作っています。技術記事だけでなく、イラストなど雑多な内容も気ままに更新します。
+              <strong class={styles["strong"]}>SolidJS / SolidStart</strong>{" "}
+              に魅力を感じ、このサイトもSolidStartで作っています。技術記事だけでなく、イラストなど雑多な内容も気ままに更新します。
             </ElmParagraph>
             <ElmParagraph>現在の活動拠点は東京です。</ElmParagraph>
           </>
         )}
 
-        <LinkLocale
-          lang={language}
-          href="/blog"
-          class={styles["blog-link-container"]}
-        >
+        <LinkLocale href="/blog" class={styles["blog-link-container"]}>
           <div class={styles["blog-link-container-inner"]}>
-            <span class={styles["blog-link-text"]}>Read the blog</span>
+            <span class={styles["blog-link-text"]}>{t("common.readBlog")}</span>
             <ElmMdiIcon d={mdiChevronRight} class={styles["blog-link-icon"]} />
           </div>
         </LinkLocale>
@@ -109,4 +88,4 @@ export const About = component$<AboutProps>(({ language }) => {
       </div>
     </div>
   );
-});
+}

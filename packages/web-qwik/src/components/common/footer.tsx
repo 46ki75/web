@@ -1,64 +1,61 @@
-import { component$, useContext } from "@qwik.dev/core";
 import { version } from "../../../package.json";
 
 import LightLogo from "../../assets/brand/logo-light.svg?url";
 import DarkLogo from "../../assets/brand/logo-dark.svg?url";
 
-import ImgGitHub from "../../assets/icons/github.svg?jsx";
+import ImgGitHub from "../../assets/icons/github.svg?url";
 
 import styles from "./footer.module.css";
-import { ElmInlineText, ElmMdiIcon, useElmethisTheme } from "@elmethis/qwik";
+import {
+  createElmethisTheme,
+  ElmInlineText,
+  ElmMdiIcon,
+} from "@elmethis/solid";
 import { LinkLocale } from "./link-locale";
 import { mdiLinkVariant, mdiOpenInNew, mdiSitemap } from "@mdi/js";
-import { LanguageContext } from "~/context/language";
+import { useI18n } from "~/i18n/context";
+import type { Locale } from "~/i18n/locale";
 
-export const Footer = component$(() => {
-  const languageState = useContext(LanguageContext);
+const labels: Record<Locale, { about: string; blogs: string }> = {
+  en: { about: "About", blogs: "Blogs" },
+  ja: { about: "このサイトについて", blogs: "ブログ" },
+};
+
+export function Footer() {
+  const { locale, t } = useI18n();
 
   const currentYear = new Date().getFullYear();
   const dateBuildMeta = new Date().toISOString().slice(0, 10).replace(/-/g, "");
   const build = `v${version}+${dateBuildMeta}`;
 
-  const { isDarkTheme } = useElmethisTheme();
+  const { isDarkTheme } = createElmethisTheme();
 
   return (
     <footer class={styles.footer}>
       <div class={styles["footer-container"]}>
         <div class={styles["footer-sitelink-container"]}>
-          <div style={{ marginBottom: "0.5em" }}>
+          <div style={{ "margin-bottom": "0.5em" }}>
             <span
               class={styles["footer-heading"]}
-              style={{ fontSize: "1em", fontWeight: "bold" }}
+              style={{ "font-size": "1em", "font-weight": "bold" }}
             >
               <ElmInlineText>SITE</ElmInlineText>
             </span>
           </div>
 
-          <LinkLocale
-            lang={languageState.language}
-            class={styles["footer-sitelink"]}
-            href="/about"
-          >
+          <LinkLocale class={styles["footer-sitelink"]} href="/about">
             <ElmMdiIcon d={mdiLinkVariant} class={styles["footer-link-icon"]} />
-            <ElmInlineText>About</ElmInlineText>
+            <ElmInlineText>{labels[locale()].about}</ElmInlineText>
           </LinkLocale>
 
-          <LinkLocale
-            lang={languageState.language}
-            class={styles["footer-sitelink"]}
-            href="/privacy"
-          >
+          <LinkLocale class={styles["footer-sitelink"]} href="/privacy">
             <ElmMdiIcon d={mdiLinkVariant} class={styles["footer-link-icon"]} />
-            <ElmInlineText>Privacy Policy</ElmInlineText>
+            <ElmInlineText>{t("common.privacyPolicy")}</ElmInlineText>
           </LinkLocale>
 
-          <LinkLocale
-            lang={languageState.language}
-            class={styles["footer-sitelink"]}
-            href="/blog"
-          >
+          <LinkLocale class={styles["footer-sitelink"]} href="/blog">
             <ElmMdiIcon d={mdiLinkVariant} class={styles["footer-link-icon"]} />
-            <ElmInlineText>Blogs</ElmInlineText>
+            <ElmInlineText>{labels[locale()].blogs}</ElmInlineText>
           </LinkLocale>
 
           <a
@@ -76,7 +73,6 @@ export const Footer = component$(() => {
         <div class={styles["footer-bottom"]}>
           <div class={styles["footer-bottom-left"]}>
             <LinkLocale
-              lang={languageState.language}
               href="/"
               class={styles["footer-logo"]}
               aria-label="Home"
@@ -84,7 +80,7 @@ export const Footer = component$(() => {
               <img
                 height={24}
                 width={24}
-                src={isDarkTheme.value ? DarkLogo : LightLogo}
+                src={isDarkTheme() ? DarkLogo : LightLogo}
                 alt="Logo"
               />
             </LinkLocale>
@@ -117,11 +113,11 @@ export const Footer = component$(() => {
               target="_blank"
               aria-label="Source code on GitHub"
             >
-              <ImgGitHub class={styles["footer-icon"]} />
+              <img src={ImgGitHub} class={styles["footer-icon"]} alt="" />
             </a>
           </div>
         </div>
       </div>
     </footer>
   );
-});
+}

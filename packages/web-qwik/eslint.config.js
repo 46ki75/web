@@ -1,8 +1,8 @@
 import js from "@eslint/js";
 import globals from "globals";
+import solid from "eslint-plugin-solid/configs/typescript";
 import tseslint from "typescript-eslint";
 import { globalIgnores } from "eslint/config";
-import { qwikEslint9Plugin } from "eslint-plugin-qwik";
 
 const ignores = [
   "**/*.log",
@@ -14,7 +14,6 @@ const ignores = [
   "**/bazel-*",
   "**/bazel-bin",
   "**/bazel-out",
-  "**/bazel-qwik",
   "**/bazel-testlogs",
   "**/dist",
   "**/dist-dev",
@@ -35,9 +34,6 @@ const ignores = [
   "**/.rollup.cache",
   "**/dist",
   "**/tsconfig.tsbuildinfo",
-  "**/vite.config.ts",
-  "**/*.spec.tsx",
-  "**/*.spec.ts",
   "**/.netlify",
   "**/pnpm-lock.yaml",
   "**/package-lock.json",
@@ -50,7 +46,7 @@ export default tseslint.config(
   globalIgnores(ignores),
   js.configs.recommended,
   tseslint.configs.recommended,
-  qwikEslint9Plugin.configs.recommended,
+  solid,
   {
     languageOptions: {
       globals: {

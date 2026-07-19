@@ -1,55 +1,43 @@
-import { $, component$ } from "@qwik.dev/core";
-
 import en from "./privacy.en.md?raw";
 import ja from "./privacy.ja.md?raw";
 
-import { ElmMarkdown } from "@elmethis/qwik";
+import { ElmMarkdown } from "@elmethis/solid";
 import { MainContainer } from "../common/main-container";
 import { Meta } from "../common/meta";
-import { Language } from "~/types";
-import { useNavigate } from "@qwik.dev/router";
+import { useNavigate } from "@solidjs/router";
+import { useI18n } from "~/i18n/context";
+import type { Locale } from "~/i18n/locale";
 
-const translation: Record<Language, { title: string; markdown: string }> = {
-  en: {
-    title: "Privacy Policy",
-    markdown: en,
-  },
-  ja: {
-    title: "プライバシーポリシー",
-    markdown: ja,
-  },
+const markdown: Record<Locale, string> = {
+  en,
+  ja,
 };
 
-export interface PrivacyProps {
-  language: Language;
-}
-
-export const Privacy = component$<PrivacyProps>(({ language }) => {
-  const nav = useNavigate();
+export function Privacy() {
+  const navigate = useNavigate();
+  const { locale, localizePath, t } = useI18n();
 
   return (
     <div>
       <MainContainer>
         <Meta
-          title={translation[language].title}
+          title={t("common.privacyPolicy")}
           links={[
             {
-              text: "Home",
-              onClick$: $(() => nav(language === "en" ? "/" : "/ja/")),
+              text: t("common.home"),
+              onClick: () => navigate(localizePath("/")),
             },
             {
-              text: "Privacy Policy",
-              onClick$: $(() =>
-                nav(language === "en" ? "/privacy" : "/ja/privacy"),
-              ),
+              text: t("common.privacyPolicy"),
+              onClick: () => navigate(localizePath("/privacy")),
             },
           ]}
           createdAt="2023-10-01"
           updatedAt="2026-03-06"
         />
 
-        <ElmMarkdown markdown={translation[language].markdown} />
+        <ElmMarkdown markdown={markdown[locale()]} />
       </MainContainer>
     </div>
   );
-});
+}

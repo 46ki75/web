@@ -8,15 +8,12 @@ on:
     - cron: "0 0 * * *"
 
 env:
-  NODE_VERSION: 22.x
+  NODE_VERSION: 24.x
 
 jobs:
   build:
     name: Build Test (packages/web-qwik)
     runs-on: ubuntu-latest
-    env:
-      NODE_VERSION: 22.x
-
     steps:
       - uses: actions/checkout@v4
         with:
@@ -36,6 +33,18 @@ jobs:
 
       - name: Run Build Test
         run: pnpm run build
+        working-directory: packages/web-qwik
+
+      - name: Run Type Check
+        run: pnpm run build.types
+        working-directory: packages/web-qwik
+
+      - name: Run Unit Tests
+        run: pnpm run test.unit
+        working-directory: packages/web-qwik
+
+      - name: Run SSR Tests
+        run: pnpm run test.ssr
         working-directory: packages/web-qwik
 
   eslint:

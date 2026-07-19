@@ -1,14 +1,11 @@
-import { Suspense, component$, useAsync$ } from "@qwik.dev/core";
-import { server$ } from "@qwik.dev/router";
-import { ElmHeading, ElmMarkdown, ElmRectangleWave } from "@elmethis/qwik";
-import { Language } from "~/types";
+import { ElmHeading, ElmMarkdown, ElmRectangleWave } from "@elmethis/solid";
+import { createAsync, query } from "@solidjs/router";
+import { ErrorBoundary, For, Suspense } from "solid-js";
+import { useI18n } from "~/i18n/context";
+import type { Locale } from "~/i18n/locale";
 import { CredlyBadge } from "./credly-badge";
 
 import styles from "./credly-badge-wallet.module.css";
-
-export interface CredlyBadgeWalletProps {
-  language: Language;
-}
 
 const CREDLY_BADGES_ENDPOINT =
   "https://www.credly.com/users/ikuma-yamashita/badges.json";
@@ -23,20 +20,31 @@ const credlyJa = `
 Credly のバッジは[規約](${CREDLY_LEGAL_ENDPOINT})および同ドメインの [robots.txt](${CREDLY_ROBOTS_ENDPOINT}) に基づいて表示しています。[データソース (JSON)](${CREDLY_BADGES_ENDPOINT})
 `;
 
-const translation: Record<
-  Language,
-  {
-    credly: string;
-  }
-> = {
+const translation: Record<Locale, { credly: string }> = {
   en: { credly: credlyEn },
   ja: { credly: credlyJa },
 };
 
-const fetchBadges = server$(async () => {
-  const res = await fetch(CREDLY_BADGES_ENDPOINT);
-  const json = await res.json();
-  return json.data.map((badge: any) => ({
+interface CredlyBadgeData {
+  id: string;
+  issued_at_date: string;
+  expires_at_date?: string | null;
+  badge_template: {
+    name: string;
+    description: string;
+    image_url: string;
+    url: string;
+  };
+}
+
+const fetchBadges = query(async (): Promise<CredlyBadgeData[]> => {
+  "use server";
+
+  const response = await fetch(CREDLY_BADGES_ENDPOINT);
+  if (!response.ok) throw new Error(`Credly returned ${response.status}`);
+
+  const json = (await response.json()) as { data: CredlyBadgeData[] };
+  return json.data.map((badge) => ({
     id: badge.id,
     issued_at_date: badge.issued_at_date,
     expires_at_date: badge.expires_at_date,
@@ -47,21 +55,22 @@ const fetchBadges = server$(async () => {
       url: badge.badge_template.url,
     },
   }));
-});
+}, "credly-badges");
 
-export const CredlyBadgeWallet = component$<CredlyBadgeWalletProps>(
-  ({ language }) => {
-    const badges = useAsync$<any[]>(() => fetchBadges());
+export function CredlyBadgeWallet() {
+  const badges = createAsync(() => fetchBadges());
+  const { locale, t } = useI18n();
 
-    return (
-      <div class={styles["badge-wallet"]}>
-        <ElmHeading level={2} style={{ "--margin-block": "2rem" }}>
-          Credly Badge Wallet
-        </ElmHeading>
+  return (
+    <div class={styles["badge-wallet"]}>
+      <ElmHeading level={2} style={{ "margin-block": "2rem" }}>
+        Credly Badge Wallet
+      </ElmHeading>
 
-        <ElmMarkdown markdown={translation[language].credly} />
+      <ElmMarkdown markdown={translation[locale()].credly} />
 
-        <div class={styles["badge-container"]}>
+      <div class={styles["badge-container"]}>
+        <ErrorBoundary fallback={<div>{t("common.failedToLoadBadges")}</div>}>
           <Suspense
             fallback={
               <div class={styles["badge-container-fallback"]}>
@@ -69,27 +78,22 @@ export const CredlyBadgeWallet = component$<CredlyBadgeWalletProps>(
               </div>
             }
           >
-            {badges.error ? (
-              <div>Failed to load badges.</div>
-            ) : (
-              <>
-                {badges.value.map((badge: any, index) => (
-                  <CredlyBadge
-                    key={badge.id}
-                    src={badge.badge_template.image_url}
-                    alt={badge.badge_template.description}
-                    href={badge.badge_template.url}
-                    name={badge.badge_template.name}
-                    issued_at_date={badge.issued_at_date}
-                    expires_at_date={badge.expires_at_date}
-                    delay={25 * index}
-                  />
-                ))}
-              </>
-            )}
+            <For each={badges()}>
+              {(badge, index) => (
+                <CredlyBadge
+                  src={badge.badge_template.image_url}
+                  alt={badge.badge_template.description}
+                  href={badge.badge_template.url}
+                  name={badge.badge_template.name}
+                  issued_at_date={badge.issued_at_date}
+                  expires_at_date={badge.expires_at_date}
+                  delay={25 * index()}
+                />
+              )}
+            </For>
           </Suspense>
-        </div>
+        </ErrorBoundary>
       </div>
-    );
-  },
-);
+    </div>
+  );
+}

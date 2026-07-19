@@ -28,6 +28,6 @@
   cursor: pointer;
 
   &:hover {
-    background-color: rgba(#59a7b5, 0.1);
+    background-color: rgb(89 167 181 / 10%);
   }
 }

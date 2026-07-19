@@ -1,27 +1,15 @@
-import {
-  $,
-  component$,
-  noSerialize,
-  useAsync$,
-  useContext,
-} from "@qwik.dev/core";
+import { ElmA2ui, notionBlockCatalog } from "@elmethis/solid";
+import { useNavigate } from "@solidjs/router";
+import { createMemo, For } from "solid-js";
 
-import { ElmA2ui, ElmBlockFallback, notionBlockCatalog } from "@elmethis/qwik";
-
-import type { BlogResponse } from "../../../openapi/blog";
-import { getBlogContents, ogImageUrl } from "../../../openapi/blog";
+import type { BlogContentsResponse } from "../../../openapi/blog";
+import { ogImageUrl } from "../../../openapi/blog";
 import { Meta } from "../common/meta";
-import { useNavigate } from "@qwik.dev/router";
-import { BlogContext } from "~/context/blog";
 import { Tag } from "../common/tag";
+import { useBlog } from "~/context/blog";
+import { useI18n } from "~/i18n/context";
 
 import styles from "./blog-article.module.css";
-import { Language } from "~/types";
-
-type BlogContents = {
-  meta: BlogResponse;
-  surface: unknown;
-};
 
 const NOTION_BLOCK_CATALOG_ID =
   "https://46ki75.github.io/elmethis/a2ui/v0_9/notion_block_catalog.json";
@@ -35,10 +23,7 @@ const surfaceToMessages = (raw: unknown, surfaceId: string): object[] => {
   return [
     {
       version: "v0.9",
-      createSurface: {
-        surfaceId,
-        catalogId: NOTION_BLOCK_CATALOG_ID,
-      },
+      createSurface: { surfaceId, catalogId: NOTION_BLOCK_CATALOG_ID },
     },
     {
       version: "v0.9",
@@ -50,106 +35,74 @@ const surfaceToMessages = (raw: unknown, surfaceId: string): object[] => {
   ];
 };
 
-export interface ArticleProps {
+export interface BlogArticleProps {
   slug: string;
-  language: Language;
+  contents: BlogContentsResponse;
 }
 
-export const BlogArticle = component$<ArticleProps>(({ slug, language }) => {
-  const blogState = useContext(BlogContext);
+export function BlogArticle(props: BlogArticleProps) {
+  const blogState = useBlog();
+  const { t, locale, localizePath } = useI18n();
+  const navigate = useNavigate();
+  const tags = createMemo(() =>
+    props.contents.meta.tag_ids.flatMap((id) => {
+      const tag = blogState.tags.find((candidate) => candidate.id === id);
+      return tag ? [tag] : [];
+    }),
+  );
+  const messages = createMemo(() =>
+    surfaceToMessages(props.contents.surface, `blog-${locale()}-${props.slug}`),
+  );
 
-  const contents = useAsync$<BlogContents>(async ({ track, abortSignal }) => {
-    const trackedSlug = track(() => slug);
-    const trackedLang = track(() => language);
-
-    const blogContents = await getBlogContents(
-      trackedSlug!,
-      trackedLang,
-      abortSignal,
-    );
-
-    return blogContents as BlogContents;
-  });
-
-  const nav = useNavigate();
-
-  const handleTagClick = $(async (tagId: string) => {
-    blogState.selectedTagIds = [tagId];
-    await nav(language === "en" ? "/blog/search" : `/${language}/blog/search`);
-  });
+  const handleTagClick = (tagId: string) => {
+    blogState.setSelectedTagIds([tagId]);
+    navigate(localizePath("/blog/search"));
+  };
 
   return (
     <article>
-      {contents.loading ? (
-        <ElmBlockFallback
-          height={"calc(100vh - 8rem)"}
-          style={{
-            viewTransitionName: `blog-article-pending-${language}-${slug}`,
-          }}
-        />
-      ) : (
-        <div
-          class={styles["blog-article"]}
-          style={{
-            viewTransitionName: `blog-article-resolved-${language}-${slug}`,
-          }}
+      <div
+        class={styles["blog-article"]}
+        style={{
+          "view-transition-name": `blog-article-resolved-${locale()}-${props.slug}`,
+        }}
+      >
+        <Meta
+          title={props.contents.meta.title}
+          createdAt={props.contents.meta.created_at}
+          updatedAt={props.contents.meta.updated_at}
+          image={ogImageUrl(props.slug, locale())}
+          links={[
+            {
+              text: t("common.home"),
+              onClick: () => navigate(localizePath("/")),
+            },
+            {
+              text: t("common.blog"),
+              onClick: () => navigate(localizePath("/blog")),
+            },
+            {
+              text: "Article",
+              onClick: () =>
+                navigate(localizePath(`/blog/article/${props.slug}`)),
+            },
+          ]}
         >
-          <Meta
-            title={contents.value.meta.title}
-            createdAt={contents.value.meta.created_at}
-            updatedAt={contents.value.meta.updated_at}
-            image={ogImageUrl(slug, language)}
-            links={[
-              {
-                text: "Home",
-                onClick$: $(() =>
-                  nav(language === "en" ? "/" : `/${language}`),
-                ),
-              },
-              {
-                text: "Blog",
-                onClick$: $(() =>
-                  nav(language === "en" ? "/blog" : `/${language}/blog`),
-                ),
-              },
-              {
-                text: "Article",
-                onClick$: $(() =>
-                  nav(
-                    language === "en"
-                      ? `/blog/article/${slug}`
-                      : `/${language}/blog/article/${slug}`,
-                  ),
-                ),
-              },
-            ]}
-          >
-            <div class={styles["tag-container"]}>
-              {contents.value.meta.tag_ids
-                .flatMap((id) => blogState.tags.find((t) => t.id === id))
-                .map((tag) => (
-                  <span
-                    key={tag?.id}
-                    class={styles.tag}
-                    onClick$={() => handleTagClick(tag!.id!)}
-                  >
-                    <Tag
-                      name={(language === "en" ? tag?.name_en : tag?.name_ja)!}
-                      src={tag!.icon_url!}
-                    ></Tag>
-                  </span>
-                ))}
-            </div>
-          </Meta>
-          <ElmA2ui
-            catalog={noSerialize(notionBlockCatalog)}
-            messages={surfaceToMessages(
-              contents.value.surface,
-              `blog-${language}-${slug}`,
-            )}
-          />
-        </div>
-      )}
+          <div class={styles["tag-container"]}>
+            <For each={tags()}>
+              {(tag) => (
+                <span class={styles.tag} onClick={() => handleTagClick(tag.id)}>
+                  <Tag
+                    name={locale() === "en" ? tag.name_en : tag.name_ja}
+                    src={tag.icon_url ?? ""}
+                  />
+                </span>
+              )}
+            </For>
+          </div>
+        </Meta>
+        <ElmA2ui catalog={notionBlockCatalog} messages={messages()} />
+      </div>
     </article>
   );
-});
+}

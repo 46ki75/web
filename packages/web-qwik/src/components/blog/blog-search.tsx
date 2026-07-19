@@ -1,172 +1,88 @@
 import {
-  $,
-  component$,
-  isServer,
-  noSerialize,
-  NoSerialize,
-  useContext,
-  useSignal,
-  useTask$,
-  useVisibleTask$,
-} from "@qwik.dev/core";
-
-import styles from "./blog-search.module.css";
-import { BlogContext } from "~/context/blog";
-
-import Fuse from "fuse.js";
-import {
+  createAutoAnimate,
   ElmButton,
   ElmCollapse,
   ElmHeading,
   ElmMdiIcon,
   ElmTextField,
-} from "@elmethis/qwik";
-import { Language } from "~/types";
-import { BlogCard } from "./blog-card";
-import { Tag } from "../common/tag";
+} from "@elmethis/solid";
 import { mdiTagRemove } from "@mdi/js";
+import { useNavigate } from "@solidjs/router";
+import Fuse from "fuse.js";
+import {
+  createEffect,
+  createMemo,
+  createSignal,
+  For,
+  onCleanup,
+  Show,
+} from "solid-js";
+
 import { Meta } from "../common/meta";
-import { useNavigate } from "@qwik.dev/router";
+import { Tag } from "../common/tag";
+import { useBlog } from "~/context/blog";
+import { useI18n } from "~/i18n/context";
+import { BlogCard } from "./blog-card";
 
-import autoAnimate from "@formkit/auto-animate";
+import styles from "./blog-search.module.css";
 
-export type BlogSearchProps = {
-  language: Language;
-};
+export function BlogSearch() {
+  const blogState = useBlog();
+  const { t, locale, localizePath } = useI18n();
+  const navigate = useNavigate();
+  const selectedTagsAnimation = createAutoAnimate<HTMLDivElement>();
+  const resultsAnimation = createAutoAnimate<HTMLDivElement>();
+  const [searchKeyword, setSearchKeyword] = createSignal("");
+  const [debouncedKeyword, setDebouncedKeyword] = createSignal("");
 
-const translations = {
-  en: {
-    tags: "Tags",
-    selectedTags: "Selected Tags",
-    searchResults: "Search Results",
-    resetTags: "Reset Tags",
-  },
-  ja: {
-    tags: "タグ",
-    selectedTags: "選択中のタグ",
-    searchResults: "検索結果",
-    resetTags: "タグ選択をリセット",
-  },
-};
+  const fuse = createMemo(
+    () =>
+      new Fuse(blogState.blogMeta, {
+        keys: [
+          { name: "title", weight: 0.7 },
+          { name: "description", weight: 0.3 },
+          { name: "keywords", weight: 1 },
+        ],
+        threshold: 0.3,
+      }),
+  );
 
-export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
-  const selectedTagPoolRef = useSignal<HTMLDivElement>();
-  const selectedTagPoolAnimateController = useSignal<NoSerialize<
-    ReturnType<typeof autoAnimate>
-  > | null>(null);
-  const blogSearchResultContainerRef = useSignal<HTMLDivElement>();
-  const blogSearchResultContainerAnimateController = useSignal<NoSerialize<
-    ReturnType<typeof autoAnimate>
-  > | null>(null);
-  // eslint-disable-next-line qwik/no-use-visible-task
-  useVisibleTask$(({ cleanup }) => {
-    if (selectedTagPoolRef.value != null) {
-      selectedTagPoolAnimateController.value = noSerialize(
-        autoAnimate(selectedTagPoolRef.value),
-      );
-    }
-    if (blogSearchResultContainerRef.value != null) {
-      blogSearchResultContainerAnimateController.value = noSerialize(
-        autoAnimate(blogSearchResultContainerRef.value),
-      );
-    }
-
-    cleanup(() => {
-      if (selectedTagPoolAnimateController.value != null) {
-        selectedTagPoolAnimateController.value.disable();
-      }
-      if (blogSearchResultContainerAnimateController.value != null) {
-        blogSearchResultContainerAnimateController.value.disable();
-      }
-    });
+  let searchTimer: ReturnType<typeof setTimeout> | undefined;
+  createEffect(() => {
+    const keyword = searchKeyword();
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => setDebouncedKeyword(keyword), 300);
   });
+  onCleanup(() => clearTimeout(searchTimer));
 
-  const nav = useNavigate();
-  const blogState = useContext(BlogContext);
+  const searchResults = createMemo(() => {
+    const keyword = debouncedKeyword().trim();
+    const matches = keyword
+      ? fuse()
+          .search(keyword, { limit: 10 })
+          .map((result) => result.item)
+      : blogState.blogMeta;
 
-  const searchKeyword = useSignal("");
-  const searchResults = useSignal<(typeof blogState.blogMeta)[Language]>([]);
-  const fuseInstance = useSignal<NoSerialize<
-    Fuse<(typeof blogState.blogMeta)[Language][number]>
-  > | null>(null);
-
-  const executeSearch = $(() => {
-    if (fuseInstance.value == null) {
-      fuseInstance.value = noSerialize(
-        new Fuse(blogState.blogMeta[language], {
-          keys: [
-            { name: "title", weight: 0.7 },
-            { name: "description", weight: 0.3 },
-            { name: "keywords", weight: 1 },
-          ],
-          threshold: 0.3,
-        }),
-      );
-    }
-
-    if (fuseInstance.value != null) {
-      const fuseSearchResults =
-        searchKeyword.value.trim() === ""
-          ? blogState.blogMeta[language]
-          : fuseInstance.value
-              .search(searchKeyword.value, {
-                limit: 10,
-              })
-              .map(({ item }) => item);
-
-      const results =
-        fuseSearchResults.filter((blog) =>
-          blogState.selectedTagIds.every((tagId) =>
-            blog.tag_ids?.includes(tagId),
-          ),
-        ) ?? [];
-
-      searchResults.value = results;
-    } else {
-      searchResults.value = [];
-    }
-  });
-
-  const handleTagAdd = $((tagId: string) => {
-    if (!blogState.selectedTagIds.includes(tagId)) {
-      blogState.selectedTagIds = [...blogState.selectedTagIds, tagId];
-      executeSearch();
-    }
-  });
-
-  const handleTagRemove = $((tagId: string) => {
-    blogState.selectedTagIds = blogState.selectedTagIds.filter(
-      (id) => id !== tagId,
+    return matches.filter((blog) =>
+      blogState.selectedTagIds().every((tagId) => blog.tag_ids.includes(tagId)),
     );
-    executeSearch();
   });
 
-  const handleTagReset = $(() => {
-    blogState.selectedTagIds = [];
-    executeSearch();
-  });
+  const visibleResults = createMemo(() =>
+    searchKeyword().trim() === "" && blogState.selectedTagIds().length === 0
+      ? blogState.blogMeta
+      : searchResults(),
+  );
 
-  const handleSearchKeywordChangeTimer = useSignal<number | null>(null);
-
-  useTask$(({ track, cleanup }) => {
-    track(() => searchKeyword.value);
-
-    if (isServer) return;
-
-    if (handleSearchKeywordChangeTimer.value != null) {
-      window.clearTimeout(handleSearchKeywordChangeTimer.value);
+  const addTag = (tagId: string) => {
+    if (!blogState.selectedTagIds().includes(tagId)) {
+      blogState.setSelectedTagIds((current) => [...current, tagId]);
     }
-
-    handleSearchKeywordChangeTimer.value = window.setTimeout(() => {
-      executeSearch();
-    }, 300);
-
-    cleanup(() => {
-      if (handleSearchKeywordChangeTimer.value != null) {
-        window.clearTimeout(handleSearchKeywordChangeTimer.value);
-      }
-    });
-  });
+  };
+  const removeTag = (tagId: string) =>
+    blogState.setSelectedTagIds((current) =>
+      current.filter((id) => id !== tagId),
+    );
 
   return (
     <>
@@ -176,120 +92,112 @@ export const BlogSearch = component$<BlogSearchProps>(({ language }) => {
         updatedAt="2026-03-05"
         links={[
           {
-            text: "Home",
-            onClick$: $(() => nav(language === "en" ? "/" : `/${language}`)),
+            text: t("common.home"),
+            onClick: () => navigate(localizePath("/")),
           },
           {
-            text: "Blog",
-            onClick$: $(() =>
-              nav(language === "en" ? "/blog" : `/${language}/blog`),
-            ),
+            text: t("common.blog"),
+            onClick: () => navigate(localizePath("/blog")),
           },
           {
-            text: "Search",
-            onClick$: $(() =>
-              nav(
-                language === "en" ? "/blog/search" : `/${language}/blog/search`,
-              ),
-            ),
+            text: t("common.search"),
+            onClick: () => navigate(localizePath("/blog/search")),
           },
         ]}
       />
-
       <div class={styles["blog-search"]}>
-        <div style={{ marginBlock: "2rem" }}>
-          <ElmTextField value={searchKeyword} label="Keyword" />
+        <div style={{ "margin-block": "2rem" }}>
+          <ElmTextField
+            value={searchKeyword()}
+            label="Keyword"
+            onInput={(event) => setSearchKeyword(event.currentTarget.value)}
+          />
         </div>
-
-        <ElmHeading level={2}>{translations[language].tags}</ElmHeading>
-
+        <ElmHeading level={2}>{t("common.tags")}</ElmHeading>
         <div class={styles["tag-pool"]}>
-          {blogState.tags.map((tag) => (
-            <span
-              key={tag.id}
-              class={[styles["tag-wrapper"], styles["add"]]}
-              onClick$={() => handleTagAdd(tag.id)}
-            >
-              <Tag
-                name={language === "en" ? tag.name_en : tag.name_ja}
-                src={tag.icon_url!}
-                style={{
-                  viewTransitionName: `blog-search-tag-pool-${tag.id}`,
-                }}
-              />
-            </span>
-          ))}
+          <For each={blogState.tags}>
+            {(tag) => (
+              <span
+                class={`${styles["tag-wrapper"]} ${styles.add}`}
+                onClick={() => addTag(tag.id)}
+              >
+                <Tag
+                  name={locale() === "en" ? tag.name_en : tag.name_ja}
+                  src={tag.icon_url ?? ""}
+                  style={{
+                    "view-transition-name": `blog-search-tag-pool-${tag.id}`,
+                  }}
+                />
+              </span>
+            )}
+          </For>
         </div>
-
-        <ElmHeading level={2}>{translations[language].selectedTags}</ElmHeading>
-
-        <ElmCollapse isOpen={blogState.selectedTagIds.length > 0}>
+        <ElmHeading level={2}>{t("common.selectedTags")}</ElmHeading>
+        <ElmCollapse isOpen={blogState.selectedTagIds().length > 0}>
           <div
-            ref={selectedTagPoolRef}
-            class={[
-              styles["tag-pool"],
-              {
-                [styles["empty"]]: blogState.selectedTagIds.length === 0,
-              },
-            ]}
+            ref={selectedTagsAnimation.ref}
+            class={styles["tag-pool"]}
+            classList={{
+              [styles.empty]: blogState.selectedTagIds().length === 0,
+            }}
           >
-            {blogState.selectedTagIds.map((tagId) => {
-              const tag = blogState.tags.find((t) => t.id === tagId);
-              if (tag == null) return null;
-
-              return (
-                <span
-                  key={tag.id}
-                  class={[styles["tag-wrapper"], styles["remove"]]}
-                  onClick$={() => handleTagRemove(tag.id)}
-                >
-                  <Tag
-                    name={language === "en" ? tag.name_en : tag.name_ja}
-                    src={tag.icon_url!}
-                    style={{
-                      viewTransitionName: `blog-search-tag-selected-${tag.id}`,
-                    }}
-                  />
-                </span>
-              );
-            })}
+            <For each={blogState.selectedTagIds()}>
+              {(tagId) => {
+                const tag = () =>
+                  blogState.tags.find((candidate) => candidate.id === tagId);
+                return (
+                  <Show when={tag()} keyed>
+                    {(selectedTag) => (
+                      <span
+                        class={`${styles["tag-wrapper"]} ${styles.remove}`}
+                        onClick={() => removeTag(selectedTag.id)}
+                      >
+                        <Tag
+                          name={
+                            locale() === "en"
+                              ? selectedTag.name_en
+                              : selectedTag.name_ja
+                          }
+                          src={selectedTag.icon_url ?? ""}
+                          style={{
+                            "view-transition-name": `blog-search-tag-selected-${selectedTag.id}`,
+                          }}
+                        />
+                      </span>
+                    )}
+                  </Show>
+                );
+              }}
+            </For>
           </div>
         </ElmCollapse>
-
-        <div style={{ marginBlock: "1rem" }}>
-          <ElmButton onClick$={handleTagReset} block>
+        <div style={{ "margin-block": "1rem" }}>
+          <ElmButton
+            type="button"
+            onClick={() => blogState.setSelectedTagIds([])}
+            block
+          >
             <ElmMdiIcon class={styles.icon} d={mdiTagRemove} />
-            {translations[language].resetTags}
+            {t("common.resetTags")}
           </ElmButton>
         </div>
-
-        <ElmHeading level={2}>
-          {translations[language].searchResults}
-        </ElmHeading>
-
-        <div
-          ref={blogSearchResultContainerRef}
-          class={styles["blog-search-result"]}
-        >
-          {(searchKeyword.value.trim() === "" &&
-          blogState.selectedTagIds.length === 0
-            ? blogState.blogMeta[language]
-            : searchResults.value
-          ).map((blog) => (
-            <BlogCard
-              key={blog.slug}
-              blog={blog}
-              tags={blogState.tags?.filter((tag) =>
-                blog.tag_ids?.includes(tag.id),
-              )}
-              language={language}
-              style={{
-                viewTransitionName: `blog-search-blog-card-${blog.page_id}`,
-              }}
-            />
-          ))}
+        <ElmHeading level={2}>{t("common.searchResults")}</ElmHeading>
+        <div ref={resultsAnimation.ref} class={styles["blog-search-result"]}>
+          <For each={visibleResults()}>
+            {(blog) => (
+              <BlogCard
+                blog={blog}
+                tags={blogState.tags.filter((tag) =>
+                  blog.tag_ids.includes(tag.id),
+                )}
+                style={{
+                  "view-transition-name": `blog-search-blog-card-${blog.page_id}`,
+                }}
+              />
+            )}
+          </For>
         </div>
       </div>
     </>
   );
-});
+}

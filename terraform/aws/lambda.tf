@@ -181,8 +181,8 @@ resource "aws_lambda_function" "nitro" {
   function_name = "${terraform.workspace}-46ki75-web-lambda-function-nitro"
   role          = aws_iam_role.lambda_role_nitro.arn
   filename      = "${path.module}/assets/bootstrap.zip"
-  handler       = "entry_aws-lambda.handler"
-  runtime       = "nodejs22.x"
+  handler       = "index.handler"
+  runtime       = "nodejs24.x"
   architectures = ["arm64"]
   memory_size   = 512
   publish       = true # Publish a new version
@@ -210,7 +210,12 @@ resource "aws_lambda_function" "nitro" {
 resource "aws_lambda_alias" "nitro" {
   name             = "stable"
   function_name    = aws_lambda_function.nitro.function_name
-  function_version = "$LATEST"
+  function_version = aws_lambda_function.nitro.version
+
+  # Application deployments publish and promote the real Nitro artifact.
+  lifecycle {
+    ignore_changes = [function_version]
+  }
 }
 
 resource "aws_lambda_function_url" "nitro" {

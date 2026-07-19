@@ -7,7 +7,7 @@
   user-select: none;
 
   &.empty {
-    border: 1px dashed rgb(gray, 0.5);
+    border: 1px dashed rgb(128 128 128 / 50%);
   }
 }
 

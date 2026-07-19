@@ -1,19 +1,16 @@
-import { component$, Slot } from "@qwik.dev/core";
+import { ElmBlockFallback } from "@elmethis/solid";
+import { Suspense, type ParentProps } from "solid-js";
 
 import styles from "./blog-main.module.css";
 import { BlogAuthor } from "./blog-author";
-import type { Language } from "~/types";
 
-export type BlogMainProps = {
-  language: Language;
-};
-
-export const BlogMain = component$<BlogMainProps>(({ language }) => {
+export function BlogMain(props: ParentProps) {
   return (
     <main class={styles["blog-main"]}>
-      <Slot />
-
-      <BlogAuthor language={language} />
+      <Suspense fallback={<ElmBlockFallback height="calc(100vh - 8rem)" />}>
+        {props.children}
+      </Suspense>
+      <BlogAuthor />
     </main>
   );
-});
+}

@@ -1,35 +1,24 @@
-import { $, component$, useContext } from "@qwik.dev/core";
+import { ElmHeading, ElmParagraph } from "@elmethis/solid";
+import { useNavigate } from "@solidjs/router";
+import { createMemo, For } from "solid-js";
+
+import { Meta } from "../common/meta";
+import { useBlog } from "~/context/blog";
+import { useI18n } from "~/i18n/context";
+import { BlogCard } from "./blog-card";
 
 import styles from "./blog-index.module.css";
-import { BlogContext } from "~/context/blog";
-import { Language } from "~/types";
-import { BlogCard } from "./blog-card";
-import { Meta } from "../common/meta";
-import { useNavigate } from "@qwik.dev/router";
-import { ElmHeading, ElmParagraph } from "@elmethis/qwik";
 
-export interface BlogIndexProps {
-  language: Language;
-}
+export function BlogIndex() {
+  const blogState = useBlog();
+  const { t, localizePath } = useI18n();
+  const navigate = useNavigate();
+  const featured = createMemo(() =>
+    blogState.blogMeta.filter((blog) => blog.featured),
+  );
 
-const translations = {
-  en: {
-    featured: "Featured",
-    recent: "Recent",
-    description:
-      "This blog primarily publishes articles about software engineering and AWS. I have also started publishing blogs about how to draw illustrations. The types of articles provided may vary depending on the language.",
-  },
-  ja: {
-    featured: "おすすめ",
-    recent: "最近の記事",
-    description:
-      "このブログは主にソフトウェア工学と AWS に関する記事を公開しています。イラストの描き方に関するブログの公開も開始しました。提供される記事の種類は、言語によって異なる場合があります。",
-  },
-};
-
-export const BlogIndex = component$<BlogIndexProps>(({ language }) => {
-  const nav = useNavigate();
-  const blogState = useContext(BlogContext);
+  const tagsFor = (tagIds: string[]) =>
+    blogState.tags.filter((tag) => tagIds.includes(tag.id));
 
   return (
     <div class={styles["blog-index"]}>
@@ -39,55 +28,42 @@ export const BlogIndex = component$<BlogIndexProps>(({ language }) => {
         updatedAt="2023-10-01"
         links={[
           {
-            text: "Home",
-            onClick$: $(() => nav(language === "en" ? "/" : `/${language}`)),
+            text: t("common.home"),
+            onClick: () => navigate(localizePath("/")),
           },
           {
-            text: "Blog",
-            onClick$: $(() =>
-              nav(language === "en" ? "/blog" : `/${language}/blog`),
-            ),
+            text: t("common.blog"),
+            onClick: () => navigate(localizePath("/blog")),
           },
         ]}
       />
-
       <div class={styles["blog-index-content"]}>
-        <ElmParagraph>{translations[language].description}</ElmParagraph>
-
-        <ElmHeading level={2} text={translations[language].featured} />
-
+        <ElmParagraph>{t("blog.description")}</ElmParagraph>
+        <ElmHeading level={2} text={t("common.featured")} />
         <div class={styles["blog-card-list"]}>
-          {blogState.blogMeta[language]
-            .filter(({ featured }) => featured)
-            .map((blog, index) => (
+          <For each={featured()}>
+            {(blog, index) => (
               <BlogCard
-                key={blog.page_id}
                 blog={blog}
-                tags={blogState.tags?.filter((tag) =>
-                  blog.tag_ids?.includes(tag.id),
-                )}
-                language={language}
-                delay={(index + 1) * 100}
-              ></BlogCard>
-            ))}
+                tags={tagsFor(blog.tag_ids)}
+                delay={(index() + 1) * 100}
+              />
+            )}
+          </For>
         </div>
-
-        <ElmHeading level={2} text={translations[language].recent} />
-
+        <ElmHeading level={2} text={t("common.recent")} />
         <div class={styles["blog-card-list"]}>
-          {blogState.blogMeta[language].slice(0, 3).map((blog, index) => (
-            <BlogCard
-              key={blog.page_id}
-              blog={blog}
-              tags={blogState.tags?.filter((tag) =>
-                blog.tag_ids?.includes(tag.id),
-              )}
-              language={language}
-              delay={(index + 1) * 100}
-            ></BlogCard>
-          ))}
+          <For each={blogState.blogMeta.slice(0, 3)}>
+            {(blog, index) => (
+              <BlogCard
+                blog={blog}
+                tags={tagsFor(blog.tag_ids)}
+                delay={(index() + 1) * 100}
+              />
+            )}
+          </For>
         </div>
       </div>
     </div>
   );
-});
+}

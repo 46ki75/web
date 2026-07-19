@@ -1,5 +1,3 @@
-import { component$, useContext } from "@qwik.dev/core";
-
 import styles from "./header.module.css";
 
 import LightLogo from "../../assets/brand/logo-light-label.svg?url";
@@ -9,8 +7,8 @@ import {
   ElmInlineText,
   ElmMdiIcon,
   ElmToggleTheme,
-  useElmethisTheme,
-} from "@elmethis/qwik";
+  createElmethisTheme,
+} from "@elmethis/solid";
 import { Language } from "./language";
 import { LinkLocale } from "./link-locale";
 import {
@@ -19,49 +17,39 @@ import {
   mdiNotebookMultiple,
   mdiOpenInNew,
 } from "@mdi/js";
-import { LanguageContext } from "~/context/language";
+import { useI18n } from "~/i18n/context";
 
-export const Header = component$(() => {
-  const languageState = useContext(LanguageContext);
-
-  const { isDarkTheme } = useElmethisTheme();
+export function Header() {
+  const { isDarkTheme } = createElmethisTheme();
+  const { t } = useI18n();
 
   return (
     <header class={styles.header}>
       <div class={styles["header-left"]}>
-        <LinkLocale
-          href="/"
-          class={styles.link}
-          lang={languageState.language}
-          aria-label="To Home"
-        >
+        <LinkLocale href="/" class={styles.link} aria-label="To Home">
           <img
             height={40}
             width={160}
-            src={isDarkTheme.value ? DarkLogo : LightLogo}
+            src={isDarkTheme() ? DarkLogo : LightLogo}
             alt="Logo"
           />
         </LinkLocale>
       </div>
 
       <div class={styles["header-center"]}>
-        <LinkLocale href="/" class={styles.link} lang={languageState.language}>
+        <LinkLocale href="/" class={styles.link}>
           <ElmMdiIcon class={styles["header-center-icon"]} d={mdiHome} />
-          <ElmInlineText>Home</ElmInlineText>
+          <ElmInlineText>{t("common.home")}</ElmInlineText>
         </LinkLocale>
 
         <ElmInlineText>|</ElmInlineText>
 
-        <LinkLocale
-          href="/blog"
-          class={styles.link}
-          lang={languageState.language}
-        >
+        <LinkLocale href="/blog" class={styles.link}>
           <ElmMdiIcon
             class={styles["header-center-icon"]}
             d={mdiNotebookMultiple}
           />
-          <ElmInlineText>Blog</ElmInlineText>
+          <ElmInlineText>{t("common.blog")}</ElmInlineText>
         </LinkLocale>
 
         <ElmInlineText>|</ElmInlineText>
@@ -87,4 +75,4 @@ export const Header = component$(() => {
       </div>
     </header>
   );
-});
+}

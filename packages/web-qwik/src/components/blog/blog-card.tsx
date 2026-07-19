@@ -1,101 +1,82 @@
-import { $, component$, CSSProperties, useContext } from "@qwik.dev/core";
+import { ElmInlineText } from "@elmethis/solid";
+import { A, useNavigate } from "@solidjs/router";
+import { For, type JSX } from "solid-js";
+
+import type { BlogResponse, BlogTagResponse } from "../../../openapi/blog";
+import { ogImageUrl } from "../../../openapi/blog";
+import { DateComponent } from "../common/date";
+import { Tag } from "../common/tag";
+import { useBlog } from "~/context/blog";
+import { useI18n } from "~/i18n/context";
 
 import styles from "./blog-card.module.css";
 
-import { paths } from "../../../openapi/schema";
-import { ogImageUrl } from "../../../openapi/blog";
-import { Link, useNavigate } from "@qwik.dev/router";
-import { Language } from "~/types";
-import { ElmInlineText } from "@elmethis/qwik";
-import { Tag } from "../common/tag";
-import { DateComponent } from "../common/date";
-import { BlogContext } from "~/context/blog";
-
 export interface BlogCardProps {
-  style?: CSSProperties;
-  blog: paths["/api/v2/blog/{slug}"]["get"]["responses"]["200"]["content"]["application/json"]["meta"];
-  tags: paths["/api/v2/blog/tag"]["get"]["responses"]["200"]["content"]["application/json"];
-  language: Language;
+  style?: JSX.CSSProperties;
+  blog: BlogResponse;
+  tags: BlogTagResponse[];
   delay?: number;
 }
 
-export const BlogCard = component$<BlogCardProps>(
-  ({ blog, tags, language, delay = 0, style }) => {
-    const blogState = useContext(BlogContext);
+export function BlogCard(props: BlogCardProps) {
+  const blogState = useBlog();
+  const { locale, localizePath } = useI18n();
+  const navigate = useNavigate();
 
-    const nav = useNavigate();
+  const handleTagClick = (tagId: string) => {
+    blogState.setSelectedTagIds([tagId]);
+    navigate(localizePath("/blog/search"));
+  };
 
-    const handleTagClick = $(async (tagId: string) => {
-      blogState.selectedTagIds = [tagId];
-      await nav(
-        language === "en" ? "/blog/search" : `/${language}/blog/search`,
-      );
-    });
-
-    return (
-      <div
-        key={blog.page_id}
-        class={[
-          styles["blog-card"],
-          {
-            [styles["animation-enabled"]]: delay > 0,
-          },
-        ]}
-        style={{
-          "--delay": `${delay}ms`,
-          ...style,
-        }}
+  return (
+    <div
+      class={styles["blog-card"]}
+      classList={{ [styles["animation-enabled"]]: (props.delay ?? 0) > 0 }}
+      style={{
+        "--delay": `${props.delay ?? 0}ms`,
+        ...props.style,
+      }}
+    >
+      <A
+        href={localizePath(`/blog/article/${props.blog.slug}`)}
+        style={{ all: "unset" }}
       >
-        <Link
-          key={blog.page_id}
-          href={
-            language === "en"
-              ? `/blog/article/${blog.slug}`
-              : `/${language}/blog/article/${blog.slug}`
-          }
-          style={{ all: "unset" }}
-        >
-          <div class={styles["blog-card-link"]}>
-            <img
-              class={styles["blog-card-image"]}
-              src={ogImageUrl(blog.slug, language)}
-              alt={blog.title}
-              width={1140}
-              height={600}
-            />
-
-            <div class={styles["blog-card-content"]}>
-              <span class={styles["blog-card-content-title"]}>
-                <ElmInlineText bold>{blog.title}</ElmInlineText>
-              </span>
-
-              <div class={styles["blog-card-content-description"]}>
-                <ElmInlineText size="0.75rem">{blog.description}</ElmInlineText>
-              </div>
-
-              <DateComponent
-                createdAt={blog.created_at}
-                updatedAt={blog.updated_at}
-              />
+        <div class={styles["blog-card-link"]}>
+          <img
+            class={styles["blog-card-image"]}
+            src={ogImageUrl(props.blog.slug, locale())}
+            alt={props.blog.title}
+            width={1140}
+            height={600}
+          />
+          <div class={styles["blog-card-content"]}>
+            <span class={styles["blog-card-content-title"]}>
+              <ElmInlineText bold>{props.blog.title}</ElmInlineText>
+            </span>
+            <div class={styles["blog-card-content-description"]}>
+              <ElmInlineText size="0.75rem">
+                {props.blog.description}
+              </ElmInlineText>
             </div>
+            <DateComponent
+              createdAt={props.blog.created_at}
+              updatedAt={props.blog.updated_at}
+            />
           </div>
-        </Link>
-
-        <div class={styles["blog-card-tag-container"]}>
-          {tags.map((tag) => (
-            <span
-              key={tag.id}
-              class={styles.tag}
-              onClick$={() => handleTagClick(tag.id!)}
-            >
+        </div>
+      </A>
+      <div class={styles["blog-card-tag-container"]}>
+        <For each={props.tags}>
+          {(tag) => (
+            <span class={styles.tag} onClick={() => handleTagClick(tag.id)}>
               <Tag
-                name={language === "ja" ? tag.name_ja : tag.name_en}
-                src={tag.icon_url!}
+                name={locale() === "ja" ? tag.name_ja : tag.name_en}
+                src={tag.icon_url ?? ""}
               />
             </span>
-          ))}
-        </div>
+          )}
+        </For>
       </div>
-    );
-  },
-);
+    </div>
+  );
+}

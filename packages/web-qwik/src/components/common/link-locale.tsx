@@ -1,23 +1,16 @@
-import { component$, PropsOf, Slot, useContext } from "@qwik.dev/core";
-import { Link } from "@qwik.dev/router";
-import { LanguageContext } from "~/context/language";
+import { A, type AnchorProps } from "@solidjs/router";
+import { splitProps } from "solid-js";
+import { useI18n } from "~/i18n/context";
 
-export type LinkLocaleProps = PropsOf<typeof Link>;
+export type LinkLocaleProps = AnchorProps;
 
-export const LinkLocale = component$<LinkLocaleProps>((props) => {
-  const languageState = useContext(LanguageContext);
+export function LinkLocale(props: LinkLocaleProps) {
+  const { locale, localizePath } = useI18n();
+  const [local, rest] = splitProps(props, ["href", "children"]);
 
   return (
-    <Link
-      {...props}
-      hreflang={languageState.language}
-      href={
-        languageState.language === "en"
-          ? props.href
-          : `/${languageState.language}${props.href}`
-      }
-    >
-      <Slot />
-    </Link>
+    <A {...rest} hreflang={locale()} href={localizePath(local.href)}>
+      {local.children}
+    </A>
   );
-});
+}

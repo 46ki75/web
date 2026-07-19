@@ -1,47 +1,37 @@
-import { $, component$, useContext } from "@qwik.dev/core";
+import { ElmButton, ElmMdiIcon } from "@elmethis/solid";
+import { mdiBookSearch } from "@mdi/js";
+import { useNavigate } from "@solidjs/router";
+import { For } from "solid-js";
+
+import { useBlog } from "~/context/blog";
+import { useI18n } from "~/i18n/context";
+import { BlogCard } from "./blog-card";
 
 import styles from "./blog-side.module.css";
 
-import { Link, useNavigate } from "@qwik.dev/router";
-import { BlogContext } from "~/context/blog";
-import { Language } from "~/types";
-import { BlogCard } from "./blog-card";
-import { ElmButton, ElmMdiIcon } from "@elmethis/qwik";
-import { mdiBookSearch } from "@mdi/js";
-
-export type BlogSideProps = {
-  language: Language;
-};
-
-export const BlogSide = component$<BlogSideProps>(({ language }) => {
-  const blogState = useContext(BlogContext);
-  const nav = useNavigate();
+export function BlogSide() {
+  const blogState = useBlog();
+  const { t, localizePath } = useI18n();
+  const navigate = useNavigate();
 
   return (
     <nav class={styles["blog-side"]}>
-      <Link
-        href={language === "en" ? "/blog/search" : `/${language}/blog/search`}
-        aria-label="Search Blogs"
-      ></Link>
-
       <ElmButton
-        onClick$={$(() =>
-          nav(language === "en" ? "/blog/search" : `/${language}/blog/search`),
-        )}
+        type="button"
+        onClick={() => navigate(localizePath("/blog/search"))}
       >
         <ElmMdiIcon class={styles.icon} d={mdiBookSearch} />
-        {language === "en" ? "Search Blogs" : "記事を検索"}
+        {t("common.searchBlogs")}
       </ElmButton>
-
-      {blogState.blogMeta[language]?.map((blog, index) => (
-        <BlogCard
-          key={blog.page_id}
-          blog={blog}
-          tags={blogState.tags?.filter((tag) => blog.tag_ids?.includes(tag.id))}
-          language={language}
-          delay={(index + 1) * 100}
-        />
-      ))}
+      <For each={blogState.blogMeta}>
+        {(blog, index) => (
+          <BlogCard
+            blog={blog}
+            tags={blogState.tags.filter((tag) => blog.tag_ids.includes(tag.id))}
+            delay={(index() + 1) * 100}
+          />
+        )}
+      </For>
     </nav>
   );
-});
+}

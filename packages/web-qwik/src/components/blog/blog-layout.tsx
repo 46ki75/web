@@ -1,47 +1,20 @@
-import { component$, Slot, useContext, useTask$ } from "@qwik.dev/core";
+import type { ParentProps } from "solid-js";
+
+import { BlogProvider, type BlogProviderProps } from "~/context/blog";
+import { BlogMain } from "./blog-main";
+import { BlogSide } from "./blog-side";
 
 import styles from "./blog-layout.module.css";
 
-import { BlogSide } from "~/components/blog/blog-side";
-import { BlogMain } from "~/components/blog/blog-main";
-import { getBlogList, getBlogTags } from "../../../openapi/blog";
-import { BlogContext } from "~/context/blog";
-import type { Language } from "~/types";
+export type BlogLayoutProps = ParentProps<BlogProviderProps>;
 
-export interface BlogLayoutProps {
-  language: Language;
-}
-
-export const BlogLayout = component$<BlogLayoutProps>(({ language }) => {
-  const blogState = useContext(BlogContext);
-
-  useTask$(async () => {
-    if (blogState.blogMeta[language].length === 0) {
-      const blogMeta = await getBlogList(language);
-
-      if (blogMeta != null) {
-        blogState.blogMeta[language] = blogMeta.sort((a, b) =>
-          b.created_at.localeCompare(a.created_at),
-        );
-      }
-    }
-
-    if (blogState.tags.length === 0) {
-      const blogTags = await getBlogTags();
-
-      if (blogTags != null) {
-        blogState.tags = blogTags;
-      }
-    }
-  });
-
+export function BlogLayout(props: BlogLayoutProps) {
   return (
-    <div class={styles["blog-layout"]}>
-      <BlogMain language={language}>
-        <Slot />
-      </BlogMain>
-
-      <BlogSide language={language} />
-    </div>
+    <BlogProvider blogMeta={props.blogMeta} tags={props.tags}>
+      <div class={styles["blog-layout"]}>
+        <BlogMain>{props.children}</BlogMain>
+        <BlogSide />
+      </div>
+    </BlogProvider>
   );
-});
+}

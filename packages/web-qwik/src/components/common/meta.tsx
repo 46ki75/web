@@ -1,7 +1,8 @@
-import { component$, PropsOf, Slot } from "@qwik.dev/core";
+import type { ElmBreadcrumbProps } from "@elmethis/solid";
+import type { ParentProps } from "solid-js";
 
 import styles from "./meta.module.css";
-import { ElmBlockImage, ElmBreadcrumb, ElmHeading } from "@elmethis/qwik";
+import { ElmBlockImage, ElmBreadcrumb, ElmHeading } from "@elmethis/solid";
 
 import { DateComponent } from "./date";
 
@@ -10,33 +11,34 @@ export interface MetaProps {
   createdAt: string;
   updatedAt: string;
   image?: string;
-  links: PropsOf<typeof ElmBreadcrumb>["links"];
+  links: ElmBreadcrumbProps["links"];
 }
 
-export const Meta = component$<MetaProps>(
-  ({ title, createdAt, updatedAt, image, links }) => {
-    return (
-      <div>
-        <ElmBreadcrumb links={links} />
+export function Meta(props: ParentProps<MetaProps>) {
+  return (
+    <div>
+      <ElmBreadcrumb links={props.links} />
 
-        <hr class={styles.divider} />
+      <hr class={styles.divider} />
 
-        <ElmHeading level={1}>{title}</ElmHeading>
-        <div class={styles["date-container"]}>
-          <DateComponent createdAt={createdAt} updatedAt={updatedAt} />
-        </div>
-
-        <Slot />
-
-        {image && (
-          <ElmBlockImage
-            src={image}
-            alt={`OGP ${title}`}
-            width={1200}
-            height={630}
-          />
-        )}
+      <ElmHeading level={1}>{props.title}</ElmHeading>
+      <div class={styles["date-container"]}>
+        <DateComponent
+          createdAt={props.createdAt}
+          updatedAt={props.updatedAt}
+        />
       </div>
-    );
-  },
-);
+
+      {props.children}
+
+      {props.image && (
+        <ElmBlockImage
+          src={props.image}
+          alt={`OGP ${props.title}`}
+          width={1200}
+          height={630}
+        />
+      )}
+    </div>
+  );
+}

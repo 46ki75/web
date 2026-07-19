@@ -1,22 +1,15 @@
-import { component$ } from "@qwik.dev/core";
-
 import styles from "./home.module.css";
 import { LayerDecoration } from "./layer-decoration";
-import type { Language } from "~/types";
 import { About } from "./about";
 
-export type HomeProps = {
-  language: Language;
-};
-
-export const Home = component$<HomeProps>(({ language }) => {
+export function Home() {
   return (
-    <div class={[styles["home"]]}>
+    <div class={styles["home"]}>
       <div class={styles["about"]}>
-        <About language={language} />
+        <About />
       </div>
-      <div></div>
+      <div />
       <LayerDecoration />
     </div>
   );
-});
+}

@@ -251,12 +251,7 @@ resource "aws_cloudfront_distribution" "default" {
 
   dynamic "ordered_cache_behavior" {
     for_each = [
-      "/static/*",
-      "/assets/*",
       "/build/*",
-      "/favicon.ico",
-      "/manifest.json",
-      "/q-manifest.json"
     ]
     iterator = path_pattern
 
@@ -361,13 +356,6 @@ resource "aws_cloudfront_distribution" "default" {
   }
   # <<< [Lambda Function URLs] origin
 
-
-  custom_error_response {
-    error_code            = 404
-    response_code         = 404
-    response_page_path    = "/redirect/index.html"
-    error_caching_min_ttl = 0
-  }
 }
 
 # <<< CloudFront Logging v2 <https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/standard-logging.html>

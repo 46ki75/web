@@ -1,5 +1,5 @@
 // ============================================================================
-// Orbital model — WebGL scene (Qwik decoration variant)
+// Orbital model — WebGL scene (Solid decoration variant)
 // A glowing nucleus wrapped in electron orbits. Each electron rides its own
 // inclined ellipse and drags a comet trail. Trimmed from the standalone
 // showcase: transparent canvas, single element (Carbon), gentle auto-rotation,
@@ -74,7 +74,14 @@ export function createAtomScene(canvas: HTMLCanvasElement): () => void {
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, W, H);
     // a bright soft spot for a crisp specular highlight
-    const hl = ctx.createRadialGradient(W * 0.66, H * 0.3, 0, W * 0.66, H * 0.3, H * 0.5);
+    const hl = ctx.createRadialGradient(
+      W * 0.66,
+      H * 0.3,
+      0,
+      W * 0.66,
+      H * 0.3,
+      H * 0.5,
+    );
     hl.addColorStop(0.0, "rgba(255,255,255,0.9)");
     hl.addColorStop(1.0, "rgba(255,255,255,0)");
     ctx.fillStyle = hl;

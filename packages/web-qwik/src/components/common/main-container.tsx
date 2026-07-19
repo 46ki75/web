@@ -1,13 +1,11 @@
-import { component$, Slot } from "@qwik.dev/core";
+import type { ParentProps } from "solid-js";
 
 import styles from "./main-container.module.css";
 
-export const MainContainer = component$(() => {
+export function MainContainer(props: ParentProps) {
   return (
     <div class={styles["main"]}>
-      <div class={styles["main-inner"]}>
-        <Slot />
-      </div>
+      <div class={styles["main-inner"]}>{props.children}</div>
     </div>
   );
-});
+}

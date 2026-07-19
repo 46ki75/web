@@ -1,11 +1,11 @@
-import { component$ } from "@qwik.dev/core";
-import { ElmInlineText } from "@elmethis/qwik";
+import { ElmInlineText } from "@elmethis/solid";
+import { For } from "solid-js";
 
-import GitHubIcon from "../../assets/icons/github.svg?jsx";
-import XIcon from "../../assets/icons/x.svg?jsx";
-import PixivIcon from "../../assets/icons/pixiv.svg?jsx";
-import LinkedInIcon from "../../assets/icons/linkedin.svg?jsx";
-import EmailIcon from "../../assets/icons/email.svg?jsx";
+import GitHubIcon from "../../assets/icons/github.svg?url";
+import XIcon from "../../assets/icons/x.svg?url";
+import PixivIcon from "../../assets/icons/pixiv.svg?url";
+import LinkedInIcon from "../../assets/icons/linkedin.svg?url";
+import EmailIcon from "../../assets/icons/email.svg?url";
 
 import styles from "./find-me-on.module.css";
 
@@ -37,23 +37,28 @@ const links = [
   },
 ];
 
-export const FindMeOn = component$(() => {
+export function FindMeOn() {
   return (
-    <>
-      <div class={styles["link-container"]}>
-        {links.map((link) => (
+    <div class={styles["link-container"]}>
+      <For each={links}>
+        {(link) => (
           <a
-            key={link.text}
             class={styles["link"]}
             href={link.href}
             target="_blank"
             rel="noopener noreferrer"
           >
-            <link.image width={40} height={40} class={styles["link-icon"]} />
+            <img
+              src={link.image}
+              alt=""
+              width={40}
+              height={40}
+              class={styles["link-icon"]}
+            />
             <ElmInlineText size="0.75rem">{link.text}</ElmInlineText>
           </a>
-        ))}
-      </div>
-    </>
+        )}
+      </For>
+    </div>
   );
-});
+}

@@ -1,48 +1,45 @@
-import { component$ } from "@qwik.dev/core";
+import { ElmInlineText, ElmParagraph } from "@elmethis/solid";
+
+import { useI18n } from "~/i18n/context";
+import githubIconUrl from "../../assets/icons/github.svg?url";
+import profileIconUrl from "../../assets/icons/profile-icon.webp?url";
 
 import styles from "./blog-author.module.css";
-import { Language } from "~/types";
 
-import ImgProfileIcon from "../../assets/icons/profile-icon.webp?jsx";
-import ImgGitHubIcon from "../../assets/icons/github.svg?jsx";
+export function BlogAuthor() {
+  const { t } = useI18n();
 
-import { ElmInlineText, ElmParagraph } from "@elmethis/qwik";
-
-export interface BlogAuthorProps {
-  language: Language;
-}
-
-const translations: Record<Language, { selfIntroduction: string }> = {
-  en: {
-    selfIntroduction:
-      "I like Rust. For work, I'm an infrastructure engineer, and as a hobby, I'm an application engineer. I enjoy drawing illustrations and other creative pursuits.",
-  },
-  ja: {
-    selfIntroduction:
-      "Rust が好きです。仕事ではインフラエンジニア、趣味ではアプリケーションエンジニアです。イラストなどを嗜む。",
-  },
-};
-
-export const BlogAuthor = component$<BlogAuthorProps>(({ language }) => {
   return (
-    <div class={styles["author"]}>
-      <ImgProfileIcon class={styles.icon} alt="Profile Icon" />
+    <div class={styles.author}>
+      <img
+        class={styles.icon}
+        src={profileIconUrl}
+        alt="Profile Icon"
+        width={512}
+        height={512}
+      />
       <ElmInlineText bold size="1.1rem">
         Ikuma Yamashita
       </ElmInlineText>
-      <div class={styles["content"]}>
-        <ElmParagraph>{translations[language]?.selfIntroduction}</ElmParagraph>
+      <div class={styles.content}>
+        <ElmParagraph>{t("blog.authorIntroduction")}</ElmParagraph>
       </div>
-      <div class={styles["links"]}>
+      <div class={styles.links}>
         <a
           href="https://github.com/46ki75"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="GitHub"
         >
-          <ImgGitHubIcon class={styles["link-icon"]} />
+          <img
+            class={styles["link-icon"]}
+            src={githubIconUrl}
+            alt=""
+            width={32}
+            height={32}
+          />
         </a>
       </div>
     </div>
   );
-});
+}
