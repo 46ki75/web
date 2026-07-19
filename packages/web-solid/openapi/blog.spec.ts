@@ -40,7 +40,7 @@ describe("blog CDN client", () => {
 
   it("includes the locale in article image paths", () => {
     expect(ogImageUrl("solid-start", "ja")).toBe(
-      "/cache/v3/blog/article/solid-start/og-image/ja",
+      "https://dev-www.ikuma.cloud/cache/v3/blog/article/solid-start/og-image/ja",
     );
   });
 });

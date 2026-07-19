@@ -48,4 +48,4 @@ export const getBlogTags = (signal?: AbortSignal) =>
 
 /** Path to a blog's materialized OGP cover image. */
 export const ogImageUrl = (slug: string, language: BlogLanguage) =>
-  `/cache/v3/blog/article/${slug}/og-image/${language}`;
+  `${apiBase}/cache/v3/blog/article/${slug}/og-image/${language}`;
