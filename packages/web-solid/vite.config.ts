@@ -46,6 +46,11 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, ""),
         },
+        "/cache": {
+          target: `https://${domain}/cache`,
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/cache/, ""),
+        },
       },
     },
   };
