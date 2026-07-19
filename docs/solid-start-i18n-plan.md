@@ -1,7 +1,7 @@
 # SolidStart i18n migration plan
 
 This document outlines the internationalization design for migrating
-`packages/web-qwik` from Qwik City to SolidStart. The implementation uses
+`packages/web-solid` from Qwik City to SolidStart. The implementation uses
 `@solid-primitives/i18n` for typed translation utilities and an application-owned
 Solid context for locale state.
 

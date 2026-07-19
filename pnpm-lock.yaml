@@ -8,7 +8,7 @@ importers:
 
   .: {}
 
-  packages/web-qwik:
+  packages/web-solid:
     dependencies:
       '@elmethis/solid':
         specifier: 0.3.1
