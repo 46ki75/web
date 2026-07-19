@@ -3,7 +3,7 @@ import {
   type RouteDefinition,
   type RouteSectionProps,
 } from "@solidjs/router";
-import { Show, Suspense } from "solid-js";
+import { Suspense } from "solid-js";
 
 import { BlogLayout } from "~/components/blog/blog-layout";
 import { getBlogData } from "~/data/blog";
@@ -23,13 +23,9 @@ export default function BlogRouteLayout(props: RouteSectionProps) {
 
   return (
     <Suspense>
-      <Show when={data()} keyed>
-        {(resolved) => (
-          <BlogLayout blogMeta={resolved.blogMeta} tags={resolved.tags}>
-            {props.children}
-          </BlogLayout>
-        )}
-      </Show>
+      <BlogLayout blogMeta={data()?.blogMeta ?? []} tags={data()?.tags ?? []}>
+        {props.children}
+      </BlogLayout>
     </Suspense>
   );
 }

@@ -63,9 +63,7 @@ export function Seo(props: SeoProps) {
 
   return (
     <>
-      <Title>
-        {props.title} | {siteConfig[props.locale].siteName}
-      </Title>
+      <Title>{`${props.title} | ${siteConfig[props.locale].siteName}`}</Title>
       <HeadMeta name="description" content={description()} />
       <HeadMeta property="og:site_name" content="FineNight" />
       <HeadMeta property="og:type" content={props.type} />

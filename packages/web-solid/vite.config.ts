@@ -37,7 +37,15 @@ export default defineConfig(({ mode }) => {
           }
         },
       },
-      nitro({ preset: "aws-lambda" }),
+      nitro({
+        preset: "aws-lambda",
+        devProxy: {
+          "/cache/**": {
+            target: `https://${domain}`,
+            changeOrigin: true,
+          },
+        },
+      }),
     ],
     server: {
       headers: {
