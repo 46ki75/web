@@ -1,6 +1,5 @@
 import { solidStart } from "@solidjs/start/config";
 import { nitro } from "nitro/vite";
-import { fileURLToPath } from "node:url";
 import { defineConfig, loadEnv } from "vite";
 
 export default defineConfig(({ mode }) => {
@@ -12,16 +11,6 @@ export default defineConfig(({ mode }) => {
   return {
     define: {
       "import.meta.env.VITE_API_DOMAIN": JSON.stringify(domain),
-    },
-    resolve: {
-      alias: [
-        {
-          find: /^shiki$/,
-          replacement: fileURLToPath(
-            new URL("./src/stubs/shiki.ts", import.meta.url),
-          ),
-        },
-      ],
     },
     plugins: [
       solidStart({ middleware: "src/middleware.ts" }),

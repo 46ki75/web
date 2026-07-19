@@ -11,8 +11,8 @@ importers:
   packages/web-solid:
     dependencies:
       '@elmethis/solid':
-        specifier: 0.3.3
-        version: 0.3.3(solid-js@1.9.14)(zod@3.25.76)
+        specifier: 0.3.5
+        version: 0.3.5(solid-js@1.9.14)(zod@3.25.76)
       '@mdi/js':
         specifier: ^7.4.47
         version: 7.4.47
@@ -263,8 +263,8 @@ packages:
       '@a2ui/web_core': '>=0.10.0'
       zod: ^3
 
-  '@elmethis/solid@0.3.3':
-    resolution: {integrity: sha512-enFq4NSCEzwt32RWchDl3HGDf/QKf3btn8KyRXNaOm/WsKqLL9l2UBRhHKjo7wL3NXqt4sCr1na3Q7Rydwm90w==}
+  '@elmethis/solid@0.3.5':
+    resolution: {integrity: sha512-9wI+Kw3Z2rmhjnQsLohafcrKIaGZcq2PW9/eyQdgw6Ds5VpOZimN89w6OPm9+fjb8+QEQ1cZaF00Oedu0XPKKQ==}
     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
     peerDependencies:
       solid-js: ^1.9.0
@@ -3834,7 +3834,7 @@ snapshots:
       zod: 3.25.76
       zod-to-json-schema: 3.25.2(zod@3.25.76)
 
-  '@elmethis/solid@0.3.3(solid-js@1.9.14)(zod@3.25.76)':
+  '@elmethis/solid@0.3.5(solid-js@1.9.14)(zod@3.25.76)':
     dependencies:
       '@46ki75/ikuma-theme': 0.0.10
       '@a2ui/web_core': 0.10.5
