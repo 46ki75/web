@@ -30,7 +30,7 @@ export default function LocaleLayout(props: RouteSectionProps) {
           <main style={{ "view-transition-name": "main-content" }}>
             {props.children}
           </main>
-          <ElmParallax images={[amber, gold]} />
+          <ElmParallax images={[amber, gold]} style={{ isolation: "auto" }} />
           <Footer />
           <ElmPageTop />
         </I18nProvider>
