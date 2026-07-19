@@ -22,15 +22,15 @@ resource "github_repository_ruleset" "branch_require_pr" {
         integration_id = data.github_app.github_actions.id
       }
       required_check {
-        context        = "Build Test (packages/web-qwik)"
+        context        = "Build Test (packages/web-solid)"
         integration_id = data.github_app.github_actions.id
       }
       required_check {
-        context        = "Lint (packages/web-qwik) - ESLint"
+        context        = "Lint (packages/web-solid) - ESLint"
         integration_id = data.github_app.github_actions.id
       }
       required_check {
-        context        = "Lint (packages/web-qwik) - Stylelint"
+        context        = "Lint (packages/web-solid) - Stylelint"
         integration_id = data.github_app.github_actions.id
       }
     }

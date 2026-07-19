@@ -9,12 +9,12 @@ is dynamic (Lambda) or a pre-rendered static object (S3).
 
 CloudFront behaviors are matched in order; the first matching path pattern wins.
 
-| Path pattern                                                                               | Origin          | Backend                        | Cache policy | Basic auth\* |
-| ------------------------------------------------------------------------------------------ | --------------- | ------------------------------ | ------------ | ------------ |
-| `/api/*`                                                                                   | `api-backend`   | Lambda — `web-lambda-http-api` | `http_api`   | no           |
-| `/cache/*`                                                                                 | `s3-blog`       | S3 — blog cache bucket         | `s3`         | no           |
-| `/static/*`, `/assets/*`, `/build/*`, `/favicon.ico`, `/manifest.json`, `/q-manifest.json` | `s3-web`        | S3 — frontend assets           | `s3`         | yes          |
-| _(default)_                                                                                | `nitro-backend` | Lambda — Qwik SSR (nitro)      | `nitro`      | yes          |
+| Path pattern | Origin          | Backend                          | Cache policy | Basic auth\* |
+| ------------ | --------------- | -------------------------------- | ------------ | ------------ |
+| `/api/*`     | `api-backend`   | Lambda — `web-lambda-http-api`   | `http_api`   | no           |
+| `/cache/*`   | `s3-blog`       | S3 — blog cache bucket           | `s3`         | no           |
+| `/build/*`   | `s3-web`        | S3 — SolidStart frontend assets  | `s3`         | yes          |
+| _(default)_  | `nitro-backend` | Lambda — SolidStart SSR (Nitro)  | `nitro`      | yes          |
 
 \* Basic auth is a CloudFront viewer-request function applied only to the HTML
 and frontend-asset behaviors on non-`prod` stages. `/api/*` and `/cache/*` are
