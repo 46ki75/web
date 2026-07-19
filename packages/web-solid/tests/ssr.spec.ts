@@ -1,4 +1,4 @@
-import { access } from "node:fs/promises";
+import { access, readFile, readdir } from "node:fs/promises";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
@@ -254,6 +254,34 @@ describe("production SSR handler", () => {
         ),
       ),
     ).resolves.toBeUndefined();
+  });
+
+  it("preserves manual theme selection in production CSS", async () => {
+    const buildDirectory = fileURLToPath(
+      new URL("../.output/public/build", import.meta.url),
+    );
+    const cssFiles = (await readdir(buildDirectory)).filter((file) =>
+      file.endsWith(".css"),
+    );
+    const css = (
+      await Promise.all(
+        cssFiles.map((file) => readFile(join(buildDirectory, file), "utf8")),
+      )
+    ).join("\n");
+
+    const usesNativeThemeTokens = css.includes("light-dark(");
+    const compilesLightTheme =
+      /\[data-theme=["']?light["']?\]\{[^}]*--lightningcss-light:initial/.test(
+        css,
+      );
+    const compilesDarkTheme =
+      /\[data-theme=["']?dark["']?\]\{[^}]*--lightningcss-dark:initial/.test(
+        css,
+      );
+
+    expect(
+      usesNativeThemeTokens || (compilesLightTheme && compilesDarkTheme),
+    ).toBe(true);
   });
 
   it.each([
