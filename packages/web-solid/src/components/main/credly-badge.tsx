@@ -32,11 +32,11 @@ export function CredlyBadge(props: CredlyBadgeProps) {
       <div class={styles.p}>{props.name}</div>
 
       <div class={styles.grid}>
-        <ElmMdiIcon d={mdiCertificateOutline} size="0.5rem" color="gray" />
+        <ElmMdiIcon path={mdiCertificateOutline} size="0.5rem" color="gray" />
         <ElmInlineText size=".5rem">Issued</ElmInlineText>
         <ElmInlineText size=".5rem">{props.issued_at_date}</ElmInlineText>
 
-        <ElmMdiIcon d={mdiAlertCircleOutline} size="0.5rem" color="gray" />
+        <ElmMdiIcon path={mdiAlertCircleOutline} size="0.5rem" color="gray" />
         <ElmInlineText size=".5rem">Expires</ElmInlineText>
         <ElmInlineText size=".5rem">
           {props.expires_at_date ?? "-"}

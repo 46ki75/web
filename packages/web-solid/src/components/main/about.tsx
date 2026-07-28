@@ -70,7 +70,10 @@ export function About() {
         <LinkLocale href="/blog" class={styles["blog-link-container"]}>
           <div class={styles["blog-link-container-inner"]}>
             <span class={styles["blog-link-text"]}>{t("common.readBlog")}</span>
-            <ElmMdiIcon d={mdiChevronRight} class={styles["blog-link-icon"]} />
+            <ElmMdiIcon
+              path={mdiChevronRight}
+              class={styles["blog-link-icon"]}
+            />
           </div>
         </LinkLocale>
 

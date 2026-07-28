@@ -20,7 +20,7 @@ export function BlogSide() {
         type="button"
         onClick={() => navigate(localizePath("/blog/search"))}
       >
-        <ElmMdiIcon class={styles.icon} d={mdiBookSearch} />
+        <ElmMdiIcon class={styles.icon} path={mdiBookSearch} />
         {t("common.searchBlogs")}
       </ElmButton>
       <For each={blogState.blogMeta}>

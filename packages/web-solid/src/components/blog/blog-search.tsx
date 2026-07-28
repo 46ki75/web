@@ -1,11 +1,11 @@
 import {
-  createAutoAnimate,
   ElmButton,
   ElmCollapse,
   ElmHeading,
   ElmMdiIcon,
   ElmTextField,
 } from "@elmethis/solid";
+import { createAutoAnimate } from "@formkit/auto-animate/solid";
 import { mdiTagRemove } from "@mdi/js";
 import { useNavigate } from "@solidjs/router";
 import Fuse from "fuse.js";
@@ -30,8 +30,8 @@ export function BlogSearch() {
   const blogState = useBlog();
   const { t, locale, localizePath } = useI18n();
   const navigate = useNavigate();
-  const selectedTagsAnimation = createAutoAnimate<HTMLDivElement>();
-  const resultsAnimation = createAutoAnimate<HTMLDivElement>();
+  const [selectedTagsAnimation] = createAutoAnimate<HTMLDivElement>();
+  const [resultsAnimation] = createAutoAnimate<HTMLDivElement>();
   const [searchKeyword, setSearchKeyword] = createSignal("");
   const [debouncedKeyword, setDebouncedKeyword] = createSignal("");
 
@@ -135,7 +135,7 @@ export function BlogSearch() {
         <ElmHeading level={2}>{t("common.selectedTags")}</ElmHeading>
         <ElmCollapse isOpen={blogState.selectedTagIds().length > 0}>
           <div
-            ref={selectedTagsAnimation.ref}
+            ref={selectedTagsAnimation}
             class={styles["tag-pool"]}
             classList={{
               [styles.empty]: blogState.selectedTagIds().length === 0,
@@ -177,12 +177,12 @@ export function BlogSearch() {
             onClick={() => blogState.setSelectedTagIds([])}
             block
           >
-            <ElmMdiIcon class={styles.icon} d={mdiTagRemove} />
+            <ElmMdiIcon class={styles.icon} path={mdiTagRemove} />
             {t("common.resetTags")}
           </ElmButton>
         </div>
         <ElmHeading level={2}>{t("common.searchResults")}</ElmHeading>
-        <div ref={resultsAnimation.ref} class={styles["blog-search-result"]}>
+        <div ref={resultsAnimation} class={styles["blog-search-result"]}>
           <For each={visibleResults()}>
             {(blog) => (
               <BlogCard
