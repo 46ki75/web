@@ -144,6 +144,7 @@ describe("production SSR handler", () => {
         if (url.includes("/cache/v3/blog/list/")) {
           return Response.json([]);
         }
+        await new Promise((resolve) => setTimeout(resolve, 10));
         return Response.json({
           meta: {
             slug: "a2ui-ssr-vitest",

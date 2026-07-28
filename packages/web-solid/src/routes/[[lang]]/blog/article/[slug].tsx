@@ -23,57 +23,64 @@ export const route = {
 
 export default function BlogArticleRoute(props: RouteSectionProps) {
   const { locale } = useI18n();
-  const contents = createAsync(() =>
-    getBlogArticle(props.params.slug!, locale()),
+  const article = createAsync(
+    () => getBlogArticle(props.params.slug!, locale()),
+    { deferStream: true },
   );
 
   return (
     <Suspense>
-      <Show
-        when={contents()}
-        keyed
-        fallback={
-          <>
-            <HttpStatusCode code={404} text="Not Found" />
-            <Seo
-              title="Not Found"
-              locale={locale()}
-              pathname={props.location.pathname}
-              type="website"
-              noIndex
-            />
-            <h1>Not Found</h1>
-          </>
-        }
-      >
-        {(resolved) => (
-          <>
-            <Seo
-              title={resolved.meta.title}
-              description={resolved.meta.description}
-              locale={locale()}
-              pathname={props.location.pathname}
-              type="article"
-              image={ogImageUrl(resolved.meta.slug, locale())}
-              jsonLd={{
-                "@context": "https://schema.org",
-                "@type": "Article",
-                headline: resolved.meta.title,
-                description: resolved.meta.description,
-                datePublished: resolved.meta.created_at,
-                dateModified: resolved.meta.updated_at,
-                inLanguage: locale(),
-                url: absoluteUrl(props.location.pathname),
-                image: absoluteUrl(ogImageUrl(resolved.meta.slug, locale())),
-                author: {
-                  "@type": "Person",
-                  name: "Ikuma Yamashita",
-                  url: absoluteUrl("/"),
-                },
-              }}
-            />
-            <BlogArticle slug={props.params.slug!} contents={resolved} />
-          </>
+      <Show when={article()} keyed>
+        {(resolvedArticle) => (
+          <Show
+            when={resolvedArticle.contents}
+            keyed
+            fallback={
+              <>
+                <HttpStatusCode code={404} text="Not Found" />
+                <Seo
+                  title="Not Found"
+                  locale={locale()}
+                  pathname={props.location.pathname}
+                  type="website"
+                  noIndex
+                />
+                <h1>Not Found</h1>
+              </>
+            }
+          >
+            {(resolved) => (
+              <>
+                <Seo
+                  title={resolved.meta.title}
+                  description={resolved.meta.description}
+                  locale={locale()}
+                  pathname={props.location.pathname}
+                  type="article"
+                  image={ogImageUrl(resolved.meta.slug, locale())}
+                  jsonLd={{
+                    "@context": "https://schema.org",
+                    "@type": "Article",
+                    headline: resolved.meta.title,
+                    description: resolved.meta.description,
+                    datePublished: resolved.meta.created_at,
+                    dateModified: resolved.meta.updated_at,
+                    inLanguage: locale(),
+                    url: absoluteUrl(props.location.pathname),
+                    image: absoluteUrl(
+                      ogImageUrl(resolved.meta.slug, locale()),
+                    ),
+                    author: {
+                      "@type": "Person",
+                      name: "Ikuma Yamashita",
+                      url: absoluteUrl("/"),
+                    },
+                  }}
+                />
+                <BlogArticle slug={props.params.slug!} contents={resolved} />
+              </>
+            )}
+          </Show>
         )}
       </Show>
     </Suspense>
