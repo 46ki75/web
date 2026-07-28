@@ -22,5 +22,5 @@ export const getBlogData = query(async (locale: Locale) => {
 export const getBlogArticle = query(async (slug: string, locale: Locale) => {
   "use server";
 
-  return getBlogContents(slug, locale);
+  return { contents: await getBlogContents(slug, locale) };
 }, "blog-article");
