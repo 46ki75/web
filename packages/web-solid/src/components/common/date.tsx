@@ -10,11 +10,11 @@ export interface DateProps {
 export function DateComponent(props: DateProps) {
   return (
     <div class={styles.date}>
-      <ElmMdiIcon class={styles.icon} d={mdiCalendarEdit} size="1rem" />
+      <ElmMdiIcon class={styles.icon} path={mdiCalendarEdit} size="1rem" />
       <ElmInlineText size="0.85rem">
         {props.createdAt.substring(0, 10)}
       </ElmInlineText>
-      <ElmMdiIcon class={styles.icon} d={mdiCalendarClock} size="1rem" />
+      <ElmMdiIcon class={styles.icon} path={mdiCalendarClock} size="1rem" />
       <ElmInlineText size="0.85rem">
         {props.updatedAt.substring(0, 10)}
       </ElmInlineText>

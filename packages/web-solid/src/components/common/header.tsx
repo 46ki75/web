@@ -38,7 +38,7 @@ export function Header() {
 
       <div class={styles["header-center"]}>
         <LinkLocale href="/" class={styles.link}>
-          <ElmMdiIcon class={styles["header-center-icon"]} d={mdiHome} />
+          <ElmMdiIcon class={styles["header-center-icon"]} path={mdiHome} />
           <ElmInlineText>{t("common.home")}</ElmInlineText>
         </LinkLocale>
 
@@ -47,7 +47,7 @@ export function Header() {
         <LinkLocale href="/blog" class={styles.link}>
           <ElmMdiIcon
             class={styles["header-center-icon"]}
-            d={mdiNotebookMultiple}
+            path={mdiNotebookMultiple}
           />
           <ElmInlineText>{t("common.blog")}</ElmInlineText>
         </LinkLocale>
@@ -62,10 +62,13 @@ export function Header() {
         >
           <ElmMdiIcon
             class={styles["header-center-icon"]}
-            d={mdiAccountVoice}
+            path={mdiAccountVoice}
           />
           <ElmInlineText>Speaker Deck</ElmInlineText>
-          <ElmMdiIcon class={styles["header-center-icon"]} d={mdiOpenInNew} />
+          <ElmMdiIcon
+            class={styles["header-center-icon"]}
+            path={mdiOpenInNew}
+          />
         </a>
       </div>
 

@@ -44,17 +44,26 @@ export function Footer() {
           </div>
 
           <LinkLocale class={styles["footer-sitelink"]} href="/about">
-            <ElmMdiIcon d={mdiLinkVariant} class={styles["footer-link-icon"]} />
+            <ElmMdiIcon
+              path={mdiLinkVariant}
+              class={styles["footer-link-icon"]}
+            />
             <ElmInlineText>{labels[locale()].about}</ElmInlineText>
           </LinkLocale>
 
           <LinkLocale class={styles["footer-sitelink"]} href="/privacy">
-            <ElmMdiIcon d={mdiLinkVariant} class={styles["footer-link-icon"]} />
+            <ElmMdiIcon
+              path={mdiLinkVariant}
+              class={styles["footer-link-icon"]}
+            />
             <ElmInlineText>{t("common.privacyPolicy")}</ElmInlineText>
           </LinkLocale>
 
           <LinkLocale class={styles["footer-sitelink"]} href="/blog">
-            <ElmMdiIcon d={mdiLinkVariant} class={styles["footer-link-icon"]} />
+            <ElmMdiIcon
+              path={mdiLinkVariant}
+              class={styles["footer-link-icon"]}
+            />
             <ElmInlineText>{labels[locale()].blogs}</ElmInlineText>
           </LinkLocale>
 
@@ -64,7 +73,10 @@ export function Footer() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <ElmMdiIcon d={mdiOpenInNew} class={styles["footer-link-icon"]} />
+            <ElmMdiIcon
+              path={mdiOpenInNew}
+              class={styles["footer-link-icon"]}
+            />
             <ElmInlineText>Speaker Deck</ElmInlineText>
           </a>
         </div>
@@ -103,7 +115,7 @@ export function Footer() {
               target="_blank"
               aria-label="Sitemap"
             >
-              <ElmMdiIcon d={mdiSitemap} size="1.5rem" />
+              <ElmMdiIcon path={mdiSitemap} size="1.5rem" />
             </a>
 
             <a

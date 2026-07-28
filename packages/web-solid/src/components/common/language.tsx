@@ -18,7 +18,7 @@ export function Language() {
 
   return (
     <div class={styles.language} onClick={handleToggleLanguage}>
-      <ElmMdiIcon d={mdiTranslate} color="#a4863e" />
+      <ElmMdiIcon path={mdiTranslate} color="#a4863e" />
       <div class={styles["language-container"]}>
         <span class={styles["language-label"]}>
           <ElmInlineText>{t("common.language")}</ElmInlineText>
