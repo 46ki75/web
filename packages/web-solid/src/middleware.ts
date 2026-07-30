@@ -54,6 +54,8 @@ export default createMiddleware({
         "public, max-age=600, s-maxage=31536000",
       );
     }
+
+    return undefined;
   },
   onBeforeResponse(event) {
     if ((event.response.status ?? 200) >= 400) {

@@ -15,7 +15,9 @@ const NOTION_BLOCK_CATALOG_ID =
   "https://46ki75.github.io/elmethis/a2ui/v0_9/notion_block_catalog.json";
 
 const surfaceToMessages = (raw: unknown, surfaceId: string): object[] => {
-  if (!raw || typeof raw !== "object") return [];
+  if (!raw || typeof raw !== "object") {
+    return [];
+  }
   const surface = raw as {
     components?: Record<string, { id: string; component: string }>;
   };

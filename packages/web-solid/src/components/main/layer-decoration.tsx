@@ -11,8 +11,10 @@ export function LayerDecoration() {
     let dispose: (() => void) | undefined;
     let cancelled = false;
 
-    import("./atom-scene").then(({ createAtomScene }) => {
-      if (cancelled) return;
+    void import("./atom-scene").then(({ createAtomScene }) => {
+      if (cancelled) {
+        return;
+      }
       dispose = createAtomScene(canvasRef);
     });
 

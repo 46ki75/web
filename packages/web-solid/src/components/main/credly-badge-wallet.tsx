@@ -41,7 +41,9 @@ const fetchBadges = query(async (): Promise<CredlyBadgeData[]> => {
   "use server";
 
   const response = await fetch(CREDLY_BADGES_ENDPOINT);
-  if (!response.ok) throw new Error(`Credly returned ${response.status}`);
+  if (!response.ok) {
+    throw new Error(`Credly returned ${response.status}`);
+  }
 
   const json = (await response.json()) as { data: CredlyBadgeData[] };
   return json.data.map((badge) => ({

@@ -24,6 +24,8 @@ export default defineConfig(({ mode }) => {
               },
             };
           }
+
+          return undefined;
         },
       },
       nitro({

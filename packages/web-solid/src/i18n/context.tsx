@@ -42,7 +42,9 @@ export function I18nProvider(props: ParentProps<{ locale: Accessor<Locale> }>) {
   const value = createI18nValue(() => props.locale());
 
   createEffect(() => {
-    if (!isServer) document.documentElement.lang = props.locale();
+    if (!isServer) {
+      document.documentElement.lang = props.locale();
+    }
   });
 
   return (
@@ -52,6 +54,8 @@ export function I18nProvider(props: ParentProps<{ locale: Accessor<Locale> }>) {
 
 export function useI18n(): I18nContextValue {
   const context = useContext(I18nContext);
-  if (!context) throw new Error("useI18n must be used inside I18nProvider");
+  if (!context) {
+    throw new Error("useI18n must be used inside I18nProvider");
+  }
   return context;
 }
