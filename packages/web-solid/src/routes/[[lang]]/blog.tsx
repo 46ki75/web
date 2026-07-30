@@ -13,7 +13,9 @@ import { localeFromRouteParam } from "~/i18n/locale";
 export const route = {
   preload({ params }) {
     const locale = localeFromRouteParam(params.lang);
-    if (locale) void getBlogData(locale);
+    if (locale) {
+      void getBlogData(locale);
+    }
   },
 } satisfies RouteDefinition;
 

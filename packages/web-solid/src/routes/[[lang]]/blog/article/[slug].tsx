@@ -17,7 +17,9 @@ import { absoluteUrl } from "~/utils/site";
 export const route = {
   preload({ params }) {
     const locale = localeFromRouteParam(params.lang);
-    if (locale) void getBlogArticle(params.slug!, locale);
+    if (locale) {
+      void getBlogArticle(params.slug!, locale);
+    }
   },
 } satisfies RouteDefinition;
 

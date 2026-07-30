@@ -47,6 +47,8 @@ export function BlogProvider(props: ParentProps<BlogProviderProps>) {
 
 export function useBlog(): BlogContextValue {
   const context = useContext(BlogContext);
-  if (!context) throw new Error("useBlog must be used inside BlogProvider");
+  if (!context) {
+    throw new Error("useBlog must be used inside BlogProvider");
+  }
   return context;
 }

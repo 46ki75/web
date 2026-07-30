@@ -19,7 +19,9 @@ export function isLocale(value: string | undefined): value is Locale {
 }
 
 export function localeFromRouteParam(value: string | undefined): Locale | null {
-  if (value == null || value === "") return defaultLocale;
+  if (value == null || value === "") {
+    return defaultLocale;
+  }
   return isLocale(value) ? value : null;
 }
 
@@ -28,10 +30,18 @@ export function localeFromPath(pathname: string): Locale {
 }
 
 export function removeLocalePrefix(pathname: string): string {
-  if (pathname === "/ja" || pathname === "/ja/") return "/";
-  if (pathname.startsWith("/ja/")) return pathname.slice(3);
-  if (pathname === "/en" || pathname === "/en/") return "/";
-  if (pathname.startsWith("/en/")) return pathname.slice(3);
+  if (pathname === "/ja" || pathname === "/ja/") {
+    return "/";
+  }
+  if (pathname.startsWith("/ja/")) {
+    return pathname.slice(3);
+  }
+  if (pathname === "/en" || pathname === "/en/") {
+    return "/";
+  }
+  if (pathname.startsWith("/en/")) {
+    return pathname.slice(3);
+  }
   return pathname || "/";
 }
 

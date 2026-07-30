@@ -379,7 +379,9 @@ export function createAtomScene(canvas: HTMLCanvasElement): () => void {
   function resize() {
     const w = canvas.clientWidth;
     const h = canvas.clientHeight;
-    if (!w || !h) return;
+    if (!w || !h) {
+      return;
+    }
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
@@ -399,7 +401,9 @@ export function createAtomScene(canvas: HTMLCanvasElement): () => void {
   let disposed = false;
 
   function frame(now: number) {
-    if (disposed) return;
+    if (disposed) {
+      return;
+    }
     const dt = Math.min((now - last) / 1000, 0.05);
     last = now;
     t += dt;
@@ -419,19 +423,26 @@ export function createAtomScene(canvas: HTMLCanvasElement): () => void {
   // one static paint even under reduced motion, then loop if allowed
   updateElectrons(0);
   renderer.render(scene, camera);
-  if (!reduceMotion) raf = requestAnimationFrame(frame);
+  if (!reduceMotion) {
+    raf = requestAnimationFrame(frame);
+  }
 
   // --- cleanup --------------------------------------------------------------
   return () => {
     disposed = true;
-    if (raf) cancelAnimationFrame(raf);
+    if (raf) {
+      cancelAnimationFrame(raf);
+    }
     ro.disconnect();
     scene.traverse((obj) => {
       const mesh = obj as Partial<THREE.Mesh & THREE.Line & THREE.Sprite>;
       mesh.geometry?.dispose?.();
       const mat = mesh.material;
-      if (Array.isArray(mat)) mat.forEach((m) => m.dispose());
-      else mat?.dispose?.();
+      if (Array.isArray(mat)) {
+        mat.forEach((m) => m.dispose());
+      } else {
+        mat?.dispose?.();
+      }
     });
     TEX_CORE.dispose();
     TEX_HALO.dispose();

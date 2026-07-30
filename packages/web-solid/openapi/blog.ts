@@ -23,7 +23,9 @@ const getJson = async <T>(
   signal?: AbortSignal,
 ): Promise<T | undefined> => {
   const response = await fetch(`${apiBase}${path}`, { signal });
-  if (!response.ok) return undefined;
+  if (!response.ok) {
+    return undefined;
+  }
   return (await response.json()) as T;
 };
 
