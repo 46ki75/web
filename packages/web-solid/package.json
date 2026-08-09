@@ -54,7 +54,7 @@
     "vitest": "4.1.10"
   },
   "dependencies": {
-    "@elmethis/solid": "0.5.0",
+    "@elmethis/solid": "0.7.1",
     "@formkit/auto-animate": "^0.10.0",
     "@mdi/js": "^7.4.47",
     "@solid-primitives/i18n": "2.2.1",
