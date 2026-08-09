@@ -159,7 +159,7 @@ describe("production SSR handler", () => {
               root: {
                 component: "Column",
                 id: "root",
-                children: ["paragraph"],
+                children: ["paragraph", "table"],
               },
               paragraph: {
                 component: "Paragraph",
@@ -170,6 +170,42 @@ describe("production SSR handler", () => {
                 component: "RichText",
                 id: "body",
                 text: "A2UI article body rendered on the server",
+              },
+              table: {
+                component: "Table",
+                id: "table",
+                header: ["header-row"],
+                body: ["body-row"],
+              },
+              "header-row": {
+                component: "TableRow",
+                id: "header-row",
+                children: ["header-cell"],
+              },
+              "header-cell": {
+                component: "TableCell",
+                id: "header-cell",
+                children: ["header-text"],
+              },
+              "header-text": {
+                component: "RichText",
+                id: "header-text",
+                text: "Heading",
+              },
+              "body-row": {
+                component: "TableRow",
+                id: "body-row",
+                children: ["body-cell"],
+              },
+              "body-cell": {
+                component: "TableCell",
+                id: "body-cell",
+                children: ["body-text"],
+              },
+              "body-text": {
+                component: "RichText",
+                id: "body-text",
+                text: "Value",
               },
             },
           },
@@ -185,6 +221,17 @@ describe("production SSR handler", () => {
     );
     expect(response.body).toContain('data-a2ui-component-id="root"');
     expect(response.body).toContain("A2UI article body rendered on the server");
+    expect(response.body).not.toMatch(
+      /<span[^>]*data-a2ui-component-id="(?:header|body)-(?:row|cell)"/,
+    );
+    expect(response.body).toMatch(
+      /<tr[^>]*data-a2ui-component-id="header-row"/,
+    );
+    expect(response.body).toMatch(
+      /<th[^>]*data-a2ui-component-id="header-cell"/,
+    );
+    expect(response.body).toMatch(/<tr[^>]*data-a2ui-component-id="body-row"/);
+    expect(response.body).toMatch(/<td[^>]*data-a2ui-component-id="body-cell"/);
   });
 
   it("does not leak locale state across concurrent requests", async () => {
