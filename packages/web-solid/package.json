@@ -51,7 +51,7 @@
     "typescript-plugin-css-modules": "latest",
     "vite": "8.1.5",
     "vite-plugin-solid": "2.11.13",
-    "vitest": "4.1.10"
+    "vitest": "4.1.11"
   },
   "dependencies": {
     "@elmethis/solid": "0.7.1",
