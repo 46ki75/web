@@ -1,0 +1,230 @@
+min_version = "2026.9.9"
+
+[tools]
+node = "24.21.0"
+awscli = "2.36.46"
+terraform = "1.16.2"
+zig = "0.16.0"
+# Linux autodetection also matches Python wheels; select standalone CLI archives.
+cargo-lambda = { version = "1.9.2", matching = "cargo-lambda-v" }
+
+[tool_alias]
+cargo-lambda = "github:cargo-lambda/cargo-lambda"
+
+[tool_config]
+locked = true
+
+[task_config]
+shell = "bash -euo pipefail -c"
+
+[settings]
+idiomatic_version_file_enable_tools = ["pnpm"]
+# Rust belongs to rustup; package.json owns pnpm, including its checksum.
+disable_tools = ["rust", "npm:pnpm"]
+auto_install = false
+lockfile_platforms = ["macos-arm64", "linux-x64", "linux-arm64"]
+
+[tasks.setup]
+description = "Prepare the native Rust toolchain and locked Node dependencies"
+run = [{ task = "setup:rust" }, { task = "setup:node" }]
+
+[tasks."setup:rust"]
+description = "Install the toolchain, components, and targets from rust-toolchain.toml"
+run = "rustup toolchain install --no-self-update"
+
+[tasks."setup:node"]
+description = "Install locked pnpm workspace dependencies"
+run = "pnpm install --frozen-lockfile"
+
+[tasks.fmt]
+description = "Format active Rust, frontend, and Terraform sources"
+depends = ["rust:fmt", "web:fmt", "terraform:fmt"]
+
+[tasks.fmt-check]
+description = "Check the same formatting scope as fmt"
+depends = ["rust:fmt-check", "web:fmt-check", "terraform:fmt-check"]
+
+[tasks.lint]
+description = "Run Rust, ESLint, and Stylelint checks"
+depends = ["rust:lint", "web:lint", "web:lint:css"]
+
+[tasks.check]
+description = "Run project-wide formatting, lint, and type checks"
+depends = ["fmt-check", "lint", "web:typecheck"]
+
+[tasks.test]
+description = "Run Rust unit tests and frontend unit/SSR tests"
+depends = ["rust:test", "web:test"]
+
+[tasks."rust:fmt"]
+description = "Format the active Rust workspace"
+run = "cargo fmt --all"
+
+[tasks."rust:fmt-check"]
+description = "Check active Rust workspace formatting"
+run = "cargo fmt --all -- --check"
+
+[tasks."rust:lint"]
+description = "Deny Clippy warnings in the active Rust workspace"
+run = "cargo clippy --locked --workspace --all-targets -- -D warnings"
+
+[tasks."rust:test"]
+description = "Run Rust unit tests without credential-dependent integration tests"
+run = "cargo test --locked --workspace --lib --bins"
+
+[tasks."rust:test:live"]
+description = "Run web-blog-sdk integration tests against Notion (requires credentials)"
+run = "cargo test --locked -p web-blog-sdk --tests"
+
+[tasks."rust:ci"]
+description = "Run the active Rust workspace CI gate"
+run = [{ task = "rust:fmt-check" }, { task = "rust:lint" }, { task = "rust:test" }]
+
+[tasks."web:dev"]
+description = "Start the SolidStart development server"
+dir = "packages/web-solid"
+run = "pnpm run dev"
+
+[tasks."web:build"]
+description = "Build the SolidStart frontend"
+dir = "packages/web-solid"
+run = "pnpm run build"
+
+[tasks."web:typecheck"]
+description = "Check frontend TypeScript types"
+dir = "packages/web-solid"
+run = "pnpm run build.types"
+
+[tasks."web:fmt"]
+description = "Format the frontend package"
+dir = "packages/web-solid"
+run = "pnpm run fmt"
+
+[tasks."web:fmt-check"]
+description = "Check frontend package formatting"
+dir = "packages/web-solid"
+run = "pnpm run fmt.check"
+
+[tasks."web:lint"]
+description = "Run frontend ESLint"
+dir = "packages/web-solid"
+run = "pnpm run lint"
+
+[tasks."web:lint:css"]
+description = "Run frontend Stylelint"
+dir = "packages/web-solid"
+run = "pnpm run stylelint"
+
+[tasks."web:test"]
+description = "Build the frontend, then run unit and SSR tests"
+dir = "packages/web-solid"
+run = [{ task = "web:build" }, "pnpm run test.unit", "pnpm run test.ssr"]
+
+[tasks."web:deploy"]
+description = "Build, upload the frontend/Lambda, and invalidate CloudFront"
+dir = "packages/web-solid"
+usage = '''
+arg "<stage>" { choices "dev" "stg" "prod" }
+'''
+run = '''
+export STAGE_NAME="${usage_stage?}"
+pnpm run build
+./scripts/deploy-s3.sh
+./scripts/deploy-lambda.sh
+./scripts/invalidate.sh
+'''
+
+[tasks."terraform:fmt"]
+description = "Format Terraform configuration"
+run = "terraform fmt -recursive terraform"
+
+[tasks."terraform:fmt-check"]
+description = "Check Terraform formatting"
+run = "terraform fmt -check -recursive terraform"
+
+[tasks."http-api:dev"]
+description = "Watch the HTTP API on port 10000 (dev by default)"
+dir = "crates/web-lambda-http-api"
+usage = '''
+arg "[stage]" default="dev" { choices "dev" "stg" "prod" }
+'''
+run = 'STAGE_NAME="${usage_stage?}" RUST_LOG=info cargo lambda watch -P 10000 --package web-lambda-http-api'
+
+[tasks."http-api:stg"]
+description = "Watch the HTTP API with staging configuration"
+run = [{ task = "http-api:dev", args = ["stg"] }]
+
+[tasks."http-api:prod"]
+description = "Watch the HTTP API with production configuration"
+run = [{ task = "http-api:dev", args = ["prod"] }]
+
+[tasks."http-api:build"]
+description = "Build the arm64 HTTP API and blog publisher Lambdas"
+dir = "crates/web-lambda-http-api"
+run = "cargo lambda build --release --arm64"
+
+[tasks."http-api:deploy"]
+description = "Build and deploy the HTTP API Lambda"
+dir = "crates/web-lambda-http-api"
+usage = '''
+arg "<stage>" { choices "dev" "stg" "prod" }
+'''
+run = [{ task = "http-api:build" }, 'cargo lambda deploy --binary-name web-lambda-http-api "${usage_stage?}-46ki75-web-lambda-function-http_api"']
+
+[tasks."http-api:deploy-publisher"]
+description = "Build and deploy the blog publisher Lambda"
+dir = "crates/web-lambda-http-api"
+usage = '''
+arg "<stage>" { choices "dev" "stg" "prod" }
+'''
+run = [{ task = "http-api:build" }, 'cargo lambda deploy --binary-name web-lambda-blog-publisher "${usage_stage?}-46ki75-web-lambda-function-blog_publisher"']
+
+[tasks."http-api:invoke-publisher"]
+description = "Rebuild published blogs, waiting up to the Lambda's 15-minute timeout"
+usage = '''
+arg "<stage>" { choices "dev" "stg" "prod" }
+'''
+run = '''aws lambda invoke --function-name "${usage_stage?}-46ki75-web-lambda-function-blog_publisher" --cli-binary-format raw-in-base64-out --cli-read-timeout 900 --payload '{}' /dev/stdout'''
+
+[tasks."logs-reporter:dev"]
+description = "Watch the logs reporter with development configuration"
+dir = "crates/web-lambda-logs-reporter"
+run = "STAGE_NAME=dev RUST_LOG=web_lambda_logs_reporter=debug cargo lambda watch --package web-lambda-logs-reporter"
+
+[tasks."logs-reporter:build"]
+description = "Build the arm64 logs reporter Lambda"
+dir = "crates/web-lambda-logs-reporter"
+run = "cargo lambda build --arm64 --release"
+
+[tasks."logs-reporter:deploy"]
+description = "Build and deploy the logs reporter Lambda"
+dir = "crates/web-lambda-logs-reporter"
+usage = '''
+arg "<stage>" { choices "dev" "stg" "prod" }
+'''
+run = [{ task = "logs-reporter:build" }, 'cargo lambda deploy --binary-name web-lambda-logs-reporter "${usage_stage?}-46ki75-web-lambda-function-reporter"']
+
+[tasks."logs-reporter:test"]
+description = "Run logs reporter binary tests"
+dir = "crates/web-lambda-logs-reporter"
+run = "cargo test --locked --bins"
+
+# Archived recipes are retained for reference. This crate's manifest currently
+# inherits removed workspace dependencies (including jarkup-rs).
+[tasks."legacy:http-api-old:dev"]
+description = "Legacy HTTP API watch (blocked by archived manifest dependencies)"
+dir = "crates/http-api-old"
+run = "STAGE_NAME=dev AWS_LAMBDA_LOG_LEVEL=info AWS_LAMBDA_LOG_FORMAT=pretty cargo lambda watch -P 10000"
+
+[tasks."legacy:http-api-old:build"]
+description = "Legacy arm64 Lambda build (blocked by archived manifest dependencies)"
+dir = "crates/http-api-old"
+run = "cargo lambda build --release --arm64"
+
+[tasks."legacy:http-api-old:deploy"]
+description = "Legacy Lambda deployment (requires restoring the archived crate)"
+dir = "crates/http-api-old"
+usage = '''
+arg "<stage>" { choices "dev" "stg" "prod" }
+'''
+run = [{ task = "legacy:http-api-old:build" }, 'cargo lambda deploy --binary-name http-api "${usage_stage?}-46ki75-web-lambda-function-http_api"']

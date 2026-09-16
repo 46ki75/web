@@ -1,4 +1,4 @@
-name: crates/http-api
+name: Rust CI
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
 
 jobs:
   test:
-    name: Unit Test (crates/http-api)
+    name: Rust unit tests
     runs-on: ubuntu-latest
 
     steps:
@@ -18,12 +18,15 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Setup Rust Toolchain
-        uses: actions-rust-lang/setup-rust-toolchain@v1
+      - uses: jdx/mise-action@v4
+        with:
+          version: "2026.9.9"
+          install: false
 
-      # - name: Run Unit Test
-      #   run: cargo test --lib
-      #   working-directory: crates/http-api
+      - name: Install native Rust toolchain
+        run: mise run setup:rust
 
-      - name: Run Unit Test
-        run: exit 0
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Run unit tests (Notion integration tests are separate)
+        run: mise run rust:test
