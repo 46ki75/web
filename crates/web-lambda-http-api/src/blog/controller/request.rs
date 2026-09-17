@@ -19,9 +19,9 @@ pub enum BlogImageSizeQueryParam {
     Large,
 }
 
-impl Into<u32> for BlogImageSizeQueryParam {
-    fn into(self) -> u32 {
-        match self {
+impl From<BlogImageSizeQueryParam> for u32 {
+    fn from(size: BlogImageSizeQueryParam) -> Self {
+        match size {
             BlogImageSizeQueryParam::Small => 500,
             BlogImageSizeQueryParam::Medium => 800,
             BlogImageSizeQueryParam::Large => 1200,

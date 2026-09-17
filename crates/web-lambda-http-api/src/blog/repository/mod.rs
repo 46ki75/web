@@ -349,7 +349,6 @@ impl BlogRepository for BlogRepositoryImpl {
         >,
     > {
         let slug = slug.to_owned();
-        let language = language;
 
         Box::pin(async move {
             let notionrs_client =

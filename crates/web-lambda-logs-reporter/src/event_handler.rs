@@ -4,10 +4,22 @@ use lambda_runtime::{Error, LambdaEvent};
 
 #[derive(Debug)]
 enum Level {
-    DEBUG,
-    INFO,
-    WARN,
-    ERROR,
+    Debug,
+    Info,
+    Warn,
+    Error,
+}
+
+impl std::fmt::Display for Level {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        // Preserve uppercase level labels in SNS notifications.
+        f.write_str(match self {
+            Self::Debug => "DEBUG",
+            Self::Info => "INFO",
+            Self::Warn => "WARN",
+            Self::Error => "ERROR",
+        })
+    }
 }
 
 pub(crate) async fn function_handler(event: LambdaEvent<LogsEvent>) -> Result<(), Error> {
@@ -18,26 +30,26 @@ pub(crate) async fn function_handler(event: LambdaEvent<LogsEvent>) -> Result<()
     let subscription_filters = &event.payload.aws_logs.data.subscription_filters;
 
     let level = if subscription_filters.iter().any(|f| f.contains("_debug")) {
-        Level::DEBUG
+        Level::Debug
     } else if subscription_filters.iter().any(|f| f.contains("_info")) {
-        Level::INFO
+        Level::Info
     } else if subscription_filters.iter().any(|f| f.contains("_warn")) {
-        Level::WARN
+        Level::Warn
     } else if subscription_filters.iter().any(|f| f.contains("_error")) {
-        Level::ERROR
+        Level::Error
     } else {
-        Level::INFO
+        Level::Info
     };
 
     let topic_arn = match level {
-        Level::DEBUG | Level::INFO => sns_info_topic_arn,
-        Level::WARN => sns_warn_topic_arn,
-        Level::ERROR => sns_error_topic_arn,
+        Level::Debug | Level::Info => sns_info_topic_arn,
+        Level::Warn => sns_warn_topic_arn,
+        Level::Error => sns_error_topic_arn,
     };
 
     let message = format!(
-        "| Log Group: {} |\nAn {:?} level message was captured by the subscription filter.",
-        &event.payload.aws_logs.data.log_group, level
+        "| Log Group: {} |\nAn {} level message was captured by the subscription filter.",
+        event.payload.aws_logs.data.log_group, level
     );
 
     let logs = event

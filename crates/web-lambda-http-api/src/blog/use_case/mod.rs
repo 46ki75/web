@@ -61,7 +61,7 @@ impl BlogUseCase {
 
         let blog_entities = blog_dtoes
             .into_iter()
-            .map(|dto| output::BlogEntity::from(dto))
+            .map(output::BlogEntity::from)
             .collect::<Vec<output::BlogEntity>>();
 
         Ok(blog_entities)
@@ -117,7 +117,7 @@ impl BlogUseCase {
         let tag_dtos = self.blog_repository.list_tags().await?;
         let tags = tag_dtos
             .into_iter()
-            .map(|tag| output::BlogTagEntity::from(tag))
+            .map(output::BlogTagEntity::from)
             .collect::<Vec<output::BlogTagEntity>>();
 
         Ok(tags)
@@ -126,7 +126,7 @@ impl BlogUseCase {
     /// Infers the MIME type of the image by its binary data.
     #[tracing::instrument(skip(self))]
     pub fn infer_image_mime_type(&self, image_bytes: &bytes::Bytes) -> String {
-        infer::get(&image_bytes)
+        infer::get(image_bytes)
             .map(|t| {
                 let mime_type = t.to_string();
                 if mime_type.contains("xml") {
@@ -238,7 +238,7 @@ impl BlogUseCase {
                 for blog in blogs {
                     let base_url = match lang {
                         input::BlogLanguageEntity::En => format!("https://{domain}"),
-                        _ => format!("https://{domain}/{}", lang.to_string()),
+                        _ => format!("https://{domain}/{lang}"),
                     };
 
                     let loc = format!("{base_url}/blog/article/{slug}", slug = blog.slug);
@@ -253,7 +253,7 @@ impl BlogUseCase {
                                     input::BlogLanguageEntity::En => {
                                         format!("https://{domain}")
                                     }
-                                    _ => format!("https://{domain}/{}", alt_lang.to_string()),
+                                    _ => format!("https://{domain}/{alt_lang}"),
                                 };
                                 let href =
                                     format!("{alt_base}/blog/article/{slug}", slug = blog.slug);
@@ -315,7 +315,7 @@ impl BlogUseCase {
                     "https://{domain}{language_prefix}/blog/article/{slug}",
                     language_prefix = match language {
                         input::BlogLanguageEntity::En => "".to_string(),
-                        _ => format!("/{}", language.to_string()),
+                        _ => format!("/{language}"),
                     },
                     slug = blog.slug
                 );
@@ -339,7 +339,7 @@ impl BlogUseCase {
                 "https://{domain}{language_prefix}/blog",
                 language_prefix = match language {
                     input::BlogLanguageEntity::En => "".to_string(),
-                    _ => format!("/{}", language.to_string()),
+                    _ => format!("/{language}"),
                 }
             ))
             .description("Ikuma's personal blog about software development and technology.")
@@ -368,7 +368,7 @@ impl BlogUseCase {
                     blog.slug,
                     language_prefix = match language {
                         input::BlogLanguageEntity::En => "".to_string(),
-                        _ => format!("/{}", language.to_string()),
+                        _ => format!("/{language}"),
                     }
                 );
 
@@ -422,7 +422,7 @@ impl BlogUseCase {
                     "https://{domain}{language_prefix}/blog/article/{slug}",
                     language_prefix = match language {
                         input::BlogLanguageEntity::En => "".to_string(),
-                        _ => format!("/{}", language.to_string()),
+                        _ => format!("/{language}"),
                     },
                     slug = blog.slug
                 );
@@ -444,7 +444,7 @@ impl BlogUseCase {
                 "https://{domain}{language_prefix}/blog",
                 language_prefix = match language {
                     input::BlogLanguageEntity::En => "".to_string(),
-                    _ => format!("/{}", language.to_string()),
+                    _ => format!("/{language}"),
                 }
             )),
             description: Some(
