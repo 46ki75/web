@@ -94,15 +94,14 @@ pub async fn list_blogs(
 
         let article_page_id =
             if let PageProperty::Relation(blog_article_relation) = maybe_blog_article_relation {
-                let article_page_id = blog_article_relation
+                blog_article_relation
                     .relation
                     .first()
                     .map(|relation| relation.id.clone())
                     .ok_or(crate::error::Error::NotionRecord(format!(
                         "relation is not set in property '{0}' (page_id: {1})",
                         blog_article_relation_property_name, page_id
-                    )))?;
-                article_page_id
+                    )))?
             } else {
                 return Err(crate::error::Error::NotionInvalidSchema(
                     blog_article_relation_property_name.to_owned(),

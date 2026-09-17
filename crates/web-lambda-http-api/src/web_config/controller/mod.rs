@@ -38,7 +38,9 @@ impl axum::response::IntoResponse for WebConfigControllerError {
     )
 )]
 pub async fn fetch_web_config(
-    axum::extract::State(state): axum::extract::State<std::sync::Arc<super::router::WebConfigState>>,
+    axum::extract::State(state): axum::extract::State<
+        std::sync::Arc<super::router::WebConfigState>,
+    >,
 ) -> Result<axum::response::Response<axum::body::Body>, WebConfigControllerError> {
     let web_config_use_case = &state.web_config_use_case;
 

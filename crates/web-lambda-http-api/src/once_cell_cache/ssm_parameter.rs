@@ -7,9 +7,7 @@ async fn init_ssm_client() -> &'static aws_sdk_ssm::Client {
         .get_or_init(|| async {
             let sdk_config = super::aws_config::init_sdk_config().await;
 
-            let ssm_client = aws_sdk_ssm::Client::new(sdk_config);
-
-            ssm_client
+            aws_sdk_ssm::Client::new(sdk_config)
         })
         .await
 }
