@@ -30,3 +30,6 @@ target
 .terraform/
 
 .pnpm-store/
+mise.local.toml
+mise.local.lock
+.mise/locks/mise.local/

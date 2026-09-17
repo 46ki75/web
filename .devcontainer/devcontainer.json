@@ -1,5 +1,6 @@
 {
   "name": "Web Dev Container",
+  "remoteUser": "vscode",
   "build": {
     "dockerfile": "Dockerfile"
   },
@@ -27,21 +28,12 @@
       ]
     }
   },
-  "forwardPorts": [
-    10000
-  ],
+  "forwardPorts": [10000],
   "features": {
     "ghcr.io/devcontainers-extra/features/starship": {},
-    "ghcr.io/devcontainers/features/github-cli": {},
-    "ghcr.io/devcontainers/features/aws-cli": {},
-    "ghcr.io/devcontainers/features/node": {},
-    "ghcr.io/devcontainers-extra/features/zig": {},
-    "ghcr.io/devcontainers/features/rust": {},
-    "./features/cargo-binstall": {},
-    "ghcr.io/devcontainers/features/terraform": {},
-    "./features/uv": {}
+    "ghcr.io/devcontainers/features/github-cli": {}
   },
-  "postCreateCommand": "echo 'eval \"$(starship init bash)\"' >> ~/.bashrc",
+  "postCreateCommand": "mise trust mise.toml && mise install node pnpm awscli terraform zig cargo-lambda && mise run setup && echo 'eval \"$(starship init bash)\"' >> ~/.bashrc",
   "mounts": [
     "type=bind,source=${localEnv:HOME}/.aws/,target=/home/vscode/.aws/"
   ],

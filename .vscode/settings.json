@@ -1,17 +1,7 @@
 {
   "editor.formatOnSave": true,
-  "stylelint.validate": [
-    "css",
-    "postcss",
-    "scss",
-    "vue"
-  ],
-  "files.associations": {
-    "Justfile": "makefile"
-  },
-  "markdownlint.lintWorkspaceGlobs": [
-    "!pull_request_template.md"
-  ],
+  "stylelint.validate": ["css", "postcss", "scss", "vue"],
+  "markdownlint.lintWorkspaceGlobs": ["!pull_request_template.md"],
   "eslint.workingDirectories": [
     {
       "mode": "auto"
