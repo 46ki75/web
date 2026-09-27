@@ -1,10 +1,10 @@
 [tasks.fmt]
 description = "Format AWS Terraform configuration"
-run = "terraform fmt ."
+run = "terraform fmt -recursive ."
 
 [tasks.fmt-check]
 description = "Check AWS Terraform formatting"
-run = "terraform fmt -check ."
+run = "terraform fmt -check -recursive ."
 
 [tasks."check:quick"]
 description = "Check AWS Terraform formatting"
