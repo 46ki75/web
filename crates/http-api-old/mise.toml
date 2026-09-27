@@ -1,0 +1,16 @@
+# This archived crate inherits removed workspace dependencies and is intentionally
+# excluded from the repository quality-gate aggregates.
+[tasks.dev]
+description = "Legacy HTTP API watch (blocked by archived manifest dependencies)"
+run = "STAGE_NAME=dev AWS_LAMBDA_LOG_LEVEL=info AWS_LAMBDA_LOG_FORMAT=pretty cargo lambda watch -P 10000"
+
+[tasks.build]
+description = "Legacy arm64 Lambda build (blocked by archived manifest dependencies)"
+run = "cargo lambda build --release --arm64"
+
+[tasks.deploy]
+description = "Legacy Lambda deployment (requires restoring the archived crate)"
+usage = '''
+arg "<stage>" { choices "dev" "stg" "prod" }
+'''
+run = [{ task = ":build" }, 'cargo lambda deploy --binary-name http-api "${usage_stage?}-46ki75-web-lambda-function-http_api"']

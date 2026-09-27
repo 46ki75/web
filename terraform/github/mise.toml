@@ -1,0 +1,15 @@
+[tasks.fmt]
+description = "Format GitHub Terraform configuration"
+run = "terraform fmt -recursive ."
+
+[tasks.fmt-check]
+description = "Check GitHub Terraform formatting"
+run = "terraform fmt -check -recursive ."
+
+[tasks."check:quick"]
+description = "Check GitHub Terraform formatting"
+depends = [":fmt-check"]
+
+[tasks.check]
+description = "Run the GitHub Terraform quality gate"
+depends = [":check:quick"]

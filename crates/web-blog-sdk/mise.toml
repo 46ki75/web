@@ -1,0 +1,27 @@
+[tasks.fmt]
+description = "Format web-blog-sdk sources"
+run = "cargo fmt --package web-blog-sdk"
+
+[tasks.fmt-check]
+description = "Check web-blog-sdk formatting"
+run = "cargo fmt --package web-blog-sdk -- --check"
+
+[tasks.lint]
+description = "Deny Clippy warnings in web-blog-sdk"
+run = "cargo clippy --locked --package web-blog-sdk --all-targets -- -D warnings"
+
+[tasks.test]
+description = "Run web-blog-sdk unit tests"
+run = "cargo test --locked --package web-blog-sdk --lib"
+
+[tasks."test:live"]
+description = "Run integration tests against Notion (requires credentials)"
+run = "cargo test --locked --package web-blog-sdk --tests"
+
+[tasks."check:quick"]
+description = "Run web-blog-sdk formatting and lint checks"
+depends = [":fmt-check", ":lint"]
+
+[tasks.check]
+description = "Run the complete web-blog-sdk quality gate"
+depends = [":check:quick", ":test"]

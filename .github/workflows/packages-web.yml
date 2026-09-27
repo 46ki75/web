@@ -24,11 +24,14 @@ jobs:
       - name: Install dependencies
         run: mise run setup:node
 
-      - name: Run Type Check
-        run: mise run web:typecheck
+      - name: Check formatting
+        run: mise run //packages/web-solid:fmt-check
+
+      - name: Run type check
+        run: mise run //packages/web-solid:typecheck
 
       - name: Build and run unit/SSR tests
-        run: mise run web:test
+        run: mise run //packages/web-solid:test
 
   eslint:
     name: Lint (packages/web-solid) - ESLint
@@ -48,7 +51,7 @@ jobs:
         run: mise run setup:node
 
       - name: Run ESLint
-        run: mise run web:lint
+        run: mise run //packages/web-solid:lint:eslint
 
   stylelint:
     name: Lint (packages/web-solid) - Stylelint
@@ -68,4 +71,4 @@ jobs:
         run: mise run setup:node
 
       - name: Run Stylelint
-        run: mise run web:lint:css
+        run: mise run //packages/web-solid:lint:style

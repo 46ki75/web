@@ -1,0 +1,38 @@
+[tasks.fmt]
+description = "Format logs reporter sources"
+run = "cargo fmt --package web-lambda-logs-reporter"
+
+[tasks.fmt-check]
+description = "Check logs reporter formatting"
+run = "cargo fmt --package web-lambda-logs-reporter -- --check"
+
+[tasks.lint]
+description = "Deny Clippy warnings in the logs reporter package"
+run = "cargo clippy --locked --package web-lambda-logs-reporter --all-targets -- -D warnings"
+
+[tasks.test]
+description = "Run logs reporter binary tests"
+run = "cargo test --locked --package web-lambda-logs-reporter --bins"
+
+[tasks."check:quick"]
+description = "Run logs reporter formatting and lint checks"
+depends = [":fmt-check", ":lint"]
+
+[tasks.check]
+description = "Run the complete logs reporter quality gate"
+depends = [":check:quick", ":test"]
+
+[tasks.dev]
+description = "Watch the logs reporter with development configuration"
+run = "STAGE_NAME=dev RUST_LOG=web_lambda_logs_reporter=debug cargo lambda watch --package web-lambda-logs-reporter"
+
+[tasks.build]
+description = "Build the arm64 logs reporter Lambda"
+run = "cargo lambda build --arm64 --release"
+
+[tasks.deploy]
+description = "Build and deploy the logs reporter Lambda"
+usage = '''
+arg "<stage>" { choices "dev" "stg" "prod" }
+'''
+run = [{ task = ":build" }, 'cargo lambda deploy --binary-name web-lambda-logs-reporter "${usage_stage?}-46ki75-web-lambda-function-reporter"']
