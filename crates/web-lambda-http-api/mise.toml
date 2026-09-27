@@ -29,6 +29,14 @@ arg "[stage]" default="dev" { choices "dev" "stg" "prod" }
 '''
 run = 'STAGE_NAME="${usage_stage?}" RUST_LOG=info cargo lambda watch -P 10000 --package web-lambda-http-api'
 
+[tasks.stg]
+description = "Watch the HTTP API with staging configuration"
+run = [{ task = ":dev", args = ["stg"] }]
+
+[tasks.prod]
+description = "Watch the HTTP API with production configuration"
+run = [{ task = ":dev", args = ["prod"] }]
+
 [tasks.build]
 description = "Build the arm64 HTTP API and blog publisher Lambdas"
 run = "cargo lambda build --release --arm64"
