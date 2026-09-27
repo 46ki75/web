@@ -8,8 +8,8 @@ on:
     - cron: "0 0 * * *"
 
 jobs:
-  check:
-    name: Frontend quality gate
+  build:
+    name: Build Test (packages/web-solid)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -24,5 +24,51 @@ jobs:
       - name: Install dependencies
         run: mise run setup:node
 
-      - name: Run frontend quality gate
-        run: mise run //packages/web-solid:check
+      - name: Check formatting
+        run: mise run //packages/web-solid:fmt-check
+
+      - name: Run type check
+        run: mise run //packages/web-solid:typecheck
+
+      - name: Build and run unit/SSR tests
+        run: mise run //packages/web-solid:test
+
+  eslint:
+    name: Lint (packages/web-solid) - ESLint
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: jdx/mise-action@v4
+        with:
+          version: "2026.9.9"
+          install_args: "node pnpm"
+
+      - name: Install dependencies
+        run: mise run setup:node
+
+      - name: Run ESLint
+        run: mise run //packages/web-solid:lint:eslint
+
+  stylelint:
+    name: Lint (packages/web-solid) - Stylelint
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: jdx/mise-action@v4
+        with:
+          version: "2026.9.9"
+          install_args: "node pnpm"
+
+      - name: Install dependencies
+        run: mise run setup:node
+
+      - name: Run Stylelint
+        run: mise run //packages/web-solid:lint:style
