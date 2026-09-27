@@ -317,19 +317,21 @@ describe("production SSR handler", () => {
       )
     ).join("\n");
 
-    const usesNativeThemeTokens = css.includes("light-dark(");
-    const compilesLightTheme =
-      /\[data-theme=["']?light["']?\]\{[^}]*--lightningcss-light:initial/.test(
-        css,
-      );
-    const compilesDarkTheme =
-      /\[data-theme=["']?dark["']?\]\{[^}]*--lightningcss-dark:initial/.test(
-        css,
-      );
+    const normalizedCss = css.replaceAll(/\s/g, "");
+    const frameworkDeclaration =
+      "--elmethis-color-surface-base:var(--lightningcss-light,var(--elmethis-primitive-color-gold-200))var(--lightningcss-dark,var(--elmethis-primitive-color-slate-700))";
+    const nativeDeclaration =
+      "--elmethis-color-surface-base:light-dark(var(--elmethis-primitive-color-gold-200),var(--elmethis-primitive-color-slate-700))";
 
-    expect(
-      usesNativeThemeTokens || (compilesLightTheme && compilesDarkTheme),
-    ).toBe(true);
+    expect(normalizedCss).toContain(
+      "--elmethis-primitive-color-slate-700:#393e46",
+    );
+    expect(normalizedCss).toMatch(
+      /:root\[data-theme=["']?dark["']?\]\{[^}]*color-scheme:dark/,
+    );
+    expect(normalizedCss.lastIndexOf(nativeDeclaration)).toBeGreaterThan(
+      normalizedCss.indexOf(frameworkDeclaration),
+    );
   });
 
   it.each([

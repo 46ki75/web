@@ -8,7 +8,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "vite build",
+    "build": "vite build && node scripts/verify-theme-css.mjs .output/public",
     "build.types": "tsc --incremental --noEmit",
     "dev": "STAGE_NAME=dev vite dev",
     "dev.debug": "node --inspect-brk ./node_modules/vite/bin/vite.js --force",
@@ -54,6 +54,7 @@
     "vitest": "4.1.11"
   },
   "dependencies": {
+    "@elmethis/core": "^0.24.0",
     "@elmethis/solid": "0.7.1",
     "@formkit/auto-animate": "^0.10.0",
     "@mdi/js": "^7.4.47",
