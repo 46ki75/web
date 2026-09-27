@@ -8,8 +8,8 @@ on:
     - cron: "0 0 * * *"
 
 jobs:
-  test:
-    name: Rust unit tests
+  check:
+    name: Rust quality gate
     runs-on: ubuntu-latest
 
     steps:
@@ -28,5 +28,5 @@ jobs:
 
       - uses: Swatinem/rust-cache@v2
 
-      - name: Run unit tests (Notion integration tests are separate)
-        run: mise run rust:test
+      - name: Run Rust package quality gates
+        run: mise run //crates/...:check

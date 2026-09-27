@@ -1,0 +1,55 @@
+[tasks.fmt]
+description = "Format HTTP API sources"
+run = "cargo fmt --package web-lambda-http-api"
+
+[tasks.fmt-check]
+description = "Check HTTP API formatting"
+run = "cargo fmt --package web-lambda-http-api -- --check"
+
+[tasks.lint]
+description = "Deny Clippy warnings in the HTTP API package"
+run = "cargo clippy --locked --package web-lambda-http-api --all-targets -- -D warnings"
+
+[tasks.test]
+description = "Run HTTP API library and binary tests"
+run = "cargo test --locked --package web-lambda-http-api --lib --bins"
+
+[tasks."check:quick"]
+description = "Run HTTP API formatting and lint checks"
+depends = [":fmt-check", ":lint"]
+
+[tasks.check]
+description = "Run the complete HTTP API quality gate"
+depends = [":check:quick", ":test"]
+
+[tasks.dev]
+description = "Watch the HTTP API on port 10000 (dev by default)"
+usage = '''
+arg "[stage]" default="dev" { choices "dev" "stg" "prod" }
+'''
+run = 'STAGE_NAME="${usage_stage?}" RUST_LOG=info cargo lambda watch -P 10000 --package web-lambda-http-api'
+
+[tasks.build]
+description = "Build the arm64 HTTP API and blog publisher Lambdas"
+run = "cargo lambda build --release --arm64"
+
+[tasks.deploy]
+description = "Build and deploy the HTTP API Lambda"
+usage = '''
+arg "<stage>" { choices "dev" "stg" "prod" }
+'''
+run = [{ task = ":build" }, 'cargo lambda deploy --binary-name web-lambda-http-api "${usage_stage?}-46ki75-web-lambda-function-http_api"']
+
+[tasks."deploy-publisher"]
+description = "Build and deploy the blog publisher Lambda"
+usage = '''
+arg "<stage>" { choices "dev" "stg" "prod" }
+'''
+run = [{ task = ":build" }, 'cargo lambda deploy --binary-name web-lambda-blog-publisher "${usage_stage?}-46ki75-web-lambda-function-blog_publisher"']
+
+[tasks."invoke-publisher"]
+description = "Rebuild published blogs, waiting up to the Lambda's 15-minute timeout"
+usage = '''
+arg "<stage>" { choices "dev" "stg" "prod" }
+'''
+run = '''aws lambda invoke --function-name "${usage_stage?}-46ki75-web-lambda-function-blog_publisher" --cli-binary-format raw-in-base64-out --cli-read-timeout 900 --payload '{}' /dev/stdout'''

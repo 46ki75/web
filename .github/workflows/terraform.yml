@@ -1,4 +1,4 @@
-name: packages/web
+name: Terraform CI
 
 on:
   push:
@@ -9,8 +9,9 @@ on:
 
 jobs:
   check:
-    name: Frontend quality gate
+    name: Terraform quality gate
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -19,10 +20,7 @@ jobs:
       - uses: jdx/mise-action@v4
         with:
           version: "2026.9.9"
-          install_args: "node pnpm"
+          install_args: "terraform"
 
-      - name: Install dependencies
-        run: mise run setup:node
-
-      - name: Run frontend quality gate
-        run: mise run //packages/web-solid:check
+      - name: Run Terraform quality gates
+        run: mise run //terraform/...:check
