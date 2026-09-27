@@ -9,6 +9,8 @@ import { RouteTransition } from "~/components/common/route-transition";
 
 import "./global.css";
 import "@elmethis/solid/style.css";
+// Override the package's pre-minified fallback with native switchable tokens.
+import "@elmethis/core/tokens.css";
 
 export default function App() {
   return (
