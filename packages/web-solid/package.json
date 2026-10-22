@@ -49,7 +49,7 @@
     "typescript": "5.8",
     "typescript-eslint": "8.65.0",
     "typescript-plugin-css-modules": "latest",
-    "vite": "8.1.5",
+    "vite": "8.1.6",
     "vite-plugin-solid": "2.11.13",
     "vitest": "4.1.11"
   },
