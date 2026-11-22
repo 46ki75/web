@@ -57,6 +57,5 @@ any staging access restrictions.
 
 The old frontend Lambda deployment command is retired. For AWS, see the
 [static deployment and rollback procedure](../../terraform/README.md#aws-static-frontend).
-The website is served from private S3 in the stages listed in
-[`static-site.auto.tfvars`](../../terraform/aws/static-site.auto.tfvars).
+CloudFront serves the website from private S3 in `dev`, `stg`, and `prod`.
 The publisher's `/cache/*` origin and the Rust `/api/*` routes are separate.

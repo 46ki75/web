@@ -21,7 +21,7 @@ and frontend-asset behaviors on non-`prod` stages. `/api/*` and `/cache/*` are
 not behind it.
 
 The default behavior serves a static S3 release selected by the CloudFront
-Function. The Nitro origin stays configured for rollback only. See the
+Function. For deployment and release rollback, see the
 [AWS static frontend runbook](../terraform/README.md#aws-static-frontend).
 
 - **`/api/*` is the Lambda HTTP API.** Dynamic responses, `http_api` cache
