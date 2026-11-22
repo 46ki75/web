@@ -44,7 +44,6 @@ impl axum::response::IntoResponse for BlogControllerError {
                     BlogRepositoryError::NotionRecord(_) => StatusCode::BAD_REQUEST,
                     BlogRepositoryError::FetchImage(_) => StatusCode::INTERNAL_SERVER_ERROR,
                     BlogRepositoryError::NotionApi(_) => StatusCode::BAD_GATEWAY,
-                    BlogRepositoryError::Internal(_) => StatusCode::INTERNAL_SERVER_ERROR,
                 },
                 BlogUseCaseError::SerializeXml(_)
                 | BlogUseCaseError::ImageConversion(_)

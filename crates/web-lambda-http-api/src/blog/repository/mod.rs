@@ -1,6 +1,10 @@
+use std::sync::Arc;
+
 use futures::TryStreamExt;
 use notionrs::PaginateExt;
 use notionrs_types::prelude::*;
+
+use super::notion_config::NotionConfig;
 
 pub mod input;
 pub mod output;
@@ -29,11 +33,6 @@ pub enum BlogRepositoryError {
 
     #[error("Notion block conversion error: {0}")]
     BlockConversion(#[from] n2a2ui::error::Error),
-
-    /// Wraps shared infrastructure failures (SSM, environment variables) that
-    /// have no additional business meaning at this layer.
-    #[error(transparent)]
-    Internal(#[from] crate::error::Error),
 }
 
 fn get_property<'a>(
@@ -92,8 +91,28 @@ pub trait BlogRepository: Send + Sync {
     >;
 }
 
-#[derive(Debug)]
-pub struct BlogRepositoryImpl {}
+pub struct BlogRepositoryImpl {
+    client: Arc<n2a2ui::client::Client>,
+    article_data_source_id: String,
+    tag_data_source_id: String,
+}
+
+impl BlogRepositoryImpl {
+    pub(super) fn new(config: NotionConfig) -> Self {
+        Self {
+            client: Arc::new(n2a2ui::client::Client {
+                notionrs_client: notionrs::Client::new(config.token),
+                reqwest_client: reqwest::Client::new(),
+                enable_unsupported_block: false,
+                enable_fetch_image_meta: true,
+                enable_fetch_bookmark_meta: false,
+                enable_html_embed: false,
+            }),
+            article_data_source_id: config.article_data_source_id,
+            tag_data_source_id: config.tag_data_source_id,
+        }
+    }
+}
 
 impl BlogRepository for BlogRepositoryImpl {
     #[cfg_attr(not(rust_analyzer), tracing::instrument(skip(self), err))]
@@ -106,23 +125,15 @@ impl BlogRepository for BlogRepositoryImpl {
                 + Send,
         >,
     > {
+        let client = Arc::clone(&self.client);
+        let data_source_id = self.article_data_source_id.clone();
+
         Box::pin(async move {
-            let notionrs_client =
-                crate::once_cell_cache::notionrs_client::init_notionrs_client().await?;
-
-            let filter = Filter::status_equals("status", "Published");
-
-            let stage_name = crate::stage_name()?;
-            let blog_master_data_source_id =
-                crate::once_cell_cache::ssm_parameter::try_get_ssm_parameter_async(format!(
-                "/{stage_name}/46ki75/web/ssm/parameter/notion/data_source/id/blog-article-master"
-            ))
-                .await?;
-
+            let notionrs_client = &client.notionrs_client;
             let results: Vec<PageResponse> = notionrs_client
                 .query_data_source()
-                .data_source_id(blog_master_data_source_id)
-                .filter(filter)
+                .data_source_id(data_source_id)
+                .filter(Filter::status_equals("status", "Published"))
                 .into_stream()
                 .try_collect()
                 .await?;
@@ -348,29 +359,19 @@ impl BlogRepository for BlogRepositoryImpl {
                 > + Send,
         >,
     > {
+        let client = Arc::clone(&self.client);
+        let data_source_id = self.article_data_source_id.clone();
         let slug = slug.to_owned();
 
         Box::pin(async move {
-            let notionrs_client =
-                crate::once_cell_cache::notionrs_client::init_notionrs_client().await?;
-
-            let stage_name = crate::stage_name()?;
-            let blog_master_data_source_id =
-                crate::once_cell_cache::ssm_parameter::try_get_ssm_parameter_async(format!(
-                "/{stage_name}/46ki75/web/ssm/parameter/notion/data_source/id/blog-article-master"
-            ))
-                .await?;
-
-            let filter = Filter::rich_text_equals("slug", &slug);
-
-            let pages: Vec<PageResponse<std::collections::HashMap<String, PageProperty>>> =
-                notionrs_client
-                    .query_data_source()
-                    .data_source_id(blog_master_data_source_id)
-                    .filter(filter)
-                    .send()
-                    .await?
-                    .results;
+            let pages: Vec<PageResponse<std::collections::HashMap<String, PageProperty>>> = client
+                .notionrs_client
+                .query_data_source()
+                .data_source_id(data_source_id)
+                .filter(Filter::rich_text_equals("slug", &slug))
+                .send()
+                .await?
+                .results;
 
             let page_id = match pages.first() {
                 Some(page) => {
@@ -404,8 +405,6 @@ impl BlogRepository for BlogRepositoryImpl {
                 None => Err(BlogRepositoryError::NotionRecord("Not Found".to_owned())),
             }?;
 
-            let client = crate::once_cell_cache::n2a2ui_client::init_n2a2ui_client().await?;
-
             Ok(client.convert_block(&page_id).await?)
         })
     }
@@ -419,23 +418,14 @@ impl BlogRepository for BlogRepositoryImpl {
                 + Send,
         >,
     > {
+        let query = self
+            .client
+            .notionrs_client
+            .query_data_source()
+            .data_source_id(self.tag_data_source_id.clone());
+
         Box::pin(async move {
-            let notionrs_client =
-                crate::once_cell_cache::notionrs_client::init_notionrs_client().await?;
-
-            let stage_name = crate::stage_name()?;
-            let blog_tag_data_source_id =
-                crate::once_cell_cache::ssm_parameter::try_get_ssm_parameter_async(format!(
-                    "/{stage_name}/46ki75/web/ssm/parameter/notion/data_source/id/blog-tag"
-                ))
-                .await?;
-
-            let pages: Vec<PageResponse> = notionrs_client
-                .query_data_source()
-                .data_source_id(blog_tag_data_source_id)
-                .into_stream()
-                .try_collect()
-                .await?;
+            let pages: Vec<PageResponse> = query.into_stream().try_collect().await?;
 
             let mut tags: Vec<output::BlogTagDto> = vec![];
 
@@ -509,15 +499,16 @@ impl BlogRepository for BlogRepositoryImpl {
     ) -> std::pin::Pin<
         Box<dyn std::future::Future<Output = Result<bytes::Bytes, BlogRepositoryError>> + Send>,
     > {
+        let client = Arc::clone(&self.client);
         let block_id = block_id.to_owned();
 
         Box::pin(async move {
-            let notionrs_client =
-                crate::once_cell_cache::notionrs_client::init_notionrs_client().await?;
-
-            let request = notionrs_client.get_block().block_id(block_id);
-
-            let response = request.send().await?;
+            let response = client
+                .notionrs_client
+                .get_block()
+                .block_id(block_id)
+                .send()
+                .await?;
 
             let url = match response.block {
                 notionrs_types::object::block::Block::Image { image } => image.get_url(),

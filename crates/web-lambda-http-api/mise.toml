@@ -11,8 +11,11 @@ description = "Deny Clippy warnings in the HTTP API package"
 run = "cargo clippy --locked --package web-lambda-http-api --all-targets -- -D warnings"
 
 [tasks.test]
-description = "Run HTTP API library and binary tests"
-run = "cargo test --locked --package web-lambda-http-api --lib --bins"
+description = "Run HTTP API, publisher, and SSM wrapper tests"
+run = [
+  "cargo test --locked --package web-lambda-http-api --lib --bins",
+  "bash ../../scripts/tests/with-notion-ssm.sh",
+]
 
 [tasks."check:quick"]
 description = "Run HTTP API formatting and lint checks"
