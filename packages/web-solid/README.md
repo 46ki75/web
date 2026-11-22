@@ -11,14 +11,14 @@ From the repository root:
 ```sh
 pnpm install --frozen-lockfile
 mise run //packages/web-solid:build
-python3 -m http.server 4173 --directory packages/web-solid/dist/client
+pnpm --filter web-solid start
 ```
 
-For a local preview with the site's 404 page, use `pnpm --filter web-solid start`
-instead of the Python server. For development, run `mise run //packages/web-solid:dev`.
-Vite takes a fresh content snapshot on startup. `mise run //packages/web-solid:check` runs format,
-lint, type, and test checks. The integration tests build from local fixtures, so
-CI does not depend on the live blog or Credly.
+The preview serves the static build and its 404 page. For development, run
+`mise run //packages/web-solid:dev`; Vite takes a fresh content snapshot on
+startup. `mise run //packages/web-solid:check` runs format, lint, type, and test
+checks. The integration tests build from local fixtures, so CI does not depend
+on the live blog or Credly.
 
 ## Build-time configuration
 

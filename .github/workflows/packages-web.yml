@@ -36,6 +36,9 @@ jobs:
       - name: Check the TypeScript blog publisher
         run: mise run //packages/blog-publisher:check
 
+      - name: Check the AWS release commands
+        run: mise run //packages/aws-release:check
+
   eslint:
     name: Lint (packages/web-solid) - ESLint
     runs-on: ubuntu-latest

@@ -11,11 +11,8 @@ description = "Check AWS Terraform formatting"
 depends = [":fmt-check"]
 
 [tasks.test]
-description = "Test static deployment and CloudFront routing locally"
-run = [
-  "node --test assets/*.test.mjs",
-  "python3 -B -m unittest discover -s ../../scripts/tests -p 'test_*_aws.py'",
-]
+description = "Test CloudFront routing locally"
+run = "node --test assets/*.test.mjs"
 
 [tasks.check]
 description = "Run the AWS Terraform quality gate"

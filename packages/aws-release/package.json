@@ -1,0 +1,14 @@
+{
+  "name": "@web/aws-release",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@web/blog-snapshot": "workspace:*",
+    "@xmldom/xmldom": "0.9.12"
+  },
+  "devDependencies": {
+    "@types/node": "24.10.4",
+    "prettier": "3.6.2",
+    "typescript": "5.8.3"
+  }
+}
