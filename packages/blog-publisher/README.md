@@ -1,9 +1,9 @@
 # TypeScript blog publisher
 
-Generate a local replacement for the Rust publisher's `/cache/v3/blog/*`
-snapshots. The TypeScript job uses the official Notion SDK and `n2a2ui`; it
-has no AWS dependency and does not upload or activate anything. The deployed
-Rust publisher remains in service until a separate, verified cutover.
+Generate the `/cache/v3/blog/*` snapshots using the official Notion SDK and
+`n2a2ui`. The generator has no AWS dependency. Use the separate
+[AWS snapshot release command](../../terraform/README.md#aws-blog-snapshots)
+to publish a complete snapshot.
 
 ## Generate and preview
 
@@ -54,16 +54,13 @@ image host. A missing cover, unsuccessful image conversion, or hosted
 file/audio/video attachment without a durable copy fails the run instead
 of leaving an expiring URL in the snapshot.
 
-## Validation and cutover
+## Validation and publishing
 
 Run `mise run //packages/blog-publisher:check` for fixture tests, formatting,
-and type checking. Before a live cutover, compare both lists and sets of
-published slugs against the corresponding stage's Rust snapshots. Check
-article metadata, rendered A2UI content, image variants, and feed entry IDs;
-article component IDs and encoded image bytes need not match. Build and open
-the portable site from the candidate before activating it.
+and type checking. Preview a candidate before activating it. Check both
+locales, rendered A2UI content, image variants, and feed entry URLs.
 
-Do not upload candidate files over a live snapshot by hand. Keep the Rust
-publisher and its credentials until the replacement has a staged activation
-and rollback procedure, has published successfully in all stages, and the
-frontend has rebuilt from its output.
+Do not upload files over live snapshot keys by hand. Prepare and activate a
+versioned snapshot, then rebuild and deploy the frontend from the live cache.
+The original Rust-generated snapshot can still be selected by `legacy` for
+rollback; this does not invoke the Rust publisher.

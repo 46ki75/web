@@ -4,7 +4,7 @@
 
 My personal website. See the [frontend guide](packages/web-solid/README.md)
 for static builds and deployment, and the [TypeScript blog publisher guide](packages/blog-publisher/README.md)
-for generating and previewing replacement snapshots.
+for generating, previewing, and publishing versioned snapshots.
 
 ## Setup
 
@@ -33,9 +33,7 @@ list the complete catalog, or run `mise :<task>` from within a package directory
 | Command                                                   | Purpose                                                   |
 | --------------------------------------------------------- | --------------------------------------------------------- |
 | `mise run //packages/web-solid:dev`                       | Start the frontend                                        |
-| `mise run //crates/web-lambda-http-api:build`            | Build the arm64 blog publisher Lambda                    |
-| `mise run //crates/web-lambda-http-api:deploy-publisher <stage>` | Build and deploy the publisher                       |
-| `mise run //crates/web-lambda-http-api:invoke-publisher <stage>` | Rebuild blogs; wait up to 15 minutes                 |
+| [AWS blog snapshot commands](terraform/README.md#aws-blog-snapshots) | Publish or roll back blog snapshots       |
 | `mise run //crates/web-lambda-logs-reporter:deploy <stage>`      | Build and deploy the reporter                        |
 | `mise run //packages/web-solid:build`                     | Generate the portable static frontend                     |
 | `mise run --silent fmt` / `mise run --silent fmt-check`  | Format/check the same Rust, frontend, and Terraform scope |

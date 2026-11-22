@@ -11,8 +11,8 @@ description = "Check the blog publisher's TypeScript types"
 run = "pnpm exec tsc"
 
 [tasks.test]
-description = "Test snapshot generation with a simulated Notion API"
-run = "pnpm test"
+description = "Test snapshot generation and stage-scoped Notion credential injection"
+run = ["pnpm test", "bash ../../scripts/tests/with-notion-ssm.sh"]
 
 [tasks."check:quick"]
 description = "Check blog publisher formatting and types"

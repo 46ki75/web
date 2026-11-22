@@ -13,8 +13,8 @@ depends = [":fmt-check"]
 [tasks.test]
 description = "Test static deployment and CloudFront routing locally"
 run = [
-  "node --test assets/staticSite.test.mjs",
-  "python3 -B -m unittest discover -s ../../scripts/tests -p test_deploy_static_aws.py",
+  "node --test assets/*.test.mjs",
+  "python3 -B -m unittest discover -s ../../scripts/tests -p 'test_*_aws.py'",
 ]
 
 [tasks.check]
