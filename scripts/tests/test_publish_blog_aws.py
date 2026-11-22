@@ -85,6 +85,20 @@ class BlogPublishTests(unittest.TestCase):
                 PUBLISH.upload("dev", self.root)
             aws.assert_not_called()
 
+    def test_partial_upload_never_marks_a_release_ready(self):
+        error = ValueError("incomplete object upload")
+        with patch.object(PUBLISH, "store", return_value="arn"), patch.object(PUBLISH, "aws", return_value="owner"), patch.object(PUBLISH, "ensure_blob", side_effect=error), patch.object(PUBLISH, "kvs") as kvs:
+            with self.assertRaisesRegex(ValueError, "incomplete object upload"):
+                PUBLISH.upload("dev", self.root)
+            kvs.assert_not_called()
+
+    def test_unprepared_release_cannot_be_activated(self):
+        release = "0123456789ab" * 2
+        with patch.object(PUBLISH, "store", return_value="arn"), patch.object(PUBLISH, "etag", return_value="etag"), patch.object(PUBLISH, "get_active", return_value="legacy"), patch.object(PUBLISH, "key_value", return_value="0"), patch.object(PUBLISH, "kvs") as kvs:
+            with self.assertRaisesRegex(ValueError, "not ready"):
+                PUBLISH.activate("dev", release)
+            kvs.assert_not_called()
+
     def test_conditional_activation_and_rollback(self):
         release = "0123456789ab" * 2
         with patch.object(PUBLISH, "store", return_value="arn"), patch.object(PUBLISH, "etag", return_value="etag"), patch.object(PUBLISH, "get_active", return_value="legacy"), patch.object(PUBLISH, "key_value", return_value="1") as marker, patch.object(PUBLISH, "kvs") as kvs:
