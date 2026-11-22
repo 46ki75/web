@@ -4,7 +4,7 @@
 
 My personal website. See the [frontend guide](packages/web-solid/README.md)
 for static builds and deployment, and the [TypeScript blog publisher guide](packages/blog-publisher/README.md)
-for generating and previewing replacement snapshots.
+for generating, previewing, and publishing versioned snapshots.
 
 ## Setup
 

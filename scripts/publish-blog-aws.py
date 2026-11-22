@@ -245,7 +245,7 @@ def upload(stage, directory, dry_run=False):
         for _ in pool.map(put, blobs):
             pass
     kvs(arn, "put-key", "--if-match", etag(arn), "--key", f"blog:{release}:ready", "--value", "1")
-    print(f"Prepared {stage} blog release {release}; it is not active yet.")
+    print(f"Prepared {stage} blog release {release}; active pointer unchanged.")
     return release
 
 
