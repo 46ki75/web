@@ -1,0 +1,21 @@
+[tasks.fmt]
+description = "Format the AWS release commands and tests"
+run = "pnpm exec prettier --write ."
+
+[tasks.fmt-check]
+description = "Check AWS release command formatting"
+run = "pnpm exec prettier --check ."
+
+[tasks.typecheck]
+description = "Check AWS release command types"
+run = "pnpm exec tsc"
+
+[tasks.test]
+description = "Test release preparation and activation without AWS writes"
+run = "node --test 'tests/*.test.ts'"
+
+[tasks."check:quick"]
+depends = [":fmt-check", ":typecheck"]
+
+[tasks.check]
+depends = [":check:quick", ":test"]

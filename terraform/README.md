@@ -10,10 +10,10 @@ not a Notion token.
 ```sh
 export AWS_PROFILE=46ki75-web
 export STAGE_NAME=dev
-python3 scripts/publish-blog-aws.py --stage "$STAGE_NAME" upload --directory "$work/snapshot"
-python3 scripts/publish-blog-aws.py --stage "$STAGE_NAME" active
-# Use the IDs reported above; the initial active ID is legacy.
-python3 scripts/publish-blog-aws.py --stage "$STAGE_NAME" activate NEW_ID --expect PREVIOUS_ID
+previous=$(node packages/aws-release/src/publish-blog.ts --stage "$STAGE_NAME" active)
+node packages/aws-release/src/publish-blog.ts --stage "$STAGE_NAME" upload --directory "$work/snapshot"
+# Use the release ID printed by upload. The initial active ID is legacy.
+node packages/aws-release/src/publish-blog.ts --stage "$STAGE_NAME" activate NEW_ID --expect "$previous"
 ```
 
 Upload validates the complete snapshot, stores immutable objects in the
@@ -39,16 +39,19 @@ authentication on the site. Retired `/api/*` paths are handled like any other
 missing website path.
 
 From the repository root, with the web account AWS profile set, deploy one
-stage at a time (`dev`, `stg`, or `prod`):
+stage at a time (`dev`, `stg`, or `prod`). Both release commands use the
+workspace's Node.js and AWS CLI versions. On a fresh checkout, run
+`mise run setup:node` first.
 
 ```sh
 export AWS_PROFILE=46ki75-web
 export AWS_REGION=ap-northeast-1
 export STAGE_NAME=dev
-pnpm --filter web-solid build
-python3 scripts/deploy-static-aws.py --stage "$STAGE_NAME" upload
-# Use the release ID printed by upload:
-python3 scripts/deploy-static-aws.py --stage "$STAGE_NAME" activate RELEASE_ID
+previous=$(node packages/aws-release/src/deploy-static.ts --stage "$STAGE_NAME" active)
+mise run //packages/web-solid:build &&
+  node packages/aws-release/src/deploy-static.ts --stage "$STAGE_NAME" upload
+# Use the website release ID printed by upload, not the blog release ID.
+node packages/aws-release/src/deploy-static.ts --stage "$STAGE_NAME" activate RELEASE_ID --expect "$previous"
 ```
 
 The uploader accepts only the static client artifact and checks its canonical
@@ -68,8 +71,11 @@ and non-production site pages require valid Basic credentials. When editing
 the edge function, test its `DEVELOPMENT` stage with CloudFront `TestFunction`:
 CloudFront's JavaScript runtime supports less syntax than Node.js.
 
-To roll back, activate the prior prepared static release ID. The old Nitro
-origin is no longer available as a rollback target.
+To roll back, run `activate PREVIOUS_ID --expect CURRENT_ID` with the same
+stage. The old Nitro origin is no longer available as a rollback target.
+
+Run `mise run //packages/aws-release:check` to test both release commands
+without writing to AWS.
 
 ## Manually Managed Resources
 
