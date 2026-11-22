@@ -1,5 +1,52 @@
 # Terraform
 
+## AWS static frontend
+
+The existing private `web` bucket serves the site through CloudFront. `/api/*`
+and `/cache/*` retain their own origins and error responses. A CloudFront
+Function handles directory indexes, permanent redirects, and the website's
+`404.html`. Dev and staging keep Basic authentication.
+
+From the repository root, with the web account AWS profile set, deploy one
+stage at a time (`dev`, `stg`, or `prod`):
+
+```sh
+export AWS_PROFILE=46ki75-web
+export AWS_REGION=ap-northeast-1
+export STAGE_NAME=dev
+pnpm --filter web-solid build
+python3 scripts/deploy-static-aws.py --stage "$STAGE_NAME" upload
+# Use the release ID printed by upload:
+python3 scripts/deploy-static-aws.py --stage "$STAGE_NAME" activate RELEASE_ID
+```
+
+The uploader accepts only the static client artifact and checks its canonical
+host. It keeps the existing `/build/` assets for cached pages and rollback,
+uploads the rest under `site-releases/`, and writes public route entries to the
+stage's existing CloudFront key-value store. It leaves the publisher's cache
+and the auth entries alone. Activation changes the release pointer only. Do
+not run simultaneous uploads for the same stage or delete a release still used
+for rollback. If pruning old releases, remove their S3 prefixes and associated
+`static:<release>:` KVS keys together. Use regional STS credentials for KVS.
+
+For the **first** cutover of a stage, prepare and activate a release before
+adding the stage to [`aws/static-site.auto.tfvars`](aws/static-site.auto.tfvars).
+With `TF_WORKSPACE` set to that stage, review and apply a saved Terraform plan.
+The plan should only add the new website function and cache policy and update
+the two website behaviors. After CloudFront deploys, verify the English and
+Japanese home and article routes, immutable assets, redirects with query
+strings, and an unknown URL returning HTTP 404. Check that `/api/health` and
+`/cache/v3/blog/list/en.json` still respond, and that non-production requires
+valid Basic credentials. Nitro remains deployed for rollback. When editing the
+edge function, also test its `DEVELOPMENT` stage with CloudFront `TestFunction`:
+CloudFront's JavaScript runtime supports less syntax than Node.js.
+
+To roll back a content release, activate the prior prepared release ID. To
+roll back the origin migration itself, remove the stage from
+`aws/static-site.auto.tfvars` and review and apply the Terraform plan for that
+workspace. This switches the website behaviors back without changing the API
+or blog cache.
+
 ## Manually Managed Resources
 
 ## S3 Bucket
