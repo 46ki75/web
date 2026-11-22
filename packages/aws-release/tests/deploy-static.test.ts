@@ -154,3 +154,22 @@ test("the direct Node CLI can dry-run without AWS CLI or credentials", (t) => {
     /dev release 6b613b3d6516f4134083f050: 13 static routes and values/,
   );
 });
+
+test("documents promote and accepts activate as a compatibility alias", () => {
+  const script = fileURLToPath(
+    new URL("../src/deploy-static.ts", import.meta.url),
+  );
+  const run = (...args: string[]) =>
+    execFileSync(process.execPath, [script, ...args], {
+      encoding: "utf8",
+      env: { PATH: "" },
+      stdio: "pipe",
+    });
+  assert.match(run("--help"), /promote RELEASE_ID/);
+  for (const command of ["promote", "activate"]) {
+    assert.throws(
+      () => run("--stage", "dev", command, "invalid", "--expect", "none"),
+      /Expected a 24-character release ID/,
+    );
+  }
+});

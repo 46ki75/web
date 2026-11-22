@@ -57,10 +57,10 @@ of leaving an expiring URL in the snapshot.
 ## Validation and publishing
 
 Run `mise run //packages/blog-publisher:check` for fixture tests, formatting,
-and type checking. Preview a candidate before activating it. Check both
+and type checking. Preview a candidate before promoting it. Check both
 locales, rendered A2UI content, image variants, and feed entry URLs.
 
-Do not upload files over live snapshot keys by hand. Prepare and activate a
+Do not upload files over live snapshot keys by hand. Upload and promote a
 versioned snapshot, then rebuild and deploy the frontend from the live cache.
 The original Rust-generated snapshot can still be selected by `legacy` for
 rollback; this does not invoke the Rust publisher.
