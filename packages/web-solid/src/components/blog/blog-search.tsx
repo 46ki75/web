@@ -5,7 +5,7 @@ import {
   ElmMdiIcon,
   ElmTextField,
 } from "@elmethis/solid";
-import { createAutoAnimate } from "@formkit/auto-animate/solid";
+import autoAnimate from "@formkit/auto-animate";
 import { mdiTagRemove } from "@mdi/js";
 import { useNavigate } from "@solidjs/router";
 import Fuse from "fuse.js";
@@ -14,7 +14,7 @@ import {
   createMemo,
   createSignal,
   For,
-  onCleanup,
+  onSettled,
   Show,
 } from "solid-js";
 
@@ -30,8 +30,9 @@ export function BlogSearch() {
   const blogState = useBlog();
   const { t, locale, localizePath } = useI18n();
   const navigate = useNavigate();
-  const [selectedTagsAnimation] = createAutoAnimate<HTMLDivElement>();
-  const [resultsAnimation] = createAutoAnimate<HTMLDivElement>();
+  const animateChildren = (element: HTMLDivElement) => {
+    onSettled(() => autoAnimate(element).destroy);
+  };
   const [searchKeyword, setSearchKeyword] = createSignal("");
   const [debouncedKeyword, setDebouncedKeyword] = createSignal("");
 
@@ -47,13 +48,10 @@ export function BlogSearch() {
       }),
   );
 
-  let searchTimer: ReturnType<typeof setTimeout> | undefined;
-  createEffect(() => {
-    const keyword = searchKeyword();
-    clearTimeout(searchTimer);
-    searchTimer = setTimeout(() => setDebouncedKeyword(keyword), 300);
+  createEffect(searchKeyword, (keyword) => {
+    const timer = setTimeout(() => setDebouncedKeyword(keyword), 300);
+    return () => clearTimeout(timer);
   });
-  onCleanup(() => clearTimeout(searchTimer));
 
   const searchResults = createMemo(() => {
     const keyword = debouncedKeyword().trim();
@@ -135,9 +133,9 @@ export function BlogSearch() {
         <ElmHeading level={2}>{t("common.selectedTags")}</ElmHeading>
         <ElmCollapse isOpen={blogState.selectedTagIds().length > 0}>
           <div
-            ref={selectedTagsAnimation}
-            class={styles["tag-pool"]}
-            classList={{
+            ref={animateChildren}
+            class={{
+              [styles["tag-pool"]]: true,
               [styles.empty]: blogState.selectedTagIds().length === 0,
             }}
           >
@@ -182,7 +180,7 @@ export function BlogSearch() {
           </ElmButton>
         </div>
         <ElmHeading level={2}>{t("common.searchResults")}</ElmHeading>
-        <div ref={resultsAnimation} class={styles["blog-search-result"]}>
+        <div ref={animateChildren} class={styles["blog-search-result"]}>
           <For each={visibleResults()}>
             {(blog) => (
               <BlogCard

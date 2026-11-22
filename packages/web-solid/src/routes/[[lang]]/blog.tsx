@@ -1,33 +1,30 @@
-import {
-  createAsync,
-  type RouteDefinition,
-  type RouteSectionProps,
-} from "@solidjs/router";
-import { Suspense } from "solid-js";
+import type { RouteProps } from "@solidjs/router";
+import { defineFileRoute } from "@solidjs/router/fs";
+import { createMemo, Loading } from "solid-js";
 
 import { BlogLayout } from "~/components/blog/blog-layout";
 import { getBlogData } from "~/data/blog";
 import { useI18n } from "~/i18n/context";
 import { localeFromRouteParam } from "~/i18n/locale";
 
-export const route = {
+export const route = defineFileRoute("/:lang?/blog", {
   preload({ params }) {
     const locale = localeFromRouteParam(params.lang);
     if (locale) {
       void getBlogData(locale);
     }
   },
-} satisfies RouteDefinition;
+});
 
-export default function BlogRouteLayout(props: RouteSectionProps) {
+export default function BlogRouteLayout(props: RouteProps<typeof route>) {
   const { locale } = useI18n();
-  const data = createAsync(() => getBlogData(locale()));
+  const data = createMemo(() => getBlogData(locale()));
 
   return (
-    <Suspense>
-      <BlogLayout blogMeta={data()?.blogMeta ?? []} tags={data()?.tags ?? []}>
+    <Loading>
+      <BlogLayout blogMeta={data().blogMeta} tags={data().tags}>
         {props.children}
       </BlogLayout>
-    </Suspense>
+    </Loading>
   );
 }

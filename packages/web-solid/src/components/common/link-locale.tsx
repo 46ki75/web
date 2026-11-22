@@ -1,16 +1,14 @@
-import { A, type AnchorProps } from "@solidjs/router";
-import { splitProps } from "solid-js";
+import type { JSX } from "@solidjs/web";
+import { omit } from "solid-js";
 import { useI18n } from "~/i18n/context";
 
-export type LinkLocaleProps = AnchorProps;
+export type LinkLocaleProps = JSX.AnchorHTMLAttributes<HTMLAnchorElement> & {
+  href: string;
+};
 
 export function LinkLocale(props: LinkLocaleProps) {
   const { locale, localizePath } = useI18n();
-  const [local, rest] = splitProps(props, ["href", "children"]);
+  const rest = omit(props, "href");
 
-  return (
-    <A {...rest} hreflang={locale()} href={localizePath(local.href)}>
-      {local.children}
-    </A>
-  );
+  return <a {...rest} hreflang={locale()} href={localizePath(props.href)} />;
 }

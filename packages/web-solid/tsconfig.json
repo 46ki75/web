@@ -5,7 +5,7 @@
     "module": "ESNext",
     "lib": ["es2022", "DOM", "WebWorker", "DOM.Iterable"],
     "jsx": "preserve",
-    "jsxImportSource": "solid-js",
+    "jsxImportSource": "@solidjs/web",
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
@@ -21,7 +21,7 @@
     },
     /* if you do not use CSS modules, remove this line and delete the typescript-plugin-css-modules module from package.json */
     "plugins": [{ "name": "typescript-plugin-css-modules" }],
-    "types": ["vite/client", "vitest/globals", "@testing-library/jest-dom"]
+    "types": ["vite/client", "vitest/globals", "filesystem-routing/types"]
   },
   "include": ["src", "openapi", "tests", "./*.d.ts", "./*.config.ts"]
 }

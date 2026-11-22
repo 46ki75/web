@@ -37,7 +37,7 @@ export function BlogProvider(props: ParentProps<BlogProviderProps>) {
     setSelectedTagIds,
   };
 
-  return createComponent(BlogContext.Provider, {
+  return createComponent(BlogContext, {
     value,
     get children() {
       return props.children;

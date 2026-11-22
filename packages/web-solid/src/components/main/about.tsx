@@ -35,11 +35,9 @@ export function About() {
             </ElmParagraph>
             <ElmParagraph>
               On the frontend, I went from Angular to React to Vue.js, and now I
-              am drawn to{" "}
-              <strong class={styles["strong"]}>SolidJS / SolidStart</strong>.
-              This site is also built with SolidStart. Besides technical posts,
-              I also casually update the blog with illustrations and other
-              miscellaneous topics.
+              am drawn to <strong class={styles["strong"]}>SolidJS</strong>,
+              which powers this site. Besides technical posts, I also share
+              illustrations and other topics on the blog.
             </ElmParagraph>
             <ElmParagraph>I am currently based in Tokyo.</ElmParagraph>
           </>
@@ -60,8 +58,8 @@ export function About() {
             </ElmParagraph>
             <ElmParagraph>
               フロントエンドはAngular→React→Vue.jsを経て、いまは{" "}
-              <strong class={styles["strong"]}>SolidJS / SolidStart</strong>{" "}
-              に魅力を感じ、このサイトもSolidStartで作っています。技術記事だけでなく、イラストなど雑多な内容も気ままに更新します。
+              <strong class={styles["strong"]}>SolidJS</strong>{" "}
+              に魅力を感じ、このサイトもSolidJSで作っています。技術記事だけでなく、イラストなど雑多な内容も気ままに更新します。
             </ElmParagraph>
             <ElmParagraph>現在の活動拠点は東京です。</ElmParagraph>
           </>

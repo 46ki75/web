@@ -1,26 +1,5 @@
 import { useBeforeLeave, useIsRouting } from "@solidjs/router";
-import {
-  type Accessor,
-  createRenderEffect,
-  createRoot,
-  type ParentProps,
-} from "solid-js";
-
-const waitForRouting = (isRouting: Accessor<boolean>) =>
-  new Promise<void>((resolve) => {
-    let started = false;
-
-    createRoot((dispose) => {
-      createRenderEffect(() => {
-        if (isRouting()) {
-          started = true;
-        } else if (started) {
-          dispose();
-          resolve();
-        }
-      });
-    });
-  });
+import { flush, until, type ParentProps } from "solid-js";
 
 export function RouteTransition(props: ParentProps) {
   const isRouting = useIsRouting();
@@ -37,9 +16,9 @@ export function RouteTransition(props: ParentProps) {
     event.preventDefault();
 
     document.startViewTransition(async () => {
-      const routingFinished = waitForRouting(isRouting);
-      event.retry(true);
-      await routingFinished;
+      // Flush the staged navigation before checking whether it needs to wait.
+      flush(() => event.retry(true));
+      await until(() => !isRouting());
     });
   });
 

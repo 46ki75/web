@@ -86,7 +86,11 @@ export function BlogArticle(props: BlogArticleProps) {
             {
               text: "Article",
               onClick: () =>
-                navigate(localizePath(`/blog/article/${props.slug}`)),
+                navigate(
+                  localizePath(
+                    `/blog/article/${encodeURIComponent(props.slug)}`,
+                  ),
+                ),
             },
           ]}
         >

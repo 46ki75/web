@@ -1,16 +1,16 @@
 import { ElmPageTop, ElmParallax } from "@elmethis/solid";
-import type { RouteSectionProps } from "@solidjs/router";
-import { HttpStatusCode } from "@solidjs/start";
+import type { RouteProps } from "@solidjs/router";
 import { createMemo, Show } from "solid-js";
 
 import amber from "~/assets/parallax/bg-amber.webp?url";
 import gold from "~/assets/parallax/bg-gold.webp?url";
 import { Footer } from "~/components/common/footer";
 import { Header } from "~/components/common/header";
+import { NotFound } from "~/components/common/not-found";
 import { I18nProvider } from "~/i18n/context";
 import { localeFromRouteParam } from "~/i18n/locale";
 
-export default function LocaleLayout(props: RouteSectionProps) {
+export default function LocaleLayout(props: RouteProps<"/:lang?">) {
   const locale = createMemo(() => localeFromRouteParam(props.params.lang));
 
   return (
@@ -19,8 +19,7 @@ export default function LocaleLayout(props: RouteSectionProps) {
       keyed
       fallback={
         <main>
-          <HttpStatusCode code={404} text="Not Found" />
-          <h1>Not Found</h1>
+          <NotFound />
         </main>
       }
     >

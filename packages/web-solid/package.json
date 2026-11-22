@@ -1,7 +1,7 @@
 {
   "name": "web-solid",
   "version": "0.1.0",
-  "description": "Personal site built with SolidStart",
+  "description": "Personal site built with SolidJS",
   "engines": {
     "node": ">=24"
   },
@@ -32,9 +32,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.37.0",
-    "@solidjs/testing-library": "0.8.10",
-    "@testing-library/jest-dom": "6.9.1",
-    "@testing-library/user-event": "14.6.1",
+    "@solidjs/vite-plugin": "3.0.1",
     "@types/node": "24.0.14",
     "@types/three": "^0.184.1",
     "@vitest/eslint-plugin": "^1.6.24",
@@ -44,29 +42,28 @@
     "openapi-typescript": "^7.9.1",
     "prettier": "3.6.2",
     "schema-dts": "^1.1.5",
-    "stylelint": "^16.17.0",
-    "stylelint-config-standard-scss": "^16.0.0",
+    "stylelint": "^17.16.0",
+    "stylelint-config-standard-scss": "^17.0.0",
     "typescript": "5.8",
     "typescript-eslint": "8.65.0",
     "typescript-plugin-css-modules": "latest",
     "vite": "8.1.6",
-    "vite-plugin-solid": "2.11.13",
     "vitest": "4.1.11"
   },
   "dependencies": {
-    "@elmethis/core": "^0.24.0",
-    "@elmethis/solid": "0.7.1",
+    "@elmethis/solid": "0.9.0",
     "@formkit/auto-animate": "^0.10.0",
     "@mdi/js": "^7.4.47",
-    "@solid-primitives/i18n": "2.2.1",
-    "@solidjs/meta": "0.29.4",
-    "@solidjs/router": "0.16.2",
-    "@solidjs/start": "2.0.0-beta.9",
+    "@solid-primitives/i18n": "3.0.0",
+    "@solidjs/meta": "2.0.0",
+    "@solidjs/router": "2.0.1",
+    "@solidjs/web": "2.0.3",
+    "filesystem-routing": "0.5.0",
     "fuse.js": "^7.1.0",
-    "nitro": "3.0.260610-beta",
+    "nitro": "3.0.261103-rc",
     "shiki": "4.3.1",
     "sitemap": "^9.0.0",
-    "solid-js": "1.9.14",
+    "solid-js": "2.0.3",
     "three": "^0.184.0"
   }
 }

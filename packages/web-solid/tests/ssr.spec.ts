@@ -29,7 +29,7 @@ beforeAll(async () => {
   handler = module.handler;
 });
 
-const invoke = async (path: string, accept = "text/html") => {
+const invoke = async (path: string, accept = "text/html", method = "GET") => {
   const url = new URL(path, "https://dev-www.ikuma.cloud");
   return handler(
     {
@@ -45,7 +45,7 @@ const invoke = async (path: string, accept = "text/html") => {
       requestContext: {
         domainName: url.host,
         http: {
-          method: "GET",
+          method,
           path: url.pathname,
           protocol: "HTTP/1.1",
           sourceIp: "127.0.0.1",
@@ -68,7 +68,9 @@ describe("production SSR handler", () => {
     const response = await invoke(path);
 
     expect(response.statusCode).toBe(200);
-    expect(response.body).toContain(`<html lang="${locale}">`);
+    expect(response.body).toMatch(
+      new RegExp(`<html\\b[^>]*\\blang="${locale}"`),
+    );
     expect(response.body).toMatch(new RegExp(`<title[^>]*>${title}</title>`));
     expect(response.headers["x-content-type-options"]).toBe("nosniff");
     expect(response.headers["cache-control"]).toBe(
@@ -84,6 +86,9 @@ describe("production SSR handler", () => {
     );
     expect(response.body).toContain(
       'hreflang="en" href="https://dev-www.ikuma.cloud/privacy"',
+    );
+    expect(response.body).toContain(
+      'hreflang="x-default" href="https://dev-www.ikuma.cloud/privacy"',
     );
     expect(response.body).toContain(
       'hreflang="ja" href="https://dev-www.ikuma.cloud/ja/privacy"',
@@ -103,12 +108,16 @@ describe("production SSR handler", () => {
     expect(about.headers.location).toBe("/ja/?ref=test");
   });
 
-  it("returns 404 for unsupported locale prefixes", async () => {
-    const response = await invoke("/fr/privacy");
+  it.each(["/fr/privacy", "/ja/unknown/path"])(
+    "returns a non-cacheable 404 for %s",
+    async (path) => {
+      const response = await invoke(path);
 
-    expect(response.statusCode).toBe(404);
-    expect(response.body).toContain("Not Found");
-  });
+      expect(response.statusCode).toBe(404);
+      expect(response.headers["cache-control"]).toBe("no-store");
+      expect(response.body).toContain("Not Found");
+    },
+  );
 
   it("returns a non-cacheable 404 for missing articles", async () => {
     vi.stubGlobal(
@@ -133,7 +142,9 @@ describe("production SSR handler", () => {
     expect(response.body).toContain('content="noindex,follow"');
   });
 
-  it("server-renders the A2UI article body", async () => {
+  it("server-renders the A2UI article body for an encoded slug", async () => {
+    const slug = "a2ui-100%-vitest";
+    const encodedSlug = encodeURIComponent(slug);
     vi.stubGlobal(
       "fetch",
       vi.fn(async (input: RequestInfo | URL) => {
@@ -144,10 +155,13 @@ describe("production SSR handler", () => {
         if (url.includes("/cache/v3/blog/list/")) {
           return Response.json([]);
         }
+        if (!url.endsWith(`/article/${encodedSlug}/contents/en.json`)) {
+          return new Response(null, { status: 404 });
+        }
         await new Promise((resolve) => setTimeout(resolve, 10));
         return Response.json({
           meta: {
-            slug: "a2ui-ssr-vitest",
+            slug,
             title: "A2UI SSR article",
             description: "A2UI SSR description",
             created_at: "2026-01-01",
@@ -213,12 +227,10 @@ describe("production SSR handler", () => {
       }),
     );
 
-    const response = await invoke("/blog/article/a2ui-ssr-vitest");
+    const response = await invoke(`/blog/article/${encodedSlug}`);
 
     expect(response.statusCode).toBe(200);
-    expect(response.body).toContain(
-      'data-a2ui-surface-id="blog-en-a2ui-ssr-vitest"',
-    );
+    expect(response.body).toContain(`data-a2ui-surface-id="blog-en-${slug}"`);
     expect(response.body).toContain('data-a2ui-component-id="root"');
     expect(response.body).toContain("A2UI article body rendered on the server");
     expect(response.body).not.toMatch(
@@ -242,7 +254,9 @@ describe("production SSR handler", () => {
 
     responses.forEach((response, index) => {
       const locale = index % 2 === 0 ? "en" : "ja";
-      expect(response.body).toContain(`<html lang="${locale}">`);
+      expect(response.body).toMatch(
+        new RegExp(`<html\\b[^>]*\\blang="${locale}"`),
+      );
     });
   });
 
@@ -279,10 +293,10 @@ describe("production SSR handler", () => {
 
     expect(english.statusCode).toBe(200);
     expect(english.body).toContain("English article | FineNight");
-    expect(english.body).toContain('<html lang="en">');
+    expect(english.body).toMatch(/<html\b[^>]*\blang="en"/);
     expect(japanese.statusCode).toBe(200);
     expect(japanese.body).toContain("日本語の記事 | FineNight");
-    expect(japanese.body).toContain('<html lang="ja">');
+    expect(japanese.body).toMatch(/<html\b[^>]*\blang="ja"/);
   });
 
   it("emits paths that match the deployed static asset directory", async () => {
@@ -318,8 +332,6 @@ describe("production SSR handler", () => {
     ).join("\n");
 
     const normalizedCss = css.replaceAll(/\s/g, "");
-    const frameworkDeclaration =
-      "--elmethis-color-surface-base:var(--lightningcss-light,var(--elmethis-primitive-color-gold-200))var(--lightningcss-dark,var(--elmethis-primitive-color-slate-700))";
     const nativeDeclaration =
       "--elmethis-color-surface-base:light-dark(var(--elmethis-primitive-color-gold-200),var(--elmethis-primitive-color-slate-700))";
 
@@ -329,8 +341,9 @@ describe("production SSR handler", () => {
     expect(normalizedCss).toMatch(
       /:root\[data-theme=["']?dark["']?\]\{[^}]*color-scheme:dark/,
     );
-    expect(normalizedCss.lastIndexOf(nativeDeclaration)).toBeGreaterThan(
-      normalizedCss.indexOf(frameworkDeclaration),
+    expect(normalizedCss).toContain(nativeDeclaration);
+    expect(normalizedCss.lastIndexOf(nativeDeclaration)).toBe(
+      normalizedCss.lastIndexOf("--elmethis-color-surface-base:"),
     );
   });
 
@@ -344,5 +357,13 @@ describe("production SSR handler", () => {
     expect(response.statusCode).toBe(200);
     expect(response.headers["content-type"]).toContain(contentType);
     expect(response.body).toContain(marker);
+  });
+
+  it("serves API route headers for HEAD without a body", async () => {
+    const response = await invoke("/robots.txt", "text/plain", "HEAD");
+
+    expect(response.statusCode).toBe(200);
+    expect(response.headers["content-type"]).toContain("text/plain");
+    expect(response.body ?? "").toBe("");
   });
 });

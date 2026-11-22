@@ -11,7 +11,6 @@ import {
   type Accessor,
   type ParentProps,
 } from "solid-js";
-import { isServer } from "solid-js/web";
 import { localizePath, type Locale } from "./locale";
 import { en, type RawDictionary } from "./messages/en";
 import { ja } from "./messages/ja";
@@ -41,15 +40,11 @@ const I18nContext = createContext<I18nContextValue>();
 export function I18nProvider(props: ParentProps<{ locale: Accessor<Locale> }>) {
   const value = createI18nValue(() => props.locale());
 
-  createEffect(() => {
-    if (!isServer) {
-      document.documentElement.lang = props.locale();
-    }
+  createEffect(value.locale, (locale) => {
+    document.documentElement.lang = locale;
   });
 
-  return (
-    <I18nContext.Provider value={value}>{props.children}</I18nContext.Provider>
-  );
+  return <I18nContext value={value}>{props.children}</I18nContext>;
 }
 
 export function useI18n(): I18nContextValue {
