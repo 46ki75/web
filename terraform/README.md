@@ -9,11 +9,12 @@ not a Notion token.
 
 ```sh
 export AWS_PROFILE=46ki75-web
+export AWS_REGION=ap-northeast-1
 export STAGE_NAME=dev
-previous=$(node packages/aws-release/src/publish-blog.ts --stage "$STAGE_NAME" active)
-node packages/aws-release/src/publish-blog.ts --stage "$STAGE_NAME" upload --directory "$work/snapshot"
-# Use the release ID printed by upload. The initial active ID is legacy.
-node packages/aws-release/src/publish-blog.ts --stage "$STAGE_NAME" promote NEW_ID --expect "$previous"
+previous=$(mise run --quiet //packages/aws-release:blog --stage "$STAGE_NAME" active)
+mise run //packages/aws-release:blog --stage "$STAGE_NAME" upload --directory "$work/snapshot"
+# Use the blog release ID printed by upload. The initial active ID is legacy.
+mise run //packages/aws-release:blog --stage "$STAGE_NAME" promote NEW_ID --expect "$previous"
 ```
 
 Upload validates the complete snapshot, stores immutable objects in the

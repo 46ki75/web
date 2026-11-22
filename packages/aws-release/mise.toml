@@ -3,6 +3,11 @@ description = "Upload or promote an AWS static site release, or print the curren
 raw_args = true
 run = "node src/deploy-static.ts"
 
+[tasks.blog]
+description = "Upload or promote an AWS blog snapshot, or print the current release"
+raw_args = true
+run = "node src/publish-blog.ts"
+
 [tasks.fmt]
 description = "Format the AWS release commands and tests"
 run = "pnpm exec prettier --write ."
