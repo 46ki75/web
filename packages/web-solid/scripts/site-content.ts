@@ -5,10 +5,10 @@ import { Readable } from "node:stream";
 import { SitemapIndexStream, SitemapStream, streamToPromise } from "sitemap";
 
 import type {
-  BlogContentsResponse,
-  BlogResponse,
-  BlogTagResponse,
-} from "../openapi/blog";
+  BlogArticleSnapshot,
+  BlogSnapshotEntry,
+  BlogTagSnapshot,
+} from "../src/data/blog-snapshot";
 import {
   articlePath,
   badgesPath,
@@ -134,11 +134,11 @@ export async function prepareSiteContent({
       locales.map(async (locale) => ({
         locale,
         posts: (
-          await fetchJson<BlogResponse[]>(blogUrl(`/list/${locale}.json`))
+          await fetchJson<BlogSnapshotEntry[]>(blogUrl(`/list/${locale}.json`))
         ).filter(({ status }) => status === "Published"),
       })),
     ),
-    fetchJson<BlogTagResponse[]>(blogUrl("/tags.json")),
+    fetchJson<BlogTagSnapshot[]>(blogUrl("/tags.json")),
     fetchJson<{ data: CredlyBadgeData[] }>(new URL(badgesSource)),
   ]);
 
@@ -171,7 +171,7 @@ export async function prepareSiteContent({
   const savedArticles = await mapConcurrent(
     articles,
     async ({ slug, locale }) => {
-      const contents = await fetchJson<BlogContentsResponse>(
+      const contents = await fetchJson<BlogArticleSnapshot>(
         blogUrl(`/article/${encodeURIComponent(slug)}/contents/${locale}.json`),
       );
       if (

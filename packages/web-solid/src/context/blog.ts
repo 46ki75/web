@@ -8,16 +8,16 @@ import {
   type Setter,
 } from "solid-js";
 
-import type { BlogResponse, BlogTagResponse } from "../../openapi/blog";
+import type { BlogSnapshotEntry, BlogTagSnapshot } from "../data/blog-snapshot";
 
 export interface BlogProviderProps {
-  blogMeta: BlogResponse[];
-  tags: BlogTagResponse[];
+  blogMeta: BlogSnapshotEntry[];
+  tags: BlogTagSnapshot[];
 }
 
 export interface BlogContextValue {
-  readonly blogMeta: BlogResponse[];
-  readonly tags: BlogTagResponse[];
+  readonly blogMeta: BlogSnapshotEntry[];
+  readonly tags: BlogTagSnapshot[];
   selectedTagIds: Accessor<string[]>;
   setSelectedTagIds: Setter<string[]>;
 }

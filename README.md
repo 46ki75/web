@@ -32,9 +32,7 @@ list the complete catalog, or run `mise :<task>` from within a package directory
 | Command                                                   | Purpose                                                   |
 | --------------------------------------------------------- | --------------------------------------------------------- |
 | `mise run //packages/web-solid:dev`                       | Start the frontend                                        |
-| `mise run //crates/web-lambda-http-api:dev [stage]`       | Watch the API on port 10000                               |
-| `mise run //crates/web-lambda-http-api:build`             | Build arm64 API/publisher Lambdas                         |
-| `mise run //crates/web-lambda-http-api:deploy <stage>`    | Build and deploy the API                                  |
+| `mise run //crates/web-lambda-http-api:build`            | Build the arm64 blog publisher Lambda                    |
 | `mise run //crates/web-lambda-http-api:deploy-publisher <stage>` | Build and deploy the publisher                       |
 | `mise run //crates/web-lambda-http-api:invoke-publisher <stage>` | Rebuild blogs; wait up to 15 minutes                 |
 | `mise run //crates/web-lambda-logs-reporter:deploy <stage>`      | Build and deploy the reporter                        |

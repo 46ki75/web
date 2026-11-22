@@ -8,13 +8,6 @@ rust-version = "1.88"
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(rust_analyzer)'] }
 
 [dependencies]
-# HTTP
-http = { workspace = true }
-
-# HTTP Server
-axum = { workspace = true, features = ["macros"] }
-tower-http = { workspace = true, features = ["cors"] }
-
 # HTTP Client
 reqwest = { workspace = true }
 
@@ -25,7 +18,6 @@ aws-sdk-cloudfront = { workspace = true }
 aws-config = { workspace = true }
 
 # AWS Lambda
-lambda_http = { workspace = true }
 lambda_runtime = { workspace = true }
 
 # Logging
@@ -41,7 +33,6 @@ quick-xml = { workspace = true }
 tokio = { workspace = true }
 
 # General Utils
-tower = { workspace = true }
 thiserror = { workspace = true }
 futures = { workspace = true }
 bytes = { workspace = true }
@@ -55,11 +46,6 @@ n2a2ui = { workspace = true }
 n2a2ui-a2ui = { workspace = true }
 notionrs = { workspace = true }
 notionrs_types = { workspace = true }
-
-# OpenAPI
-utoipa = { workspace = true }
-utoipa-axum = { workspace = true }
-utoipa-swagger-ui = { workspace = true }
 
 # Image
 image = { workspace = true }

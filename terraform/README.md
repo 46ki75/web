@@ -2,10 +2,11 @@
 
 ## AWS static frontend
 
-The existing private `web` bucket serves the site through CloudFront. `/api/*`
-and `/cache/*` retain their own origins and error responses. A CloudFront
-Function handles directory indexes, permanent redirects, and the website's
-`404.html`. Dev and staging keep Basic authentication.
+The private `web` bucket serves the site through CloudFront. `/cache/*` has a
+separate private S3 origin. A CloudFront Function handles directory indexes,
+permanent redirects, and the website's `404.html`. Dev and staging keep Basic
+authentication on the site. Retired `/api/*` paths are handled like any other
+missing website path.
 
 From the repository root, with the web account AWS profile set, deploy one
 stage at a time (`dev`, `stg`, or `prod`):
@@ -32,8 +33,8 @@ for rollback. If pruning old releases, remove their S3 prefixes and associated
 All three stages use the static origin. For a new distribution, apply Terraform
 for that workspace, then prepare and activate its first release. After an
 activation, check localized pages, immutable assets, redirects with query
-strings, and HTTP 404s. Verify `/api/health` and `/cache/v3/blog/list/en.json`
-still respond and non-production requires valid Basic credentials. When editing
+strings, and HTTP 404s. Verify `/cache/v3/blog/list/en.json` remains reachable
+and non-production site pages require valid Basic credentials. When editing
 the edge function, test its `DEVELOPMENT` stage with CloudFront `TestFunction`:
 CloudFront's JavaScript runtime supports less syntax than Node.js.
 

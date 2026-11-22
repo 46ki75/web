@@ -6,14 +6,6 @@ resource "aws_cloudfront_origin_access_control" "web" {
   signing_protocol                  = "sigv4"
 }
 
-resource "aws_cloudfront_origin_access_control" "http_api" {
-  name                              = "${terraform.workspace}-46ki75-web-cloudfront-oac-http_api"
-  description                       = "Lambda HTTP API OAC"
-  origin_access_control_origin_type = "lambda"
-  signing_behavior                  = "always"
-  signing_protocol                  = "sigv4"
-}
-
 resource "aws_cloudfront_origin_access_control" "blog_cache" {
   name                              = "${terraform.workspace}-46ki75-web-cloudfront-oac-blog_cache"
   description                       = "Blog cache S3 OAC"
@@ -36,34 +28,6 @@ resource "aws_cloudfront_cache_policy" "s3" {
 
     headers_config {
       header_behavior = "none"
-    }
-
-    query_strings_config {
-      query_string_behavior = "none"
-    }
-
-    enable_accept_encoding_brotli = true
-    enable_accept_encoding_gzip   = true
-  }
-}
-
-resource "aws_cloudfront_cache_policy" "http_api" {
-  name = "${terraform.workspace}-46ki75-web-cloudfront-cache_policy-http_api"
-
-  default_ttl = 0
-  min_ttl     = 0
-  max_ttl     = 3600 * 24 * 30 * 12
-
-  parameters_in_cache_key_and_forwarded_to_origin {
-    cookies_config {
-      cookie_behavior = "none"
-    }
-
-    headers_config {
-      header_behavior = "whitelist"
-      headers {
-        items = ["Accept-Language"]
-      }
     }
 
     query_strings_config {

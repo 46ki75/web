@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 import { createBuilder, preview } from "vite";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
-import type { BlogResponse } from "../openapi/blog";
+import type { BlogSnapshotEntry } from "../src/data/blog-snapshot";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const canonical = "https://static.example.test";
@@ -32,7 +32,7 @@ function fixture(path: string, origin: string): Response {
     keywords: ["fixture"],
     notion_url: "https://example.test/fixture",
     page_id: "1234",
-  } satisfies BlogResponse;
+  } satisfies BlogSnapshotEntry;
   const draft = { ...post, slug: "hidden-draft", status: "Draft" };
   if (path.startsWith(`${cache}/list/`)) {
     return Response.json(locale === "en" ? [post, draft] : [post]);
@@ -222,6 +222,8 @@ describe("portable static artifact", () => {
       expect(json).toContain(title);
       expect(json).toContain(image);
       expect(json).not.toContain(block);
+      expect(json).not.toContain("/api/v2/blog/");
+      expect(html).not.toContain("/api/v2/blog/");
     },
   );
 

@@ -7,15 +7,6 @@ members = [
 ]
 
 [workspace.dependencies]
-# WEB
-axum = "0.8.6"
-http = "1.4"
-tower-http = { version = "0.6.4", features = [
-    "catch-panic",
-    "compression-full",
-    "normalize-path",
-] }
-
 # HTTP Client
 reqwest = { version = "0.13", default-features = true, features = [
     "gzip",
@@ -47,7 +38,6 @@ quick-xml = { version = "0.38.4", features = ["serialize"] }
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 
 # General Utils
-tower = "0.5.2"
 bytes = "1.11.1"
 futures = "0.3.31"
 dotenvy = "0.15.7"
@@ -63,11 +53,6 @@ n2a2ui = "0.4.0"
 n2a2ui-a2ui = "0.3.0"
 notionrs = "0.28.0"
 notionrs_types = "0.21.0"
-
-# OpenAPI
-utoipa = "5.4.0"
-utoipa-axum = "0.2.0"
-utoipa-swagger-ui = { version = "9.0.2", features = ["axum"] }
 
 # Image
 image = "0.25.9"
