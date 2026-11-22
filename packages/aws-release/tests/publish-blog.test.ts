@@ -115,16 +115,49 @@ test("rejects wrong-stage, invalid XML, missing images, and extra files before A
   );
   unlinkSync(path("unused.txt"));
   const rss = `${prefix}/feed/rss/en.xml`;
-  write(rss, "<!DOCTYPE rss><rss/>");
+  write(
+    rss,
+    `<!DOCTYPE rss SYSTEM "urn:example:feed"><rss><channel><item><link>${origin}/blog/article/static%2525.post</link></item></channel></rss>`,
+  );
   await assert.rejects(publish.upload("dev", root), /DTDs are not allowed/);
   write(rss, "<rss>");
-  await assert.rejects(publish.upload("dev", root), /unclosed tag/);
+  await assert.rejects(publish.upload("dev", root), /Malformed snapshot XML/);
   unlinkSync(path(media));
   await assert.rejects(
     publish.upload("dev", root),
     /do not match content-derived key/,
   );
   assert.deepEqual(calls, []);
+});
+
+test("matches Atom namespace URIs rather than prefixes and rejects unbound prefixes", async (t) => {
+  const { root, write } = snapshot(t);
+  const { aws, calls } = mockAws();
+  const publish = blogPublishing(aws);
+  const feed = `${prefix}/feed/atom/en.xml`;
+  const entry = `<a:entry><a:id>${origin}/blog/article/static%2525.post</a:id></a:entry>`;
+  write(
+    feed,
+    `<a:feed xmlns:a="http://www.w3.org/2005/Atom">${entry}</a:feed>`,
+  );
+  assert.equal(prepareBlog(root, "dev").blobs.size, 15);
+  write(feed, `<a:feed xmlns:a="urn:not-atom">${entry}</a:feed>`);
+  await assert.rejects(
+    publish.upload("dev", root),
+    /RSS\/Atom IDs do not match/,
+  );
+  write(feed, `<a:feed>${entry}</a:feed>`);
+  await assert.rejects(publish.upload("dev", root), /Malformed snapshot XML/);
+  assert.deepEqual(calls, []);
+});
+
+test("does not mistake literal CDATA for a DTD declaration", (t) => {
+  const { root, write } = snapshot(t);
+  write(
+    `${prefix}/feed/rss/en.xml`,
+    `<rss><channel><description><![CDATA[<!DOCTYPE rss>]]></description><item><link>${origin}/blog/article/static%2525.post</link></item></channel></rss>`,
+  );
+  assert.equal(prepareBlog(root, "dev").blobs.size, 15);
 });
 
 test("marks no release ready after incomplete uploads", async (t) => {

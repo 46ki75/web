@@ -2,7 +2,12 @@ import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { isDeepStrictEqual } from "node:util";
 import { blogCache, blogLocales, isArticleSlug } from "@web/blog-snapshot";
-import { SaxesParser } from "saxes";
+import {
+  DOMParser,
+  Node,
+  onWarningStopParsing,
+  type Document,
+} from "@xmldom/xmldom";
 import {
   AwsError,
   awsCli,
@@ -39,37 +44,53 @@ function array(value: unknown): unknown[] {
   return value;
 }
 
-function xmlValues(data: Buffer, path: string[], namespace = "") {
-  const parser = new SaxesParser({ xmlns: true });
-  const elements: string[] = [];
-  const values: string[] = [];
-  let value: string | undefined;
-  parser.on("doctype", () => {
+function xmlValues(
+  data: Buffer,
+  path: string[],
+  namespace: string | null = null,
+) {
+  let document: Document;
+  try {
+    const text = new TextDecoder("utf-8", { fatal: true }).decode(data);
+    document = new DOMParser({ onError: onWarningStopParsing }).parseFromString(
+      text,
+      "application/xml",
+    );
+  } catch {
+    throw new Error("Malformed snapshot XML");
+  }
+  // xmldom records the doctype without resolving its entities. Check the node
+  // rather than scanning for a string that can also appear in article CDATA.
+  if (document.doctype)
     throw new Error(
       "Not a generated snapshot XML document: DTDs are not allowed",
     );
-  });
-  parser.on("opentag", (tag) => {
-    elements.push(tag.uri === namespace ? tag.local : "");
-    if (
-      elements.length === path.length &&
-      path.every((name, i) => name === elements[i])
-    )
-      value = "";
-  });
-  function text(text: string) {
-    if (value !== undefined && elements.length === path.length) value += text;
-  }
-  parser.on("text", text);
-  parser.on("cdata", text);
-  parser.on("closetag", () => {
-    if (value !== undefined && elements.length === path.length) {
-      values.push(value);
-      value = undefined;
+
+  const values: string[] = [];
+  function visit(parent: Node, depth: number) {
+    for (let child = parent.firstChild; child; child = child.nextSibling) {
+      if (
+        child.nodeType !== Node.ELEMENT_NODE ||
+        child.localName !== path[depth] ||
+        child.namespaceURI !== namespace
+      )
+        continue;
+      if (depth < path.length - 1) {
+        visit(child, depth + 1);
+      } else {
+        let value = "";
+        for (let text = child.firstChild; text; text = text.nextSibling) {
+          if (
+            text.nodeType === Node.TEXT_NODE ||
+            text.nodeType === Node.CDATA_SECTION_NODE
+          )
+            value += text.nodeValue ?? "";
+        }
+        values.push(value);
+      }
     }
-    elements.pop();
-  });
-  parser.write(new TextDecoder("utf-8", { fatal: true }).decode(data)).close();
+  }
+  visit(document, 0);
   return values;
 }
 
