@@ -29,23 +29,16 @@ not run simultaneous uploads for the same stage or delete a release still used
 for rollback. If pruning old releases, remove their S3 prefixes and associated
 `static:<release>:` KVS keys together. Use regional STS credentials for KVS.
 
-For the **first** cutover of a stage, prepare and activate a release before
-adding the stage to [`aws/static-site.auto.tfvars`](aws/static-site.auto.tfvars).
-With `TF_WORKSPACE` set to that stage, review and apply a saved Terraform plan.
-The plan should only add the new website function and cache policy and update
-the two website behaviors. After CloudFront deploys, verify the English and
-Japanese home and article routes, immutable assets, redirects with query
-strings, and an unknown URL returning HTTP 404. Check that `/api/health` and
-`/cache/v3/blog/list/en.json` still respond, and that non-production requires
-valid Basic credentials. Nitro remains deployed for rollback. When editing the
-edge function, also test its `DEVELOPMENT` stage with CloudFront `TestFunction`:
+All three stages use the static origin. For a new distribution, apply Terraform
+for that workspace, then prepare and activate its first release. After an
+activation, check localized pages, immutable assets, redirects with query
+strings, and HTTP 404s. Verify `/api/health` and `/cache/v3/blog/list/en.json`
+still respond and non-production requires valid Basic credentials. When editing
+the edge function, test its `DEVELOPMENT` stage with CloudFront `TestFunction`:
 CloudFront's JavaScript runtime supports less syntax than Node.js.
 
-To roll back a content release, activate the prior prepared release ID. To
-roll back the origin migration itself, remove the stage from
-`aws/static-site.auto.tfvars` and review and apply the Terraform plan for that
-workspace. This switches the website behaviors back without changing the API
-or blog cache.
+To roll back, activate the prior prepared static release ID. The old Nitro
+origin is no longer available as a rollback target.
 
 ## Manually Managed Resources
 

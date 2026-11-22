@@ -1,20 +1,3 @@
-variable "static_site_stages" {
-  description = "Stages running the static S3 frontend. Upload a release before enabling a stage."
-  type        = set(string)
-  default     = []
-
-  validation {
-    condition     = alltrue([for stage in var.static_site_stages : contains(["dev", "stg", "prod"], stage)])
-    error_message = "Static site stages must be dev, stg, or prod."
-  }
-}
-
-locals {
-  static_site_enabled = contains(var.static_site_stages, terraform.workspace)
-}
-
-# Keep the policy and function available on rollback. CloudFront refuses to
-# delete either while a deployed distribution still references it.
 resource "aws_cloudfront_cache_policy" "static_site" {
   name        = "${terraform.workspace}-46ki75-web-cloudfront-cache_policy-static_site"
   default_ttl = 0

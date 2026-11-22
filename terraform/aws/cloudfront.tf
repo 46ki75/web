@@ -204,7 +204,7 @@ resource "aws_cloudfront_distribution" "default" {
   aliases = [aws_acm_certificate.cloudfront_cert.domain_name]
   # <<< custom domain
 
-  # Keep the Nitro origin defined until the static rollout is verified.
+  # >>> [S3 web] origin
   default_cache_behavior {
     allowed_methods = [
       "GET",
@@ -213,41 +213,18 @@ resource "aws_cloudfront_distribution" "default" {
     ]
     cached_methods         = ["GET", "HEAD"]
     viewer_protocol_policy = "redirect-to-https"
-    target_origin_id       = local.static_site_enabled ? "s3-web" : "nitro-backend"
+    target_origin_id       = "s3-web"
 
-    cache_policy_id            = local.static_site_enabled ? aws_cloudfront_cache_policy.static_site.id : aws_cloudfront_cache_policy.nitro.id
-    origin_request_policy_id   = local.static_site_enabled ? null : aws_cloudfront_origin_request_policy.all_viewer.id
+    cache_policy_id            = aws_cloudfront_cache_policy.static_site.id
     response_headers_policy_id = aws_cloudfront_response_headers_policy.security.id
 
     compress = true
 
     function_association {
       event_type   = "viewer-request"
-      function_arn = local.static_site_enabled ? aws_cloudfront_function.static_site.arn : aws_cloudfront_function.rename_uri.arn
+      function_arn = aws_cloudfront_function.static_site.arn
     }
   }
-
-  origin {
-    domain_name = local.lambda_function_url_domain_nitro
-    origin_id   = "nitro-backend"
-
-    origin_shield {
-      enabled              = true
-      origin_shield_region = "ap-northeast-1"
-    }
-
-    origin_access_control_id = aws_cloudfront_origin_access_control.nitro.id
-
-    custom_origin_config {
-      http_port              = 80
-      https_port             = 443
-      origin_protocol_policy = "https-only"
-      origin_ssl_protocols   = ["TLSv1.2"]
-    }
-  }
-  # <<< [Nitro] origin
-
-  # # >>> [S3 web] origin
 
   dynamic "ordered_cache_behavior" {
     for_each = [
@@ -267,14 +244,13 @@ resource "aws_cloudfront_distribution" "default" {
       target_origin_id       = "s3-web"
 
       cache_policy_id            = aws_cloudfront_cache_policy.s3.id
-      origin_request_policy_id   = local.static_site_enabled ? null : aws_cloudfront_origin_request_policy.all_viewer.id
       response_headers_policy_id = aws_cloudfront_response_headers_policy.security.id
 
       compress = true
 
       function_association {
         event_type   = "viewer-request"
-        function_arn = local.static_site_enabled ? aws_cloudfront_function.static_site.arn : aws_cloudfront_function.rename_uri.arn
+        function_arn = aws_cloudfront_function.static_site.arn
       }
     }
   }
@@ -284,7 +260,7 @@ resource "aws_cloudfront_distribution" "default" {
     origin_id                = "s3-web"
     origin_access_control_id = aws_cloudfront_origin_access_control.web.id
   }
-  # # <<< [S3 web] origin
+  # <<< [S3 web] origin
 
   # >>> [S3 blog cache] origin
   # The blog is pre-rendered to S3 (JSON, feeds, sitemap, OGP + block images)
