@@ -1,3 +1,8 @@
+[tasks.site]
+description = "Upload or promote an AWS static site release, or print the current release"
+raw_args = true
+run = "node src/deploy-static.ts"
+
 [tasks.fmt]
 description = "Format the AWS release commands and tests"
 run = "pnpm exec prettier --write ."

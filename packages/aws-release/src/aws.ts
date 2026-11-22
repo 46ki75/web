@@ -142,9 +142,9 @@ export async function releaseCli(options: {
     ? "[--directory DIRECTORY]"
     : "--directory DIRECTORY";
   const usage = `Usage: node ${options.script} --stage dev|stg|prod <command>
-  upload ${directory} [--dry-run]  Prepare without activating
-  active                                Print the current release ID
-  activate RELEASE_ID [--expect ID]     Activate or roll back`;
+  upload ${directory} [--dry-run]  Prepare a release without making it live
+  active                               Print the current release ID
+  promote RELEASE_ID [--expect ID]     Make a prepared release live or roll back`;
   try {
     const {
       values,
@@ -174,7 +174,7 @@ export async function releaseCli(options: {
       if (!input) throw new Error("Specify --directory DIRECTORY");
       await options.upload(stage, input, values["dry-run"] === true);
     } else if (
-      command === "activate" &&
+      (command === "promote" || command === "activate") &&
       release &&
       !extra.length &&
       values.directory === undefined &&
