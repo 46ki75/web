@@ -37,9 +37,6 @@ importers:
       fuse.js:
         specifier: ^7.1.0
         version: 7.1.0
-      nitro:
-        specifier: 3.0.261103-rc
-        version: 3.0.261103-rc
       shiki:
         specifier: 4.3.1
         version: 4.3.1
@@ -80,6 +77,9 @@ importers:
       openapi-typescript:
         specifier: ^7.9.1
         version: 7.9.1(typescript@5.8.3)
+      prerender-crawler:
+        specifier: 0.3.0
+        version: 0.3.0(vite@8.1.6(@types/node@24.0.14)(esbuild@0.27.7)(jiti@2.7.0)(less@4.9.1)(sass-embedded@1.97.3)(sass@1.108.2)(stylus@0.62.0)(terser@5.48.0)(tsx@4.20.6)(yaml@2.9.0))
       prettier:
         specifier: 3.6.2
         version: 3.6.2
@@ -1695,14 +1695,6 @@ packages:
     resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
     engines: {node: '>= 8'}
 
-  crossws@0.4.17:
-    resolution: {integrity: sha512-YG2kyfafNXKmu7e6k64yrj6whrw7m5sBIsOSXOlJ/72X3TQWRQuw8DhvXFDcBk8HF77PnTSygnm7xpYCTnFpow==}
-    peerDependencies:
-      srvx: '>=0.11.5'
-    peerDependenciesMeta:
-      srvx:
-        optional: true
-
   css-functions-list@3.3.3:
     resolution: {integrity: sha512-8HFEBPKhOpJPEPu70wJJetjKta86Gw9+CCyCnB3sui2qQfOvRyqBy4IKLKKAwdMpWb2lHXWk9Wb4Z6AmaUT1Pg==}
     engines: {node: '>=12'}
@@ -1784,10 +1776,6 @@ packages:
   env-paths@2.2.1:
     resolution: {integrity: sha512-+h1lkLKhZMTYjog1VEpJNG7NZJWcuc2DDk/qsqSTRRCOXiLjeQ1d1/udrUGhqMxUgAlwKNZ0cf2uqan5GLuS2A==}
     engines: {node: '>=6'}
-
-  env-runner@0.3.11:
-    resolution: {integrity: sha512-jKG29hxqGrL9ktunIwmt9aHbP3n995DGUY1KyXS7iGYFoD/yDdpc2CjJt6remFI3x2H1JOmBBMo0KXxjEQ2G6g==}
-    hasBin: true
 
   errno@0.1.8:
     resolution: {integrity: sha512-dJ6oBr5SQ1VSd9qkk7ByRgb/1SH4JZjCHSW/mr63/QcXO9zLVxvJ6Oy13nio03rxpSnVDDjFor75SjVeZWPW/A==}
@@ -2079,19 +2067,6 @@ packages:
 
   graceful-fs@4.2.12:
     resolution: {integrity: sha512-iuyGF2E4oafQfPsRrG2wtY2ILupMhvtdrhzrxB+0VcjsPpSPttpfYdjnGFGsTi5MaJFjI1jOKHPQ6UTbTj9TAw==}
-
-  h3@2.0.8:
-    resolution: {integrity: sha512-ENuKlF9kC6E6PrvY1PUyE0qkrnnPTIt2/v48uyEEfTVfgoiqBCE0uwwf++2XrWwT1gxjQBDLQ8PAsmZVniKvTw==}
-    engines: {node: '>=20.19.0'}
-    hasBin: true
-    peerDependencies:
-      crossws: ^0.4.12
-      ocache: '>=0.3.0'
-    peerDependenciesMeta:
-      crossws:
-        optional: true
-      ocache:
-        optional: true
 
   has-flag@4.0.0:
     resolution: {integrity: sha512-EykJT/Q1KjTWctppgIAgfSO0tKVuZUjhgMr17kqTumMl6Afv3EISleU7qZUzoXDFTAHTDC4NOoG/ZxU3EvlMPQ==}
@@ -2572,11 +2547,6 @@ packages:
     resolution: {integrity: sha512-8Ofs/AUQh8MaEcrlq5xOX0CQ9ypTF5dl78mjlMNfOK08fzpgTHQRQPBxcPlEtIw0yRpws+Zo/3r+5WRby7u3Gg==}
     engines: {node: '>= 0.6'}
 
-  nitro@3.0.261103-rc:
-    resolution: {integrity: sha512-tLD7r5fWCtwnQEE4ZkckLUnx1wkWDaLY48dD+BCJtcQ+srSWAUpxJEK3YfTsgN3v+e4UgBYRzuR7zV7Sqns/zA==}
-    engines: {node: '>=22.22.0'}
-    hasBin: true
-
   node-addon-api@7.1.1:
     resolution: {integrity: sha512-5m3bsyrjFWE1xf7nz7YXdN4udnVtXK6/Yfgn5qnahL6bCkf2yKt4k3nuTKAtT4r3IG8JNR2ncsIMdZuAzJjHQQ==}
 
@@ -2599,9 +2569,6 @@ packages:
   obug@2.2.1:
     resolution: {integrity: sha512-XrsrhT5sybtKI6wakr2SPOlGZWWYbUXZ7a0jT8/QOeAPau+1X/bSegNe5YR75oJmEZQbKningirmGOEJCIk61Q==}
     engines: {node: '>=12.20.0'}
-
-  ocache@0.3.2:
-    resolution: {integrity: sha512-wu82jmgyoORtWMBZy6PvyJ8dBhtaOOhCwfRnSKBRbnSLht/RqNUs5WUzOxw5/IikJLMC9e+s1ReReZm4XbrNoQ==}
 
   on-finished@2.4.1:
     resolution: {integrity: sha512-oVlzkg3ENAhCk2zdv7IJwd/QUD4z2RxRwpkcGY8psCVcCYZNq4wYnVWALHM+brtuJjePWiYF/ClmuDr8Ch5+kg==}
@@ -2769,6 +2736,16 @@ packages:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
     engines: {node: '>= 0.8.0'}
 
+  prerender-crawler@0.3.0:
+    resolution: {integrity: sha512-b5Zak9xlgYd+ydmWSasgXTvCfRpv/S0Xkg4v06SMb6njYmF9z31wqdeK/K7DLlH0Gc6nmMQUzp76Svm90juc4g==}
+    engines: {node: '>=20'}
+    hasBin: true
+    peerDependencies:
+      vite: ^7.0.0 || ^8.0.0
+    peerDependenciesMeta:
+      vite:
+        optional: true
+
   prettier@3.6.2:
     resolution: {integrity: sha512-I7AIg5boAr5R0FFtJ6rCfD+LFsWHp81dolrFD8S79U9tb8Az2nGrJncnMSnys+bpQJfRUzqs9hnA81OAA3hCuQ==}
     engines: {node: '>=14'}
@@ -2870,10 +2847,6 @@ packages:
     resolution: {integrity: sha512-t9z29cJjXf/vxQ8dyhCSpt6H6aSwHTk8cT5I3iy6SMXuFpk5mB6PL6XfC8PCwrPTx93udwKUm9HRteAlTGBLiA==}
     engines: {node: ^20.19.0 || >=22.12.0}
     hasBin: true
-
-  rou3@1.0.0:
-    resolution: {integrity: sha512-ySeaQkSrua+ut9g+65I7FHqOFBaY8tV0FmccXItoq0q21se32Q3u4YiW7/RqXSosWgYJaaKwRHXy3BST9PeCNQ==}
-    engines: {node: '>=20.19.0'}
 
   router@2.2.0:
     resolution: {integrity: sha512-nLTrUKm2UyiL7rlhapu/Zl45FwNgkZGaCpZbIHajDYgwlJCOzLSk+cIPAnsEqV955GjILJnKbdQC1nVPz+gAYQ==}
@@ -3130,11 +3103,6 @@ packages:
 
   space-separated-tokens@2.0.2:
     resolution: {integrity: sha512-PEGlAwrG8yXGXRjW32fGbg66JAlOAwbObuqVoJpv/mRgoWDQfgH1wDPvtzWyUSNAXBGSk8h755YDbbcEy3SH2Q==}
-
-  srvx@1.0.8:
-    resolution: {integrity: sha512-ngFS/J6St4PJfHRHGjr78xkPPtbyXtdMOLNE4x/XZunEK3OhV7aGUWMHf9WTUEy6wm1U0W4okkd82ZFFWRVQTw==}
-    engines: {node: '>=20.16.0'}
-    hasBin: true
 
   stackback@0.0.2:
     resolution: {integrity: sha512-1XMJE5fQo1jGH6Y/7ebnwPOBEkIEnT4QF32d5R1+VXdXveM0IBMJt8zfaxX1P3QhVwrYe+576+jkANtSS2mBbw==}
@@ -5050,10 +5018,6 @@ snapshots:
       shebang-command: 2.0.0
       which: 2.0.2
 
-  crossws@0.4.17(srvx@1.0.8):
-    optionalDependencies:
-      srvx: 1.0.8
-
   css-functions-list@3.3.3: {}
 
   css-tree@3.2.1:
@@ -5112,11 +5076,6 @@ snapshots:
   encodeurl@2.0.0: {}
 
   env-paths@2.2.1: {}
-
-  env-runner@0.3.11:
-    dependencies:
-      crossws: 0.4.17(srvx@1.0.8)
-      srvx: 1.0.8
 
   errno@0.1.8:
     dependencies:
@@ -5517,14 +5476,6 @@ snapshots:
 
   graceful-fs@4.2.12:
     optional: true
-
-  h3@2.0.8(crossws@0.4.17(srvx@1.0.8))(ocache@0.3.2):
-    dependencies:
-      rou3: 1.0.0
-      srvx: 1.0.8
-    optionalDependencies:
-      crossws: 0.4.17(srvx@1.0.8)
-      ocache: 0.3.2
 
   has-flag@4.0.0: {}
 
@@ -5950,15 +5901,6 @@ snapshots:
 
   negotiator@1.0.0: {}
 
-  nitro@3.0.261103-rc:
-    dependencies:
-      crossws: 0.4.17(srvx@1.0.8)
-      env-runner: 0.3.11
-      h3: 2.0.8(crossws@0.4.17(srvx@1.0.8))(ocache@0.3.2)
-      ocache: 0.3.2
-      rou3: 1.0.0
-      srvx: 1.0.8
-
   node-addon-api@7.1.1:
     optional: true
 
@@ -5972,8 +5914,6 @@ snapshots:
   object-inspect@1.13.4: {}
 
   obug@2.2.1: {}
-
-  ocache@0.3.2: {}
 
   on-finished@2.4.1:
     dependencies:
@@ -6148,6 +6088,10 @@ snapshots:
 
   prelude-ls@1.2.1: {}
 
+  prerender-crawler@0.3.0(vite@8.1.6(@types/node@24.0.14)(esbuild@0.27.7)(jiti@2.7.0)(less@4.9.1)(sass-embedded@1.97.3)(sass@1.108.2)(stylus@0.62.0)(terser@5.48.0)(tsx@4.20.6)(yaml@2.9.0)):
+    optionalDependencies:
+      vite: 8.1.6(@types/node@24.0.14)(esbuild@0.27.7)(jiti@2.7.0)(less@4.9.1)(sass-embedded@1.97.3)(sass@1.108.2)(stylus@0.62.0)(terser@5.48.0)(tsx@4.20.6)(yaml@2.9.0)
+
   prettier@3.6.2: {}
 
   probe-image-size@7.5.0:
@@ -6259,8 +6203,6 @@ snapshots:
       '@rolldown/binding-wasm32-wasi': 1.1.5
       '@rolldown/binding-win32-arm64-msvc': 1.1.5
       '@rolldown/binding-win32-x64-msvc': 1.1.5
-
-  rou3@1.0.0: {}
 
   router@2.2.0:
     dependencies:
@@ -6538,8 +6480,6 @@ snapshots:
     optional: true
 
   space-separated-tokens@2.0.2: {}
-
-  srvx@1.0.8: {}
 
   stackback@0.0.2: {}
 

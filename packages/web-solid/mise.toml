@@ -3,7 +3,7 @@ description = "Start the SolidJS development server"
 run = "pnpm run dev"
 
 [tasks.build]
-description = "Build the SolidJS frontend"
+description = "Generate the portable static frontend in dist/client"
 run = "pnpm run build"
 
 [tasks.typecheck]
@@ -31,8 +31,8 @@ description = "Run Stylelint"
 run = "pnpm run stylelint"
 
 [tasks.test]
-description = "Build the frontend, then run unit and SSR tests"
-run = [{ task = ":build" }, "pnpm run test.unit", "pnpm run test.ssr"]
+description = "Run unit tests and build the static site against fixture content"
+run = "pnpm test"
 
 [tasks."check:quick"]
 description = "Run frontend formatting, lint, and type checks"
@@ -41,15 +41,3 @@ depends = [":fmt-check", ":lint", ":typecheck"]
 [tasks.check]
 description = "Run the complete frontend quality gate"
 depends = [":check:quick", ":test"]
-
-[tasks.deploy]
-description = "Build, upload the frontend/Lambda, and invalidate CloudFront"
-usage = '''
-arg "<stage>" { choices "dev" "stg" "prod" }
-'''
-run = [
-  { task = ":build", env = { STAGE_NAME = "{{usage.stage}}" } },
-  'STAGE_NAME="${usage_stage?}" ./scripts/deploy-s3.sh',
-  'STAGE_NAME="${usage_stage?}" ./scripts/deploy-lambda.sh',
-  'STAGE_NAME="${usage_stage?}" ./scripts/invalidate.sh',
-]

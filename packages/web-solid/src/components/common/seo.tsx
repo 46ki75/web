@@ -1,7 +1,14 @@
 import { Link, Meta as HeadMeta, Script, Title } from "@solidjs/meta";
+import { Show } from "solid-js";
 
 import commonOgpImage from "~/assets/image/ogp.png?url";
-import { localizePath, openGraphLocales, type Locale } from "~/i18n/locale";
+import {
+  alternateLocale,
+  localizePath,
+  locales,
+  openGraphLocales,
+  type Locale,
+} from "~/i18n/locale";
 import { siteConfig } from "~/meta/site-config";
 import { absoluteUrl } from "~/utils/site";
 
@@ -14,15 +21,17 @@ export interface SeoProps {
   image?: string;
   jsonLd?: Record<string, unknown>;
   noIndex?: boolean;
+  availableLocales?: readonly Locale[];
 }
 
 export function Seo(props: SeoProps) {
   const description = () =>
     props.description ?? siteConfig[props.locale].description;
-  const canonicalPath = () => localizePath(props.pathname, props.locale);
-  const canonicalUrl = () => absoluteUrl(canonicalPath());
-  const enUrl = () => absoluteUrl(localizePath(props.pathname, "en"));
-  const jaUrl = () => absoluteUrl(localizePath(props.pathname, "ja"));
+  const pageUrl = (locale: Locale) =>
+    absoluteUrl(localizePath(props.pathname.replace(/\/$/, ""), locale));
+  const canonicalUrl = () => pageUrl(props.locale);
+  const available = (locale: Locale) =>
+    (props.availableLocales ?? locales).includes(locale);
   const image = () =>
     props.image
       ? props.image.startsWith("http")
@@ -56,10 +65,12 @@ export function Seo(props: SeoProps) {
       <HeadMeta property="og:url" content={canonicalUrl()} />
       <HeadMeta property="og:image" content={image()} />
       <HeadMeta property="og:locale" content={openGraphLocales[props.locale]} />
-      <HeadMeta
-        property="og:locale:alternate"
-        content={openGraphLocales[props.locale === "en" ? "ja" : "en"]}
-      />
+      <Show when={available(alternateLocale(props.locale))}>
+        <HeadMeta
+          property="og:locale:alternate"
+          content={openGraphLocales[alternateLocale(props.locale)]}
+        />
+      </Show>
       <HeadMeta name="twitter:card" content="summary_large_image" />
       <HeadMeta name="twitter:title" content={props.title} />
       <HeadMeta name="twitter:description" content={description()} />
@@ -68,14 +79,28 @@ export function Seo(props: SeoProps) {
       <HeadMeta name="twitter:site" content="@ikuma_cloud" />
       {props.noIndex && <HeadMeta name="robots" content="noindex,follow" />}
       <Link rel="canonical" href={canonicalUrl()} />
-      <Link
-        key="alternate-default"
-        rel="alternate"
-        hreflang="x-default"
-        href={enUrl()}
-      />
-      <Link key="alternate-en" rel="alternate" hreflang="en" href={enUrl()} />
-      <Link key="alternate-ja" rel="alternate" hreflang="ja" href={jaUrl()} />
+      <Show when={available("en")}>
+        <Link
+          key="alternate-default"
+          rel="alternate"
+          hreflang="x-default"
+          href={pageUrl("en")}
+        />
+        <Link
+          key="alternate-en"
+          rel="alternate"
+          hreflang="en"
+          href={pageUrl("en")}
+        />
+      </Show>
+      <Show when={available("ja")}>
+        <Link
+          key="alternate-ja"
+          rel="alternate"
+          hreflang="ja"
+          href={pageUrl("ja")}
+        />
+      </Show>
       <Script type="application/ld+json">
         {JSON.stringify(jsonLd()).replace(/</g, "\\u003c")}
       </Script>

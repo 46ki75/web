@@ -30,7 +30,7 @@ jobs:
       - name: Run type check
         run: mise run //packages/web-solid:typecheck
 
-      - name: Build and run unit/SSR tests
+      - name: Run unit tests and verify the static build
         run: mise run //packages/web-solid:test
 
   eslint:

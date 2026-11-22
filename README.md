@@ -2,7 +2,8 @@
 
 [www.ikuma.cloud](https://www.ikuma.cloud)
 
-My personal website.
+My personal website. See the [frontend guide](packages/web-solid/README.md)
+for static builds and deployment.
 
 ## Setup
 
@@ -37,7 +38,7 @@ list the complete catalog, or run `mise :<task>` from within a package directory
 | `mise run //crates/web-lambda-http-api:deploy-publisher <stage>` | Build and deploy the publisher                       |
 | `mise run //crates/web-lambda-http-api:invoke-publisher <stage>` | Rebuild blogs; wait up to 15 minutes                 |
 | `mise run //crates/web-lambda-logs-reporter:deploy <stage>`      | Build and deploy the reporter                        |
-| `mise run //packages/web-solid:deploy <stage>`            | Build, upload, and invalidate the frontend                |
+| `mise run //packages/web-solid:build`                     | Generate the portable static frontend                     |
 | `mise run --silent fmt` / `mise run --silent fmt-check`  | Format/check the same Rust, frontend, and Terraform scope |
 | `mise run --silent check:quick`                           | Fast project-wide feedback                                |
 | `mise run --silent check`                                 | Complete quality gate, including ordinary tests           |

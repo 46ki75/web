@@ -2,7 +2,7 @@ import type { RouteProps } from "@solidjs/router";
 import { defineFileRoute } from "@solidjs/router/fs";
 import { createMemo, Loading, Show } from "solid-js";
 
-import { ogImageUrl } from "../../../../../openapi/blog";
+import { ogImageUrl } from "~/data/content-paths";
 import { BlogArticle } from "~/components/blog/blog-article";
 import { NotFound } from "~/components/common/not-found";
 import { Seo } from "~/components/common/seo";
@@ -49,6 +49,7 @@ export default function BlogArticleRoute(props: RouteProps<typeof route>) {
               locale={locale()}
               pathname={props.location.pathname}
               type="article"
+              availableLocales={resolved.availableLocales}
               image={ogImageUrl(resolved.meta.slug, locale())}
               jsonLd={{
                 "@context": "https://schema.org",
@@ -58,7 +59,7 @@ export default function BlogArticleRoute(props: RouteProps<typeof route>) {
                 datePublished: resolved.meta.created_at,
                 dateModified: resolved.meta.updated_at,
                 inLanguage: locale(),
-                url: absoluteUrl(props.location.pathname),
+                url: absoluteUrl(props.location.pathname.replace(/\/$/, "")),
                 image: absoluteUrl(ogImageUrl(resolved.meta.slug, locale())),
                 author: {
                   "@type": "Person",
