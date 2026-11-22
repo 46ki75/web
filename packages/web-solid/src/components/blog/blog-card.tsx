@@ -1,6 +1,7 @@
 import { ElmInlineText } from "@elmethis/solid";
-import { A, useNavigate } from "@solidjs/router";
-import { For, type JSX } from "solid-js";
+import { useNavigate } from "@solidjs/router";
+import type { JSX } from "@solidjs/web";
+import { For } from "solid-js";
 
 import type { BlogResponse, BlogTagResponse } from "../../../openapi/blog";
 import { ogImageUrl } from "../../../openapi/blog";
@@ -30,15 +31,19 @@ export function BlogCard(props: BlogCardProps) {
 
   return (
     <div
-      class={styles["blog-card"]}
-      classList={{ [styles["animation-enabled"]]: (props.delay ?? 0) > 0 }}
+      class={{
+        [styles["blog-card"]]: true,
+        [styles["animation-enabled"]]: (props.delay ?? 0) > 0,
+      }}
       style={{
         "--delay": `${props.delay ?? 0}ms`,
         ...props.style,
       }}
     >
-      <A
-        href={localizePath(`/blog/article/${props.blog.slug}`)}
+      <a
+        href={localizePath(
+          `/blog/article/${encodeURIComponent(props.blog.slug)}`,
+        )}
         style={{ all: "unset" }}
       >
         <div class={styles["blog-card-link"]}>
@@ -64,7 +69,7 @@ export function BlogCard(props: BlogCardProps) {
             />
           </div>
         </div>
-      </A>
+      </a>
       <div class={styles["blog-card-tag-container"]}>
         <For each={props.tags}>
           {(tag) => (

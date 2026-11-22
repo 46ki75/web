@@ -1,5 +1,4 @@
-import { Link, Meta as HeadMeta, Title, useHead } from "@solidjs/meta";
-import { createUniqueId } from "solid-js";
+import { Link, Meta as HeadMeta, Script, Title } from "@solidjs/meta";
 
 import commonOgpImage from "~/assets/image/ogp.png?url";
 import { localizePath, openGraphLocales, type Locale } from "~/i18n/locale";
@@ -15,21 +14,6 @@ export interface SeoProps {
   image?: string;
   jsonLd?: Record<string, unknown>;
   noIndex?: boolean;
-}
-
-function JsonLd(props: { value: Record<string, unknown> }) {
-  useHead({
-    tag: "script",
-    id: createUniqueId(),
-    props: {
-      type: "application/ld+json",
-      get children() {
-        return JSON.stringify(props.value).replace(/</g, "\\u003c");
-      },
-    },
-    setting: { close: true },
-  });
-  return null;
 }
 
 export function Seo(props: SeoProps) {
@@ -84,10 +68,17 @@ export function Seo(props: SeoProps) {
       <HeadMeta name="twitter:site" content="@ikuma_cloud" />
       {props.noIndex && <HeadMeta name="robots" content="noindex,follow" />}
       <Link rel="canonical" href={canonicalUrl()} />
-      <Link rel="alternate" hreflang="x-default" href={enUrl()} />
-      <Link rel="alternate" hreflang="en" href={enUrl()} />
-      <Link rel="alternate" hreflang="ja" href={jaUrl()} />
-      <JsonLd value={jsonLd()} />
+      <Link
+        key="alternate-default"
+        rel="alternate"
+        hreflang="x-default"
+        href={enUrl()}
+      />
+      <Link key="alternate-en" rel="alternate" hreflang="en" href={enUrl()} />
+      <Link key="alternate-ja" rel="alternate" hreflang="ja" href={jaUrl()} />
+      <Script type="application/ld+json">
+        {JSON.stringify(jsonLd()).replace(/</g, "\\u003c")}
+      </Script>
     </>
   );
 }

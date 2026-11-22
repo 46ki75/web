@@ -1,6 +1,7 @@
 import { ElmHeading, ElmMarkdown, ElmRectangleWave } from "@elmethis/solid";
-import { createAsync, query } from "@solidjs/router";
-import { ErrorBoundary, For, Suspense } from "solid-js";
+import { query } from "@solidjs/router";
+import { GET } from "@solidjs/web/server-functions";
+import { createMemo, Errored, For, Loading } from "solid-js";
 import { useI18n } from "~/i18n/context";
 import type { Locale } from "~/i18n/locale";
 import { CredlyBadge } from "./credly-badge";
@@ -37,30 +38,33 @@ interface CredlyBadgeData {
   };
 }
 
-const fetchBadges = query(async (): Promise<CredlyBadgeData[]> => {
-  "use server";
+const fetchBadges = query(
+  GET(async (): Promise<CredlyBadgeData[]> => {
+    "use server";
 
-  const response = await fetch(CREDLY_BADGES_ENDPOINT);
-  if (!response.ok) {
-    throw new Error(`Credly returned ${response.status}`);
-  }
+    const response = await fetch(CREDLY_BADGES_ENDPOINT);
+    if (!response.ok) {
+      throw new Error(`Credly returned ${response.status}`);
+    }
 
-  const json = (await response.json()) as { data: CredlyBadgeData[] };
-  return json.data.map((badge) => ({
-    id: badge.id,
-    issued_at_date: badge.issued_at_date,
-    expires_at_date: badge.expires_at_date,
-    badge_template: {
-      name: badge.badge_template.name,
-      description: badge.badge_template.description,
-      image_url: badge.badge_template.image_url,
-      url: badge.badge_template.url,
-    },
-  }));
-}, "credly-badges");
+    const json = (await response.json()) as { data: CredlyBadgeData[] };
+    return json.data.map((badge) => ({
+      id: badge.id,
+      issued_at_date: badge.issued_at_date,
+      expires_at_date: badge.expires_at_date,
+      badge_template: {
+        name: badge.badge_template.name,
+        description: badge.badge_template.description,
+        image_url: badge.badge_template.image_url,
+        url: badge.badge_template.url,
+      },
+    }));
+  }),
+  "credly-badges",
+);
 
 export function CredlyBadgeWallet() {
-  const badges = createAsync(() => fetchBadges());
+  const badges = createMemo(() => fetchBadges());
   const { locale, t } = useI18n();
 
   return (
@@ -72,8 +76,8 @@ export function CredlyBadgeWallet() {
       <ElmMarkdown markdown={translation[locale()].credly} />
 
       <div class={styles["badge-container"]}>
-        <ErrorBoundary fallback={<div>{t("common.failedToLoadBadges")}</div>}>
-          <Suspense
+        <Errored fallback={<div>{t("common.failedToLoadBadges")}</div>}>
+          <Loading
             fallback={
               <div class={styles["badge-container-fallback"]}>
                 <ElmRectangleWave />
@@ -93,8 +97,8 @@ export function CredlyBadgeWallet() {
                 />
               )}
             </For>
-          </Suspense>
-        </ErrorBoundary>
+          </Loading>
+        </Errored>
       </div>
     </div>
   );

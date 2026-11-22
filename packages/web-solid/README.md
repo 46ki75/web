@@ -1,6 +1,6 @@
 # FineNight web
 
-Personal site built with SolidStart and deployed through Nitro to AWS Lambda.
+Personal site built with SolidJS 2, Solid Router, and `@solidjs/vite-plugin` start mode. Nitro deploys the server-rendered frontend to AWS Lambda.
 
 ## Development
 

@@ -1,4 +1,6 @@
-import { solidStart } from "@solidjs/start/config";
+import { fileURLToPath } from "node:url";
+import solid from "@solidjs/vite-plugin";
+import { fileRoutes } from "filesystem-routing/vite";
 import { nitro } from "nitro/vite";
 import { defineConfig, loadEnv } from "vite";
 
@@ -12,8 +14,26 @@ export default defineConfig(({ mode }) => {
     define: {
       "import.meta.env.VITE_API_DOMAIN": JSON.stringify(domain),
     },
+    resolve: {
+      alias: { "~": fileURLToPath(new URL("./src", import.meta.url)) },
+    },
+    optimizeDeps: {
+      // Elmethis ships JSX for Vite to compile; A2UI's nested CommonJS import still needs prebundling.
+      include: ["@elmethis/solid > @a2ui/web_core > validate-color"],
+    },
     plugins: [
-      solidStart({ middleware: "src/middleware.ts" }),
+      solid({
+        start: {
+          app: "./src/app.tsx",
+          middleware: "./src/middleware.ts",
+          // Article metadata and missing-article status must be decided before the response is sent.
+          renderMode: "async",
+        },
+        ssr: true,
+        serverFunctions: true,
+        extensions: [".jsx", ".tsx"],
+      }),
+      fileRoutes({ httpMethods: true }),
       {
         name: "web-static-asset-path",
         configEnvironment(name) {
@@ -28,16 +48,17 @@ export default defineConfig(({ mode }) => {
           return undefined;
         },
       },
-      nitro({
-        preset: "aws-lambda",
-        devProxy: {
-          "/cache/**": {
-            target: `https://${domain}`,
-            changeOrigin: true,
-          },
-        },
-      }),
+      nitro({ serverEntry: false }),
     ],
+    nitro: {
+      preset: "aws-lambda",
+      devProxy: {
+        "/cache/**": {
+          target: `https://${domain}`,
+          changeOrigin: true,
+        },
+      },
+    },
     build: {
       // Older CSS targets make Lightning CSS replace light-dark() with an OS
       // media query, which ignores runtime color-scheme changes.

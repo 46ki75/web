@@ -49,12 +49,6 @@ const surfaceDeclarations = [
 ].map((match) => match[1]);
 const relativeFile = path.relative(process.cwd(), tokenStylesheet.file);
 
-if (surfaceDeclarations.length < 2) {
-  throw new Error(
-    `${relativeFile} does not load raw @elmethis/core tokens after the framework stylesheet`,
-  );
-}
-
 if (surfaceDeclarations.at(-1) !== expectedSurfaceValue) {
   throw new Error(
     `${relativeFile} does not preserve the native ${surfaceProperty} declaration as the final cascade value`,

@@ -43,7 +43,7 @@ export function Footer() {
             </span>
           </div>
 
-          <LinkLocale class={styles["footer-sitelink"]} href="/about">
+          <LinkLocale class={styles["footer-sitelink"]} href="/">
             <ElmMdiIcon
               path={mdiLinkVariant}
               class={styles["footer-link-icon"]}

@@ -1,9 +1,9 @@
 [tasks.dev]
-description = "Start the SolidStart development server"
+description = "Start the SolidJS development server"
 run = "pnpm run dev"
 
 [tasks.build]
-description = "Build the SolidStart frontend"
+description = "Build the SolidJS frontend"
 run = "pnpm run build"
 
 [tasks.typecheck]

@@ -1,4 +1,4 @@
-import { onCleanup, onMount } from "solid-js";
+import { onSettled } from "solid-js";
 
 import styles from "./layer-decoration.module.css";
 
@@ -7,7 +7,7 @@ export function LayerDecoration() {
 
   // WebGL is browser-only: spin it up on mount and tear it down when the
   // component unmounts. `three` stays out of the SSR and initial client bundle.
-  onMount(() => {
+  onSettled(() => {
     let dispose: (() => void) | undefined;
     let cancelled = false;
 
@@ -18,10 +18,10 @@ export function LayerDecoration() {
       dispose = createAtomScene(canvasRef);
     });
 
-    onCleanup(() => {
+    return () => {
       cancelled = true;
       dispose?.();
-    });
+    };
   });
 
   return (

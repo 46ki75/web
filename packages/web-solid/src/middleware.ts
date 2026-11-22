@@ -1,66 +1,51 @@
-import { createMiddleware } from "@solidjs/start/middleware";
+import type { StartMiddleware } from "@solidjs/vite-plugin";
+import { createAPIHandler } from "filesystem-routing/api";
+import routes from "virtual:file-routes";
 
 import { removeLocalePrefix } from "~/i18n/locale";
 
-export default createMiddleware({
-  onRequest(event) {
-    const request = new URL(event.request.url);
-    const canRedirect =
-      event.request.method === "GET" || event.request.method === "HEAD";
+const handleApi = createAPIHandler(routes);
 
-    if (
-      canRedirect &&
-      (request.pathname === "/en" || request.pathname.startsWith("/en/"))
-    ) {
-      return new Response(null, {
+const middleware: StartMiddleware = async (event, next) => {
+  const { request } = event;
+  const { pathname, search } = new URL(request.url);
+  const canRedirect = request.method === "GET" || request.method === "HEAD";
+
+  let location: string | undefined;
+  if (canRedirect) {
+    if (pathname === "/en" || pathname.startsWith("/en/")) {
+      location = removeLocalePrefix(pathname);
+    } else if (pathname === "/about" || pathname === "/about/") {
+      location = "/";
+    } else if (pathname === "/ja/about" || pathname === "/ja/about/") {
+      location = "/ja/";
+    }
+  }
+
+  const response = location
+    ? new Response(null, {
         status: 308,
-        headers: {
-          Location: `${removeLocalePrefix(request.pathname)}${request.search}`,
-        },
-      });
-    }
+        headers: { Location: location + search },
+      })
+    : await handleApi(event, next);
 
-    if (
-      canRedirect &&
-      (request.pathname === "/about" || request.pathname === "/about/")
-    ) {
-      return new Response(null, {
-        status: 308,
-        headers: { Location: `/${request.search}` },
-      });
-    }
+  response.headers.set("X-Content-Type-Options", "nosniff");
+  if (response.status >= 400) {
+    response.headers.set("Cache-Control", "no-store");
+  } else if (
+    response.ok &&
+    request.method === "GET" &&
+    request.headers.get("accept")?.includes("text/html") &&
+    response.headers.get("content-type")?.includes("text/html") &&
+    !pathname.includes(".")
+  ) {
+    response.headers.set(
+      "Cache-Control",
+      "public, max-age=600, s-maxage=31536000",
+    );
+  }
 
-    if (
-      canRedirect &&
-      (request.pathname === "/ja/about" || request.pathname === "/ja/about/")
-    ) {
-      return new Response(null, {
-        status: 308,
-        headers: { Location: `/ja/${request.search}` },
-      });
-    }
+  return response;
+};
 
-    const acceptsHtml = event.request.headers
-      .get("accept")
-      ?.includes("text/html");
-
-    if (
-      event.request.method === "GET" &&
-      acceptsHtml &&
-      !request.pathname.includes(".")
-    ) {
-      event.response.headers.set(
-        "Cache-Control",
-        "public, max-age=600, s-maxage=31536000",
-      );
-    }
-
-    return undefined;
-  },
-  onBeforeResponse(event) {
-    if ((event.response.status ?? 200) >= 400) {
-      event.response.headers.set("Cache-Control", "no-store");
-    }
-    event.response.headers.set("X-Content-Type-Options", "nosniff");
-  },
-});
+export default middleware;
