@@ -33,6 +33,9 @@ jobs:
       - name: Run unit tests and verify the static build
         run: mise run //packages/web-solid:test
 
+      - name: Check the TypeScript blog publisher
+        run: mise run //packages/blog-publisher:check
+
   eslint:
     name: Lint (packages/web-solid) - ESLint
     runs-on: ubuntu-latest

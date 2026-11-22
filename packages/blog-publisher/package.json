@@ -1,0 +1,25 @@
+{
+  "name": "blog-publisher",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "snapshot": "node src/cli.ts snapshot",
+    "serve": "node src/cli.ts serve",
+    "test": "node --test 'tests/*.test.ts'"
+  },
+  "dependencies": {
+    "@notionhq/client": "5.31.1",
+    "@web/blog-snapshot": "workspace:*",
+    "n2a2ui": "0.8.1",
+    "sharp": "0.35.5"
+  },
+  "devDependencies": {
+    "@types/node": "24.0.14",
+    "prettier": "3.6.2",
+    "typescript": "5.8.3"
+  }
+}

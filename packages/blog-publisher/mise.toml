@@ -1,0 +1,23 @@
+[tasks.fmt]
+description = "Format the blog publisher and shared snapshot contract"
+run = "pnpm exec prettier --write . ../blog-snapshot"
+
+[tasks.fmt-check]
+description = "Check blog publisher formatting"
+run = "pnpm exec prettier --check . ../blog-snapshot"
+
+[tasks.typecheck]
+description = "Check the blog publisher's TypeScript types"
+run = "pnpm exec tsc"
+
+[tasks.test]
+description = "Test snapshot generation with a simulated Notion API"
+run = "pnpm test"
+
+[tasks."check:quick"]
+description = "Check blog publisher formatting and types"
+depends = [":fmt-check", ":typecheck"]
+
+[tasks.check]
+description = "Run all blog publisher checks"
+depends = [":check:quick", ":test"]
