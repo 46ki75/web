@@ -25,8 +25,9 @@ CI does not depend on the live blog or Credly.
 The build downloads the public blog cache and Credly badges. It bundles JSON,
 article and badge images, RSS/Atom/JSON feeds, `robots.txt`, and sitemaps. Builds
 fail if required published content is unavailable. Rebuild and redeploy after
-the existing Rust publisher updates the cache. The publisher still owns Notion
-access and reads its credentials from SSM; the frontend build needs neither.
+the existing Rust publisher updates the cache. The frontend build needs no
+Notion or SSM credentials. See the [publisher configuration](../../crates/web-lambda-http-api/README.md#notion-publisher-configuration)
+for how to supply them to the publisher.
 
 Set these variables in the shell/CI or in a Vite `.env.<mode>` file in this
 package. The default build mode is `production`; `STAGE_NAME` does not select a

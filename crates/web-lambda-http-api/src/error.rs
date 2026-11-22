@@ -1,8 +1,7 @@
 /// Crate-root error used by shared infrastructure utilities and router initialisation.
 ///
-/// This type is returned by helpers such as [`crate::stage_name`], the SSM parameter
-/// cache, and the Notion client cache. Feature-specific layers wrap it (via `#[from]`)
-/// into their own `*RepositoryError` or `*UseCaseError` as an opaque internal failure.
+/// This type is returned by helpers such as [`crate::stage_name`] and the SSM parameter
+/// cache. Feature-specific layers wrap it via `#[from]` as an internal failure.
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
     #[error("environment variable not found: '{variable_name}'")]

@@ -1,4 +1,5 @@
 pub mod controller;
+pub mod notion_config;
 pub mod publisher;
 pub mod repository;
 pub mod router;

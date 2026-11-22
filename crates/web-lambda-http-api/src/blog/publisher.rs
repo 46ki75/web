@@ -11,6 +11,7 @@
 use std::sync::Arc;
 
 use crate::blog::controller::response::{BlogContentsResponse, BlogResponse, BlogTagResponse};
+use crate::blog::notion_config::NotionConfig;
 use crate::blog::repository::BlogRepositoryImpl;
 use crate::blog::use_case::input::BlogLanguageEntity;
 use crate::blog::use_case::output::BlogEntity;
@@ -285,10 +286,10 @@ impl S3BlogStorage {
 /// cache/v3/blog/article/{slug}/og-image/{en|ja}
 /// cache/v3/blog/block-image/{block_id}/{default|small|medium|large}
 /// ```
-#[cfg_attr(not(rust_analyzer), tracing::instrument(err))]
-pub async fn rebuild_cache() -> Result<RebuildSummary, PublisherError> {
+#[cfg_attr(not(rust_analyzer), tracing::instrument(skip(config), err))]
+pub async fn rebuild_cache(config: NotionConfig) -> Result<RebuildSummary, PublisherError> {
     let use_case = BlogUseCase {
-        blog_repository: Arc::new(BlogRepositoryImpl {}),
+        blog_repository: Arc::new(BlogRepositoryImpl::new(config)),
     };
     let storage = S3BlogStorage::new().await?;
 
