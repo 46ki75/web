@@ -6,7 +6,10 @@ import { fileURLToPath } from "node:url";
 import { createBuilder, preview } from "vite";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
-import type { BlogSnapshotEntry } from "../src/data/blog-snapshot";
+import type {
+  BlogSnapshotEntry,
+  BlogTagSnapshot,
+} from "../src/data/blog-snapshot";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const canonical = "https://static.example.test";
@@ -26,7 +29,7 @@ function fixture(path: string, origin: string): Response {
     description: "A static test article",
     created_at: "2026-01-01",
     updated_at: "2026-01-02",
-    tag_ids: [],
+    tag_ids: ["fixture-tag"],
     status: "Published",
     featured: true,
     keywords: ["fixture"],
@@ -80,7 +83,14 @@ function fixture(path: string, origin: string): Response {
     return new Response(svg, { headers: { "Content-Type": "image/svg+xml" } });
   }
   if (path === `${cache}/tags.json`) {
-    return Response.json([]);
+    return Response.json([
+      {
+        id: "fixture-tag",
+        name_en: "Fixture",
+        name_ja: "タグ",
+        icon_url: block,
+      },
+    ]);
   }
   if (path.includes("/feed/")) {
     return new Response(
@@ -222,6 +232,10 @@ describe("portable static artifact", () => {
       expect(json).toContain(title);
       expect(json).toContain(image);
       expect(json).not.toContain(block);
+      const [tag] = JSON.parse(
+        await file("/content/blog/tags.json"),
+      ) as BlogTagSnapshot[];
+      expect(tag.icon_url).toBe(image);
       expect(json).not.toContain("/api/v2/blog/");
       expect(html).not.toContain("/api/v2/blog/");
     },

@@ -3,6 +3,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
 import { Readable } from "node:stream";
 import { SitemapIndexStream, SitemapStream, streamToPromise } from "sitemap";
+import { blogCache } from "@web/blog-snapshot";
 
 import type {
   BlogArticleSnapshot,
@@ -22,7 +23,6 @@ import {
 } from "../src/data/content-paths";
 import { localizePath, locales, type Locale } from "../src/i18n/locale";
 
-const blogCache = "/cache/v3/blog";
 const fixedPages = ["/", "/privacy", "/blog", "/blog/search"];
 const imageExtensions: Record<string, string> = {
   "image/avif": "avif",
@@ -225,7 +225,9 @@ export async function prepareSiteContent({
     tagsPath,
     await mapConcurrent(tags, async (tag) => ({
       ...tag,
-      icon_url: tag.icon_url ? await mirrorImage(tag.icon_url) : null,
+      icon_url: tag.icon_url
+        ? await mirrorImage(new URL(tag.icon_url, blogOrigin).href)
+        : null,
     })),
   );
   await saveJson(

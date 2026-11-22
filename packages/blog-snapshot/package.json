@@ -1,0 +1,6 @@
+{
+  "name": "@web/blog-snapshot",
+  "private": true,
+  "type": "module",
+  "exports": "./index.ts"
+}

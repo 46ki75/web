@@ -6,11 +6,7 @@ export const badgesPath = `${contentRoot}/badges.json`;
 export const listPath = (locale: Locale) =>
   `${contentRoot}/blog/list/${locale}.json`;
 
-export function isArticleSlug(slug: string) {
-  return (
-    slug !== "" && slug !== "." && slug !== ".." && !/[\\/\p{Cc}]/u.test(slug)
-  );
-}
+export { isArticleSlug } from "@web/blog-snapshot";
 
 export const articlePath = (slug: string, locale: Locale) =>
   `${contentRoot}/blog/article/${encodeURIComponent(slug)}/${locale}.json`;
