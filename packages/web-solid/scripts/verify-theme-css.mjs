@@ -1,7 +1,7 @@
 import { readFile, readdir } from "node:fs/promises";
 import path from "node:path";
 
-const outputDirectory = path.resolve(process.argv[2] ?? ".output/public");
+const outputDirectory = path.resolve(process.argv[2] ?? "dist/client");
 
 const findCssFiles = async (directory) => {
   const entries = await readdir(directory, { withFileTypes: true });

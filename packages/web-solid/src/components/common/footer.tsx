@@ -24,9 +24,9 @@ const labels: Record<Locale, { about: string; blogs: string }> = {
 export function Footer() {
   const { locale, t } = useI18n();
 
-  const currentYear = new Date().getFullYear();
-  const dateBuildMeta = new Date().toISOString().slice(0, 10).replace(/-/g, "");
-  const build = `v${version}+${dateBuildMeta}`;
+  const buildDate = import.meta.env.VITE_SITE_BUILD_DATE;
+  const currentYear = buildDate.slice(0, 4);
+  const build = `v${version}+${buildDate.replaceAll("-", "")}`;
 
   const { isDarkTheme } = createElmethisTheme();
 

@@ -1,34 +1,34 @@
 import { query } from "@solidjs/router";
-import { GET } from "@solidjs/web/server-functions";
 
-import { getBlogContents, getBlogList, getBlogTags } from "../../openapi/blog";
+import type {
+  BlogContentsResponse,
+  BlogResponse,
+  BlogTagResponse,
+} from "../../openapi/blog";
 import type { Locale } from "~/i18n/locale";
+import { readContent, requireContent } from "./content";
+import {
+  articlePath,
+  isArticleSlug,
+  listPath,
+  tagsPath,
+} from "./content-paths";
 
-// CloudFront's frontend behavior only allows GET, HEAD, and OPTIONS.
-export const getBlogData = query(
-  GET(async (locale: Locale) => {
-    "use server";
+export const getBlogData = query(async (locale: Locale) => {
+  const [blogMeta, tags] = await Promise.all([
+    requireContent<BlogResponse[]>(listPath(locale)),
+    requireContent<BlogTagResponse[]>(tagsPath),
+  ]);
+  return { blogMeta, tags };
+}, "blog-data");
 
-    const [blogMeta, tags] = await Promise.all([
-      getBlogList(locale),
-      getBlogTags(),
-    ]);
-
-    return {
-      blogMeta: [...(blogMeta ?? [])].sort((a, b) =>
-        b.created_at.localeCompare(a.created_at),
-      ),
-      tags: tags ?? [],
-    };
-  }),
-  "blog-data",
-);
+type SnapshotArticle = BlogContentsResponse & { availableLocales: Locale[] };
 
 export const getBlogArticle = query(
-  GET(async (slug: string, locale: Locale) => {
-    "use server";
-
-    return { contents: await getBlogContents(slug, locale) };
+  async (slug: string, locale: Locale) => ({
+    contents: isArticleSlug(slug)
+      ? await readContent<SnapshotArticle>(articlePath(slug, locale))
+      : undefined,
   }),
   "blog-article",
 );

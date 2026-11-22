@@ -3,7 +3,7 @@ import { useNavigate } from "@solidjs/router";
 import { createMemo, For } from "solid-js";
 
 import type { BlogContentsResponse } from "../../../openapi/blog";
-import { ogImageUrl } from "../../../openapi/blog";
+import { ogImageUrl } from "~/data/content-paths";
 import { Meta } from "../common/meta";
 import { Tag } from "../common/tag";
 import { useBlog } from "~/context/blog";

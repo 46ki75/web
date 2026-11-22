@@ -4,7 +4,7 @@ import type { JSX } from "@solidjs/web";
 import { For } from "solid-js";
 
 import type { BlogResponse, BlogTagResponse } from "../../../openapi/blog";
-import { ogImageUrl } from "../../../openapi/blog";
+import { ogImageUrl } from "~/data/content-paths";
 import { DateComponent } from "../common/date";
 import { Tag } from "../common/tag";
 import { useBlog } from "~/context/blog";
