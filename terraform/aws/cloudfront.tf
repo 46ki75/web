@@ -232,9 +232,7 @@ resource "aws_cloudfront_distribution" "default" {
   # >>> [S3 blog cache] origin
   # The blog is pre-rendered to S3 (JSON, feeds, sitemap, OGP + block images)
   # by the blog_publisher lambda under the `/cache/v3/blog/*` key space. The `/cache/*`
-  # namespace is reserved for this S3 static origin, keeping it cleanly separate
-  # from the `/api/*` Lambda origin. Public URLs map 1:1 to the object keys, so the
-  # CDN serves them straight from S3 with no Lambda hop.
+  # namespace is reserved for this S3 origin. Public URLs map 1:1 to object keys.
   ordered_cache_behavior {
     path_pattern = "/cache/*"
     allowed_methods = [
@@ -259,46 +257,6 @@ resource "aws_cloudfront_distribution" "default" {
     origin_id                = "s3-blog"
     origin_access_control_id = aws_cloudfront_origin_access_control.blog_cache.id
   }
-
-  # >>> [Lambda Function URLs] origin
-  ordered_cache_behavior {
-    path_pattern = "/api/*"
-    allowed_methods = [
-      "GET",
-      "HEAD",
-      "OPTIONS",
-    ]
-    cached_methods         = ["GET", "HEAD"]
-    viewer_protocol_policy = "redirect-to-https"
-    target_origin_id       = "api-backend"
-
-    cache_policy_id            = aws_cloudfront_cache_policy.http_api.id
-    origin_request_policy_id   = aws_cloudfront_origin_request_policy.all_viewer.id
-    response_headers_policy_id = aws_cloudfront_response_headers_policy.security.id
-
-    compress = true
-  }
-
-  origin {
-    domain_name = local.lambda_function_url_domain_http_api
-    origin_id   = "api-backend"
-
-    origin_shield {
-      enabled              = true
-      origin_shield_region = "ap-northeast-1"
-    }
-
-    origin_access_control_id = aws_cloudfront_origin_access_control.http_api.id
-
-    custom_origin_config {
-      http_port              = 80
-      https_port             = 443
-      origin_protocol_policy = "https-only"
-      origin_ssl_protocols   = ["TLSv1.2"]
-    }
-  }
-  # <<< [Lambda Function URLs] origin
-
 }
 
 # <<< CloudFront Logging v2 <https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/standard-logging.html>
