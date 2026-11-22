@@ -20,7 +20,7 @@ jobs:
       - uses: jdx/mise-action@v4
         with:
           version: "2026.9.9"
-          install_args: "terraform"
+          install_args: "node terraform"
 
       - name: Run Terraform quality gates
         run: mise run //terraform/...:check

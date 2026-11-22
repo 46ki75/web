@@ -13,14 +13,16 @@ CloudFront behaviors are matched in order; the first matching path pattern wins.
 | ------------ | --------------- | -------------------------------- | ------------ | ------------ |
 | `/api/*`     | `api-backend`   | Lambda — `web-lambda-http-api`   | `http_api`   | no           |
 | `/cache/*`   | `s3-blog`       | S3 — blog cache bucket           | `s3`         | no           |
-| `/build/*`   | `s3-web`        | S3 — SolidStart frontend assets  | `s3`         | yes          |
-| _(default)_  | `nitro-backend` | Lambda — SolidStart SSR (Nitro)  | `nitro`      | yes          |
+| `/build/*`   | `s3-web`        | S3 — hashed frontend assets     | `s3`         | yes          |
+| _(default)_  | `s3-web`        | S3 — static site releases       | `static_site` | yes         |
 
 \* Basic auth is a CloudFront viewer-request function applied only to the HTML
 and frontend-asset behaviors on non-`prod` stages. `/api/*` and `/cache/*` are
 not behind it.
 
-The two rules that matter:
+The default behavior serves a static S3 release selected by the CloudFront
+Function. The Nitro origin stays configured for rollback only. See the
+[AWS static frontend runbook](../terraform/README.md#aws-static-frontend).
 
 - **`/api/*` is the Lambda HTTP API.** Dynamic responses, `http_api` cache
   policy (varies on `Accept-Language`, short TTL).
@@ -104,7 +106,8 @@ and invalidates nothing.
 
 The Lambda still exposes the original header/query-based blog API under
 `/api/v2/blog/*` (e.g. `GET /api/v2/blog` with `Accept-Language`). It is **not**
-on the read path — the frontend reads `/cache/v3/blog/*` directly — but it is kept
+on the frontend's runtime read path — the static build downloads `/cache/v3/blog/*`
+and the browser reads the bundled copy — but it is kept
 because:
 
 - it is the source of the OpenAPI spec the frontend generates TypeScript types

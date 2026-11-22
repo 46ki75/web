@@ -204,7 +204,7 @@ resource "aws_cloudfront_distribution" "default" {
   aliases = [aws_acm_certificate.cloudfront_cert.domain_name]
   # <<< custom domain
 
-  # >>> [Nitro] origin
+  # Keep the Nitro origin defined until the static rollout is verified.
   default_cache_behavior {
     allowed_methods = [
       "GET",
@@ -213,17 +213,17 @@ resource "aws_cloudfront_distribution" "default" {
     ]
     cached_methods         = ["GET", "HEAD"]
     viewer_protocol_policy = "redirect-to-https"
-    target_origin_id       = "nitro-backend"
+    target_origin_id       = local.static_site_enabled ? "s3-web" : "nitro-backend"
 
-    cache_policy_id            = aws_cloudfront_cache_policy.nitro.id
-    origin_request_policy_id   = aws_cloudfront_origin_request_policy.all_viewer.id
+    cache_policy_id            = local.static_site_enabled ? aws_cloudfront_cache_policy.static_site.id : aws_cloudfront_cache_policy.nitro.id
+    origin_request_policy_id   = local.static_site_enabled ? null : aws_cloudfront_origin_request_policy.all_viewer.id
     response_headers_policy_id = aws_cloudfront_response_headers_policy.security.id
 
     compress = true
 
     function_association {
       event_type   = "viewer-request"
-      function_arn = aws_cloudfront_function.rename_uri.arn
+      function_arn = local.static_site_enabled ? aws_cloudfront_function.static_site.arn : aws_cloudfront_function.rename_uri.arn
     }
   }
 
@@ -267,14 +267,14 @@ resource "aws_cloudfront_distribution" "default" {
       target_origin_id       = "s3-web"
 
       cache_policy_id            = aws_cloudfront_cache_policy.s3.id
-      origin_request_policy_id   = aws_cloudfront_origin_request_policy.all_viewer.id
+      origin_request_policy_id   = local.static_site_enabled ? null : aws_cloudfront_origin_request_policy.all_viewer.id
       response_headers_policy_id = aws_cloudfront_response_headers_policy.security.id
 
       compress = true
 
       function_association {
         event_type   = "viewer-request"
-        function_arn = aws_cloudfront_function.rename_uri.arn
+        function_arn = local.static_site_enabled ? aws_cloudfront_function.static_site.arn : aws_cloudfront_function.rename_uri.arn
       }
     }
   }

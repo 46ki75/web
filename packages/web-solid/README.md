@@ -55,9 +55,8 @@ pages. If the host supports redirects, prefer permanent HTTP redirects that
 preserve the query string. Use host configuration for response headers and
 any staging access restrictions.
 
-The old frontend Lambda deployment command is retired. The existing AWS
-Terraform distribution still points at the old frontend Lambda; it is not
-changed by this build. For an AWS cutover, publish to a static origin, validate
-routes and 404s, and switch the website origin separately. Leave the publisher,
-its `/cache/*` origin, and the Rust `/api/*` routes in place for existing
-consumers until they are migrated or confirmed unused.
+The old frontend Lambda deployment command is retired. For AWS, see the
+[static deployment and rollback procedure](../../terraform/README.md#aws-static-frontend).
+The website is served from private S3 in the stages listed in
+[`static-site.auto.tfvars`](../../terraform/aws/static-site.auto.tfvars).
+The publisher's `/cache/*` origin and the Rust `/api/*` routes are separate.
