@@ -22,14 +22,6 @@ resource "aws_cloudfront_origin_access_control" "blog_cache" {
   signing_protocol                  = "sigv4"
 }
 
-resource "aws_cloudfront_origin_access_control" "nitro" {
-  name                              = "${terraform.workspace}-46ki75-web-cloudfront-oac-nitro"
-  description                       = "Lambda Nitro OAC"
-  origin_access_control_origin_type = "lambda"
-  signing_behavior                  = "always"
-  signing_protocol                  = "sigv4"
-}
-
 resource "aws_cloudfront_cache_policy" "s3" {
   name = "${terraform.workspace}-46ki75-web-cloudfront-cache_policy-s3"
 
@@ -72,31 +64,6 @@ resource "aws_cloudfront_cache_policy" "http_api" {
       headers {
         items = ["Accept-Language"]
       }
-    }
-
-    query_strings_config {
-      query_string_behavior = "none"
-    }
-
-    enable_accept_encoding_brotli = true
-    enable_accept_encoding_gzip   = true
-  }
-}
-
-resource "aws_cloudfront_cache_policy" "nitro" {
-  name = "${terraform.workspace}-46ki75-web-cloudfront-cache_policy-nitro"
-
-  default_ttl = 0
-  min_ttl     = 0
-  max_ttl     = 3600 * 24 * 30 * 12
-
-  parameters_in_cache_key_and_forwarded_to_origin {
-    cookies_config {
-      cookie_behavior = "none"
-    }
-
-    headers_config {
-      header_behavior = "none"
     }
 
     query_strings_config {
@@ -397,26 +364,10 @@ resource "aws_cloudwatch_log_delivery" "cloudfront" {
 }
 # >>> CloudFront Logging v2
 
-# >>> CloudFront Function
+# Used by the static site function for release routing and non-production auth.
 resource "aws_cloudfront_key_value_store" "basic" {
   name = "${terraform.workspace}-46ki75-web-cloudfront-kvs-basic"
 }
-
-locals {
-  kvs_id = element(split("/", aws_cloudfront_key_value_store.basic.arn), length(split("/", aws_cloudfront_key_value_store.basic.arn)) - 1)
-}
-
-resource "aws_cloudfront_function" "rename_uri" {
-  name    = "${terraform.workspace}-46ki75-cloudfront-web-function-rename-uri"
-  runtime = "cloudfront-js-2.0"
-  comment = "Rename URI to index.html"
-  publish = true
-  code = terraform.workspace == "prod" ? file("${path.module}/assets/renameUri.js") : templatefile("${path.module}/assets/renameUriBasic.js", {
-    KVS_ID = local.kvs_id
-  })
-  key_value_store_associations = [aws_cloudfront_key_value_store.basic.arn]
-}
-# <<< CloudFront Function
 
 resource "aws_route53_record" "cloudfront" {
   zone_id = data.aws_route53_zone.internal.zone_id
