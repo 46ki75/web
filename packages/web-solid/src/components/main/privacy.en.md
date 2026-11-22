@@ -5,8 +5,8 @@ This website is personally operated and managed by Ikuma Yamashita. Please note 
 ## Purpose of Use of Personal Information
 
 - Collected information is used for bug fixes, access analysis, and service improvement.
-- Since this site does not provide any input fields for personally identifiable information, only anonymous telemetry data is collected.
-- This site uses Google Analytics and Amazon CloudWatch RUM. The data collected is anonymous and does not identify individuals.
+- This site does not ask visitors to provide personal information through forms.
+- This site uses Google Analytics to understand how visitors use it.
 
 ## Disclaimer and Limitation of Liability
 

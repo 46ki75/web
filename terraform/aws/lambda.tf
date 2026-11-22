@@ -28,16 +28,8 @@ resource "aws_iam_policy" "lambda_policy_http_api" {
           "logs:CreateLogGroup",
           "logs:CreateLogStream",
           "logs:PutLogEvents",
-          "ssm:GetParameter",
           "xray:PutTraceSegments",
           "xray:PutTelemetryRecords"
-        ],
-        "Resource" : "*"
-      },
-      {
-        "Effect" : "Allow",
-        "Action" : [
-          "ssm:GetParameter"
         ],
         "Resource" : "*"
       },
