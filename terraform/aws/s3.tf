@@ -77,7 +77,7 @@ resource "aws_s3_bucket" "analyze" {
   bucket = "${terraform.workspace}-46ki75-web-s3-bucket-analyze"
 }
 
-# Materialized blog cache (write side: blog_publisher lambda; read side: CloudFront/S3).
+# Prepared and legacy blog snapshots; browsers read through CloudFront, not S3.
 resource "aws_s3_bucket" "blog_cache" {
   bucket = "${terraform.workspace}-46ki75-web-s3-bucket-blog-cache"
 }
@@ -92,7 +92,10 @@ resource "aws_s3_bucket_policy" "blog_cache" {
         Effect    = "Allow"
         Principal = { Service = "cloudfront.amazonaws.com" }
         Action    = ["s3:GetObject"]
-        Resource  = "${aws_s3_bucket.blog_cache.arn}/*"
+        Resource = [
+          "${aws_s3_bucket.blog_cache.arn}/cache/*",
+          "${aws_s3_bucket.blog_cache.arn}/blog-releases/*",
+        ]
         Condition = {
           StringEquals = {
             "AWS:SourceArn" = "${aws_cloudfront_distribution.default.arn}"

@@ -194,9 +194,7 @@ resource "aws_cloudfront_distribution" "default" {
   # <<< [S3 web] origin
 
   # >>> [S3 blog cache] origin
-  # The blog is pre-rendered to S3 (JSON, feeds, sitemap, OGP + block images)
-  # by the blog_publisher lambda under the `/cache/v3/blog/*` key space. The `/cache/*`
-  # namespace is reserved for this S3 origin. Public URLs map 1:1 to object keys.
+  # Keep the public cache URLs stable while selecting a complete S3 snapshot release.
   ordered_cache_behavior {
     path_pattern = "/cache/*"
     allowed_methods = [
@@ -213,6 +211,11 @@ resource "aws_cloudfront_distribution" "default" {
     response_headers_policy_id = aws_cloudfront_response_headers_policy.security.id
 
     compress = true
+
+    function_association {
+      event_type   = "viewer-request"
+      function_arn = aws_cloudfront_function.blog_snapshots.arn
+    }
   }
   # <<< [S3 blog cache] origin
 

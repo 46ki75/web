@@ -1,5 +1,35 @@
 # Terraform
 
+## AWS blog snapshots
+
+Generate a candidate with the [TypeScript publisher](../packages/blog-publisher/README.md).
+Use the stage's public website origin when generating it. Notion credentials are
+only passed to the generator; the following commands need AWS credentials but
+not a Notion token.
+
+```sh
+export AWS_PROFILE=46ki75-web
+export STAGE_NAME=dev
+python3 scripts/publish-blog-aws.py --stage "$STAGE_NAME" upload --directory "$work/snapshot"
+python3 scripts/publish-blog-aws.py --stage "$STAGE_NAME" active
+# Use the IDs reported above; the initial active ID is legacy.
+python3 scripts/publish-blog-aws.py --stage "$STAGE_NAME" activate NEW_ID --expect PREVIOUS_ID
+```
+
+Upload validates the complete snapshot, stores immutable objects in the
+existing private blog bucket, and marks the release ready. Activation changes
+one CloudFront key. The public `/cache/v3/blog/*` URLs stay the same. Shared
+image keys are content-addressed; v2 cache objects and old image URLs are kept.
+Do not run simultaneous uploads for the same stage. Do not delete releases or
+shared images needed for rollback.
+
+CloudFront propagates changes asynchronously. Verify both indices, localized
+article JSON, images, and feeds match the candidate before rebuilding and
+deploying the website from the stage's public snapshots. To roll
+back, run `activate PREVIOUS_ID --expect NEW_ID`; `legacy` selects the last
+Rust-generated snapshot without running Rust. Website release rollback is
+separate.
+
 ## AWS static frontend
 
 The private `web` bucket serves the site through CloudFront. `/cache/*` has a

@@ -2,8 +2,8 @@
 
 Generate a local replacement for the Rust publisher's `/cache/v3/blog/*`
 snapshots. The TypeScript job uses the official Notion SDK and `n2a2ui`; it
-has no AWS dependency and does not upload or activate anything. The deployed
-Rust publisher remains in service until a separate, verified cutover.
+has no AWS dependency. Use the separate [AWS snapshot release command](../../terraform/README.md#aws-blog-snapshots)
+when a snapshot is ready to publish.
 
 ## Generate and preview
 
@@ -63,7 +63,7 @@ article metadata, rendered A2UI content, image variants, and feed entry IDs;
 article component IDs and encoded image bytes need not match. Build and open
 the portable site from the candidate before activating it.
 
-Do not upload candidate files over a live snapshot by hand. Keep the Rust
-publisher and its credentials until the replacement has a staged activation
-and rollback procedure, has published successfully in all stages, and the
-frontend has rebuilt from its output.
+Do not upload files over live snapshot keys by hand. Prepare and activate a
+versioned snapshot, then rebuild and deploy the frontend from the live cache.
+The original Rust-generated snapshot can still be selected by `legacy` for
+rollback; this does not invoke the Rust publisher.

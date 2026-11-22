@@ -22,13 +22,15 @@ Function. For deployment and release rollback, see the
 [AWS static frontend runbook](../terraform/README.md#aws-static-frontend).
 
 The retired `/api/*` namespace falls through to the website's 404 handling.
-`/cache/*` maps public URLs 1:1 to `s3-blog` object keys, with no Lambda hop.
+`/cache/*` uses a separate CloudFront Function to select the active blog
+release in `s3-blog`. Neither behavior invokes a Lambda.
 
 ## Blog cache key layout
 
-The `blog_publisher` Lambda renders the current Notion state into static objects
-in the blog-cache bucket (`{stage}-46ki75-web-s3-bucket-blog-cache`). Object
-keys mirror the public `/cache/v3/blog/...` URLs exactly:
+The TypeScript blog publisher renders the current Notion state into a complete
+snapshot. [Publishing to AWS](../terraform/README.md#aws-blog-snapshots) stores
+it in the existing private blog-cache bucket (`{stage}-46ki75-web-s3-bucket-blog-cache`).
+The public paths stay the same:
 
 ```text
 # collection-level
@@ -41,8 +43,8 @@ cache/v3/blog/sitemap.xml                                          # blog sitema
 cache/v3/blog/article/{slug}/contents/{en|ja}.json                 # rendered article (A2UI surface)
 cache/v3/blog/article/{slug}/og-image/{en|ja}                      # OGP cover (WebP, 1200w)
 
-# global, content-addressed (block ids are unique; shared across articles)
-cache/v3/blog/block-image/{block_id}/{default|small|medium|large}  # in-article images
+# global, content-addressed (shared across releases and articles)
+cache/v3/blog/block-image/{sha256}/{default|small|medium|large}    # images and tag icons
 ```
 
 Notes:
@@ -51,8 +53,8 @@ Notes:
   `?lang=` query — every object is independently cacheable.
 - Rendered article JSON embeds image `src`/`srcset` as `/cache/v3/blog/block-image/{id}/{size}`,
   so the browser fetches them directly from the static origin.
-- Raster images expose `default|small|medium|large`; SVGs are
-  resolution-independent and expose only `default`.
+- Images are materialized as WebP. Up to four variants are generated, depending
+  on source size. Legacy image URLs remain valid.
 
 ### Cache-Control
 
@@ -60,44 +62,18 @@ Set at publish time, passed through by the `s3` cache policy:
 
 | Objects                                             | `Cache-Control`                                                                                 |
 | --------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| indices, contents, tags, feeds, sitemap, OGP covers | `public, max-age=0, s-maxage=31536000` (browser revalidates; CDN holds, invalidated on publish) |
-| block images                                        | `public, max-age=31536000, s-maxage=31536000, immutable`                                        |
+| indices, contents, tags, feeds, sitemap, OGP covers | `public, max-age=0, s-maxage=31536000` (browser revalidates)                                   |
+| block images                                        | `public, max-age=31536000, immutable`                                                          |
 
-Each publish issues a CloudFront invalidation for only the paths it changed
-(see below).
-
-## Incremental publishing
-
-The `blog_publisher` runs incrementally. It lists blogs from Notion (slug +
-`updated_at`) and diffs each against a manifest of what was last published:
-
-```text
-internal/blog-publisher/manifest-v3.json   # language -> (slug -> published updated_at)
-```
-
-The manifest lives in the blog-cache bucket but **outside** the `cache/` prefix,
-so no CloudFront behavior routes to it and it is never publicly served.
-
-Per (slug, language):
-
-- **added / updated** — no manifest entry, or `updated_at` differs → rebuild that
-  article's contents + block images + OGP cover.
-- **unchanged** — same `updated_at` → skipped entirely (no Notion content fetch,
-  no image conversion).
-- **removed** — gone from Notion → its article objects are pruned. (Block-image
-  variants it referenced are immutable/content-addressed and left as harmless
-  orphans, since their ids aren't known without the old content.)
-
-The version is the **manual `updated_at` Notion date property**, not the system
-`last_edited_time`: a post republishes only when you bump `updated_at`, which
-keeps release control in the author's hands. Collection objects (list, feeds,
-tags, sitemap) are regenerated only when something changed, and the CloudFront
-invalidation is targeted at exactly the paths touched (`/cache/v3/blog/article/{slug}/*`
-plus any affected collection paths). A run where nothing changed writes nothing
-and invalidates nothing.
+The CloudFront Function rewrites snapshot requests to
+`blog-releases/<release>/cache/v3/blog/...`, including the release ID in the
+cache key. Changing releases does not require an invalidation. Requests for
+block images, older cache versions, or the `legacy` snapshot keep the original
+S3 object path. The legacy Rust manifest stays private and is not used.
 
 ## Snapshot contract
 
-The frontend build downloads the published `/cache/v3/blog/*` files. The
-browser only reads the bundled copy. Keep the [frontend snapshot types](../packages/web-solid/src/data/blog-snapshot.ts)
-in sync with the [Rust publisher's serialized JSON](../crates/web-lambda-http-api/src/blog/snapshot.rs).
+The frontend build downloads the published `/cache/v3/blog/*` files. For
+interactive site features the browser reads the bundled copy. Public feed URLs
+are still served through CloudFront. The generator and frontend share the
+[TypeScript snapshot contract](../packages/blog-snapshot/index.ts).
