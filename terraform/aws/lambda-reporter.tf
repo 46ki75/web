@@ -76,16 +76,3 @@ resource "aws_lambda_alias" "reporter" {
   function_name    = aws_lambda_function.reporter.function_name
   function_version = "$LATEST"
 }
-
-resource "aws_lambda_permission" "allow_cloudwatch_logs" {
-  for_each = {
-    "blog_publisher" = aws_cloudwatch_log_group.blog_publisher.arn
-  }
-
-  statement_id   = "AllowExecutionFromCloudWatchLogs_${each.key}"
-  action         = "lambda:InvokeFunction"
-  function_name  = aws_lambda_function.reporter.function_name
-  principal      = "logs.amazonaws.com"
-  source_arn     = "${each.value}:*"
-  source_account = data.aws_caller_identity.current.account_id
-}
