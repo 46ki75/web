@@ -1,8 +1,7 @@
-//! Blog cache publisher (write side of the read-through cache).
+//! Blog snapshot publisher.
 //!
-//! Reads the current blog state from Notion and materializes it as static JSON
-//! (and XML feeds / sitemap) into the blog-cache S3 bucket. The read path serves
-//! these objects instead of calling the (slow) Notion API on every cache miss.
+//! Reads the current blog state from Notion and materializes it as static JSON,
+//! images, feeds, and sitemaps in the blog-cache S3 bucket.
 //!
 //! The rebuild is **idempotent**: it always reflects the current Notion state,
 //! so it is safe to invoke from any trigger (manual invoke, schedule, Notion
@@ -10,9 +9,9 @@
 
 use std::sync::Arc;
 
-use crate::blog::controller::response::{BlogContentsResponse, BlogResponse, BlogTagResponse};
 use crate::blog::notion_config::NotionConfig;
 use crate::blog::repository::BlogRepositoryImpl;
+use crate::blog::snapshot::{BlogContentsResponse, BlogResponse, BlogTagResponse};
 use crate::blog::use_case::input::BlogLanguageEntity;
 use crate::blog::use_case::output::BlogEntity;
 use crate::blog::use_case::BlogUseCase;
@@ -124,20 +123,8 @@ impl S3BlogStorage {
     }
 
     /// Fetches an object's bytes, returning `None` when the key does not exist.
-    pub async fn get(&self, key: &str) -> Result<Option<bytes::Bytes>, PublisherError> {
-        Ok(self.get_object(key).await?.map(|(bytes, _)| bytes))
-    }
-
-    /// Fetches an object's bytes together with its stored `Content-Type`,
-    /// returning `None` when the key does not exist.
-    ///
-    /// The content type is preserved from publish time so the read path (and a
-    /// later CloudFront → S3 origin) can echo it without re-inferring.
     #[cfg_attr(not(rust_analyzer), tracing::instrument(skip(self)))]
-    pub async fn get_object(
-        &self,
-        key: &str,
-    ) -> Result<Option<(bytes::Bytes, Option<String>)>, PublisherError> {
+    async fn get(&self, key: &str) -> Result<Option<bytes::Bytes>, PublisherError> {
         match self
             .client
             .get_object()
@@ -147,7 +134,6 @@ impl S3BlogStorage {
             .await
         {
             Ok(output) => {
-                let content_type = output.content_type().map(|s| s.to_owned());
                 let data = output
                     .body
                     .collect()
@@ -156,7 +142,7 @@ impl S3BlogStorage {
                         key: key.to_owned(),
                         trace: e.to_string(),
                     })?;
-                Ok(Some((data.into_bytes(), content_type)))
+                Ok(Some(data.into_bytes()))
             }
             Err(e) => {
                 let service_error = e.into_service_error();

@@ -3,7 +3,10 @@ import { useNavigate } from "@solidjs/router";
 import type { JSX } from "@solidjs/web";
 import { For } from "solid-js";
 
-import type { BlogResponse, BlogTagResponse } from "../../../openapi/blog";
+import type {
+  BlogSnapshotEntry,
+  BlogTagSnapshot,
+} from "../../data/blog-snapshot";
 import { ogImageUrl } from "~/data/content-paths";
 import { DateComponent } from "../common/date";
 import { Tag } from "../common/tag";
@@ -14,8 +17,8 @@ import styles from "./blog-card.module.css";
 
 export interface BlogCardProps {
   style?: JSX.CSSProperties;
-  blog: BlogResponse;
-  tags: BlogTagResponse[];
+  blog: BlogSnapshotEntry;
+  tags: BlogTagSnapshot[];
   delay?: number;
 }
 

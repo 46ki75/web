@@ -2,7 +2,7 @@ import { ElmA2ui, notionBlockCatalog } from "@elmethis/solid";
 import { useNavigate } from "@solidjs/router";
 import { createMemo, For } from "solid-js";
 
-import type { BlogContentsResponse } from "../../../openapi/blog";
+import type { BlogArticleSnapshot } from "../../data/blog-snapshot";
 import { ogImageUrl } from "~/data/content-paths";
 import { Meta } from "../common/meta";
 import { Tag } from "../common/tag";
@@ -39,7 +39,7 @@ const surfaceToMessages = (raw: unknown, surfaceId: string): object[] => {
 
 export interface BlogArticleProps {
   slug: string;
-  contents: BlogContentsResponse;
+  contents: BlogArticleSnapshot;
 }
 
 export function BlogArticle(props: BlogArticleProps) {

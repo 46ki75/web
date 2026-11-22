@@ -1,4 +1,6 @@
-#[derive(Debug, Clone, serde::Serialize, utoipa::ToSchema)]
+//! JSON shapes published under `/cache/v3/blog`; keep frontend snapshot types in sync.
+
+#[derive(Debug, Clone, serde::Serialize)]
 pub struct BlogResponse {
     /// Notion page ID
     pub page_id: String,
@@ -58,7 +60,7 @@ impl From<crate::blog::use_case::output::BlogEntity> for BlogResponse {
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize, utoipa::ToSchema)]
+#[derive(Debug, Clone, serde::Serialize)]
 pub enum BlogStatusResponse {
     Draft,
     Archived,
@@ -81,7 +83,7 @@ impl From<crate::blog::use_case::output::BlogStatusEntity> for BlogStatusRespons
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize, utoipa::ToSchema)]
+#[derive(Debug, Clone, serde::Serialize)]
 pub struct BlogContentsResponse {
     pub meta: BlogResponse,
     pub surface: serde_json::Value,
@@ -96,7 +98,7 @@ impl From<crate::blog::use_case::output::BlogContentsEntity> for BlogContentsRes
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize, utoipa::ToSchema)]
+#[derive(Debug, Clone, serde::Serialize)]
 pub struct BlogTagResponse {
     pub id: String,
     pub name_en: String,

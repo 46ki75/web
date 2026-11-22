@@ -23,12 +23,5 @@
     "plugins": [{ "name": "typescript-plugin-css-modules" }],
     "types": ["vite/client", "vitest/globals", "filesystem-routing/types"]
   },
-  "include": [
-    "src",
-    "openapi",
-    "scripts/**/*.ts",
-    "tests",
-    "./*.d.ts",
-    "./*.config.ts"
-  ]
+  "include": ["src", "scripts/**/*.ts", "tests", "./*.d.ts", "./*.config.ts"]
 }

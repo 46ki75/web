@@ -58,4 +58,6 @@ any staging access restrictions.
 The old frontend Lambda deployment command is retired. For AWS, see the
 [static deployment and rollback procedure](../../terraform/README.md#aws-static-frontend).
 CloudFront serves the website from private S3 in `dev`, `stg`, and `prod`.
-The publisher's `/cache/*` origin and the Rust `/api/*` routes are separate.
+The publisher's `/cache/*` origin is still available for builds. The frontend
+uses [snapshot types](src/data/blog-snapshot.ts) instead of a live OpenAPI
+schema. The old `/api/*` routes are retired.

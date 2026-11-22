@@ -1,9 +1,8 @@
 # CDN path design
 
 All traffic is served by a single CloudFront distribution. The request path
-prefix selects the origin, so each prefix maps to exactly one backend. Keeping
-the prefixes disjoint makes it obvious — from a URL alone — whether a response
-is dynamic (Lambda) or a pre-rendered static object (S3).
+prefix selects the S3 origin. The static website and the blog publisher's
+snapshot files are served from separate buckets.
 
 ## Origin routing
 
@@ -11,24 +10,19 @@ CloudFront behaviors are matched in order; the first matching path pattern wins.
 
 | Path pattern | Origin          | Backend                          | Cache policy | Basic auth\* |
 | ------------ | --------------- | -------------------------------- | ------------ | ------------ |
-| `/api/*`     | `api-backend`   | Lambda — `web-lambda-http-api`   | `http_api`   | no           |
 | `/cache/*`   | `s3-blog`       | S3 — blog cache bucket           | `s3`         | no           |
 | `/build/*`   | `s3-web`        | S3 — hashed frontend assets     | `s3`         | yes          |
 | _(default)_  | `s3-web`        | S3 — static site releases       | `static_site` | yes         |
 
-\* Basic auth is a CloudFront viewer-request function applied only to the HTML
-and frontend-asset behaviors on non-`prod` stages. `/api/*` and `/cache/*` are
-not behind it.
+\* Basic auth is enforced on website pages and assets in `dev` and `stg`,
+including missing routes; `/cache/*` remains publicly readable through CloudFront.
 
 The default behavior serves a static S3 release selected by the CloudFront
 Function. For deployment and release rollback, see the
 [AWS static frontend runbook](../terraform/README.md#aws-static-frontend).
 
-- **`/api/*` is the Lambda HTTP API.** Dynamic responses, `http_api` cache
-  policy (varies on `Accept-Language`, short TTL).
-- **`/cache/*` is the S3 static blog cache.** The whole `/cache/*` namespace is
-  reserved for the `s3-blog` origin. Public URLs map 1:1 to S3 object keys, so
-  the CDN serves them straight from S3 with no Lambda hop.
+The retired `/api/*` namespace falls through to the website's 404 handling.
+`/cache/*` maps public URLs 1:1 to `s3-blog` object keys, with no Lambda hop.
 
 ## Blog cache key layout
 
@@ -102,18 +96,8 @@ invalidation is targeted at exactly the paths touched (`/cache/v3/blog/article/{
 plus any affected collection paths). A run where nothing changed writes nothing
 and invalidates nothing.
 
-## Lambda blog API (`/api/v2/blog/*`)
+## Snapshot contract
 
-The Lambda still exposes the original header/query-based blog API under
-`/api/v2/blog/*` (e.g. `GET /api/v2/blog` with `Accept-Language`). It is **not**
-on the frontend's runtime read path — the static build downloads `/cache/v3/blog/*`
-and the browser reads the bundled copy — but it is kept
-because:
-
-- it is the source of the OpenAPI spec the frontend generates TypeScript types
-  from, and
-- it serves as a fallback that reads the same materialized `cache/v3/blog/...`
-  objects.
-
-These contract paths are deliberately distinct from the `/cache/v3/blog/...` object
-keys.
+The frontend build downloads the published `/cache/v3/blog/*` files. The
+browser only reads the bundled copy. Keep the [frontend snapshot types](../packages/web-solid/src/data/blog-snapshot.ts)
+in sync with the [Rust publisher's serialized JSON](../crates/web-lambda-http-api/src/blog/snapshot.rs).

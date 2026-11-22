@@ -70,6 +70,14 @@ test("returns custom HTML with HTTP 404 and no body for HEAD", async () => {
   assert.equal((await handler(false, new Map())(request("/"))).statusCode, 503);
 });
 
+test("treats a retired API route as a missing website path", async () => {
+  const uri = "/api/v2/blog";
+  const publicResponse = await handler(false)(request(uri));
+  assert.equal(publicResponse.statusCode, 404);
+  assert.equal(publicResponse.headers["content-type"].value, "text/html; charset=utf-8");
+  assert.equal((await handler(true)(request(uri))).statusCode, 401);
+});
+
 test("retries a transient manifest lookup failure", async () => {
   let firstLookup = true;
   const transient = {
